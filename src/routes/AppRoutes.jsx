@@ -2,6 +2,7 @@ import Login from "../pages/account/Login.jsx";
 import LoginGetStarted from "../pages/account/Login.GetStarted.jsx";
 import LoginAccountVerification from "../pages/account/Login.AccountVerification.jsx";
 import LoginVerificationCode from "../pages/account/Login.VerificationCode.jsx";
+import Dashboard from "../pages/home/Dashboard.jsx";
 
 const AppRoutes = [
     {
@@ -28,7 +29,7 @@ const AppRoutes = [
 
     {
         path: '/dashboard',
-        element: <LoginVerificationCode />
+        element: <Dashboard />
     },
 ];
 

@@ -4,8 +4,10 @@ import Header from "../../components/header/Header.jsx";
 import {useFormikContext} from "../../context/FormikProvider.jsx";
 import {useEffect} from "react";
 import {useFooter} from "../../context/FooterProvider.jsx";
+import {useNavigate} from "react-router-dom";
 
 function LoginVerificationCode() {
+    const navigate = useNavigate();
     const { setFormikData } = useFormikContext();
 
     const { setFooterContent, setIsFooterVisible } = useFooter();

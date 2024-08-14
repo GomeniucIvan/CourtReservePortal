@@ -5,8 +5,11 @@ import {useFormikContext} from "../../context/FormikProvider.jsx";
 import {useNavigate} from "react-router-dom";
 
 function LoginAccountVerification() {
-    const { setFormikData } = useFormikContext();
-    const navigate = useNavigate();
+    const { formikData } = useFormikContext();
+
+    const email = formikData?.email;
+    
+    console.log(email)
     
     return (
        <>
