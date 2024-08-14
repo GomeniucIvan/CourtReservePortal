@@ -8,7 +8,7 @@ function Login() {
     
   return (
       <div className={styles.loginBg}>
-         <div className={styles.loginIcon}>
+         <div>
              <div className={styles.loginIconText}>Cartoon</div>
          </div>
 
