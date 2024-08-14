@@ -1,5 +1,6 @@
 ﻿import { Route, Routes } from 'react-router-dom';
 import AppRoutes from "../../routes/AppRoutes.jsx";
+import './Layout.module.less';
 
 function Layout() {
     return (
