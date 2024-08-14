@@ -7,18 +7,27 @@ const AppRoutes = [
     {
         index: true,
         path: '/',
-        element: <Login />
+        element: <Login />,
+        root: true
     },
     {
         path: '/login-get-started',
-        element: <LoginGetStarted />
+        element: <LoginGetStarted />,
+        title: 'Getting Started'
     },
     {
         path: '/login-account-verification',
-        element: <LoginAccountVerification />
+        element: <LoginAccountVerification />,
+        title: 'Account Verification'
     },
     {
         path: '/login-verification-code',
+        element: <LoginVerificationCode />,
+        title: 'Verification Code'
+    },
+
+    {
+        path: '/dashboard',
         element: <LoginVerificationCode />
     },
 ];

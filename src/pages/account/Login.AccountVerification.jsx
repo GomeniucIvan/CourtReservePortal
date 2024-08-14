@@ -10,8 +10,6 @@ function LoginAccountVerification() {
     
     return (
        <>
-           <Header title={'Account Verification'}/>
-           
            <div>
                Login get started
 

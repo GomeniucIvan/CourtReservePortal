@@ -15,7 +15,7 @@ const Header = forwardRef((props, ref) => {
     }));
 
     useEffect(() => {
-        pushToHistory(location.pathname, props.rootPage);
+        pushToHistory(location.pathname, props.route.root);
     }, [location]);
     
     const navigateBack = () => {
@@ -36,7 +36,7 @@ const Header = forwardRef((props, ref) => {
     }
 
     return (
-        <NavBar onBack={backToPreviousPage}>{props.title}</NavBar>
+        <NavBar onBack={backToPreviousPage}>{props.route.title}</NavBar>
     );
 })
 

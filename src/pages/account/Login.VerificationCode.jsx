@@ -8,13 +8,14 @@ function LoginVerificationCode() {
     
     return (
        <>
-           <Header title={'Verification Code'}/>
-           
            <div>
-               Please Check your Email
+               Verification Code
 
                <Input placeholder='Email' value='Email todo' readOnly />
 
+               <Button block color='primary' size='large' onClick={() => navigate('/dashboard')}>
+                   Dashboard
+               </Button>
            </div>
        </>
     )

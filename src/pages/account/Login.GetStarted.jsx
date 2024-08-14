@@ -11,8 +11,6 @@ function LoginGetStarted() {
     
     return (
        <>
-           <Header title={'Getting Started'}/>
-           
            <div>
                Login get started
 
