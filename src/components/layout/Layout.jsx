@@ -3,11 +3,38 @@ import AppRoutes from "../../routes/AppRoutes.jsx";
 import {NavBar, SafeArea, TabBar} from "antd-mobile";
 import styles from "./Layout.module.less";
 import Header from "../header/Header.jsx";
+import {useEffect, useRef, useState} from "react";
 
 function Layout() {
     const location = useLocation();
     const currentRoute = AppRoutes.find(route => route.path === location.pathname);
+    const headerRef = useRef(null);
+    const footerRef = useRef(null);
 
+    const [maxHeight, setMaxHeight] = useState(0);
+
+    // Function to calculate and set the max height for the content area
+    const calculateMaxHeight = () => {
+        const windowHeight = window.innerHeight;
+        const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
+        const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
+        const calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+        setMaxHeight(calculatedMaxHeight);
+    };
+
+    // useEffect to calculate maxHeight on mount, on window resize, and when header/footer changes
+    useEffect(() => {
+        calculateMaxHeight(); // Initial calculation
+
+        // Recalculate on window resize
+        window.addEventListener('resize', calculateMaxHeight);
+        return () => window.removeEventListener('resize', calculateMaxHeight); // Cleanup on unmount
+    }, []);
+
+    useEffect(() => {
+        calculateMaxHeight();
+    }, [location]);
+    
     const tabs = [
         {
             key: '/home',
@@ -43,12 +70,12 @@ function Layout() {
                 <SafeArea position='top'/>
             </div>
             {(currentRoute && currentRoute.title) &&
-                <div className={styles.top}>
+                <div className={styles.top} ref={headerRef}>
                     <Header route={currentRoute}/>
                 </div>
             }
 
-            <div className={styles.body}>
+            <div className={styles.body} style={{ height: `${maxHeight}px` }}>
                 <Routes>
                     {AppRoutes.map((route, index) => {
                         const {element, path, ...rest} = route;
@@ -63,7 +90,7 @@ function Layout() {
                 </Routes>
             </div>
 
-            <div className={styles.bottom}>
+            <div className={styles.bottom} ref={footerRef}>
                 <Bottom/>
             </div>
 
