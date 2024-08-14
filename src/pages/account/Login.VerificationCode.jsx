@@ -2,9 +2,22 @@ import styles from './Login.module.less'
 import {Button, Form, Input, Popup} from "antd-mobile";
 import Header from "../../components/header/Header.jsx";
 import {useFormikContext} from "../../context/FormikProvider.jsx";
+import {useEffect} from "react";
+import {useFooter} from "../../context/FooterProvider.jsx";
 
 function LoginVerificationCode() {
     const { setFormikData } = useFormikContext();
+
+    const { setFooterContent, setIsFooterVisible } = useFooter();
+
+    useEffect(() => {
+        setFooterContent(<div>Custom Button</div>);
+        setIsFooterVisible(true);
+        return () => {
+            setFooterContent(null);
+            setIsFooterVisible(true);
+        };
+    }, [setFooterContent, setIsFooterVisible]);
     
     return (
        <>

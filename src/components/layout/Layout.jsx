@@ -4,6 +4,7 @@ import {NavBar, SafeArea, TabBar} from "antd-mobile";
 import styles from "./Layout.module.less";
 import Header from "../header/Header.jsx";
 import {useEffect, useRef, useState} from "react";
+import {useFooter} from "../../context/FooterProvider.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -12,7 +13,8 @@ function Layout() {
     const footerRef = useRef(null);
 
     const [maxHeight, setMaxHeight] = useState(0);
-
+    const { footerContent, isFooterVisible } = useFooter();
+    
     // Function to calculate and set the max height for the content area
     const calculateMaxHeight = () => {
         const windowHeight = window.innerHeight;
@@ -22,15 +24,13 @@ function Layout() {
         setMaxHeight(calculatedMaxHeight);
     };
 
-    // useEffect to calculate maxHeight on mount, on window resize, and when header/footer changes
     useEffect(() => {
-        calculateMaxHeight(); // Initial calculation
+        calculateMaxHeight();
 
-        // Recalculate on window resize
         window.addEventListener('resize', calculateMaxHeight);
-        return () => window.removeEventListener('resize', calculateMaxHeight); // Cleanup on unmount
-    }, []);
-
+        return () => window.removeEventListener('resize', calculateMaxHeight);
+    }, [isFooterVisible, footerContent]);
+    
     useEffect(() => {
         calculateMaxHeight();
     }, [location]);
@@ -91,7 +91,11 @@ function Layout() {
             </div>
 
             <div className={styles.bottom} ref={footerRef}>
-                <Bottom/>
+                {isFooterVisible && (
+                    <div className={styles.bottom} ref={footerRef}>
+                        {footerContent ? footerContent : <Bottom/>}
+                    </div>
+                )}
             </div>
 
             <div style={{background: '#ffffff'}}>
