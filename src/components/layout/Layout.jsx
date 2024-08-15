@@ -1,6 +1,5 @@
 ﻿import {Route, Routes, useLocation} from 'react-router-dom';
 import AppRoutes from "../../routes/AppRoutes.jsx";
-import {NavBar, SafeArea, TabBar} from "antd-mobile";
 import styles from "./Layout.module.less";
 import Header from "../header/Header.jsx";
 import {useEffect, useRef, useState} from "react";
@@ -38,9 +37,6 @@ function Layout() {
     
     return (
         <div className={styles.app}>
-            <div style={{background: '#ace0ff'}}>
-                <SafeArea position='top'/>
-            </div>
             {(currentRoute && currentRoute.title) &&
                 <div className={styles.top} ref={headerRef}>
                     <Header route={currentRoute}/>
@@ -66,10 +62,6 @@ function Layout() {
                 {isFooterVisible && (
                     <> {footerContent ? footerContent : <Footer/>} </>
                 )}
-            </div>
-
-            <div style={{background: '#ffffff'}}>
-                <SafeArea position='bottom'/>
             </div>
         </div>
     )

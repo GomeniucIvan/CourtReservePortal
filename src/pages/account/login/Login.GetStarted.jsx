@@ -1,14 +1,16 @@
 import styles from './Login.module.less'
-import {Button, Form, Input} from "antd-mobile";
 import {useNavigate} from "react-router-dom";
 import { useFormik } from 'formik';
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
 import * as Yup from "yup";
+import {useState} from "react";
+import { Button, Form, Input } from 'antd';
 
 function LoginGetStarted() {
     const { setFormikData } = useFormikContext();
     const navigate = useNavigate();
-
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
     const startInitialValues = {
         email: '',
         password: ''
@@ -22,45 +24,37 @@ function LoginGetStarted() {
         initialValues: startInitialValues,
         validationSchema: startValidationSchema,
         onSubmit: async (values, { setStatus, setSubmitting }) => {
-            setSubmitting(true);
+            setIsSubmitting(true);
             
             setTimeout(function (){
-                setSubmitting(true);
                 
                 setFormikData(values);
                 console.log('Form submitted:', values);
                 navigate('/login-account-verification');
-                
-                setSubmitting(false);
+
+                setIsSubmitting(false);
             }, 2000);
         },
     });
-
-    console.log(startFormik.isSubmitting)
     
     return (
         <>
             <div>
                 Login get started
 
-                <form onSubmit={startFormik.handleSubmit}>
-                    <input
-                        placeholder='Enter your email'
-                        onChange={startFormik.handleChange}
-                        value={startFormik.values.email}
-                        name="email"
-                    />
+                <Form
+                    onSubmit={startFormik.handleSubmit}
+                    layout={'vertical'}
+                    initialValues={{ layout: 'vertical' }}
+                >
+                    <Form.Item label="Field A">
+                        <Input placeholder="input placeholder" />
+                    </Form.Item>
 
-                    <Button
-                        block
-                        color='primary'
-                        type="submit"
-                        size='large'
-                        disabled={startFormik.isSubmitting}
-                    >
-                        {startFormik.isSubmitting ? 'Submitting...' : 'Continue'}
+                    <Button type="primary" block type="submit" loading={isSubmitting}>
+                        Primary
                     </Button>
-                </form>
+                </Form>
             </div>
         </>
     )

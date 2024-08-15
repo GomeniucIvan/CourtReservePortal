@@ -1,7 +1,7 @@
 import styles from './Login.module.less'
-import {Button, Form, Input, Popup} from "antd-mobile";
 import {useNavigate} from "react-router-dom";
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
+import {Button, Input} from "antd";
 
 function LoginAccountVerification() {
     const { formikData } = useFormikContext();
@@ -17,11 +17,7 @@ function LoginAccountVerification() {
 
                <Input placeholder='Email' value='Email todo' readOnly />
 
-               <Form requiredMarkStyle='asterisk'>
-                   <Form.Item name='password' label='Password'>
-                       <Input placeholder='Enter your email' type={'password'} />
-                   </Form.Item>
-               </Form>
+               <Input placeholder='Enter your email' type={'password'} />
                
                <Button block color='primary' size='large' onClick={() => navigate('/login-verification-code')}>
                    Login

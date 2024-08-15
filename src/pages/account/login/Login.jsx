@@ -1,8 +1,8 @@
 import styles from './Login.module.less'
-import { Button, Popup, Form, Input } from 'antd-mobile';
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useFooter} from "../../../context/FooterProvider.jsx";
+import {Button} from "antd";
 
 function Login() {
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ function Login() {
                 <div className={styles.loginIconText}>Cartoon</div>
             </div>
 
-            <Button block color='primary' size='large' onClick={() => navigate('/login-get-started')}>
+            <Button type="primary" block onClick={() => navigate('/login-get-started')}>
                 Login
             </Button>
         </div>

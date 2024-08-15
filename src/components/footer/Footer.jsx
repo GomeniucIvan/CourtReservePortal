@@ -1,5 +1,4 @@
 ﻿import './Footer.module.less';
-import {TabBar} from "antd-mobile";
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Footer = (props) => {
@@ -26,11 +25,12 @@ const Footer = (props) => {
     ]
 
     return (
-        <TabBar>
+        
+        <div>
             {tabs.map(item => (
-                <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+                <div key={item.key} icon={item.icon} title={item.title} />
             ))}
-        </TabBar>
+        </div>
     )
 }
 

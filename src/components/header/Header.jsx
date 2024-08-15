@@ -1,5 +1,4 @@
 ﻿import './Header.module.less';
-import {NavBar} from "antd-mobile";
 import {forwardRef, useEffect, useImperativeHandle} from "react";
 import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -36,7 +35,7 @@ const Header = forwardRef((props, ref) => {
     }
 
     return (
-        <NavBar onBack={backToPreviousPage}>{props.route.title}</NavBar>
+        <div onClick={backToPreviousPage}>{props.route.title}</div>
     );
 })
 
