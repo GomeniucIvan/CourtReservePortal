@@ -9,7 +9,13 @@ function Dashboard() {
     
     return (
         <div>
-            Dashboard
+            <Button block color='primary' size='large' onClick={() => navigate(`/event-list/${orgId}`)}>
+                Events
+            </Button>
+            <Button block color='primary' size='large' onClick={() => navigate(`/scheduler/${orgId}`)}>
+                Scheduler
+            </Button>
+            
         </div>
     )
 }

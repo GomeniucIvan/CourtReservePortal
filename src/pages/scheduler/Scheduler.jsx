@@ -1,17 +1,17 @@
-﻿import styles from './Dashboard.module.less'
+﻿import styles from './Scheduler.module.less'
 import { Button, Popup, Form, Input } from 'antd-mobile';
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-function Dashboard() {
+function Scheduler() {
     const navigate = useNavigate();
     let { orgId } = useParams();
     
     return (
         <div>
-            Dashboard
+            Scheduler
         </div>
     )
 }
 
-export default Dashboard
+export default Scheduler

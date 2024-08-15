@@ -5,6 +5,7 @@ import styles from "./Layout.module.less";
 import Header from "../header/Header.jsx";
 import {useEffect, useRef, useState} from "react";
 import {useFooter} from "../../context/FooterProvider.jsx";
+import Footer from "../footer/Footer.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -35,35 +36,6 @@ function Layout() {
         calculateMaxHeight();
     }, [location]);
     
-    const tabs = [
-        {
-            key: '/home',
-            title: 'Home',
-        },
-        {
-            key: '/todo',
-            title: 'Todo',
-        },
-        {
-            key: '/message',
-            title: 'Message',
-        },
-        {
-            key: '/me',
-            title: 'Me'
-        },
-    ]
-
-    const Bottom = () => {
-        return (
-            <TabBar>
-                {tabs.map(item => (
-                    <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
-                ))}
-            </TabBar>
-        )
-    }
-    
     return (
         <div className={styles.app}>
             <div style={{background: '#ace0ff'}}>
@@ -90,11 +62,11 @@ function Layout() {
                 </Routes>
             </div>
 
-            <div className={styles.bottom} ref={footerRef}>
+            <div ref={footerRef}>
                 {isFooterVisible && (
-                    <div className={styles.bottom} ref={footerRef}>
-                        {footerContent ? footerContent : <Bottom/>}
-                    </div>
+                    <>
+                        {footerContent ? footerContent : <Footer/>}
+                    </>
                 )}
             </div>
 
