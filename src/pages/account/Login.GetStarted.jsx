@@ -1,7 +1,5 @@
 import styles from './Login.module.less'
-import {Button, Form, Input, Popup} from "antd-mobile";
-import {useState} from "react";
-import Header from "../../components/header/Header.jsx";
+import {Button, Form, Input} from "antd-mobile";
 import {useFormikContext} from "../../context/FormikProvider.jsx";
 import {useNavigate} from "react-router-dom";
 import { useFormik } from 'formik';
