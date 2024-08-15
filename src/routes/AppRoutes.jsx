@@ -3,6 +3,9 @@ import LoginGetStarted from "../pages/account/Login.GetStarted.jsx";
 import LoginAccountVerification from "../pages/account/Login.AccountVerification.jsx";
 import LoginVerificationCode from "../pages/account/Login.VerificationCode.jsx";
 import Dashboard from "../pages/home/Dashboard.jsx";
+import EventList from "../pages/event/list/EventList.jsx";
+import EventCategoryList from "../pages/event/categories/EventCategoryList.jsx";
+import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 
 const AppRoutes = [
     {
@@ -28,8 +31,20 @@ const AppRoutes = [
     },
 
     {
-        path: '/dashboard',
+        path: '/dashboard/:orgId',
         element: <Dashboard />
+    },
+    {
+        path: '/event-list/:orgId',
+        element: <EventList />
+    },
+    {
+        path: '/event-category-list/:orgId',
+        element: <EventCategoryList />
+    },
+    {
+        path: '/event-calendar/:orgId',
+        element: <EventCalendar />
     },
 ];
 
