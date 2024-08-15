@@ -64,9 +64,7 @@ function Layout() {
 
             <div ref={footerRef}>
                 {isFooterVisible && (
-                    <>
-                        {footerContent ? footerContent : <Footer/>}
-                    </>
+                    <> {footerContent ? footerContent : <Footer/>} </>
                 )}
             </div>
 

@@ -25,9 +25,9 @@ function LoginGetStarted() {
             <div>
                 Login get started
 
-                <Form requiredMarkStyle='asterisk' onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit}>
                     <Form.Item name='email' label='Email'>
-                        <Input
+                        <input
                             placeholder='Enter your email'
                             onChange={formik.handleChange}
                             value={formik.values.email}
@@ -39,7 +39,7 @@ function LoginGetStarted() {
                         Continue
                     </Button>
                     
-                </Form>
+                </form>
             </div>
         </>
     )
