@@ -1,7 +1,8 @@
 import {equalString, toBoolean} from "../utils/Utils.jsx";
 import {useRef, useState} from "react";
-import {Form, Input, Typography} from "antd";
+import {Input, Typography, theme} from "antd";
 const { Paragraph } = Typography;
+const { useToken } = theme;
 
 const FormInput = ({ label,
                        form,
@@ -19,7 +20,8 @@ const FormInput = ({ label,
                        disableAutoCapitalize,
                        isExpiryDate,
                        ...props }) => {
-
+    const { token } = useToken();
+    console.log(token)
     let field = '';
     let meta = null;
     const isRequired = toBoolean(required);
@@ -36,24 +38,24 @@ const FormInput = ({ label,
             field = { ...field, value: '' };
         }
     }
-    
+
     let hasError = meta && meta.error && meta.touched;
     const addIconToSeePassowd = equalString(name, 'password');
     const handleInputChange = (event) => {
         let { value } = event.target;
-        
+
         if (onlyDigits) {
             value = value.replace(/[^\d]/g, '');
-            
+
             if (props.maxLength && value.length > props.maxLength) {
                 value = value.slice(0, props.maxLength);
             }
-            
+
             if (inputRef.current) {
                 inputRef.current.value = value;
             }
         }
-        
+
         if (typeof onInput === 'function') {
             onInput(event);
         }
@@ -65,13 +67,21 @@ const FormInput = ({ label,
 
     const handleInputBlur = (e) => {
         setIsFocused(false);
-        form.handleBlur(e); 
+        form.handleBlur(e);
     }
 
     return (
         <div>
-            <label htmlFor={name}>{label}</label>
-            
+            <label htmlFor={name}
+                   style={{
+                       fontSize: token.Form.labelFontSize,
+                       padding: token.Form.verticalLabelPadding,
+                       marginLeft: token.Form.labelColonMarginInlineStart,
+                       display: 'block'
+                   }}>
+                {label}
+            </label>
+
             <Input
                 {...props}
                 {...field}
@@ -90,7 +100,9 @@ const FormInput = ({ label,
                 className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <div className='form-invalid'>{meta.error}</div>
+                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart,}}>
+                    {meta.error}
+                </Paragraph>
             ) : null}
         </div>
     )

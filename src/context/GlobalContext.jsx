@@ -17,6 +17,12 @@ export const GlobalContext = ({ children }) => {
                     Input: {
                         borderRadius: 8,
                         controlHeight: 40
+                    },
+                    Form: {
+                        labelFontSize: 14,
+                        verticalLabelPadding: '0 0 9px',
+                        labelColonMarginInlineStart: 4,
+                        colorError: "rgb(255,77,80)"
                     }
                 },
             }}
