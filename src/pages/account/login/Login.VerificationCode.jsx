@@ -1,10 +1,9 @@
 import styles from './Login.module.less'
 import {Button, Form, Input, Popup} from "antd-mobile";
-import Header from "../../components/header/Header.jsx";
-import {useFormikContext} from "../../context/FormikProvider.jsx";
 import {useEffect} from "react";
-import {useFooter} from "../../context/FooterProvider.jsx";
 import {useNavigate} from "react-router-dom";
+import {useFormikContext} from "../../../context/FormikProvider.jsx";
+import {useFooter} from "../../../context/FooterProvider.jsx";
 
 function LoginVerificationCode() {
     const navigate = useNavigate();

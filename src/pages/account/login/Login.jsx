@@ -2,7 +2,7 @@ import styles from './Login.module.less'
 import { Button, Popup, Form, Input } from 'antd-mobile';
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {useFooter} from "../../context/FooterProvider.jsx";
+import {useFooter} from "../../../context/FooterProvider.jsx";
 
 function Login() {
     const navigate = useNavigate();

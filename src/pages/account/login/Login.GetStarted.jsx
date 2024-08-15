@@ -1,8 +1,8 @@
 import styles from './Login.module.less'
 import {Button, Form, Input} from "antd-mobile";
-import {useFormikContext} from "../../context/FormikProvider.jsx";
 import {useNavigate} from "react-router-dom";
 import { useFormik } from 'formik';
+import {useFormikContext} from "../../../context/FormikProvider.jsx";
 
 function LoginGetStarted() {
     const { setFormikData } = useFormikContext();
