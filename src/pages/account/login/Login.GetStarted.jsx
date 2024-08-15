@@ -4,7 +4,9 @@ import { useFormik } from 'formik';
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
 import * as Yup from "yup";
 import {useState} from "react";
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Typography } from 'antd';
+import FormInput from "../../../form/FormInput.jsx";
+const { Paragraph, Link, Title } = Typography;
 
 function LoginGetStarted() {
     const { setFormikData } = useFormikContext();
@@ -23,6 +25,8 @@ function LoginGetStarted() {
     const startFormik = useFormik({
         initialValues: startInitialValues,
         validationSchema: startValidationSchema,
+        validateOnBlur: true,
+        validateOnChange: true,
         onSubmit: async (values, { setStatus, setSubmitting }) => {
             setIsSubmitting(true);
             
@@ -40,21 +44,41 @@ function LoginGetStarted() {
     return (
         <>
             <div>
-                Login get started
+                <Title level={4}>Let’s get started!</Title>
+                
+                <Paragraph>
+                    Enter your email to get started. If you don't have
+                    an account yet, you will be prompted to create one.
+                </Paragraph>
 
                 <Form
-                    onSubmit={startFormik.handleSubmit}
                     layout={'vertical'}
+                    autoComplete="off"
                     initialValues={{ layout: 'vertical' }}
                 >
-                    <Form.Item label="Field A">
-                        <Input placeholder="input placeholder" />
-                    </Form.Item>
+                    <FormInput label="Email"
+                               form={startFormik}
+                               name='email'
+                               placeholder='Email'
+                               required='true'
+                               style={{paddingBottom: '8px'}}
+                    />
 
-                    <Button type="primary" block type="submit" loading={isSubmitting}>
-                        Primary
+                    <Button type="primary" block htmlType="button" loading={isSubmitting} onClick={startFormik.handleSubmit}>
+                        Login
                     </Button>
                 </Form>
+                
+                <Paragraph>
+                    By continuing, you agree to CourtReserve’s{' '}
+                    <Link href="https://ant.design" target="_blank">
+                        Terms of Service{' '}
+                    </Link>
+                    and{' '}
+                    <Link href="https://ant.design" target="_blank">
+                        Privacy Policy
+                    </Link>
+                </Paragraph>
             </div>
         </>
     )
