@@ -6,6 +6,7 @@ import Dashboard from "../pages/home/Dashboard.jsx";
 import EventList from "../pages/event/list/EventList.jsx";
 import EventCategoryList from "../pages/event/categories/EventCategoryList.jsx";
 import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
+import EventRegistration from "../pages/event/registration/EventRegistration.jsx";
 
 const AppRoutes = [
     {
@@ -45,6 +46,10 @@ const AppRoutes = [
     {
         path: '/event-calendar/:orgId',
         element: <EventCalendar />
+    },
+    {
+        path: '/event-registration/:orgId/:resId',
+        element: <EventRegistration />
     },
 ];
 

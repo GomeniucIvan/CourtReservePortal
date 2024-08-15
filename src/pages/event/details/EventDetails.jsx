@@ -1,15 +1,15 @@
-﻿import styles from './EventCalendar.module.less'
+﻿import styles from './EventDetails.module.less'
 import {useNavigate, useParams} from "react-router-dom";
 
-function EventCalendar() {
+function EventDetails() {
     const navigate = useNavigate();
     let { orgId } = useParams();
 
     return (
         <div>
-            EventCalendar
+            EventDetails
         </div>
     )
 }
 
-export default EventCalendar
+export default EventDetails
