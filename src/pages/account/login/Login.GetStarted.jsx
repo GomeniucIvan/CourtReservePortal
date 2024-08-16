@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import { useFormik } from 'formik';
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
 import * as Yup from "yup";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Button, Form, theme, Typography} from 'antd';
 import FormInput from "../../../form/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
@@ -65,7 +65,7 @@ function LoginGetStarted() {
                     />
 
                     <Button type="primary" 
-                            block htmlType="button"
+                            block htmlType="submit"
                             loading={isLoading}
                             onClick={startFormik.handleSubmit}>
                         Login

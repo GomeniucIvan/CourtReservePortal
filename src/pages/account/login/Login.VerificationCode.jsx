@@ -4,13 +4,24 @@ import {useNavigate} from "react-router-dom";
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
 import {useFooter} from "../../../context/FooterProvider.jsx";
 import {Button, Input} from "antd";
+import {isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 
 function LoginVerificationCode() {
     const navigate = useNavigate();
-    const { setFormikData } = useFormikContext();
-
+    const { formikData, isLoading, setIsLoading, setFormikData } = useFormikContext();
+    
     const { setFooterContent, setIsFooterVisible } = useFooter();
 
+    const email = formikData?.email;
+    const password = formikData?.password;
+    
+    useEffect(() => {
+        if (isNullOrEmpty(email) || isNullOrEmpty(password)){
+            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+        }
+    }, []);
+    
     useEffect(() => {
         setFooterContent(<div>Custom Button</div>);
         setIsFooterVisible(true);

@@ -6,6 +6,8 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import FormInput from "../../../form/FormInput.jsx";
+import {useEffect} from "react";
+import {isNullOrEmpty} from "../../../utils/Utils.jsx";
 const { Paragraph, Title } = Typography;
 const { useToken } = theme;
 
@@ -20,6 +22,12 @@ function LoginAccountVerification() {
         password: ''
     };
 
+    useEffect(() => {
+        if (isNullOrEmpty(email)){
+            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+        }
+    }, []);
+    
     const validationSchema = Yup.object({
         email: Yup.string().required('Email is required.'),
         password: Yup.string().required('Password is required.'),
@@ -69,13 +77,11 @@ function LoginAccountVerification() {
                               placeholder='Enter your password'
                               required='true'
                    />
-
                    
                    <Button type="primary"
                            block
-                           htmlType="button"
+                           htmlType="submit"
                            loading={isLoading}
-                           style={{marginBottom: token.Button.marginXS}}
                            onClick={formik.handleSubmit}>
                        Continue
                    </Button>
