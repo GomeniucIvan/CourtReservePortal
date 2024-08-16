@@ -1,17 +1,20 @@
 ﻿import {Route, Routes, useLocation} from 'react-router-dom';
 import AppRoutes from "../../routes/AppRoutes.jsx";
-import styles from "./Layout.module.less";
+import "./Layout.module.less";
 import Header from "../header/Header.jsx";
 import {useEffect, useRef, useState} from "react";
 import {useFooter} from "../../context/FooterProvider.jsx";
 import Footer from "../footer/Footer.jsx";
+import {useStyles} from "./Layout.styles.jsx";
+import { cx } from 'antd-style';
 
 function Layout() {
     const location = useLocation();
     const currentRoute = AppRoutes.find(route => route.path === location.pathname);
     const headerRef = useRef(null);
     const footerRef = useRef(null);
-
+    const { styles } = useStyles();
+    
     const [maxHeight, setMaxHeight] = useState(0);
     const { footerContent, isFooterVisible, isFooterLoading } = useFooter();
     
@@ -36,14 +39,14 @@ function Layout() {
     }, [location]);
     
     return (
-        <div className={styles.app}>
+        <div className={cx(styles.root)}>
             {(currentRoute && currentRoute.title) &&
-                <div className={styles.top} ref={headerRef}>
+                <div ref={headerRef}>
                     <Header route={currentRoute}/>
                 </div>
             }
 
-            <div className={styles.body} style={{ height: `${maxHeight}px` }}>
+            <div style={{ height: `${maxHeight}px` }}>
                 <Routes>
                     {AppRoutes.map((route, index) => {
                         const {element, path, ...rest} = route;

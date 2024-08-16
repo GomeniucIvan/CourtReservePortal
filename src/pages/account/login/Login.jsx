@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useFooter} from "../../../context/FooterProvider.jsx";
 import {Button} from "antd";
+import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 
 function Login() {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ function Login() {
                 <div className={styles.loginIconText}>Cartoon</div>
             </div>
 
-            <Button type="primary" block onClick={() => navigate('/login-get-started')}>
+            <Button type="primary" block onClick={() => navigate(AuthRouteNames.LOGIN_GET_STARTED)}>
                 Login
             </Button>
         </div>

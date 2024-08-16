@@ -6,6 +6,8 @@ import * as Yup from "yup";
 import {useState} from "react";
 import {Button, Form, theme, Typography} from 'antd';
 import FormInput from "../../../form/FormInput.jsx";
+import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
+import LoginAccountVerification from "./Login.AccountVerification.jsx";
 const { Paragraph, Link, Title } = Typography;
 const { useToken } = theme;
 
@@ -15,12 +17,11 @@ function LoginGetStarted() {
     const { token } = useToken();
     
     const startInitialValues = {
-        email: '',
-        password: ''
+        email: ''
     };
 
     const startValidationSchema = Yup.object({
-        email: Yup.string().required('Email or Username is required.')
+        email: Yup.string().required('Email is required.')
     });
     
     const startFormik = useFormik({
@@ -35,8 +36,7 @@ function LoginGetStarted() {
                 
                 setFormikData(values);
                 console.log('Form submitted:', values);
-                navigate('/login-account-verification');
-
+                navigate(AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION);
                 setIsLoading(false);
             }, 2000);
         },
@@ -60,20 +60,19 @@ function LoginGetStarted() {
                     <FormInput label="Email"
                                form={startFormik}
                                name='email'
-                               placeholder='Email'
+                               placeholder='Enter your email'
                                required='true'
                     />
 
                     <Button type="primary" 
                             block htmlType="button"
                             loading={isLoading}
-                            style={{marginBottom: token.Button.marginXS}}
                             onClick={startFormik.handleSubmit}>
                         Login
                     </Button>
                 </Form>
                 
-                <Paragraph>
+                <Paragraph className={'sm-padding'}>
                     By continuing, you agree to CourtReserve’s{' '}
                     <Link href="https://ant.design" target="_blank">
                         Terms of Service{' '}

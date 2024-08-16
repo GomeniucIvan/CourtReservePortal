@@ -1,27 +1,113 @@
 import styles from './Login.module.less'
 import {useNavigate} from "react-router-dom";
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
-import {Button, Input} from "antd";
+import {Button, Divider, Form, Input, theme, Typography} from "antd";
+import * as Yup from "yup";
+import {useFormik} from "formik";
+import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
+import FormInput from "../../../form/FormInput.jsx";
+const { Paragraph, Title } = Typography;
+const { useToken } = theme;
 
 function LoginAccountVerification() {
-    const { formikData } = useFormikContext();
-
+    const { formikData, isLoading, setIsLoading, setFormikData } = useFormikContext();
     const email = formikData?.email;
+    const { token } = useToken();
+    const navigate = useNavigate();
     
-    console.log(email)
+    const initialValues = {
+        email: email,
+        password: ''
+    };
+
+    const validationSchema = Yup.object({
+        email: Yup.string().required('Email is required.'),
+        password: Yup.string().required('Password is required.'),
+    });
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        validateOnBlur: true,
+        validateOnChange: true,
+        onSubmit: async (values, { setStatus, setSubmitting }) => {
+            setIsLoading(true);
+
+            setTimeout(function (){
+                setFormikData(values);
+                console.log('Form submitted:', values);
+                navigate(AuthRouteNames.LOGIN_VERIFICATION_CODE);
+                setIsLoading(false);
+            }, 2000);
+        },
+    });
     
     return (
        <>
            <div>
-               Login get started
+               <Title level={4}>We Found Your Account</Title>
 
-               <Input placeholder='Email' value='Email todo' readOnly />
+               <Paragraph>
+                   Enter your password or request a code to continue.
+               </Paragraph>
 
-               <Input placeholder='Enter your email' type={'password'} />
-               
-               <Button block color='primary' size='large' onClick={() => navigate('/login-verification-code')}>
-                   Login
-               </Button>
+               <Form
+                   layout={'vertical'}
+                   autoComplete="off"
+                   initialValues={{ layout: 'vertical' }}
+               >
+                   <FormInput label="Email"
+                              form={formik}
+                              name='email'
+                              disabled={true}
+                              placeholder='Enter your email'
+                   />
+
+                   <FormInput label="Password"
+                              form={formik}
+                              name='password'
+                              placeholder='Enter your password'
+                              required='true'
+                   />
+
+                   
+                   <Button type="primary"
+                           block
+                           htmlType="button"
+                           loading={isLoading}
+                           style={{marginBottom: token.Button.marginXS}}
+                           onClick={formik.handleSubmit}>
+                       Continue
+                   </Button>
+
+                   <Divider>or</Divider>
+                   
+                   <Button
+                       disabled={isLoading}
+                       block
+                       htmlType="button"
+                       onClick={() => {
+                           alert('todo')
+                       }}
+                   >
+                       Email a Log In Code
+                   </Button>
+
+                   <Button
+                       block
+                       htmlType="button"
+                       disabled={isLoading}
+                       onClick={() => {
+                           alert('todo')
+                       }}
+                   >
+                       Text a Code to ***-***-9650
+                   </Button>
+               </Form>
+
+               <Paragraph className={'sm-padding'}>
+                   By requesting a text code, you agree to receive texts from CourtReserve. Carrier rates may apply.
+               </Paragraph>
            </div>
        </>
     )
