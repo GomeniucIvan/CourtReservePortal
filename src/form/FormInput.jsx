@@ -3,6 +3,7 @@ import {useRef, useState} from "react";
 import {Input, Typography, theme} from "antd";
 const { Paragraph } = Typography;
 const { useToken } = theme;
+import style from './FormInput.module.less';
 
 const FormInput = ({ label,
                        form,
@@ -71,7 +72,7 @@ const FormInput = ({ label,
     }
 
     return (
-        <div>
+        <div style={{marginBottom: token.Form.itemMarginBottom}}>
             <label htmlFor={name}
                    style={{
                        fontSize: token.Form.labelFontSize,
@@ -80,6 +81,7 @@ const FormInput = ({ label,
                        display: 'block'
                    }}>
                 {label}
+                {isRequired && <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
 
             <Input
@@ -100,7 +102,7 @@ const FormInput = ({ label,
                 className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart,}}>
+                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                     {meta.error}
                 </Paragraph>
             ) : null}

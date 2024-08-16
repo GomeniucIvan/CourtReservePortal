@@ -4,14 +4,16 @@ import { useFormik } from 'formik';
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
 import * as Yup from "yup";
 import {useState} from "react";
-import { Button, Form, Input, Typography } from 'antd';
+import {Button, Form, theme, Typography} from 'antd';
 import FormInput from "../../../form/FormInput.jsx";
 const { Paragraph, Link, Title } = Typography;
+const { useToken } = theme;
 
 function LoginGetStarted() {
     const { setFormikData } = useFormikContext();
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { token } = useToken();
     
     const startInitialValues = {
         email: '',
@@ -61,10 +63,13 @@ function LoginGetStarted() {
                                name='email'
                                placeholder='Email'
                                required='true'
-                               style={{paddingBottom: '8px'}}
                     />
 
-                    <Button type="primary" block htmlType="button" loading={isSubmitting} onClick={startFormik.handleSubmit}>
+                    <Button type="primary" 
+                            block htmlType="button"
+                            loading={isSubmitting}
+                            style={{marginBottom: token.Button.marginXS}}
+                            onClick={startFormik.handleSubmit}>
                         Login
                     </Button>
                 </Form>

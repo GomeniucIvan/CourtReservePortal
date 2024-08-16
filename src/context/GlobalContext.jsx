@@ -13,6 +13,8 @@ export const GlobalContext = ({ children }) => {
                         controlHeight: 40,
                         controlHeightLG: 46,
                         borderRadius: 8,
+                        paddingXS: 8,
+                        marginXS: 8
                     },
                     Input: {
                         borderRadius: 8,
@@ -20,9 +22,12 @@ export const GlobalContext = ({ children }) => {
                     },
                     Form: {
                         labelFontSize: 14,
-                        verticalLabelPadding: '0 0 9px',
+                        verticalLabelPadding: '0 0 8px',
                         labelColonMarginInlineStart: 4,
-                        colorError: "rgb(255,77,80)"
+                        colorError: "rgb(255,77,80)",
+                        itemMarginBottom: 24,
+                        labelRequiredMarkColor: "rgb(255,77,80)",
+                        marginXXS: 4
                     }
                 },
             }}
