@@ -22,7 +22,7 @@ const FormInput = ({ label,
                        isExpiryDate,
                        ...props }) => {
     const { token } = useToken();
-    console.log(token)
+
     let field = '';
     let meta = null;
     const isRequired = toBoolean(required);

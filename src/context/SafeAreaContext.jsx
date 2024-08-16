@@ -34,3 +34,38 @@ const SafeArea = ({ children }) => {
 };
 
 export default SafeArea;
+
+
+// import React, { useEffect } from 'react';
+// import { SafeAreaView, StyleSheet } from 'react-native';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import { WebView } from 'react-native-webview';
+//
+// const MyWebView = () => {
+//     const insets = useSafeAreaInsets();
+//
+//     const injectedJS = `
+//     window.safeAreaInsets = {
+//       top: ${insets.top},
+//       bottom: ${insets.bottom},
+//     };
+//     window.dispatchEvent(new Event('safeAreaInsetsLoaded'));
+//   `;
+//
+//     return (
+//         <SafeAreaView style={styles.container}>
+//             <WebView
+//                 source={{ uri: 'https://your-web-app-url.com' }}
+//                 injectedJavaScript={injectedJS}
+//             />
+//         </SafeAreaView>
+//     );
+// };
+//
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//     },
+// });
+//
+// export default MyWebView;

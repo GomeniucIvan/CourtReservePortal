@@ -1,6 +1,7 @@
 ﻿import { FormikProvider } from "./FormikProvider.jsx";
 import { FooterProvider } from "./FooterProvider.jsx";
 import { ConfigProvider, theme } from "antd";
+import SafeArea from "./SafeAreaContext.jsx";
 
 export const GlobalContext = ({ children }) => {
     return (
@@ -27,14 +28,17 @@ export const GlobalContext = ({ children }) => {
                         colorError: "rgb(255,77,80)",
                         itemMarginBottom: 24,
                         labelRequiredMarkColor: "rgb(255,77,80)",
-                        marginXXS: 4
+                        marginXXS: 4,
+                        colorBorder: "rgb(217,217,217)"
                     }
                 },
             }}
         >
             <FooterProvider>
                 <FormikProvider>
-                    {children}
+                    <SafeArea>
+                        {children}
+                    </SafeArea>
                 </FormikProvider>
             </FooterProvider>
         </ConfigProvider>

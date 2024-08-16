@@ -1,4 +1,4 @@
-﻿import './Footer.module.less';
+﻿import styles from './Footer.module.less';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Footer = (props) => {
