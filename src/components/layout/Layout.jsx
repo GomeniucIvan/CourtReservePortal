@@ -13,7 +13,7 @@ function Layout() {
     const footerRef = useRef(null);
 
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible } = useFooter();
+    const { footerContent, isFooterVisible, isFooterLoading } = useFooter();
     
     // Function to calculate and set the max height for the content area
     const calculateMaxHeight = () => {

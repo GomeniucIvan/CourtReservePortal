@@ -10,9 +10,8 @@ const { Paragraph, Link, Title } = Typography;
 const { useToken } = theme;
 
 function LoginGetStarted() {
-    const { setFormikData } = useFormikContext();
+    const { setFormikData, isLoading, setIsLoading } = useFormikContext();
     const navigate = useNavigate();
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const { token } = useToken();
     
     const startInitialValues = {
@@ -30,7 +29,7 @@ function LoginGetStarted() {
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, { setStatus, setSubmitting }) => {
-            setIsSubmitting(true);
+            setIsLoading(true);
             
             setTimeout(function (){
                 
@@ -38,7 +37,7 @@ function LoginGetStarted() {
                 console.log('Form submitted:', values);
                 navigate('/login-account-verification');
 
-                setIsSubmitting(false);
+                setIsLoading(false);
             }, 2000);
         },
     });
@@ -67,7 +66,7 @@ function LoginGetStarted() {
 
                     <Button type="primary" 
                             block htmlType="button"
-                            loading={isSubmitting}
+                            loading={isLoading}
                             style={{marginBottom: token.Button.marginXS}}
                             onClick={startFormik.handleSubmit}>
                         Login
