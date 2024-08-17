@@ -14,7 +14,7 @@ const DashboardReservations = ({ dashboardData, isFetching }) => {
     }
 
     return (
-        <EntityCard title={t('Reservations')} link={'/reservations/:orgId'} isFetching={isFetching}>
+        <EntityCard title={t('Reservations')} link={'/reservations/:orgId'} isFetching={isFetching} addPadding={true}>
             {showMyBookings &&
                 <div className='modern-dashboard-block modern-dashboard-slick-block'>
                     {!anyInList(bookings) &&

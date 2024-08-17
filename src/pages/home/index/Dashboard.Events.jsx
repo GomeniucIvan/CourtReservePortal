@@ -15,7 +15,7 @@ const DashboardEvents = ({ dashboardData, isFetching }) => {
     }
     
     return (
-        <EntityCard title={t('Events')} link={'/reservations/:orgId'} isFetching={isFetching}>
+        <EntityCard title={t('Events')} link={'/reservations/:orgId'} isFetching={isFetching} addPadding={true}>
             <div className='modern-dashboard-block modern-dashboard-slick-block'>
                 {anyInList(events) &&
                     <SlickSlider>

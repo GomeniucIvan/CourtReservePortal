@@ -1,10 +1,10 @@
 ﻿import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { isMobileKeyboardOpen } from './MobileUtils';
 import {Button} from "antd";
 import {isNullOrEmpty, equalString, toBoolean } from "../../utils/Utils.jsx";
+import {isMobileKeyboardOpen} from "../../utils/MobileUtils.jsx";
 
-const modalRootEl = document.getElementById('render-body-container');
+const modalRootEl = document.getElementById('root');
 
 export class DrawerBottom extends Component {
     constructor(props) {
@@ -141,7 +141,7 @@ export class DrawerBottom extends Component {
                         <div className='drawer-multiselect-confirm'>
                             <Button text={this.state.confirmButtonText}
                                            type="button"
-                                           isLoading={this.state.btnIsLoading}
+                                           loading={this.state.btnIsLoading}
                                            disabled={false}
                                            onClick={() => {
                                                if (typeof this.props.onConfirmButtonClick === 'function') {

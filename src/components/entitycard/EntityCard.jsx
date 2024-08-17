@@ -10,7 +10,7 @@ const EntityCard = ({children, title, link, addPadding}) => {
     const { token } = useToken();
     const navigate = useNavigate();
     const { styles } = useStyles();
-    
+
     return (
         <>
             <div className={cx(styles.header, toBoolean(addPadding) && styles.headerPadding)}>
@@ -21,7 +21,7 @@ const EntityCard = ({children, title, link, addPadding}) => {
                 </Title>
             </div>
             <div className={toBoolean(addPadding) ? styles.cardPadding : null}>
-            {children}
+                {children}
             </div>
         </>
     )

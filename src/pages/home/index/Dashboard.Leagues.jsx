@@ -9,9 +9,11 @@ import ModernDashboardLeaguesDates from "./Dashboard.LeagueDates.jsx";
 
 const DashboardLeagues = ({ dashboardData, isFetching }) => {
     let [showLeaguesDrawer, setShowLeaguesDrawer] = useState(false);
+    let [leagueDatesLoading, setLeagueDatesLoading] = useState(false);
     
     let myLeaguesDropdown = dashboardData?.MyLeaguesDropdown;
     let showLeaguesBlock = dashboardData?.ShowLeaguesBlock;
+    let leaguesDates = dashboardData?.LeagueDates
     let hideLeagues = !anyInList(dashboardData?.MyLeaguesDropdown) || isNullOrEmpty(dashboardData?.SelectedLeagueSessionId);
 
     if (!toBoolean(showLeaguesBlock)){
@@ -19,7 +21,7 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
     }
 
     return (
-        <EntityCard title={t('Events')} link={'/reservations/:orgId'} isFetching={isFetching}>
+        <EntityCard title={t('Events')} link={'/reservations/:orgId'} isFetching={isFetching} addPadding={true}>
             {showLeaguesBlock &&
                 <div className='modern-dashboard-block modern-dashboard-slick-block'>
                     <div className="modern-dashboard-block-header">
@@ -84,7 +86,7 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
                             </DrawerBottom>
 
                             <div id="myleagues-slick-wrapper-html">
-                                <ModernDashboardLeaguesDates leaguesDates={leaguesDates} orgId={orgId} leagueDatesLoading={leagueDatesLoading} />
+                                <ModernDashboardLeaguesDates leaguesDates={leaguesDates} leagueDatesLoading={leagueDatesLoading} />
                             </div>
                         </>
                     }
