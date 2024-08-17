@@ -1,7 +1,7 @@
 import styles from './Login.module.less'
 import {useNavigate} from "react-router-dom";
 import { useFormik } from 'formik';
-import {useFormikContext} from "../../../context/FormikProvider.jsx";
+import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useState} from "react";
 import {Button, Form, theme, Typography} from 'antd';
@@ -12,7 +12,7 @@ const { Paragraph, Link, Title } = Typography;
 const { useToken } = theme;
 
 function LoginGetStarted() {
-    const { setFormikData, isLoading, setIsLoading } = useFormikContext();
+    const { setFormikData, isLoading, setIsLoading } = useApp();
     const navigate = useNavigate();
     const { token } = useToken();
     

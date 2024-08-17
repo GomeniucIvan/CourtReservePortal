@@ -1,18 +1,15 @@
-﻿import { FormikProvider } from "./FormikProvider.jsx";
-import { FooterProvider } from "./FooterProvider.jsx";
-import SafeArea from "./SafeAreaContext.jsx";
+﻿import SafeArea from "./SafeAreaContext.jsx";
 import {AntdProvider} from "./AntdProvider.jsx";
+import {AppProvider} from "./AppProvider.jsx";
 
 export const GlobalContext = ({ children }) => {
     return (
         <AntdProvider>
-            <FooterProvider>
-                <FormikProvider>
-                    <SafeArea>
-                        {children}
-                    </SafeArea>
-                </FormikProvider>
-            </FooterProvider>
+            <AppProvider>
+                <SafeArea>
+                    {children}
+                </SafeArea>
+            </AppProvider>
         </AntdProvider>
     );
 };

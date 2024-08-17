@@ -1,8 +1,7 @@
 import styles from './Login.module.less'
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {useFormikContext} from "../../../context/FormikProvider.jsx";
-import {useFooter} from "../../../context/FooterProvider.jsx";
+import {useApp} from "../../../context/AppProvider.jsx";
 import {theme, Typography, Col, Row, Button,Form} from "antd";
 import PasscodeInput from "../../../form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
@@ -16,9 +15,7 @@ const { useToken } = theme;
 function LoginVerificationCode() {
     const navigate = useNavigate();
     const { token } = useToken();
-
-    const { formikData, isLoading, setIsLoading, setFormikData } = useFormikContext();
-    const { setFooterContent, setIsFooterVisible } = useFooter();
+    const { formikData, isLoading, setIsLoading, setFormikData, setFooterContent, setIsFooterVisible } = useApp();
 
     const email = formikData?.email;
     const password = formikData?.password;

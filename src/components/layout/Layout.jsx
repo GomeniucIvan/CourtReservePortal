@@ -3,7 +3,7 @@ import AppRoutes from "../../routes/AppRoutes.jsx";
 import "./Layout.module.less";
 import Header from "../header/Header.jsx";
 import {useEffect, useRef, useState} from "react";
-import {useFooter} from "../../context/FooterProvider.jsx";
+import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./Layout.styles.jsx";
 import { cx } from 'antd-style';
@@ -25,7 +25,7 @@ function Layout() {
     const { styles } = useStyles();
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, isFooterLoading } = useFooter();
+    const { footerContent, isFooterVisible, isFooterLoading } = useApp();
     
     // Function to calculate and set the max height for the content area
     const calculateMaxHeight = () => {

@@ -3,7 +3,7 @@ import {forwardRef, useEffect, useImperativeHandle} from "react";
 import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
 import { useLocation, useNavigate } from 'react-router-dom';
 import {theme, Typography} from "antd";
-import {useFormikContext} from "../../context/FormikProvider.jsx";
+import {useApp} from "../../context/AppProvider.jsx";
 const { Title } = Typography;
 const { useToken } = theme;
 
@@ -11,7 +11,7 @@ const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { token } = useToken();
-    const { isLoading } = useFormikContext();
+    const { isLoading } = useApp();
     
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
