@@ -39,24 +39,16 @@ function Dashboard() {
     }, []);
     
     return (
-        <div>
+        <>
             <div className={styles.orgArea}>
-                <DashboardOrganizations setSelectedOrganization={setSelectedOrganization} selectedOrganization={selectedOrganization} />
+                {/*<DashboardOrganizations setSelectedOrganization={setSelectedOrganization} selectedOrganization={selectedOrganization} />*/}
             </div>
 
             <DashboardAnnouncements dashboardData={dashboardData} isFetching={isFetching} />
             <DashboardReservations dashboardData={dashboardData} isFetching={isFetching} />
             <DashboardEvents dashboardData={dashboardData} isFetching={isFetching} />
             <DashboardEvents dashboardData={dashboardData} isFetching={isFetching} />
-            
-            
-            <Button block color='primary' size='large' onClick={() => navigate(`/event-list/${orgId}`)}>
-                Events
-            </Button>
-            <Button block color='primary' size='large' onClick={() => navigate(`/scheduler/${orgId}`)}>
-                Scheduler
-            </Button>
-        </div>
+        </>
     )
 }
 

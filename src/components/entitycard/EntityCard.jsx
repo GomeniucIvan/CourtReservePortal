@@ -1,10 +1,29 @@
-﻿import styles from './EntityCard.module.less';
+﻿import {theme, Typography} from "antd";
+import {useNavigate} from "react-router-dom";
+import {toBoolean} from "../../utils/Utils.jsx";
+const { Paragraph, Link, Title } = Typography;
+const { useToken } = theme;
+import {useStyles} from "./EntityCard.styles.jsx";
+import { cx } from 'antd-style';
 
-const EntityCard = (props) => {
+const EntityCard = ({children, title, link, addPadding}) => {
+    const { token } = useToken();
+    const navigate = useNavigate();
+    const { styles } = useStyles();
+    
     return (
-        <div className={styles.folder}>
-            {props.children}
-        </div>
+        <>
+            <div className={cx(styles.header, toBoolean(addPadding) && styles.headerPadding)}>
+                <Title level={4}>{title}</Title>
+
+                <Title level={5} style={{color: token.colorLink}} onClick={() => navigate(link)}>
+                    See All
+                </Title>
+            </div>
+            <div className={toBoolean(addPadding) ? styles.cardPadding : null}>
+            {children}
+            </div>
+        </>
     )
 }
 

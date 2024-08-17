@@ -6,7 +6,6 @@ import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./Layout.styles.jsx";
-import { cx } from 'antd-style';
 
 
 // useEffect(() => {
