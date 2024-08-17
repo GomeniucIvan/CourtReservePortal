@@ -6,13 +6,15 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import {useEffect} from "react";
-import {isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
+import mockData from "../../../mocks/auth-data.json";
+import {ModalClose} from "../../../utils/ModalUtils.jsx";
 const { Paragraph, Title } = Typography;
 const { useToken } = theme;
 
 function LoginAccountVerification() {
-    const { formikData, isLoading, setIsLoading, setFormikData } = useApp();
+    const { formikData, isLoading, setIsLoading, setFormikData, isMockData } = useApp();
     const email = formikData?.email;
     const { token } = useToken();
     const navigate = useNavigate();
@@ -41,12 +43,32 @@ function LoginAccountVerification() {
         onSubmit: async (values, { setStatus, setSubmitting }) => {
             setIsLoading(true);
 
-            setTimeout(function (){
-                setFormikData(values);
-                console.log('Form submitted:', values);
-                navigate(AuthRouteNames.LOGIN_VERIFICATION_CODE);
-                setIsLoading(false);
-            }, 2000);
+            if (isMockData){
+                
+                setTimeout(function (){
+                    const memberExists = mockData.login.started.member.email === values.email && mockData.login.started.member.password === values.password;
+
+                    if (memberExists) {
+                        setFormikData(values);
+                        navigate(AuthRouteNames.LOGIN_VERIFICATION_CODE);
+                    } else {
+                        ModalClose({
+                            title: 'Password',
+                            content: 'The email and password combination you entered is incorrect',
+                            showIcon: false,
+                            onOk: () => {
+                                focus('password');
+                            }
+                        });
+                    }
+                    setIsLoading(false);
+                }, 2000);
+            } else{
+                //todo
+                alert('todo verification')
+            }
+            
+
         },
     });
     

@@ -56,7 +56,8 @@ function LoginGetStarted() {
                     setIsLoading(false);
                 }, 1000);
             } else{
-                //implement api
+                //todo
+                alert('todo started')
             }
         },
     });

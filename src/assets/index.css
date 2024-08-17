@@ -19,6 +19,7 @@
 }
 .ant-modal-confirm-content {
   font-size: 15px !important;
+  text-align: center;
 }
 
 .ant-modal-confirm-paragraph {

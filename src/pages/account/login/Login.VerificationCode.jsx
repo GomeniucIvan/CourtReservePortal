@@ -7,15 +7,17 @@ import PasscodeInput from "../../../form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
-import {isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
+import mockData from "../../../mocks/auth-data.json";
+import {ModalClose} from "../../../utils/ModalUtils.jsx";
 const { Paragraph, Title, Text } = Typography;
 const { useToken } = theme;
 
 function LoginVerificationCode() {
     const navigate = useNavigate();
     const { token } = useToken();
-    const { formikData, isLoading, setIsLoading, setFormikData, setFooterContent, setIsFooterVisible } = useApp();
+    const { formikData, isLoading, setIsLoading, setFormikData, isMockData } = useApp();
 
     const email = formikData?.email;
     const password = formikData?.password;
@@ -49,12 +51,30 @@ function LoginVerificationCode() {
         onSubmit: async (values, { setStatus, setSubmitting }) => {
             setIsLoading(true);
 
-            setTimeout(function (){
-                setFormikData(values);
-                console.log('Form submitted:', values);
-                navigate(HomeRouteNames.INDEX);
-                setIsLoading(false);
-            }, 2000);
+            if (isMockData) {
+                setTimeout(function (){
+                    const memberExists = mockData.login.started.member.email === values.email && 
+                        mockData.login.started.member.password === values.password &&
+                        mockData.login.started.member.passcode === values.passcode;
+
+                    if (memberExists) {
+                        setFormikData(null);
+                        navigate(HomeRouteNames.INDEX);
+                    } else {
+                        ModalClose({
+                            title: 'Passcode',
+                            content: 'Entered passcode is incorrect',
+                            showIcon: false,
+                            onOk: () => {
+                                //focus('password');
+                            }
+                        });
+                    }
+                    setIsLoading(false);
+                }, 2000);
+            } else{
+                alert('todo verificationcode')
+            }
         },
     });
 
