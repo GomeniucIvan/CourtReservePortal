@@ -67,8 +67,6 @@ function LoginAccountVerification() {
                 //todo
                 alert('todo verification')
             }
-            
-
         },
     });
     

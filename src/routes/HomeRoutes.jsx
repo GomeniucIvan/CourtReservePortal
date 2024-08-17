@@ -13,7 +13,8 @@ const HomeRoutes = [
     },
     {
         path: HomeRouteNames.SCHEDULER,
-        element: <Scheduler />
+        element: <Scheduler />,
+        title: 'Scheduler'
     },
 ];
 

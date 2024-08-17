@@ -28,7 +28,7 @@ const Footer = (props) => {
         
         <div>
             {tabs.map(item => (
-                <div key={item.key} icon={item.icon} title={item.title} />
+                <div key={item.key} icon={item.icon}>{item.title}</div>
             ))}
         </div>
     )

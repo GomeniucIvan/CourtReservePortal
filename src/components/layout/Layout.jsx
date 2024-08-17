@@ -57,7 +57,7 @@ function Layout() {
                     </div>
                 }
 
-                <div style={{overflow: 'auto', height: `${maxHeight}px`}}>
+                <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
                     <Routes>
                         {AppRoutes.map((route, index) => {
                             const {element, path, ...rest} = route;

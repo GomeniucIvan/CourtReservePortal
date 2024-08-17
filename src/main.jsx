@@ -3,6 +3,9 @@ import Layout from "./components/layout/Layout.jsx";
 import { BrowserRouter } from 'react-router-dom';
 import {GlobalContext} from "./context/GlobalContext.jsx";
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
         <GlobalContext>
