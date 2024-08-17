@@ -1,8 +1,8 @@
 ﻿import styles from './Dashboard.module.less'
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {useApp} from "../../context/AppProvider.jsx";
-import mockData from "../../mocks/home-data.json";
+import {useApp} from "../../../context/AppProvider.jsx";
+import mockData from "../../../mocks/home-data.json";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);

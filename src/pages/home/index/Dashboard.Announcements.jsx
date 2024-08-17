@@ -1,9 +1,9 @@
 ﻿import styles from './Dashboard.module.less'
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {anyInList, extractTextFromHTML, toBoolean} from "../../utils/Utils.jsx";
-import {SlickSlider} from "../../components/slickslider/SlickSlider.jsx";
-import EntityCard from "../../components/entitycard/EntityCard.jsx";
+import {anyInList, extractTextFromHTML, toBoolean} from "../../../utils/Utils.jsx";
+import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
+import EntityCard from "../../../components/entitycard/EntityCard.jsx";
 
 const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
     

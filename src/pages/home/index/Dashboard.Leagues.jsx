@@ -1,11 +1,10 @@
 ﻿import styles from './Dashboard.module.less'
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {anyInList, equalString, extractTextFromHTML, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {SlickSlider} from "../../components/slickslider/SlickSlider.jsx";
-import EntityCard from "../../components/entitycard/EntityCard.jsx";
-import {t} from "../../utils/OrganizationUtils.jsx";
-import {DrawerBottom} from "../../components/drawer/DrawerBottom.jsx";
+import {anyInList, equalString, extractTextFromHTML, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import EntityCard from "../../../components/entitycard/EntityCard.jsx";
+import {t} from "../../../utils/OrganizationUtils.jsx";
+import {DrawerBottom} from "../../../components/drawer/DrawerBottom.jsx";
 import ModernDashboardLeaguesDates from "./Dashboard.LeagueDates.jsx";
 
 const DashboardLeagues = ({ dashboardData, isFetching }) => {

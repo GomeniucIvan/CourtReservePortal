@@ -2,13 +2,9 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {Button} from "antd";
-import {useApp} from "../../context/AppProvider.jsx";
-import mockData from "../../mocks/home-data.json";
-import Slider from "react-slick";
+import {useApp} from "../../../context/AppProvider.jsx";
+import mockData from "../../../mocks/home-data.json";
 import DashboardOrganizations from "./Dashboard.Organizations.jsx";
-import EntityCard from "../../components/entitycard/EntityCard.jsx";
-import {anyInList, extractTextFromHTML, toBoolean} from "../../utils/Utils.jsx";
-import {SlickSlider} from "../../components/slickslider/SlickSlider.jsx";
 import DashboardAnnouncements from "./Dashboard.Announcements.jsx";
 import DashboardReservations from "./Dashboard.Reservations.jsx";
 import DashboardEvents from "./Dashboard.Events.jsx";

@@ -1,5 +1,5 @@
-﻿import {getValueOrDefault, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {SlickSlider} from "../../components/slickslider/SlickSlider.jsx";
+﻿import {getValueOrDefault, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import {Skeleton} from "antd";
 
 const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {

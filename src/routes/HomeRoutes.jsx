@@ -1,4 +1,4 @@
-import Dashboard from "../pages/home/Dashboard.jsx";
+import Dashboard from "../pages/home/index/Dashboard.jsx";
 import Scheduler from "../pages/scheduler/Scheduler.jsx";
 
 export const HomeRouteNames = {
