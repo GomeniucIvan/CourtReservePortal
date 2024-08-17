@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {useFormikContext} from "../../../context/FormikProvider.jsx";
 import {useFooter} from "../../../context/FooterProvider.jsx";
 import {theme, Typography, Col, Row, Button,Form} from "antd";
-import PasscodeInput from "../../../form/passcode/HtmlPasscodeInput.jsx";
+import PasscodeInput from "../../../form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
@@ -61,6 +61,14 @@ function LoginVerificationCode() {
         },
     });
 
+    useEffect(() => {
+        if (formik?.values?.passcode){
+            if (formik.values.passcode.length === 6){
+                formik.handleSubmit();
+            }
+        }
+    }, [formik?.values?.passcode]);
+    
     return (
         <>
             <div>

@@ -6,7 +6,7 @@ import React, {
     useImperativeHandle,
 } from 'react';
 import { bound } from "../../utils/Utils.jsx";
-import {useStyles} from "./HtmlPasscodeInput.styles.jsx";
+import {useStyles} from "./FormPasscodeInput.styles.jsx";
 import { cx } from 'antd-style';
 
 const classPrefix = 'ant-passcode-input';
