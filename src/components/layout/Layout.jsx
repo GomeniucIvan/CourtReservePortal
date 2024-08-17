@@ -50,7 +50,7 @@ function Layout() {
     
     return (
         <>
-            <div className={'test'}>
+            <div className={styles.root}>
                 {(currentRoute && currentRoute.title) &&
                     <div ref={headerRef}>
                         <Header route={currentRoute}/>
