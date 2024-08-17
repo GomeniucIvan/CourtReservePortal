@@ -15,7 +15,6 @@ function Dashboard() {
             <Button block color='primary' size='large' onClick={() => navigate(`/scheduler/${orgId}`)}>
                 Scheduler
             </Button>
-            
         </div>
     )
 }

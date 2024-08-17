@@ -5,7 +5,7 @@ import {useFormikContext} from "../../../context/FormikProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useState} from "react";
 import {Button, Form, theme, Typography} from 'antd';
-import FormInput from "../../../form/FormInput.jsx";
+import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import LoginAccountVerification from "./Login.AccountVerification.jsx";
 const { Paragraph, Link, Title } = Typography;

@@ -8,6 +8,15 @@ import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./Layout.styles.jsx";
 import { cx } from 'antd-style';
 
+// useEffect(() => {
+//     setFooterContent(<div>Custom Button</div>);
+//     setIsFooterVisible(true);
+//     return () => {
+//         setFooterContent(null);
+//         setIsFooterVisible(true);
+//     };
+// }, [setFooterContent, setIsFooterVisible]);
+
 function Layout() {
     const location = useLocation();
     const currentRoute = AppRoutes.find(route => route.path === location.pathname);
@@ -46,7 +55,7 @@ function Layout() {
                 </div>
             }
 
-            <div style={{ height: `${maxHeight}px` }}>
+            <div style={{ overflow: 'auto', height: `${maxHeight}px`}}>
                 <Routes>
                     {AppRoutes.map((route, index) => {
                         const {element, path, ...rest} = route;

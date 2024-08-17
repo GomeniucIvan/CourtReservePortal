@@ -1,13 +1,18 @@
 import Dashboard from "../pages/home/Dashboard.jsx";
 import Scheduler from "../pages/scheduler/Scheduler.jsx";
 
+export const HomeRouteNames = {
+    INDEX: '/dashboard/:orgId',
+    SCHEDULER: '/scheduler/:orgId',
+};
+
 const HomeRoutes = [
     {
-        path: '/dashboard/:orgId',
+        path: HomeRouteNames.INDEX,
         element: <Dashboard />
     },
     {
-        path: '/scheduler/:orgId',
+        path: HomeRouteNames.SCHEDULER,
         element: <Scheduler />
     },
 ];

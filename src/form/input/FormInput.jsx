@@ -1,9 +1,9 @@
-import {equalString, toBoolean} from "../utils/Utils.jsx";
 import {useRef, useState} from "react";
 import {Input, Typography, theme} from "antd";
 const { Paragraph } = Typography;
 const { useToken } = theme;
 import style from './FormInput.module.less';
+import {equalString, toBoolean} from "../../utils/Utils.jsx";
 
 const FormInput = ({ label,
                        form,

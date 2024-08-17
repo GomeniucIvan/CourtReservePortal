@@ -5,9 +5,9 @@ import {Button, Divider, Form, Input, theme, Typography} from "antd";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
-import FormInput from "../../../form/FormInput.jsx";
 import {useEffect} from "react";
 import {isNullOrEmpty} from "../../../utils/Utils.jsx";
+import FormInput from "../../../form/input/FormInput.jsx";
 const { Paragraph, Title } = Typography;
 const { useToken } = theme;
 
@@ -16,7 +16,7 @@ function LoginAccountVerification() {
     const email = formikData?.email;
     const { token } = useToken();
     const navigate = useNavigate();
-    
+
     const initialValues = {
         email: email,
         password: ''
@@ -53,10 +53,10 @@ function LoginAccountVerification() {
     return (
        <>
            <div>
-               <Title level={4}>We Found Your Account</Title>
+               <Title level={4}>Please Check Your Email</Title>
 
                <Paragraph>
-                   Enter your password or request a code to continue.
+                   We've sent a 6-digit code to <strong>chr****@email.com</strong>. The code expires in 15 minutes. Please enter it below.
                </Paragraph>
 
                <Form
