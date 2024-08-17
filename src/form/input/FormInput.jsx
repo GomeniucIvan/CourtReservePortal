@@ -102,10 +102,16 @@ const FormInput = ({ label,
                 className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
                     {meta.error}
                 </Paragraph>
-            ) : null}
+            ) : (
+                form.status && form.status[name] && (
+                    <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
+                        {form.status[name]}
+                    </Paragraph>
+                )
+            )}
         </div>
     )
 };

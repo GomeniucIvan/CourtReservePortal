@@ -151,3 +151,13 @@ export const bound = (position, min, max) => {
     }
     return ret;
 };
+
+export const mergeProps = (defaultProps, props) => {
+    return { ...defaultProps, ...props };
+}
+
+export const focus = (name) => {
+    setTimeout(function(){
+        document.querySelector('[name="email"]').focus();
+    }, 500);
+}

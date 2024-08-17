@@ -5,7 +5,7 @@ import React, {
     forwardRef,
     useImperativeHandle,
 } from 'react';
-import { bound } from "../../utils/Utils.jsx";
+import {bound, mergeProps} from "../../utils/Utils.jsx";
 import {useStyles} from "./FormPasscodeInput.styles.jsx";
 import { cx } from 'antd-style';
 
@@ -21,9 +21,7 @@ const defaultProps = {
     fontSize: 26
 };
 
-function mergeProps(defaultProps, props) {
-    return { ...defaultProps, ...props };
-}
+
 
 function usePropsValue({ value, defaultValue, onChange }) {
     const [internalValue, setInternalValue] = useState(defaultValue);

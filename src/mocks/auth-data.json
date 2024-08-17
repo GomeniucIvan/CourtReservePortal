@@ -1,0 +1,11 @@
+﻿{
+  "login": {
+    "started": {
+      "member": {
+        "email": "ivan",
+        "password": "123456",
+        "passcode": "111111"
+      }
+    }
+  }
+}

@@ -9,7 +9,8 @@ export const AppProvider = ({ children }) => {
     const [isFooterVisible, setIsFooterVisible] = useState(true);
     const [formikData, setFormikData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [isMockData, setIsMockData] = useState(true);
+    
     return (
         <AppContext.Provider value={{
             footerContent,
@@ -19,7 +20,8 @@ export const AppProvider = ({ children }) => {
             formikData,
             setFormikData,
             isLoading,
-            setIsLoading}}>
+            setIsLoading,
+            isMockData}}>
             
             {children}
         </AppContext.Provider>

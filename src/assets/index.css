@@ -1,0 +1,49 @@
+.ant-modal-confirm-body {
+  align-items: center !important;
+  flex-direction: column;
+  align-content: center;
+}
+.ant-modal-confirm-body svg{
+  width: 50px;
+  height: 50px;
+}
+
+.ant-modal-confirm-body .anticon {
+  margin: 0px !important;
+  margin-bottom: 6px !important;
+  padding-top: 20px;
+}
+.ant-modal-confirm-title {
+  padding-top: 6px;
+  font-size: 18px !important;
+}
+.ant-modal-confirm-content {
+  font-size: 15px !important;
+}
+
+.ant-modal-confirm-paragraph {
+  align-items: center;
+}
+
+
+.ant-modal {
+  width: 280px !important;
+}
+.ant-modal-confirm-btns {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.ant-modal-content {
+  padding: 8px 12px 12px !important;;
+}
+
+.ant-modal-confirm-btns button{
+  height: 48px;
+  margin-inline-start: 0px !important;
+  font-size: 18px;
+}
+.ant-modal-confirm-btns .ant-btn-default:not(.ant-btn-dangerous){
+  margin-top: 12px;
+  border: none !important;
+}

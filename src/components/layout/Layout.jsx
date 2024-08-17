@@ -8,6 +8,7 @@ import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./Layout.styles.jsx";
 import { cx } from 'antd-style';
 
+
 // useEffect(() => {
 //     setFooterContent(<div>Custom Button</div>);
 //     setIsFooterVisible(true);
@@ -48,34 +49,36 @@ function Layout() {
     }, [location]);
     
     return (
-        <div className={cx(styles.root)}>
-            {(currentRoute && currentRoute.title) &&
-                <div ref={headerRef}>
-                    <Header route={currentRoute}/>
+        <>
+            <div className={'test'}>
+                {(currentRoute && currentRoute.title) &&
+                    <div ref={headerRef}>
+                        <Header route={currentRoute}/>
+                    </div>
+                }
+
+                <div style={{overflow: 'auto', height: `${maxHeight}px`}}>
+                    <Routes>
+                        {AppRoutes.map((route, index) => {
+                            const {element, path, ...rest} = route;
+
+                            return <Route
+                                onUpdate={() => window.scrollTo(0, 0)}
+                                key={index}
+                                path={path}
+                                {...rest}
+                                element={element}/>;
+                        })}
+                    </Routes>
                 </div>
-            }
 
-            <div style={{ overflow: 'auto', height: `${maxHeight}px`}}>
-                <Routes>
-                    {AppRoutes.map((route, index) => {
-                        const {element, path, ...rest} = route;
-
-                        return <Route
-                            onUpdate={() => window.scrollTo(0, 0)}
-                            key={index}
-                            path={path}
-                            {...rest}
-                            element={element}/>;
-                    })}
-                </Routes>
+                <div ref={footerRef}>
+                    {isFooterVisible && (
+                        <> {footerContent ? footerContent : <Footer/>} </>
+                    )}
+                </div>
             </div>
-
-            <div ref={footerRef}>
-                {isFooterVisible && (
-                    <> {footerContent ? footerContent : <Footer/>} </>
-                )}
-            </div>
-        </div>
+        </>
     )
 }
 

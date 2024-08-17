@@ -4,15 +4,18 @@ import { useFormik } from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useState} from "react";
-import {Button, Form, theme, Typography} from 'antd';
+import {Button, Form, theme, Typography, Modal} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
+import mockData from "../../../mocks/auth-data.json";
 import LoginAccountVerification from "./Login.AccountVerification.jsx";
+import {ModalClose, ModalWarning} from "../../../utils/ModalUtils.jsx";
+import {focus} from "../../../utils/Utils.jsx";
 const { Paragraph, Link, Title } = Typography;
 const { useToken } = theme;
 
 function LoginGetStarted() {
-    const { setFormikData, isLoading, setIsLoading } = useApp();
+    const { setFormikData, isLoading, setIsLoading, isMockData } = useApp();
     const navigate = useNavigate();
     const { token } = useToken();
     
@@ -31,14 +34,30 @@ function LoginGetStarted() {
         validateOnChange: true,
         onSubmit: async (values, { setStatus, setSubmitting }) => {
             setIsLoading(true);
-            
-            setTimeout(function (){
-                
-                setFormikData(values);
-                console.log('Form submitted:', values);
-                navigate(AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION);
-                setIsLoading(false);
-            }, 2000);
+            if (isMockData){
+                setTimeout(function (){
+                    const emailExists = mockData.login.started.member.email === values.email;
+                    
+                    if (emailExists) {
+                        setFormikData(values);
+                        navigate(AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION);
+                    } else {
+                        //setStatus({ email: 'Email not found.' });
+
+                        ModalClose({
+                            title: 'Not Found',
+                            content: 'Player with such email not found.',
+                            showIcon: false,
+                            onOk: () => {
+                                focus('email');
+                            }
+                        });
+                    }
+                    setIsLoading(false);
+                }, 1000);
+            } else{
+                //implement api
+            }
         },
     });
     
@@ -67,7 +86,8 @@ function LoginGetStarted() {
                     <Button type="primary" 
                             block htmlType="submit"
                             loading={isLoading}
-                            onClick={startFormik.handleSubmit}>
+                            onClick={startFormik.handleSubmit}
+                    >
                         Login
                     </Button>
                 </Form>
