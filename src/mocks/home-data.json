@@ -1,25 +1,177 @@
 ﻿{
   "dashboard": {
-    "index": {"ShowAnnouncementsBlock":true,"GlobalAnnouncementsJson":"[{\"Id\":33426,\"Title\":\"Summer Clinics are open\",\"Content\":\"Summer Clinics are open for registration! Join the fun, stay active, and improve your skills on the court!\",\"DateToDisplay\":\"2024-09-30T00:00:00\",\"IsNew\":false,\"IsUrgent\":false,\"TimeZone\":\"America\\/New_York\",\"UpdatedOnUtc\":\"2024-06-18T13:54:53\",\"IsHidden\":false}]","GlobalAnnouncements":[{"Id":33426,"OrganizationId":0,"UpdatedOnUtc":"2024-06-18T13:54:53","ActiveUntil":null,"ActiveFrom":null,"ActiveUntilUtc":null,"ActiveFromUtc":null,"Title":"Summer Clinics are open","Content":"Summer Clinics are open for registration! Join the fun, stay active, and improve your skills on the court!","CreatedByUserId":0,"IncludeOnWelcomePage":false,"IsNew":false,"TimeZone":"America/New_York","UiCulture":null,"UpdatedOn":"2024-06-18T09:54:53","UpdatedOnDisplay":"Tue, Jun 18th, 9:54 AM","IsUrgent":false,"ExtractedContent":"Summer Clinics are open for registration! Join the fun, stay active, and improve your skil...","UpdatedOnFriendyDisplay":"Tue, Jun 18th, 9:54 AM","ContentHtml":"Summer Clinics are open for registration! Join the fun, stay active, and improve your skills on the court!","CostTypeIdsString":null,"MemberGroupsIdsString":null,"CostTypeIds":[],"MemberGroupIds":[],"ContextText":null}],"MyLeaguesDropdownJson":"[{\"Id\":1540,\"Name\":\"Summer 3.0-3.5 League\",\"NextStart\":\"2024-08-17T14:00:00\"}]","MyLeaguesDropdown":[{"Id":1540,"Name":"Summer 3.0-3.5 League"}],"LeagueDatesJson":"[{\"GameDayNumber\":10,\"StartTime\":\"2024-08-17T14:00:00\",\"EndTime\":\"2024-08-17T15:30:00\",\"OptedInPlayersCount\":0,\"MaxAllowedPlayersToOptIn\":10,\"TotalRegisteredPlayersInLeague\":4,\"PriceToPay\":5.000000000000000e+000,\"PriceType\":2,\"UiCulture\":\"en-US\",\"ReservationId\":22652024,\"LeagueId\":804,\"LeagueSessionId\":1540,\"LeagueSessionRegistrationId\":35838,\"OrgMemberId\":1523432,\"IsOptIn\":false,\"TimeZone\":\"America\\/New_York\",\"LeagueMatchType\":1}]","LeagueDates":[{"GameDayNumber":10,"StartTime":"2024-08-17T14:00:00","EndTime":"2024-08-17T15:30:00","DisplayStartEndTime":"Sat, August 17th 2p - 3:30p","OptedInPlayersCount":0,"TotalRegisteredPlayersInLeague":4,"PlayingDisplay":"Playing (0/4)","MaxAllowedPlayersToOptIn":10,"TimeZone":"America/New_York","PriceToPay":5.0,"PriceDisplay":"$5.00 (per entire league)","PriceType":2,"OptInStartXBefore":null,"OptInStartXBeforeUm":null,"OptInCloseXBefore":null,"OptInCloseXBeforeUm":null,"UiCulture":"en-US","ReservationId":22652024,"LeagueId":804,"LeagueSessionId":1540,"LeagueSessionRegistrationId":35838,"OrgMemberId":1523432,"IsOptIn":false,"OptInStatus":null,"MatchType":null,"FamilyRegisteredMembersCount":0,"ClosedMessage":"","AllowToOptIn":true}],"BookingsJson":"[{\"ReservationId\":19063654,\"EventId\":562164,\"Title\":\"Ladies League Practice\",\"SubTitle\":\"Adult Clinic\",\"TypeBgColor\":\"#00ff00\",\"StartTime\":\"2024-08-20T09:00:00\",\"EndTime\":\"2024-08-20T10:30:00\",\"RegistrantsCount\":2,\"RegistrantsCountDisplay\":\"2 Players\",\"FamilyRegistrantNames\":\"Kim\",\"CourtNamesString\":\"Court #1\",\"IsUnpaid\":true,\"UiCulture\":\"en-US\"}]","Bookings":[{"Title":"Ladies League Practice","Subtitle":"Adult Clinic","MemberNames":null,"IsUnpaid":true,"TypeBgColor":"#00ff00","StartTime":"2024-08-20T09:00:00","EndTime":"2024-08-20T10:30:00","StartEndDateTimeDisplay":"Tue, August 20th 9a - 10:30a","UiCulture":"en-US","ReservationId":19063654,"RegistrantsCount":2,"RegistrantsCountDisplay":"2 Players","EventId":562164,"FamilyRegistrantNames":"Kim","CourtNamesString":"Court #1","CourtNamesDisplay":"Court #1 ","CourtNames":["Court #1"]}],"MemberId":1412801,"OrgMemberId":1523432,"SelectedLeagueSessionId":1540,"ShowWeather":true,"ShowLeaguesBlock":true,"ShowMyBookings":true,"UpfrontPaymentItemsJson":null,"HasLeaguesToJoin":false,"UnpaidItems":[],"UiCulture":"en-US","TimeZone":"America/New_York","HasNewAnnouncements":null,"UnseenPushNotificationsCount":0,"AllowMembersToPayTransactionsOnPortal":true,"DashboardButtonBgColor":"#1e6f7c","MembershipStatus":8,"MembershipStartDate":"2024-06-04T04:00:00","MembershipName":"Gold Family","MembershipStartDateString":null,"IsExpired":false,"IsSuspended":false,"IsExpiredOrSuspended":false,"OrganizationId":9422,"ShowInCelsius":false,"WindMeasurements":"mph","GetMembershipBtnUrl":null,"MembershipText":null,"MembershipDescriptionHtml":"","GetMembershipButtonText":null,"ShowMembershipBtn":false},
+    "index": {
+      "ShowAnnouncementsBlock": true,
+      "GlobalAnnouncementsJson": "[{\"Id\":33426,\"Title\":\"Summer Clinics are open\",\"Content\":\"Summer Clinics are open for registration! Join the fun, stay active, and improve your skills on the court!\",\"DateToDisplay\":\"2024-09-30T00:00:00\",\"IsNew\":false,\"IsUrgent\":false,\"TimeZone\":\"America\\/New_York\",\"UpdatedOnUtc\":\"2024-06-18T13:54:53\",\"IsHidden\":false}]",
+      "GlobalAnnouncements": [
+        {
+          "Id": 33426,
+          "OrganizationId": 0,
+          "UpdatedOnUtc": "2024-06-18T13:54:53",
+          "ActiveUntil": null,
+          "ActiveFrom": null,
+          "ActiveUntilUtc": null,
+          "ActiveFromUtc": null,
+          "Title": "Summer Clinics are open",
+          "Content": "Summer Clinics are open for registration! Join the fun, stay active, and improve your skills on the court!",
+          "CreatedByUserId": 0,
+          "IncludeOnWelcomePage": false,
+          "IsNew": false,
+          "TimeZone": "America/New_York",
+          "UiCulture": null,
+          "UpdatedOn": "2024-06-18T09:54:53",
+          "UpdatedOnDisplay": "Tue, Jun 18th, 9:54 AM",
+          "IsUrgent": false,
+          "ExtractedContent": "Summer Clinics are open for registration! Join the fun, stay active, and improve your skil...",
+          "UpdatedOnFriendyDisplay": "Tue, Jun 18th, 9:54 AM",
+          "ContentHtml": "Summer Clinics are open for registration! Join the fun, stay active, and improve your skills on the court!",
+          "CostTypeIdsString": null,
+          "MemberGroupsIdsString": null,
+          "CostTypeIds": [],
+          "MemberGroupIds": [],
+          "ContextText": null
+        }
+      ],
+      "MyLeaguesDropdownJson": "[{\"Id\":1540,\"Name\":\"Summer 3.0-3.5 League\",\"NextStart\":\"2024-08-17T14:00:00\"}]",
+      "MyLeaguesDropdown": [
+        {
+          "Id": 1540,
+          "Name": "Summer 3.0-3.5 League"
+        }
+      ],
+      "Links" : [
+        {
+          "Name": "Meet our team",
+          "Type": "Custom page",
+          "Url": "/dashboard/custompage/1",
+          "Icon": "landing-page"
+        },
+        {
+          "Name": "Website team",
+          "Type": "External link",
+          "Url": "www.google.com",
+          "Icon": "www"
+        },
+        {
+          "Name": "Family zone",
+          "Type": "Event filter",
+          "Url": "/event/list/0",
+          "Icon": "settings-sliders"
+        },
+        {
+          "Name": "Rank players",
+          "Type": "Member group",
+          "Url": "/membergroup/list/0",
+          "Icon": "group"
+        }
+      ],
+      "LeagueDatesJson": "[{\"GameDayNumber\":10,\"StartTime\":\"2024-08-17T14:00:00\",\"EndTime\":\"2024-08-17T15:30:00\",\"OptedInPlayersCount\":0,\"MaxAllowedPlayersToOptIn\":10,\"TotalRegisteredPlayersInLeague\":4,\"PriceToPay\":5.000000000000000e+000,\"PriceType\":2,\"UiCulture\":\"en-US\",\"ReservationId\":22652024,\"LeagueId\":804,\"LeagueSessionId\":1540,\"LeagueSessionRegistrationId\":35838,\"OrgMemberId\":1523432,\"IsOptIn\":false,\"TimeZone\":\"America\\/New_York\",\"LeagueMatchType\":1}]",
+      "LeagueDates": [
+        {
+          "GameDayNumber": 10,
+          "StartTime": "2024-08-17T14:00:00",
+          "EndTime": "2024-08-17T15:30:00",
+          "DisplayStartEndTime": "Sat, August 17th 2p - 3:30p",
+          "OptedInPlayersCount": 0,
+          "TotalRegisteredPlayersInLeague": 4,
+          "PlayingDisplay": "Playing (0/4)",
+          "MaxAllowedPlayersToOptIn": 10,
+          "TimeZone": "America/New_York",
+          "PriceToPay": 5.0,
+          "PriceDisplay": "$5.00 (per entire league)",
+          "PriceType": 2,
+          "OptInStartXBefore": null,
+          "OptInStartXBeforeUm": null,
+          "OptInCloseXBefore": null,
+          "OptInCloseXBeforeUm": null,
+          "UiCulture": "en-US",
+          "ReservationId": 22652024,
+          "LeagueId": 804,
+          "LeagueSessionId": 1540,
+          "LeagueSessionRegistrationId": 35838,
+          "OrgMemberId": 1523432,
+          "IsOptIn": false,
+          "OptInStatus": null,
+          "MatchType": null,
+          "FamilyRegisteredMembersCount": 0,
+          "ClosedMessage": "",
+          "AllowToOptIn": true
+        }
+      ],
+      "BookingsJson": "[{\"ReservationId\":19063654,\"EventId\":562164,\"Title\":\"Ladies League Practice\",\"SubTitle\":\"Adult Clinic\",\"TypeBgColor\":\"#00ff00\",\"StartTime\":\"2024-08-20T09:00:00\",\"EndTime\":\"2024-08-20T10:30:00\",\"RegistrantsCount\":2,\"RegistrantsCountDisplay\":\"2 Players\",\"FamilyRegistrantNames\":\"Kim\",\"CourtNamesString\":\"Court #1\",\"IsUnpaid\":true,\"UiCulture\":\"en-US\"}]",
+      "Bookings": [
+        {
+          "Title": "Ladies League Practice",
+          "Subtitle": "Adult Clinic",
+          "MemberNames": null,
+          "IsUnpaid": true,
+          "TypeBgColor": "#00ff00",
+          "StartTime": "2024-08-20T09:00:00",
+          "EndTime": "2024-08-20T10:30:00",
+          "StartEndDateTimeDisplay": "Tue, August 20th 9a - 10:30a",
+          "UiCulture": "en-US",
+          "ReservationId": 19063654,
+          "RegistrantsCount": 2,
+          "RegistrantsCountDisplay": "2 Players",
+          "EventId": 562164,
+          "FamilyRegistrantNames": "Kim",
+          "CourtNamesString": "Court #1",
+          "CourtNamesDisplay": "Court #1 ",
+          "CourtNames": [
+            "Court #1"
+          ]
+        }
+      ],
+      "MemberId": 1412801,
+      "OrgMemberId": 1523432,
+      "SelectedLeagueSessionId": 1540,
+      "ShowWeather": true,
+      "ShowLeaguesBlock": true,
+      "ShowMyBookings": true,
+      "UpfrontPaymentItemsJson": null,
+      "HasLeaguesToJoin": false,
+      "UnpaidItems": [],
+      "UiCulture": "en-US",
+      "TimeZone": "America/New_York",
+      "HasNewAnnouncements": null,
+      "UnseenPushNotificationsCount": 0,
+      "AllowMembersToPayTransactionsOnPortal": true,
+      "DashboardButtonBgColor": "#1e6f7c",
+      "MembershipStatus": 8,
+      "MembershipStartDate": "2024-06-04T04:00:00",
+      "MembershipName": "Gold Family",
+      "MembershipStartDateString": null,
+      "IsExpired": false,
+      "IsSuspended": false,
+      "IsExpiredOrSuspended": false,
+      "OrganizationId": 9422,
+      "ShowInCelsius": false,
+      "WindMeasurements": "mph",
+      "GetMembershipBtnUrl": null,
+      "MembershipText": null,
+      "MembershipDescriptionHtml": "",
+      "GetMembershipButtonText": null,
+      "ShowMembershipBtn": false
+    },
     "organizations": [
       {
-        "Id" : 6969,
+        "Id": 6969,
         "Name": "Cartoon",
-        "BgColor" : "#4286f4",
+        "BgColor": "#4286f4",
         "TextColor": "#ffffff",
-        "Image" : "https://tgcstorage.blob.core.windows.net/court-reserve-6969/09fb4843-0187-4357-b460-e2162c7a4d31.jpg",
-        "Opened" : true,
-        "OpenOrCloseMessage" : "Close in 4h",
-        "BusyPercentages" : [
-          20, 
-          40, 
-          30, 
-          35, 
-          60, 
+        "Image": "https://tgcstorage.blob.core.windows.net/court-reserve-6969/09fb4843-0187-4357-b460-e2162c7a4d31.jpg",
+        "Opened": true,
+        "OpenOrCloseMessage": "Close in 4h",
+        "BusyPercentages": [
+          20,
+          40,
+          30,
+          35,
+          60,
           65,
-          60, 
-          40, 
-          45, 
+          60,
+          40,
+          45,
           60
         ]
       }

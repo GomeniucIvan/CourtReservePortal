@@ -17,7 +17,7 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
     let [showLeaguesDrawer, setShowLeaguesDrawer] = useState(false);
     let [leagueDatesLoading, setLeagueDatesLoading] = useState(false);
     let [leagueItems, setLeagueItems] = useState([]);
-    let [selectedLeagueIdArray, setSelectedLeagueIdArray] = useState([]);
+    let [selectedLeagueIdArray, setSelectedLeagueIdArray] = useState([dashboardData?.SelectedLeagueSessionId]);
     let [selectedLeagueName, setSelectedLeagueName] = useState('test');
     
     let myLeaguesDropdown = dashboardData?.MyLeaguesDropdown;
