@@ -78,5 +78,14 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-bottom-left-radius: 0;
         }
         
+    `,
+    reservationTypeCircle: css`
+        width: 18px;
+        height: 18px;
+        border-radius: 50px;
+        display: block;
+    `,
+    noBottomPadding: css`
+        margin-bottom: 0 !important;
     `
 }));

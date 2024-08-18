@@ -9,9 +9,9 @@ const DashboardEvents = ({ dashboardData, isFetching }) => {
     let events = dashboardData?.Events;
     let showEvents = dashboardData?.ShowEvents;
     
-    // if (!toBoolean(showEvents)){
-    //     return '';
-    // }
+    if (!toBoolean(showEvents)){
+        return '';
+    }
     
     return (
         <EntityCard title={t('Events')} link={'/reservations/:orgId'} isFetching={isFetching} addPadding={true}>

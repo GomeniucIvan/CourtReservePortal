@@ -28,7 +28,7 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
         return (
             <Card className={styles.card} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
                 <Title level={5} className={cx(styles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
-                    <Ellipsis direction='end' content={'Summer Clinics are openSummer Clinics are openSummer Clinics are openSummer Clinics are openSummer Clinics are open'} />
+                    <Ellipsis direction='end' content={globalAnn.Title} />
                 </Title>
 
                 <Button className={cx(styles.hideAnnouncementButton, isUrgent && styles.urgentHideAnnouncementButton)}>

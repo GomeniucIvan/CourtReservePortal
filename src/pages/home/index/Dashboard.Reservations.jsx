@@ -2,82 +2,77 @@
 import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
 import {t} from "../../../utils/OrganizationUtils.jsx";
+import {Badge, Button, Flex, Tag, Typography} from "antd";
+import {Card, Ellipsis, ErrorBlock} from "antd-mobile";
+import {cx} from "antd-style";
+const { Text, Title } = Typography;
+import {useStyles} from "./styles.jsx";
+import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
+import {useApp} from "../../../context/AppProvider.jsx";
 
-const DashboardReservations = ({ dashboardData, isFetching }) => {
+const DashboardReservations = ({dashboardData, isFetching}) => {
     let showMyBookings = dashboardData?.ShowMyBookings;
     let bookings = dashboardData?.Bookings;
-    if (!toBoolean(showMyBookings)){
+    const { styles } = useStyles();
+    
+    const {globalStyles, token} = useApp();
+    
+    if (!toBoolean(showMyBookings)) {
         return '';
     }
 
+    console.log(globalStyles)
+    
+    const bookingTemplate = (booking, isUnpaid) => {
+        return (
+            <Card className={styles.card} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
+                <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                    <div className={globalStyles?.cardIconBlock}>
+                        <i className={styles.reservationTypeCircle} style={{backgroundColor: booking.TypeBgColor}}></i>
+                    </div>
+
+                    <div>
+                        <Title level={5} className={cx(styles.cardItemTitle, isUnpaid && styles.urgentcardItemTitle, styles.noBottomPadding)}>
+                            <Ellipsis direction='end' content={booking.Title}/>
+                        </Title>
+
+                        <Text><small><Ellipsis direction='end' content={booking.Subtitle}/></small></Text>
+                    </div>
+                </Flex>
+
+                <CardIconLabel icon={'calendar-time'} description={booking.StartEndDateTimeDisplay} />
+                <CardIconLabel icon={'team'} description={booking.FamilyRegistrantNames} />
+
+                {!isNullOrEmpty(booking.CourtNamesDisplay) &&
+                    <Tag color="default">{booking.CourtNamesDisplay}</Tag>
+                }
+                
+                <Tag color="default">
+                    {booking.RegistrantsCount} {!isNullOrEmpty(booking.EventId) ? "Registrant(s)" : "Player(s)"}
+                </Tag>
+            </Card>
+        )
+    }
+    
     return (
         <EntityCard title={t('Reservations')} link={'/reservations/:orgId'} isFetching={isFetching} addPadding={true}>
-            {showMyBookings &&
-                <>
-                    {anyInList(bookings) &&
-                        <SlickSlider>
-                            {bookings.map((booking, index) => (
-                                <div className="fn-slide-item" key={index}>
-                                    <div className="modern-dashboard-shadow-card-margin">
-                                        <div className="modern-dashboard-shadow-card fn-click-effect">
-                                            {booking.IsUnpaid &&
-                                                <div className="absolute-top-right">
-                                                    <i className="fa-solid fa-circle-dollar red"></i>
-                                                </div>
-                                            }
-
-                                            <div className="modern-dashboard-shadow-icon-row  main-icon-row">
-                                                <div className="modern-dashboard-shadow-icon">
-                                                    <i className="fa fa-circle" style={{ color: booking.TypeBgColor }}></i>
-                                                </div>
-
-                                                <div className="modern-dashboard-shadow-icon-row-text" style={{ display: 'grid' }}>
-                                                    <div className="modern-dashboard-shadow-icon-row-text-main" style={{ textWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                                        {booking.Title}
-                                                    </div>
-                                                    <div className="modern-dashboard-shadow-icon-row-text-description">
-                                                        {booking.Subtitle}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="modern-dashboard-shadow-icon-row">
-                                                <div className="modern-dashboard-shadow-icon">
-                                                    <i className="fa-regular fa-calendar-clock"></i>
-                                                </div>
-
-                                                <div className="modern-dashboard-shadow-icon-row-text">
-                                                    <div className="modern-dashboard-shadow-icon-row-value">
-                                                        {booking.StartEndDateTimeDisplay}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="modern-dashboard-shadow-icon-row">
-                                                <div className="modern-dashboard-shadow-icon">
-                                                    <i className="fa-light fa-user"></i>
-                                                </div>
-
-                                                <div className="modern-dashboard-shadow-icon-row-text">
-                                                    <div className="modern-dashboard-shadow-icon-row-value">
-                                                        {booking.FamilyRegistrantNames}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="modern-dashboard-shadow-badges-row">
-                                                {!isNullOrEmpty(booking.CourtNamesDisplay) &&
-                                                    <span className="modern-badge shadow-badge h24">{booking.CourtNamesDisplay}</span>
-                                                }
-                                                <span className="modern-badge shadow-badge h24">{booking.RegistrantsCount} {!isNullOrEmpty(booking.EventId) ? "Registrant(s)" : "Player(s)"}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </SlickSlider>
-                    }
-                </>
-            }
+            {anyInList(bookings) ? (
+                <SlickSlider>
+                    {bookings.map((booking, index) => (
+                        <div key={index}>
+                            {toBoolean(booking.IsUnpaid) ? (
+                                <Badge.Ribbon text='Unpaid' color={'orange'} className={styles.urgentRibbon}>
+                                    {bookingTemplate(booking, true)}
+                                </Badge.Ribbon>
+                            ) : (
+                                <>{bookingTemplate(booking)}</>
+                            )}
+                        </div>
+                    ))}
+                </SlickSlider>
+            ) : (
+                <ErrorBlock status='empty' title='You dont signup to any reservation' description={''} />
+            )}
         </EntityCard>
     );
 };

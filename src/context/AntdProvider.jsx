@@ -3,11 +3,15 @@
 export const AntdProvider = ({ children }) => {
     return (
         <App>
-
             <ConfigProvider
                 theme={{
                     algorithm: theme.defaultAlgorithm,
                     components: {
+                        Custom: {
+                            cardIconPadding: 8,
+                            cardIconWidth: 22
+                        },
+                        
                         Button: {
                             contentFontSize: 16,
                             controlHeight: 40,

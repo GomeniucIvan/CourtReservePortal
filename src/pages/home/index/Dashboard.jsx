@@ -12,7 +12,6 @@ import DashboardOpenMatches from "./Dashboard.OpenMatches.jsx";
 
 function Dashboard() {
     const navigate = useNavigate();
-    let { orgId } = useParams();
     const { styles } = useStyles();
     const { isLoading, setIsLoading, isMockData, setIsFooterVisible } = useApp();
     const [selectedOrganization, setSelectedOrganization] = useState(null);
