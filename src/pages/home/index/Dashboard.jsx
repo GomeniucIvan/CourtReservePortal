@@ -8,6 +8,7 @@ import DashboardAnnouncements from "./Dashboard.Announcements.jsx";
 import DashboardReservations from "./Dashboard.Reservations.jsx";
 import DashboardEvents from "./Dashboard.Events.jsx";
 import DashboardLeagues from "./Dashboard.Leagues.jsx";
+import DashboardOpenMatches from "./Dashboard.OpenMatches.jsx";
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -38,6 +39,7 @@ function Dashboard() {
 
             <DashboardAnnouncements dashboardData={dashboardData} isFetching={isFetching} />
             <DashboardReservations dashboardData={dashboardData} isFetching={isFetching} />
+            <DashboardOpenMatches dashboardData={dashboardData} isFetching={isFetching} />
             <DashboardEvents dashboardData={dashboardData} isFetching={isFetching} />
             <DashboardLeagues dashboardData={dashboardData} isFetching={isFetching} />
         </>

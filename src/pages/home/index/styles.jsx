@@ -63,5 +63,21 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     urgentRibbon: css `
         top: 12px;
+    `,
+    segmentCard: css `
+        //margin: 0px ${token.padding}px;
+        --adm-card-body-padding-block: 0px;
+        
+        .adm-card-body {
+            border: 2px solid whitesmoke;
+            height: 80px;
+            border-radius: 6px;
+        }
+        
+        .ant-segmented {
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
     `
 }));
