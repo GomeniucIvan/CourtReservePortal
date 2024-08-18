@@ -6,6 +6,9 @@ export const AntdProvider = ({ children }) => {
             <ConfigProvider
                 theme={{
                     algorithm: theme.defaultAlgorithm,
+                    token: {
+                        colorPrimary: '#61ca31',
+                    },
                     components: {
                         Custom: {
                             cardIconPadding: 8,
