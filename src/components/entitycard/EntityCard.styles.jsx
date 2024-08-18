@@ -15,5 +15,10 @@ export const useStyles = createStyles(({ css, token }) => ({
                 margin: 0 ${token.padding}px;
             }
         }
+        
+        .adm-error-block {
+            margin: 0 ${token.padding}px;
+            padding: ${token.padding}px;
+        }
     `,
 }));

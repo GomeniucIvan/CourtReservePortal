@@ -19,7 +19,7 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
     }
 
     return (
-        <EntityCard title={t('Events')} link={'/reservations/:orgId'} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={t('Leagues')} link={'/leagues'} isFetching={isFetching} addPadding={true}>
             {showLeaguesBlock &&
                 <div className='modern-dashboard-block modern-dashboard-slick-block'>
                     <div className="modern-dashboard-block-header">
