@@ -14,7 +14,7 @@ const { Paragraph, Title } = Typography;
 const { useToken } = theme;
 
 function LoginAccountVerification() {
-    const { formikData, isLoading, setIsLoading, setFormikData, isMockData } = useApp();
+    const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible } = useApp();
     const email = formikData?.email;
     const { token } = useToken();
     const navigate = useNavigate();
@@ -25,6 +25,7 @@ function LoginAccountVerification() {
     };
 
     useEffect(() => {
+        setIsFooterVisible(false);
         if (isNullOrEmpty(email)){
             navigate(AuthRouteNames.LOGIN_GET_STARTED);
         }

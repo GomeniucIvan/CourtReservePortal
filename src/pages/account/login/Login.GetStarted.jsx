@@ -15,9 +15,13 @@ const { Paragraph, Link, Title } = Typography;
 const { useToken } = theme;
 
 function LoginGetStarted() {
-    const { setFormikData, isLoading, setIsLoading, isMockData } = useApp();
+    const { setFormikData, isLoading, setIsLoading, isMockData, setIsFooterVisible } = useApp();
     const navigate = useNavigate();
     const { token } = useToken();
+    
+    useEffect(() => {
+        setIsFooterVisible(false);
+    }, []);
     
     const startInitialValues = {
         email: ''

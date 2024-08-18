@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "antd": "^5.20.1",
+    "antd-mobile": "^5.37.1",
+    "antd-mobile-icons": "^0.3.0",
     "antd-style": "^3.6.2",
     "chart.js": "^4.4.3",
     "formik": "^2.4.6",

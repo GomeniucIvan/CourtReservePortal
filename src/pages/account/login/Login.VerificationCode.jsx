@@ -17,12 +17,14 @@ const { useToken } = theme;
 function LoginVerificationCode() {
     const navigate = useNavigate();
     const { token } = useToken();
-    const { formikData, isLoading, setIsLoading, setFormikData, isMockData } = useApp();
+    const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible } = useApp();
 
     const email = formikData?.email;
     const password = formikData?.password;
-
+    
     useEffect(() => {
+        setIsFooterVisible(false);
+        
         if (isNullOrEmpty(email) || isNullOrEmpty(password)){
             navigate(AuthRouteNames.LOGIN_GET_STARTED);
         }

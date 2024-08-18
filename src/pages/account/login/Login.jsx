@@ -11,9 +11,6 @@ function Login() {
 
     useEffect(() => {
         setIsFooterVisible(false);
-        return () => {
-            setIsFooterVisible(true);
-        };
     }, []);
     
     return (
