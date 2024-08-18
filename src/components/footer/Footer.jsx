@@ -1,36 +1,52 @@
 ﻿import styles from './Footer.module.less';
 import { useLocation, useNavigate } from 'react-router-dom';
+import {
+    AppOutline,
+    MessageOutline,
+    MessageFill,
+    UnorderedListOutline,
+    UserOutline,
+} from 'antd-mobile-icons'
+import {TabBar, Badge} from "antd-mobile";
 
 const Footer = (props) => {
-    const location = useLocation();
-    const navigate = useNavigate();
 
     const tabs = [
         {
-            key: '/home',
+            key: 'home',
             title: 'Home',
+            icon: <AppOutline />
         },
         {
-            key: '/todo',
-            title: 'Todo',
+            key: 'reserve',
+            title: 'Reserve',
+            icon: <UnorderedListOutline />
         },
         {
-            key: '/message',
-            title: 'Message',
+            key: 'notifications',
+            title: 'Notifications',
+            icon: (active) =>
+                active ? <MessageFill /> : <MessageOutline />,
+            badge: '99+',
         },
         {
-            key: '/me',
-            title: 'Me'
+            key: 'account',
+            title: 'Account',
+            icon: <UserOutline />,
         },
     ]
 
     return (
-        
-        <div>
+        <TabBar>
             {tabs.map(item => (
-                <div key={item.key} icon={item.icon}>{item.title}</div>
+                <TabBar.Item
+                    key={item.key}
+                    icon={item.icon}
+                    //title={item.title}
+                    badge={item.badge}
+                />
             ))}
-        </div>
+        </TabBar>
     )
 }
 
