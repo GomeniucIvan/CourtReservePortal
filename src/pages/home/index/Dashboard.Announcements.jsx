@@ -8,11 +8,13 @@ import {CloseOutline} from "antd-mobile-icons";
 const { Text, Title } = Typography;
 import { Button, Card } from 'antd-mobile'
 import {cx} from "antd-style";
+import {useNavigate} from "react-router-dom";
 
 const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
     let announcements = dashboardData?.GlobalAnnouncements;
     let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
     const { styles } = useStyles();
+    const navigate = useNavigate();
     
     if (!toBoolean(showAnnouncementsBlock)) {
         return '';
@@ -24,7 +26,7 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
 
     const announcementCard = (globalAnn, isUrgent) => {
         return (
-            <Card className={styles.card}>
+            <Card className={styles.card} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
                 <Title level={5} className={cx(styles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
                     <Ellipsis direction='end' content={'Summer Clinics are openSummer Clinics are openSummer Clinics are openSummer Clinics are openSummer Clinics are open'} />
                 </Title>
@@ -42,7 +44,7 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
     
     
     return (
-        <EntityCard title={'Announcements'} link={'/announcements/:orgId'} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={'Announcements'} link={'/announcement/list'} isFetching={isFetching} addPadding={true}>
             {anyInList(announcements) &&
                 <SlickSlider afterChange={handleAfterChange}>
                     {announcements.map((globalAnn, index) => (
