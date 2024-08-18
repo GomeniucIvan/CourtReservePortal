@@ -26,7 +26,7 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
             <Card className={styles.card} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
                 <Flex gap={token.Custom.cardIconPadding} align={'center'}>
                     <div className={globalStyles?.cardIconBlock}>
-                        <i className={styles.reservationTypeCircle} style={{backgroundColor: booking.TypeBgColor}}></i>
+                        <i className={styles.circleIcon} style={{backgroundColor: booking.TypeBgColor}}></i>
                     </div>
 
                     <div>

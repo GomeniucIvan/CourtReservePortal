@@ -4,15 +4,16 @@ const { Text } = Typography;
 import SVG from "../svg/SVG.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 
-function CardIconLabel({description, icon}) {
+function CardIconLabel({description, icon, iconColor, size}) {
     const {globalStyles, token} = useApp();
     const { styles } = useStyles();
+    const colorToFill = iconColor || token.colorPrimary;
     
     return (
         <Flex gap={token.Custom.cardIconPadding} align={'center'} className={styles.flexRow}>
             <div className={globalStyles.cardIconBlock}>
                 <Flex justify={'center'}>
-                    <SVG icon={icon}/>
+                    <SVG icon={icon} color={colorToFill} size={size}/>
                 </Flex>
             </div>
             

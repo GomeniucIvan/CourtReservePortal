@@ -58,53 +58,53 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
                         rootClassName={styles.leagueSelector}
                         readOnly={true}
                         value={selectedLeagueName}
-                        onClick={() => {setShowLeaguesDrawer(true)}}
+                        onClick={() => {
+                            setShowLeaguesDrawer(true)
+                        }}
                         suffix={
                             <DownOutline style={{color: 'rgba(0,0,0,.45)'}}/>
                         }
                     />
 
-                    <Card className={styles.card}>
-                        <DrawerBottom showDrawer={showLeaguesDrawer} 
-                                      redirect={true}
-                                      closeDrawer={() => setShowLeaguesDrawer(false)} 
-                                      showButton={true}
-                                      confirmButtonText={'Join A League'}
-                                      label='Leagues'
-                                      onConfirmButtonClick={() => {
-                                          setShowLeaguesDrawer(false);
-                                          navigation(HomeRouteNames.LEAGUES_LIST);
-                                      }}>
+                    <DrawerBottom showDrawer={showLeaguesDrawer}
+                                  redirect={true}
+                                  closeDrawer={() => setShowLeaguesDrawer(false)}
+                                  showButton={true}
+                                  confirmButtonText={'Join A League'}
+                                  label='Leagues'
+                                  onConfirmButtonClick={() => {
+                                      setShowLeaguesDrawer(false);
+                                      navigation(HomeRouteNames.LEAGUES_LIST);
+                                  }}>
 
-                            <Menu
-                                className={globalStyles.drawerMenu}
-                                defaultSelectedKeys={selectedLeagueIdArray}
-                                mode={'inline'}
-                                items={leagueItems}
-                                onClick={(e) => {
-                                    const selectedLeagueIdKey = e.key;
+                        <Menu
+                            className={globalStyles.drawerMenu}
+                            defaultSelectedKeys={selectedLeagueIdArray}
+                            mode={'inline'}
+                            items={leagueItems}
+                            onClick={(e) => {
+                                const selectedLeagueIdKey = e.key;
 
-                                    if (selectedLeagueIdArray.some(leagueId => equalString(leagueId, selectedLeagueIdKey))){
-                                        setShowLeaguesDrawer(false);
-                                    }
-                                }}
-                                onSelect={(e) => {
-                                    const selectedLeagueIdKey = e.key;
-                                    const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, selectedLeagueIdKey));
-                                    setSelectedLeagueName(selectedLeague.Name)
-                                    setSelectedLeagueIdArray([selectedLeagueIdKey]);
+                                if (selectedLeagueIdArray.some(leagueId => equalString(leagueId, selectedLeagueIdKey))) {
                                     setShowLeaguesDrawer(false);
-                                }}
-                            />
-                        </DrawerBottom>
-
-                        <div>
-                            <ModernDashboardLeaguesDates leaguesDates={leaguesDates}
-                                                         leagueDatesLoading={leagueDatesLoading}/>
-                        </div>
-                    </Card>
+                                }
+                            }}
+                            onSelect={(e) => {
+                                const selectedLeagueIdKey = e.key;
+                                const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, selectedLeagueIdKey));
+                                setSelectedLeagueName(selectedLeague.Name)
+                                setSelectedLeagueIdArray([selectedLeagueIdKey]);
+                                setShowLeaguesDrawer(false);
+                            }}
+                        />
+                    </DrawerBottom>
                 </div>
             }
+
+            <div>
+                <ModernDashboardLeaguesDates leaguesDates={leaguesDates}
+                                             leagueDatesLoading={leagueDatesLoading}/>
+            </div>
         </EntityCard>
     );
 };

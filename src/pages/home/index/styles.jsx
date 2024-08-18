@@ -79,7 +79,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
         
     `,
-    reservationTypeCircle: css`
+    circleIcon: css`
         width: 18px;
         height: 18px;
         border-radius: 50px;
@@ -87,6 +87,9 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     noBottomPadding: css`
         margin-bottom: 0 !important;
+    `,
+    noTopPadding: css`
+        margin-top: 0 !important;
     `,
     leagueBlock: css`
         position: relative;
