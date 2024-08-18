@@ -17,9 +17,9 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
     let [showLeaguesDrawer, setShowLeaguesDrawer] = useState(false);
     let [leagueDatesLoading, setLeagueDatesLoading] = useState(false);
     let [leagueItems, setLeagueItems] = useState([]);
-    let [selectedLeagueIdArray, setSelectedLeagueIdArray] = useState([dashboardData?.SelectedLeagueSessionId]);
-    let [selectedLeagueName, setSelectedLeagueName] = useState('test');
-    
+    let [selectedLeagueIdArray, setSelectedLeagueIdArray] = useState([]);
+    let [selectedLeagueName, setSelectedLeagueName] = useState('');
+
     let myLeaguesDropdown = dashboardData?.MyLeaguesDropdown;
     let showLeaguesBlock = dashboardData?.ShowLeaguesBlock;
     let leaguesDates = dashboardData?.LeagueDates
@@ -32,6 +32,14 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
         return '';
     }
 
+    useEffect(() => {
+        if (!isNullOrEmpty(dashboardData?.SelectedLeagueSessionId) && !anyInList(selectedLeagueIdArray)){
+            const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, dashboardData?.SelectedLeagueSessionId));
+            setSelectedLeagueIdArray([`${dashboardData?.SelectedLeagueSessionId}`]);
+            setSelectedLeagueName(selectedLeague.Name);
+        }
+    }, [dashboardData]);
+    
     useEffect(() => {
         if (anyInList(myLeaguesDropdown)) {
             setLeagueItems(myLeaguesDropdown.map((gameDay) => ({
@@ -84,7 +92,6 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
                             items={leagueItems}
                             onClick={(e) => {
                                 const selectedLeagueIdKey = e.key;
-
                                 if (selectedLeagueIdArray.some(leagueId => equalString(leagueId, selectedLeagueIdKey))) {
                                     setShowLeaguesDrawer(false);
                                 }
