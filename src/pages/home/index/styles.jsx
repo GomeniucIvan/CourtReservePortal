@@ -70,7 +70,6 @@ export const useStyles = createStyles(({ css, token }) => ({
         
         .adm-card-body {
             border: 2px solid whitesmoke;
-            height: 80px;
             border-radius: 6px;
         }
         

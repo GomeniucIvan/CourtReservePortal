@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {Button} from "antd";
 import {isNullOrEmpty, equalString, toBoolean } from "../../utils/Utils.jsx";
 import {isMobileKeyboardOpen} from "../../utils/MobileUtils.jsx";
+import {Popup} from "antd-mobile";
 
 const modalRootEl = document.getElementById('root');
 
@@ -117,50 +118,67 @@ export class DrawerBottom extends Component {
     }
 
     render() {
-        return ReactDOM.createPortal(
-            <>
-                <div ref={this.drawerRef} className={`react-drawer-ul ${this.props.showButton ? 'button--drawer' : ''} ${toBoolean(this.state.showDrawer) ? 'show' : ''} ${isNullOrEmpty(this.props.drawerClass) ? '' : ` ${this.props.drawerClass}`}`} style={this.props.drawerStyle}>
-                    <div className="row">
-                        <div className="drawer-handle" onMouseDown={this.handleDragStart} onTouchStart={this.handleDragStart}>
-                            <span className="handle-bar"></span>
-                            <span className="handle-bar"></span>
-                        </div>
-                        <div className="col-12 mobile-bottom-modal-wrapper">
-                            <div className="modal-icon-title">
-                                <span className="mobile-bottom-modal-title">{this.props.label}</span>
-                                <span className="close-mobile-bottom-modal fn-close-mobile-bottom-modal" onClick={() => this.props.closeDrawer()}>x</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='mobile-bottom-modal-container lower-padding'>
-                        <div className='drawer-max-height-wrapper kendo-drawer-list-wrapper'>
-                            {this.props.children}
-                        </div>
-                    </div>
-                    {((this.props.showButton && !this.state.isClear) || (this.props.showButton && this.state.isClear && !isNullOrEmpty(this.props.selectedValue)) ) &&
-                        <div className='drawer-multiselect-confirm'>
-                            <Button text={this.state.confirmButtonText}
-                                           type="button"
-                                           loading={this.state.btnIsLoading}
-                                           disabled={false}
-                                           onClick={() => {
-                                               if (typeof this.props.onConfirmButtonClick === 'function') {
-                                                   this.props.onConfirmButtonClick();
-                                               }
-
-                                               if (toBoolean(this.props.redirect)) {
-                                                   this.setState({ btnIsLoading: true });
-                                               } else {
-                                                   this.props.closeDrawer();
-                                               }
-                                           }}
-                                           className={`btn ${this.props.secondaryButton ? 'btn-transparent-blue' : 'btn-success'}`} />
-                        </div>
-                    }
-                </div>
-                <div className={`react-drawer-backdrop ${toBoolean(this.props.open) ? '' : 'hide'}`} style={{ zIndex: '9999' }} onClick={() => this.props.closeDrawer()}></div>
-            </>,
-            this.el,
-        );
+        return (
+            <Popup
+                visible={toBoolean(this.state.showDrawer)}
+                onMaskClick={() => {
+                    this.props.closeDrawer();
+                }}
+                onClose={() => {
+                    this.props.closeDrawer();
+                }}
+                bodyStyle={{ height: '60vh' }}
+            >
+                {this.props.children}
+            </Popup>
+        )
     }
+    
+    // render() {
+    //     return ReactDOM.createPortal(
+    //         <>
+    //             <div ref={this.drawerRef} className={`react-drawer-ul ${this.props.showButton ? 'button--drawer' : ''} ${toBoolean(this.state.showDrawer) ? 'show' : ''} ${isNullOrEmpty(this.props.drawerClass) ? '' : ` ${this.props.drawerClass}`}`} style={this.props.drawerStyle}>
+    //                 <div className="row">
+    //                     <div className="drawer-handle" onMouseDown={this.handleDragStart} onTouchStart={this.handleDragStart}>
+    //                         <span className="handle-bar"></span>
+    //                         <span className="handle-bar"></span>
+    //                     </div>
+    //                     <div className="col-12 mobile-bottom-modal-wrapper">
+    //                         <div className="modal-icon-title">
+    //                             <span className="mobile-bottom-modal-title">{this.props.label}</span>
+    //                             <span className="close-mobile-bottom-modal fn-close-mobile-bottom-modal" onClick={() => this.props.closeDrawer()}>x</span>
+    //                         </div>
+    //                     </div>
+    //                 </div>
+    //                 <div className='mobile-bottom-modal-container lower-padding'>
+    //                     <div className='drawer-max-height-wrapper kendo-drawer-list-wrapper'>
+    //                         {this.props.children}
+    //                     </div>
+    //                 </div>
+    //                 {((this.props.showButton && !this.state.isClear) || (this.props.showButton && this.state.isClear && !isNullOrEmpty(this.props.selectedValue)) ) &&
+    //                     <div className='drawer-multiselect-confirm'>
+    //                         <Button text={this.state.confirmButtonText}
+    //                                        type="button"
+    //                                        loading={this.state.btnIsLoading}
+    //                                        disabled={false}
+    //                                        onClick={() => {
+    //                                            if (typeof this.props.onConfirmButtonClick === 'function') {
+    //                                                this.props.onConfirmButtonClick();
+    //                                            }
+    //
+    //                                            if (toBoolean(this.props.redirect)) {
+    //                                                this.setState({ btnIsLoading: true });
+    //                                            } else {
+    //                                                this.props.closeDrawer();
+    //                                            }
+    //                                        }}
+    //                                        className={`btn ${this.props.secondaryButton ? 'btn-transparent-blue' : 'btn-success'}`} />
+    //                     </div>
+    //                 }
+    //             </div>
+    //             <div className={`react-drawer-backdrop ${toBoolean(this.props.open) ? '' : 'hide'}`} style={{ zIndex: '9999' }} onClick={() => this.props.closeDrawer()}></div>
+    //         </>,
+    //         this.el,
+    //     );
+    // }
 }

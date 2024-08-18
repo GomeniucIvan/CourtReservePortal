@@ -15,7 +15,7 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
     let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
     const { styles } = useStyles();
     const navigate = useNavigate();
-    
+
     if (!toBoolean(showAnnouncementsBlock)) {
         return '';
     }
@@ -41,8 +41,8 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
             </Card>
         );
     }
-    
-    
+
+
     return (
         <EntityCard title={'Announcements'} link={'/announcement/list'} isFetching={isFetching} addPadding={true}>
             {anyInList(announcements) &&
@@ -53,9 +53,9 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
                                 <Badge.Ribbon text='Urgent' color="red" className={styles.urgentRibbon}>
                                     {announcementCard(globalAnn, true)}
                                 </Badge.Ribbon>
-                                ) : (
+                            ) : (
                                 <>{announcementCard(globalAnn)}</>
-                                )}
+                            )}
                         </div>
                     ))}
                 </SlickSlider>
