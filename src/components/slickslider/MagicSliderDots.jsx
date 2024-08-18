@@ -242,6 +242,10 @@ export default class MagicSliderDots extends Component {
             });
         });
 
+        if (dots.length === 1){
+            return ('');
+        }
+        
         return (
             <div
                 className={dotContainerClassName}

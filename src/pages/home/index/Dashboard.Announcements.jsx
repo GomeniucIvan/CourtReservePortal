@@ -1,21 +1,18 @@
-﻿import styles from './Dashboard.module.less'
-import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+﻿import {useStyles} from "./styles.jsx";
 import {anyInList, toBoolean} from "../../../utils/Utils.jsx";
 import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
-import {Typography, Badge, Card, theme} from "antd";
+import {Typography, Badge} from "antd";
 import { Ellipsis } from 'antd-mobile'
 import {CloseOutline} from "antd-mobile-icons";
 const { Text, Title } = Typography;
-const { useToken } = theme;
-import { Button } from 'antd-mobile'
+import { Button, Card } from 'antd-mobile'
 import {cx} from "antd-style";
 
 const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
     let announcements = dashboardData?.GlobalAnnouncements;
     let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
-    const { token } = useToken();
+    const { styles } = useStyles();
     
     if (!toBoolean(showAnnouncementsBlock)) {
         return '';
@@ -27,9 +24,9 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
 
     const announcementCard = (globalAnn, isUrgent) => {
         return (
-            <Card>
-                <Title level={5} className={styles.cardItemTitle}>
-                    <Ellipsis direction='end' content={globalAnn.Title} />
+            <Card className={styles.card}>
+                <Title level={5} className={cx(styles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
+                    <Ellipsis direction='end' content={'Summer Clinics are openSummer Clinics are openSummer Clinics are openSummer Clinics are openSummer Clinics are open'} />
                 </Title>
 
                 <Button className={cx(styles.hideAnnouncementButton, isUrgent && styles.urgentHideAnnouncementButton)}>
@@ -51,7 +48,7 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
                     {announcements.map((globalAnn, index) => (
                         <div key={index}>
                             {toBoolean(globalAnn.IsUrgent) ? (
-                                <Badge.Ribbon text='Urgent' color="red">
+                                <Badge.Ribbon text='Urgent' color="red" className={styles.urgentRibbon}>
                                     {announcementCard(globalAnn, true)}
                                 </Badge.Ribbon>
                                 ) : (

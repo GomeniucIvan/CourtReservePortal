@@ -1,7 +1,6 @@
-﻿import styles from './Dashboard.module.less'
+﻿import {useStyles} from "./styles.jsx";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {Button} from "antd";
 import {useApp} from "../../../context/AppProvider.jsx";
 import mockData from "../../../mocks/home-data.json";
 import DashboardOrganizations from "./Dashboard.Organizations.jsx";
@@ -13,19 +12,11 @@ import DashboardLeagues from "./Dashboard.Leagues.jsx";
 function Dashboard() {
     const navigate = useNavigate();
     let { orgId } = useParams();
+    const { styles } = useStyles();
     const { isLoading, setIsLoading, isMockData, setIsFooterVisible } = useApp();
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
-    
-    const [events, setEvents] = useState([]);
-
-    const [showBookings, setShowBookings] = useState(true);
-    const [bookings, setBookings] = useState([]);
-
-    const [showLeagues, setShowLeagues] = useState(true);
-    const [leagues, setLeagues] = useState([]);
-    
     const [organizations, setOrganizations] = useState([]);
     
     useEffect(() => {
