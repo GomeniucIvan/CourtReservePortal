@@ -6,5 +6,10 @@ export const useStyles = createStyles(({ css, token }) => ({
       display: flex;
       justify-content: center;
       align-items: center;
+   `,
+   drawerMenu: css`
+        .ant-menu-item {
+           padding-left: 14px !important;
+        }
    `
 }));

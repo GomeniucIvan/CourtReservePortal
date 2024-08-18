@@ -2,6 +2,6 @@
 
 export const useStyles = createStyles(({ css, token }) => ({
     flexRow: css `
-    margin: ${token.Custom.cardIconPadding/2}px 0;
+        margin: ${token.Custom.cardIconPadding/2}px 0;
     `
 }));

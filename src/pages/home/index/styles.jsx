@@ -87,5 +87,22 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     noBottomPadding: css`
         margin-bottom: 0 !important;
+    `,
+    leagueBlock: css`
+        position: relative;
+        margin: 2px ${token.padding}px 0px 16px;
+    `,
+    leagueSelector: css`
+        margin-bottom: ${token.padding}px;
+        border-color: ${token.colorBorder} !important;
+        box-shadow: none !important;
+    `,
+    selectLeagueLabel: css`
+        position: absolute;
+        top: -12px;
+        z-index: 2;
+        left: 10px;
+        background: ${token.colorBgBase};
+        padding: 0px 6px;
     `
 }));

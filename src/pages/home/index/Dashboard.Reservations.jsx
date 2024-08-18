@@ -21,8 +21,6 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
         return '';
     }
 
-    console.log(globalStyles)
-    
     const bookingTemplate = (booking, isUnpaid) => {
         return (
             <Card className={styles.card} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>

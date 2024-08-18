@@ -1,93 +1,108 @@
-﻿import {useEffect, useState} from "react";
-import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+﻿import {useEffect, useRef, useState} from "react";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
 import {t} from "../../../utils/OrganizationUtils.jsx";
-import {DrawerBottom} from "../../../components/drawer/DrawerBottom.jsx";
 import ModernDashboardLeaguesDates from "./Dashboard.LeagueDates.jsx";
+import {Input, Menu, Typography} from "antd";
+import {DownOutline} from "antd-mobile-icons";
+import {Card} from "antd-mobile";
+import {useStyles} from "./styles.jsx";
+import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
+import {useNavigate} from "react-router-dom";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import {useApp} from "../../../context/AppProvider.jsx";
+const { Text } = Typography;
 
 const DashboardLeagues = ({ dashboardData, isFetching }) => {
     let [showLeaguesDrawer, setShowLeaguesDrawer] = useState(false);
     let [leagueDatesLoading, setLeagueDatesLoading] = useState(false);
+    let [leagueItems, setLeagueItems] = useState([]);
+    let [selectedLeagueIdArray, setSelectedLeagueIdArray] = useState([]);
+    let [selectedLeagueName, setSelectedLeagueName] = useState('test');
     
     let myLeaguesDropdown = dashboardData?.MyLeaguesDropdown;
     let showLeaguesBlock = dashboardData?.ShowLeaguesBlock;
     let leaguesDates = dashboardData?.LeagueDates
     let hideLeagues = !anyInList(dashboardData?.MyLeaguesDropdown) || isNullOrEmpty(dashboardData?.SelectedLeagueSessionId);
-
-    if (!toBoolean(showLeaguesBlock)){
+    const { styles } = useStyles();
+    const navigation = useNavigate();
+    const {globalStyles} = useApp();
+    
+    if (!toBoolean(showLeaguesBlock) && !toBoolean(hideLeagues)){
         return '';
     }
 
+    useEffect(() => {
+        if (anyInList(myLeaguesDropdown)) {
+            setLeagueItems(myLeaguesDropdown.map((gameDay) => ({
+                key: gameDay.Id.toString(),
+                label: gameDay.Name,
+            })))
+        } else{
+            setLeagueItems([]) 
+        }
+    }, [myLeaguesDropdown]);
+    
+
+    
     return (
         <EntityCard title={t('Leagues')} link={'/leagues'} isFetching={isFetching} addPadding={true}>
             {showLeaguesBlock &&
-                <div className='modern-dashboard-block modern-dashboard-slick-block'>
-                    <div className="modern-dashboard-block-header">
-                        <div className="modern-dashboard-block-header-title">
-                            My Leagues
-                        </div>
-
-                        {!toBoolean(hideLeagues) &&
-                            <div className="modern-dashboard-block-header-link">
-                                <a href={``}>
-                                    Standings
-                                </a>
-                            </div>
+                <div className={styles.leagueBlock}>
+                    <Text className={styles.selectLeagueLabel}>
+                        <small>
+                            Select League
+                        </small>
+                    </Text>
+                    <Input
+                        rootClassName={styles.leagueSelector}
+                        readOnly={true}
+                        value={selectedLeagueName}
+                        onClick={() => {setShowLeaguesDrawer(true)}}
+                        suffix={
+                            <DownOutline style={{color: 'rgba(0,0,0,.45)'}}/>
                         }
+                    />
 
+                    <Card className={styles.card}>
+                        <DrawerBottom showDrawer={showLeaguesDrawer} 
+                                      redirect={true}
+                                      closeDrawer={() => setShowLeaguesDrawer(false)} 
+                                      showButton={true}
+                                      confirmButtonText={'Join A League'}
+                                      label='Leagues'
+                                      onConfirmButtonClick={() => {
+                                          setShowLeaguesDrawer(false);
+                                          navigation(HomeRouteNames.LEAGUES_LIST);
+                                      }}>
 
-                    </div>
-                    {toBoolean(hideLeagues) &&
-                        <div className="modern-empty-card with-button">
-                            You aren’t participating in any leagues
+                            <Menu
+                                className={globalStyles.drawerMenu}
+                                defaultSelectedKeys={selectedLeagueIdArray}
+                                mode={'inline'}
+                                items={leagueItems}
+                                onClick={(e) => {
+                                    const selectedLeagueIdKey = e.key;
 
-                            <div>
-                                <a href={``} className="btn btn-green-shadow fn-disable">Join Now</a>
-                            </div>
+                                    if (selectedLeagueIdArray.some(leagueId => equalString(leagueId, selectedLeagueIdKey))){
+                                        setShowLeaguesDrawer(false);
+                                    }
+                                }}
+                                onSelect={(e) => {
+                                    const selectedLeagueIdKey = e.key;
+                                    const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, selectedLeagueIdKey));
+                                    setSelectedLeagueName(selectedLeague.Name)
+                                    setSelectedLeagueIdArray([selectedLeagueIdKey]);
+                                    setShowLeaguesDrawer(false);
+                                }}
+                            />
+                        </DrawerBottom>
+
+                        <div>
+                            <ModernDashboardLeaguesDates leaguesDates={leaguesDates}
+                                                         leagueDatesLoading={leagueDatesLoading}/>
                         </div>
-                    }
-
-                    {!toBoolean(hideLeagues) &&
-                        <>
-                            <div style={{ margin: '0px', paddingBottom: '16px'  }}>
-                                <div className="mobile-session-play-date-dd">
-                                    <label>Select League</label>
-                                    <a className="k-picker k-dropdown k-widget form-control k-picker-solid k-picker-md k-rounded-md">
-                            <span className="k-input-inner" style={{ display: 'contents' }}>
-                                <span className="k-input-value-text" id="leagueDropdownValue" style={{ fontSize: '13px' }} >
-                                    test
-                                </span>
-                            </span>
-                                        <button type="button" disabled="disabled" style={{ opacity: 1 }} className="k-select k-input-button k-button k-button-md k-button-solid k-button-solid-base k-icon-button">
-                                            <span className="k-icon k-i-arrow-s k-button-icon"></span>
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <DrawerBottom open={showLeaguesDrawer} redirect={true} closeDrawer={() => setShowLeaguesDrawer(false)} showButton={true} confirmButtonText={'Join A League'} label='Leagues' onConfirmButtonClick={() => { window.location.href =`` }}>
-                                <>
-                                    {myLeaguesDropdown.map((gameDay, index) => {
-                                        return (
-                                            <div key={index} className={`modal-footer-row with-bb fn-day-selection green-bg-selection`} style={{ justifyContent: 'space-between', padding: '0px 16px' }} >
-                                                <div className="modal-icon-badge-wrapper">
-                                                    <a data-name={gameDay.Name}>{gameDay.Name}</a>
-                                                </div>
-
-                                                <div style={{ paddingRight: '8px' }}>
-                                                    <span className="fa fa-check fn-day-checkmark" style={{ display: 'none' }}></span>
-                                                </div>
-                                            </div>
-                                        )
-                                    })}
-                                </>
-                            </DrawerBottom>
-
-                            <div id="myleagues-slick-wrapper-html">
-                                <ModernDashboardLeaguesDates leaguesDates={leaguesDates} leagueDatesLoading={leagueDatesLoading} />
-                            </div>
-                        </>
-                    }
+                    </Card>
                 </div>
             }
         </EntityCard>
