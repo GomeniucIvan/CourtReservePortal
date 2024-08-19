@@ -17,6 +17,14 @@ export const useStyles = createStyles(({ css, token }) => {
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid ${token.colorBorder};
+            
+            .adm-nav-bar-title {
+                text-align: start;
+                padding-left: 0;
+            }
+            .adm-nav-bar-left {
+                flex: 0;
+            }
         `,
         headerLoadingBar: css`
             ${loadingAnimation};

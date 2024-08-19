@@ -15,7 +15,8 @@ export const HomeRouteNames = {
 const HomeRoutes = [
     {
         path: HomeRouteNames.INDEX,
-        element: <Dashboard />
+        element: <Dashboard />,
+        root: true
     },
     {
         path: HomeRouteNames.SCHEDULER,
@@ -25,7 +26,7 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.ANNOUNCEMENT_LIST,
         element: <AnnouncementList />,
-        title: 'AnnouncementList'
+        title: 'Announcements'
     },
     {
         path: HomeRouteNames.ANNOUNCEMENT_DETAILS,

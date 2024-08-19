@@ -1,19 +1,19 @@
-﻿import './Header.module.less';
-import {useStyles} from "./styles.jsx";
+﻿import {useStyles} from "./styles.jsx";
 import {forwardRef, useEffect, useImperativeHandle} from "react";
 import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
 import { useLocation, useNavigate } from 'react-router-dom';
-import {theme, Typography} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
 import {NavBar} from "antd-mobile";
-const { Title } = Typography;
-const { useToken } = theme;
+import {MoreOutline, SearchOutline} from "antd-mobile-icons";
+import {Space} from "antd";
+import {useAuth} from "../../context/AuthProvider.jsx";
 
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { isLoading } = useApp();
     const { styles } = useStyles();
+    const {isLoggedIn} = useAuth();
     
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
@@ -30,7 +30,11 @@ const Header = forwardRef((props, ref) => {
         if (lastPath) {
             navigate(`${lastPath.path}`);
         } else {
-            navigate(`/`);
+            if (isLoggedIn){
+                navigate(`/dashboard`);   
+            } else {
+                navigate(`/`); 
+            }
         }
     };
 
@@ -41,8 +45,19 @@ const Header = forwardRef((props, ref) => {
             navigateBack();
         }
     }
+    
+    const right = (
+        <div style={{ fontSize: 24 }}>
+            {/*<Space style={{ '--gap': '16px' }}>*/}
+            {/*    <SearchOutline />*/}
+            {/*    <MoreOutline />*/}
+            {/*</Space>*/}
+        </div>
+    )
+    
+    
     return (
-        <NavBar onBack={backToPreviousPage} className={styles.header}>
+        <NavBar onBack={backToPreviousPage} className={styles.header} right={right}>
             {isLoading && <div className={styles.headerLoadingBar}></div>}
             {props.route.title}
         </NavBar>

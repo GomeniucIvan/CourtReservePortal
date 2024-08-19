@@ -2,11 +2,11 @@
 const { Text } = Typography;
 import {useApp} from "../../context/AppProvider.jsx";
 
-function PaddingBlock({children}) {
+function PaddingBlock({children, topBottom = false, leftRight = true}) {
     const {globalStyles, token} = useApp();
     
     return (
-        <div style={{padding: `0px ${token.padding}px`}}>
+        <div style={{padding: `${topBottom ? token.padding : 0}px ${leftRight ?token.padding : 0}px`}}>
             {children}
         </div>
     )
