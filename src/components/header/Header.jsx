@@ -1,17 +1,19 @@
-﻿import styles from './Header.module.less';
+﻿import './Header.module.less';
+import {useStyles} from "./styles.jsx";
 import {forwardRef, useEffect, useImperativeHandle} from "react";
 import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
 import { useLocation, useNavigate } from 'react-router-dom';
 import {theme, Typography} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
+import {NavBar} from "antd-mobile";
 const { Title } = Typography;
 const { useToken } = theme;
 
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { token } = useToken();
     const { isLoading } = useApp();
+    const { styles } = useStyles();
     
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
@@ -40,18 +42,10 @@ const Header = forwardRef((props, ref) => {
         }
     }
     return (
-        <div className={styles.header} style={{borderColor: token.Form.colorBorder}}>
-            {isLoading &&
-                <div className={styles.headerLoadingBar}
-                     style={{background: `linear-gradient(to right, transparent, ${token.colorPrimary}, transparent)`}}></div>
-            }
-            <div onClick={backToPreviousPage} level={4} className={styles.headerBackIcon}>
-                {'<'}
-            </div>
-            <Title level={4} className={styles.headerText}>
-                {props.route.title}
-            </Title>
-        </div>
+        <NavBar onBack={backToPreviousPage} className={styles.header}>
+            {isLoading && <div className={styles.headerLoadingBar}></div>}
+            {props.route.title}
+        </NavBar>
     );
 })
 
