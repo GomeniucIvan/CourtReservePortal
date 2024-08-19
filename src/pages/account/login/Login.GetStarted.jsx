@@ -11,6 +11,7 @@ import mockData from "../../../mocks/auth-data.json";
 import LoginAccountVerification from "./Login.AccountVerification.jsx";
 import {ModalClose, ModalWarning} from "../../../utils/ModalUtils.jsx";
 import {focus} from "../../../utils/Utils.jsx";
+import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 const { Paragraph, Link, Title } = Typography;
 const { useToken } = theme;
 
@@ -68,7 +69,7 @@ function LoginGetStarted() {
     
     return (
         <>
-            <div>
+            <PaddingBlock>
                 <Title level={4}>Let’s get started!</Title>
                 
                 <Paragraph>
@@ -107,7 +108,7 @@ function LoginGetStarted() {
                         Privacy Policy
                     </Link>
                 </Paragraph>
-            </div>
+            </PaddingBlock>
         </>
     )
 }

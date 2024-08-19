@@ -8,7 +8,7 @@ export const AntdProvider = ({ children }) => {
                 theme={{
                     algorithm: theme.defaultAlgorithm,
                     token: {
-                        colorPrimary: '#61ca31',
+                        colorPrimary: '#873030',
                     },
                     components: {
                         Custom: {

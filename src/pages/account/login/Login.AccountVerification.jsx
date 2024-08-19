@@ -10,6 +10,7 @@ import {focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
+import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 const { Paragraph, Title } = Typography;
 const { useToken } = theme;
 
@@ -73,7 +74,7 @@ function LoginAccountVerification() {
     
     return (
        <>
-           <div>
+           <PaddingBlock>
                <Title level={4}>Please Check Your Email</Title>
 
                <Paragraph>
@@ -135,7 +136,7 @@ function LoginAccountVerification() {
                <Paragraph className={'sm-padding'}>
                    By requesting a text code, you agree to receive texts from CourtReserve. Carrier rates may apply.
                </Paragraph>
-           </div>
+           </PaddingBlock>
        </>
     )
 }

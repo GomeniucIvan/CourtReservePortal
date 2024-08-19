@@ -7,21 +7,26 @@ import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 
 function Login() {
     const navigate = useNavigate();
-    const { setIsFooterVisible } = useApp();
+    const { setIsFooterVisible, token } = useApp();
 
     useEffect(() => {
         setIsFooterVisible(false);
     }, []);
     
     return (
-        <div className={styles.loginBg}>
+        <div className={styles.loginBg} style={{backgroundImage: `url('/mock/images/cartoon-banner.png')`}}>
             <div>
                 <div className={styles.loginIconText}>Cartoon</div>
             </div>
 
-            <Button type="primary" block onClick={() => navigate(AuthRouteNames.LOGIN_GET_STARTED)}>
-                Login
-            </Button>
+            <div className={styles.loginButtonBlock} >
+                <Button type="primary"
+                        className={styles.loginButton}
+                        block
+                        onClick={() => navigate(AuthRouteNames.LOGIN_GET_STARTED)} style={{width: `calc(100% - ${token.padding}px - ${token.padding}px)`}}>
+                    Login
+                </Button>
+            </div>
         </div>
     )
 }

@@ -11,6 +11,7 @@ import {focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
+import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 const { Paragraph, Title, Text } = Typography;
 const { useToken } = theme;
 
@@ -90,7 +91,7 @@ function LoginVerificationCode() {
     
     return (
         <>
-            <div>
+            <PaddingBlock>
                 <Title level={4}>Please Check Your Phone</Title>
 
                 <Paragraph>
@@ -121,7 +122,7 @@ function LoginVerificationCode() {
                         Continue
                     </Button>
                 </Form>
-            </div>
+            </PaddingBlock>
         </>
     )
 }
