@@ -1,5 +1,6 @@
 ﻿import { ConfigProvider, theme, App } from "antd";
 
+//theme.darkAlgorithm
 export const AntdProvider = ({ children }) => {
     return (
         <App>
