@@ -12,6 +12,7 @@ export const AppProvider = ({ children }) => {
     const [formikData, setFormikData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isMockData, setIsMockData] = useState(true);
+    const [dynamicPages, setDynamicPages] = useState([]);
     const stylesToUse = useStyles();
     const { token } = useToken();
     const globalStyles = stylesToUse.styles;
@@ -28,7 +29,9 @@ export const AppProvider = ({ children }) => {
             setIsLoading,
             isMockData,
             globalStyles,
-            token}}>
+            token,
+            dynamicPages,
+            setDynamicPages}}>
             
             {children}
         </AppContext.Provider>

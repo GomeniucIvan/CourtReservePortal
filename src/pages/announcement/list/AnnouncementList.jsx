@@ -1,29 +1,23 @@
-﻿import {useStyles} from "./styles.jsx";
+﻿import {useStyles} from "./../styles.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {List} from "antd";
+import {List, Tag} from "antd";
 import {useEffect, useState, useRef} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 import mockData from "../../../mocks/home-data.json";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
+import {isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 
 function AnnouncementList() {
     const navigate = useNavigate();
     const { styles } = useStyles();
-    const{isMockData, setIsFooterVisible} = useApp();
-    const [announcements, setAnnouncements, ] = useState([]);
-
-    const data = Array.from({ length: 23 }).map((_, i) => ({
-        title: `ant design part ${i}`,
-        description:
-            'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-        content:
-            'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-    }));
+    const{isMockData, setIsFooterVisible, setPageTitle} = useApp();
+    const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
         setIsFooterVisible(true);
-
+        setPageTitle('');
+        
         if (isMockData){
             const list = mockData.dashboard.announcement_list;
             setAnnouncements(list);
@@ -44,9 +38,11 @@ function AnnouncementList() {
                         <List.Item key={item.Id}>
                             <List.Item.Meta
                                 title={item.Title}
-                                description={item.UpdatedOnDisplay}
+                                description={<>{item.UpdatedOnDisplay}{toBoolean(item.IsUrgent) && <Tag color="error">Urgent</Tag>}</> }
                             />
-                            <IframeContent content={item.Content} id={item.Id} />
+                            {!isNullOrEmpty(item.Content) &&
+                                <IframeContent content={item.Content} id={item.Id} />
+                            }
                         </List.Item>
                     );
                 }}

@@ -6,6 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./Layout.styles.jsx";
+import {isNullOrEmpty} from "../../utils/Utils.jsx";
 
 
 // useEffect(() => {
@@ -19,13 +20,17 @@ import {useStyles} from "./Layout.styles.jsx";
 
 function Layout() {
     const location = useLocation();
-    const currentRoute = AppRoutes.find(route => route.path === location.pathname);
+    let currentRoute = AppRoutes.find(route => route.path === location.pathname);
     const headerRef = useRef(null);
     const footerRef = useRef(null);
     const { styles } = useStyles();
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, isFooterLoading } = useApp();
+    const { footerContent, isFooterVisible, isFooterLoading, dynamicPages } = useApp();
+    
+    if (isNullOrEmpty(currentRoute)){
+        currentRoute = dynamicPages.find(route => route.path === location.pathname);
+    }
     
     // Function to calculate and set the max height for the content area
     const calculateMaxHeight = () => {
@@ -50,7 +55,7 @@ function Layout() {
     return (
         <>
             <div className={styles.root}>
-                {(currentRoute && currentRoute.title) &&
+                {currentRoute && !isNullOrEmpty(currentRoute.title) &&
                     <div ref={headerRef}>
                         <Header route={currentRoute}/>
                     </div>

@@ -1,5 +1,5 @@
 ﻿import {useStyles} from "./styles.jsx";
-import {forwardRef, useEffect, useImperativeHandle} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
 import { useLocation, useNavigate } from 'react-router-dom';
 import {useApp} from "../../context/AppProvider.jsx";
@@ -7,13 +7,15 @@ import {NavBar} from "antd-mobile";
 import {MoreOutline, SearchOutline} from "antd-mobile-icons";
 import {Space} from "antd";
 import {useAuth} from "../../context/AuthProvider.jsx";
+import {isNullOrEmpty} from "../../utils/Utils.jsx";
 
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { isLoading } = useApp();
+    const { isLoading, pageTitle } = useApp();
     const { styles } = useStyles();
     const {isLoggedIn} = useAuth();
+    const [title, dynamicPages] = useState(props.route?.title);
     
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
@@ -22,7 +24,7 @@ const Header = forwardRef((props, ref) => {
     }));
 
     useEffect(() => {
-        pushToHistory(location.pathname, props.route.root);
+        pushToHistory(location.pathname, props.route?.root);
     }, [location]);
     
     const navigateBack = () => {
@@ -59,7 +61,7 @@ const Header = forwardRef((props, ref) => {
     return (
         <NavBar onBack={backToPreviousPage} className={styles.header} right={right}>
             {isLoading && <div className={styles.headerLoadingBar}></div>}
-            {props.route.title}
+            {title}
         </NavBar>
     );
 })

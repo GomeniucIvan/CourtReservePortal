@@ -31,7 +31,7 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.ANNOUNCEMENT_DETAILS,
         element: <AnnouncementDetails />,
-        title: 'Announcement'
+        title: 'Details'
     },
     {
         path: HomeRouteNames.LEAGUES_LIST,

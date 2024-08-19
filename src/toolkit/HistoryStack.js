@@ -18,9 +18,12 @@ const removeConsecutiveDuplicates = (array) => {
 };
 
 export const pushToHistory = (path, isRoot) => {
-    historyStack.push({ path: path, isRoot: isRoot });
-
-    historyStack = removeConsecutiveDuplicates(historyStack);
+    if (isRoot){
+        historyStack = [];
+    } else{
+        historyStack.push({ path: path, isRoot: isRoot });
+        historyStack = removeConsecutiveDuplicates(historyStack); 
+    }
 };
 
 export const getLastFromHistory = () => {

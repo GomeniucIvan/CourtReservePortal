@@ -8,5 +8,8 @@ export const useStyles = createStyles(({ css, token }) => ({
                margin: 0 !important;
            }
        }
+        .ant-tag {
+            margin-left: ${token.Custom.cardIconPadding}px; 
+        }
   `,
 }));

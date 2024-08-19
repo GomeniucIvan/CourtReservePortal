@@ -9,13 +9,18 @@ const { Text, Title } = Typography;
 import { Button, Card } from 'antd-mobile'
 import {cx} from "antd-style";
 import {useNavigate} from "react-router-dom";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
+import {useEffect} from "react";
+import {useApp} from "../../../context/AppProvider.jsx";
 
 const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
+    let {setDynamicPages} = useApp();
     let announcements = dashboardData?.GlobalAnnouncements;
     let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
     const { styles } = useStyles();
     const navigate = useNavigate();
-
+    
     if (!toBoolean(showAnnouncementsBlock)) {
         return '';
     }
@@ -26,7 +31,11 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
 
     const announcementCard = (globalAnn, isUrgent) => {
         return (
-            <Card className={styles.card} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
+            <Card className={styles.card} onClick={() => {
+                let route = toRoute(HomeRouteNames.ANNOUNCEMENT_DETAILS, 'id', globalAnn.Id);
+                setPage(setDynamicPages, globalAnn.Title, route);
+                navigate(route);
+            }}>
                 <Title level={5} className={cx(styles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
                     <Ellipsis direction='end' content={globalAnn.Title} />
                 </Title>
