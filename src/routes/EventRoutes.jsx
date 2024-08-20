@@ -3,10 +3,15 @@ import EventCategoryList from "../pages/event/categories/EventCategoryList.jsx";
 import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 import EventRegistration from "../pages/event/registration/EventRegistration.jsx";
 
+export const EventRouteNames = {
+    EVENT_LIST: '/event/list',
+};
+
 const EventRoutes = [
     {
-        path: '/event-list/:orgId',
-        element: <EventList />
+        path: EventRouteNames.EVENT_LIST,
+        element: <EventList />,
+        title: 'Events'
     },
     {
         path: '/event-category-list/:orgId',

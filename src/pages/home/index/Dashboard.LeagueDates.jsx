@@ -6,9 +6,11 @@ import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import {cx} from "antd-style";
 import {Ellipsis} from "antd-mobile";
 import {useStyles} from "./styles.jsx";
+import {useApp} from "../../../context/AppProvider.jsx";
 const { Title } = Typography;
 
 const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
+    const {globalStyles} = useApp();
     const { styles } = useStyles();
     
     if (!anyInList(leaguesDates)){
@@ -23,7 +25,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
         <SlickSlider>
             {leaguesDates.map((leagueSessionDate, index) => (
                 <div key={index}>
-                    <Card className={styles.card} onClick={() => navigate(`/league/details/${leagueSessionDate.Id}`)}>
+                    <Card className={cx(styles.card, globalStyles.clickableCard)} onClick={() => navigate(`/league/details/${leagueSessionDate.Id}`)}>
                         <Title level={5} className={styles.noTopPadding}>
                             <CardIconLabel icon={'paddle'} description={`Game Day #${leagueSessionDate.GameDayNumber}`} />
                         </Title>

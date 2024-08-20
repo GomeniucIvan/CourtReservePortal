@@ -15,7 +15,7 @@ import {useEffect} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 
 const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
-    let {setDynamicPages} = useApp();
+    let {setDynamicPages, globalStyles} = useApp();
     let announcements = dashboardData?.GlobalAnnouncements;
     let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
     const { styles } = useStyles();
@@ -31,7 +31,7 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
 
     const announcementCard = (globalAnn, isUrgent) => {
         return (
-            <Card className={styles.card} onClick={() => {
+            <Card className={cx(styles.card, globalStyles.clickableCard)} onClick={() => {
                 let route = toRoute(HomeRouteNames.ANNOUNCEMENT_DETAILS, 'id', globalAnn.Id);
                 setPage(setDynamicPages, globalAnn.Title, route);
                 navigate(route);

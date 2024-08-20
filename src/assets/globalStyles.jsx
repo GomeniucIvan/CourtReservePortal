@@ -11,5 +11,8 @@ export const useStyles = createStyles(({ css, token }) => ({
         .ant-menu-item {
            padding-left: 14px !important;
         }
+   `,
+   clickableCard: css`
+   
    `
 }));

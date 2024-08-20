@@ -23,7 +23,7 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
 
     const bookingTemplate = (booking, isUnpaid) => {
         return (
-            <Card className={styles.card} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
+            <Card className={cx(styles.card, globalStyles.clickableCard)} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
                 <Flex gap={token.Custom.cardIconPadding} align={'center'}>
                     <div className={globalStyles?.cardIconBlock}>
                         <i className={styles.circleIcon} style={{backgroundColor: booking.TypeBgColor}}></i>
