@@ -19,7 +19,7 @@ const { useToken } = theme;
 function LoginVerificationCode() {
     const navigate = useNavigate();
     const { token } = useToken();
-    const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible } = useApp();
+    const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, globalStyles, setFooterContent } = useApp();
     const {setIsLoggedIn, setIsOrgMember} = useAuth();
     
     const email = formikData?.email;
@@ -64,9 +64,10 @@ function LoginVerificationCode() {
 
                     if (memberExists) {
                         setFormikData(null);
-                        navigate(HomeRouteNames.INDEX);
                         setIsLoggedIn(true);
                         setIsOrgMember(true);
+                        setIsLoading(false);
+                        navigate(HomeRouteNames.INDEX);
                     } else {
                         ModalClose({
                             title: 'Passcode',
@@ -77,7 +78,6 @@ function LoginVerificationCode() {
                             }
                         });
                     }
-                    setIsLoading(false);
                 }, 2000);
             } else{
                 alert('todo verificationcode')
@@ -92,6 +92,22 @@ function LoginVerificationCode() {
             }
         }
     }, [formik?.values?.passcode]);
+
+    useEffect(() => {
+        setIsFooterVisible(true);
+
+        setFooterContent(
+            <PaddingBlock topBottom={true}>
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        loading={isLoading}
+                        onClick={formik.handleSubmit}>
+                    Continue
+                </Button>
+            </PaddingBlock>
+        );
+    }, [isLoading]);
     
     return (
         <>
@@ -109,7 +125,7 @@ function LoginVerificationCode() {
                 >
                     <PasscodeInput seperated length={6} name={'passcode'} form={formik} />
 
-                    <Row justify={'space-between'} className={styles.verificationCodeLinksRow}>
+                    <Row justify={'space-between'} className={globalStyles.inputBottomLink}>
                         <Col span={12}><Text type="secondary">Didn't get the code?</Text></Col>
 
                         {/*//styles. not working use inline style*/}
@@ -117,14 +133,6 @@ function LoginVerificationCode() {
                             <Text type="primary">Resend Code</Text>
                         </Col>
                     </Row>
-
-                    <Button type="primary"
-                            block
-                            htmlType="submit"
-                            loading={isLoading}
-                            onClick={formik.handleSubmit}>
-                        Continue
-                    </Button>
                 </Form>
             </PaddingBlock>
         </>

@@ -17,7 +17,7 @@ function Dashboard() {
     const {token} = useApp();
     const navigate = useNavigate();
     const { styles } = useStyles();
-    const { isLoading, setIsLoading, isMockData, setIsFooterVisible } = useApp();
+    const { isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent } = useApp();
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
@@ -25,7 +25,7 @@ function Dashboard() {
     
     useEffect(() => {
         setIsFooterVisible(true);
-        
+        setFooterContent('');
         if (isMockData){
             const dashboardData = mockData.dashboard.index;
             setDashboardData(dashboardData);

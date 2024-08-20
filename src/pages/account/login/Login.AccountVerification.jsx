@@ -1,7 +1,7 @@
 import styles from './Login.module.less'
 import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
-import {Button, Divider, Form, Input, theme, Typography} from "antd";
+import {Button, Divider, Flex, Form, Input, theme, Typography} from "antd";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
@@ -11,11 +11,13 @@ import FormInput from "../../../form/input/FormInput.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-const { Paragraph, Title } = Typography;
+const { Paragraph, Title, Link } = Typography;
 const { useToken } = theme;
+import { Modal } from 'antd-mobile'
+import PageForm from "../../../form/pageform/PageForm.jsx";
 
 function LoginAccountVerification() {
-    const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible } = useApp();
+    const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, setFooterContent, globalStyles } = useApp();
     const email = formikData?.email;
     const { token } = useToken();
     const navigate = useNavigate();
@@ -26,11 +28,26 @@ function LoginAccountVerification() {
     };
 
     useEffect(() => {
-        setIsFooterVisible(false);
         if (isNullOrEmpty(email)){
             navigate(AuthRouteNames.LOGIN_GET_STARTED);
         }
     }, []);
+
+    useEffect(() => {
+        setIsFooterVisible(true);
+        
+        setFooterContent(
+            <PaddingBlock topBottom={true}>
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        loading={isLoading}
+                        onClick={formik.handleSubmit}>
+                    Continue
+                </Button>
+            </PaddingBlock>
+        );
+    }, [isLoading]);
     
     const validationSchema = Yup.object({
         email: Yup.string().required('Email is required.'),
@@ -81,11 +98,7 @@ function LoginAccountVerification() {
                    We've sent a 6-digit code to <strong>chr****@email.com</strong>. The code expires in 15 minutes. Please enter it below.
                </Paragraph>
 
-               <Form
-                   layout={'vertical'}
-                   autoComplete="off"
-                   initialValues={{ layout: 'vertical' }}
-               >
+               <PageForm formik={formik}>
                    <FormInput label="Email"
                               form={formik}
                               name='email'
@@ -95,47 +108,39 @@ function LoginAccountVerification() {
 
                    <FormInput label="Password"
                               form={formik}
+                              className={globalStyles.formNoBottomPadding}
                               name='password'
                               placeholder='Enter your password'
                               required='true'
                    />
-                   
-                   <Button type="primary"
-                           block
-                           htmlType="submit"
-                           loading={isLoading}
-                           onClick={formik.handleSubmit}>
-                       Continue
-                   </Button>
 
-                   <Divider>or</Divider>
-                   
-                   <Button
-                       disabled={isLoading}
-                       block
-                       htmlType="button"
-                       onClick={() => {
-                           alert('todo')
-                       }}
-                   >
-                       Email a Log In Code
-                   </Button>
-
-                   <Button
-                       block
-                       htmlType="button"
-                       disabled={isLoading}
-                       onClick={() => {
-                           alert('todo')
-                       }}
-                   >
-                       Text a Code to ***-***-9650
-                   </Button>
-               </Form>
-
-               <Paragraph className={'sm-padding'}>
-                   By requesting a text code, you agree to receive texts from CourtReserve. Carrier rates may apply.
-               </Paragraph>
+                   <Flex justify={"end"} className={globalStyles.inputBottomLink}>
+                       <Link onClick={() => {
+                           Modal.show({
+                               content: 'By requesting a text code, you agree to receive texts from CourtReserve. Carrier rates may apply.',
+                               closeOnAction: true,
+                               actions: [
+                                   {
+                                       key: 'email',
+                                       text: 'Email login code',
+                                       primary: true,
+                                   },
+                                   {
+                                       key: 'text',
+                                       text: 'Text code to *9650',
+                                       primary: true,
+                                   },
+                                   {
+                                       key: 'close',
+                                       text: 'Close',
+                                   },
+                               ],
+                           })
+                       }}>
+                           Forgot Password
+                       </Link>
+                   </Flex>
+               </PageForm>
            </PaddingBlock>
        </>
     )

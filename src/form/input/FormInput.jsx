@@ -1,9 +1,10 @@
 import {useRef, useState} from "react";
-import {Input, Typography, theme} from "antd";
+import {Input, Typography} from "antd";
 const { Paragraph } = Typography;
-const { useToken } = theme;
-import style from './FormInput.module.less';
 import {equalString, toBoolean} from "../../utils/Utils.jsx";
+import {useStyles} from "./styles.jsx";
+import {useApp} from "../../context/AppProvider.jsx";
+import {cx} from "antd-style";
 
 const FormInput = ({ label,
                        form,
@@ -20,9 +21,11 @@ const FormInput = ({ label,
                        style,
                        disableAutoCapitalize,
                        isExpiryDate,
+                       className,
                        ...props }) => {
-    const { token } = useToken();
-
+    const { token } = useApp();
+    const {styles} = useStyles();
+    
     let field = '';
     let meta = null;
     const isRequired = toBoolean(required);
@@ -72,7 +75,7 @@ const FormInput = ({ label,
     }
 
     return (
-        <div style={{marginBottom: token.Form.itemMarginBottom}}>
+        <div className={cx(styles.formBlock, className) }>
             <label htmlFor={name}
                    style={{
                        fontSize: token.Form.labelFontSize,

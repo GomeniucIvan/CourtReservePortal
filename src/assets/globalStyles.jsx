@@ -14,5 +14,12 @@ export const useStyles = createStyles(({ css, token }) => ({
    `,
    clickableCard: css`
    
+   `,
+   inputBottomLink: css`
+      padding-top: ${token.Custom.buttonPadding}px;
+      padding-bottom: ${token.Form.itemMarginBottom}px;
+   `,
+   formNoBottomPadding: css `
+    margin-bottom: 0;
    `
 }));

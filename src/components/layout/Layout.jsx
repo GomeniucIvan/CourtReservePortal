@@ -5,18 +5,8 @@ import Header from "../header/Header.jsx";
 import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
-import {useStyles} from "./Layout.styles.jsx";
+import {useStyles} from "./styles.jsx";
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
-
-
-// useEffect(() => {
-//     setFooterContent(<div>Custom Button</div>);
-//     setIsFooterVisible(true);
-//     return () => {
-//         setFooterContent(null);
-//         setIsFooterVisible(true);
-//     };
-// }, [setFooterContent, setIsFooterVisible]);
 
 function Layout() {
     const location = useLocation();
@@ -26,7 +16,7 @@ function Layout() {
     const { styles } = useStyles();
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, isFooterLoading, dynamicPages } = useApp();
+    const { footerContent, isFooterVisible, isFooterLoading, dynamicPages, token } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
@@ -51,6 +41,25 @@ function Layout() {
     useEffect(() => {
         calculateMaxHeight();
     }, [location]);
+
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.innerHTML = `
+            :root {
+                --adm-color-primary: ${token.colorPrimary};
+                
+            }
+            .adm-modal-footer.adm-space {
+                --gap-vertical: ${token.Custom.buttonPadding}px;
+            }
+            
+            .adm-center-popup-body .adm-button{
+                height: ${token.Button.controlHeight}px;
+                padding: 0px !important;
+            }
+            `;
+        document.head.appendChild(style);
+    }, [token]);
     
     return (
         <>

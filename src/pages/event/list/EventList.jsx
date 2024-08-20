@@ -5,9 +5,12 @@ import mockData from "../../../mocks/event-data.json";
 import {useApp} from "../../../context/AppProvider.jsx";
 import { InfiniteScroll, List } from 'antd-mobile'
 import {anyInList} from "../../../utils/Utils.jsx";
+import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
 
 function EventList() {
-    const{isMockData, setIsFooterVisible} = useApp();
+    const{isMockData, setIsFooterVisible, setDynamicPages} = useApp();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loadedEvents, setLoadedEvents] = useState([]);
@@ -51,7 +54,13 @@ function EventList() {
                 <>
                     <List>
                         {events.map((item, index) => (
-                            <List.Item key={index}>{item.EventName}</List.Item>
+                            <List.Item key={index}  onClick={() => {
+                                let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.EventId);
+                                setPage(setDynamicPages, item.EventName, route);
+                                navigate(route);
+                            }}>
+                                {item.EventName}
+                            </List.Item>
                         ))}
                     </List>
                     <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />

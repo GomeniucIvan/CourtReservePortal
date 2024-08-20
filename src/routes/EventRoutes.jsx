@@ -2,9 +2,11 @@ import EventList from "../pages/event/list/EventList.jsx";
 import EventCategoryList from "../pages/event/categories/EventCategoryList.jsx";
 import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 import EventRegistration from "../pages/event/registration/EventRegistration.jsx";
+import EventDetails from "../pages/event/details/EventDetails.jsx";
 
 export const EventRouteNames = {
     EVENT_LIST: '/event/list',
+    EVENT_DETAILS: '/event/details/:id',
 };
 
 const EventRoutes = [
@@ -12,6 +14,11 @@ const EventRoutes = [
         path: EventRouteNames.EVENT_LIST,
         element: <EventList />,
         title: 'Events'
+    },
+    {
+        path: EventRouteNames.EVENT_DETAILS,
+        element: <EventDetails />,
+        title: ''
     },
     {
         path: '/event-category-list/:orgId',
