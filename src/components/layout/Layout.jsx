@@ -55,7 +55,7 @@ function Layout() {
     return (
         <>
             <div className={styles.root}>
-                {currentRoute && !isNullOrEmpty(currentRoute.title) &&
+                {currentRoute &&
                     <div ref={headerRef}>
                         <Header route={currentRoute}/>
                     </div>

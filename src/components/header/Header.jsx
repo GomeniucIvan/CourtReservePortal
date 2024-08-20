@@ -57,6 +57,9 @@ const Header = forwardRef((props, ref) => {
         </div>
     )
     
+    if (isNullOrEmpty(isNullOrEmpty(title))){
+        return (<></>);
+    }
     
     return (
         <NavBar onBack={backToPreviousPage} className={styles.header} right={right}>
