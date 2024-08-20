@@ -11,12 +11,11 @@ import {isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 function AnnouncementList() {
     const navigate = useNavigate();
     const { styles } = useStyles();
-    const{isMockData, setIsFooterVisible, setPageTitle} = useApp();
+    const{isMockData, setIsFooterVisible} = useApp();
     const [announcements, setAnnouncements] = useState([]);
 
     useEffect(() => {
         setIsFooterVisible(true);
-        setPageTitle('');
         
         if (isMockData){
             const list = mockData.dashboard.announcement_list;
