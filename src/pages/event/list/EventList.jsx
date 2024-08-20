@@ -3,7 +3,6 @@ import {useNavigate, useParams} from "react-router-dom";
 
 function EventList() {
     const navigate = useNavigate();
-    let { orgId } = useParams();
 
     return (
         <div>

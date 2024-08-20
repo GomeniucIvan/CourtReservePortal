@@ -15,7 +15,6 @@ const Header = forwardRef((props, ref) => {
     const { isLoading, pageTitle } = useApp();
     const { styles } = useStyles();
     const {isLoggedIn} = useAuth();
-    const [title, dynamicPages] = useState(props.route?.title);
     
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
@@ -57,14 +56,14 @@ const Header = forwardRef((props, ref) => {
         </div>
     )
     
-    if (isNullOrEmpty(isNullOrEmpty(title))){
+    if (isNullOrEmpty(props.route?.title)){
         return (<></>);
     }
     
     return (
         <NavBar onBack={backToPreviousPage} className={styles.header} right={right}>
             {isLoading && <div className={styles.headerLoadingBar}></div>}
-            {title}
+            {props.route?.title}
         </NavBar>
     );
 })
