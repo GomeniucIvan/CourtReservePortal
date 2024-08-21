@@ -3,29 +3,30 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import mockData from "../../../mocks/event-data.json";
 import {useApp} from "../../../context/AppProvider.jsx";
-import {Card, Ellipsis, InfiniteScroll, List} from 'antd-mobile'
+import {Card, Ellipsis, List} from 'antd-mobile'
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
-import {Button, Segmented, Space, Input, Flex, Tag, Typography, Progress} from "antd";
-import {BarsOutlined, AppstoreOutlined, FilterOutlined, SearchOutlined} from "@ant-design/icons";
+import {Button, Segmented, Space, Input, Flex, Typography, Progress, Row, Col} from "antd";
+import {BarsOutlined, AppstoreOutlined, FilterOutlined} from "@ant-design/icons";
 import {t} from "../../../utils/OrganizationUtils.jsx";
 import {cx} from "antd-style";
 import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import SVG from "../../../components/svg/SVG.jsx";
-const { Search } = Input;
-const { Title, Text } = Typography;
+import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.jsx";
+
+const {Search} = Input;
+const {Title, Text} = Typography;
 
 function EventList() {
-    const{isMockData, setIsFooterVisible, setDynamicPages, setHeaderRightIcons, globalStyles, token} = useApp();
+    const {isMockData, setIsFooterVisible, setDynamicPages, setHeaderRightIcons, globalStyles, token} = useApp();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loadedEvents, setLoadedEvents] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [isSearchOpened, setIsSearchOpened] = useState(false);
-    const [displayFormatStyle, setDisplayFormatStyle] = useState(fromLocalStorage('event-list-format', 'list'))
-    const [isSearchLoading, setIsSearchLoading] = useState();
+    const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('event-list-format', 'list'), 'list'));
 
     useEffect(() => {
 
@@ -36,30 +37,31 @@ function EventList() {
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
                 {/*//onSearch={onSearch}*/}
-                <div onClick={() =>{
+                <div onClick={() => {
                     if (!toBoolean(isSearchOpened)) {
                         setIsSearchOpened(true);
                     }
                 }}>
-                    <Search rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened )}
-                            placeholder={`Search for ${t('Event(s)')}`}
-                            style={{ width: 0 }} />
+                    <Search
+                        rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened)}
+                        placeholder={`Search for ${t('Event(s)')}`}
+                        style={{width: 0}}/>
                 </div>
 
 
                 <Segmented
-                    defaultValue={displayFormatStyle}
+                    defaultValue={!isListDisplay ? 'card' : 'list'}
                     onChange={(e) => {
-                        setDisplayFormatStyle(e);
+                        setIsListDisplay(equalString(e, 'list'));
                         toLocalStorage('event-list-format', e);
                     }}
                     options={[
-                        { value: 'list', icon: <BarsOutlined /> },
-                        { value: 'card', icon: <AppstoreOutlined /> },
+                        {value: 'list', icon: <BarsOutlined/>},
+                        {value: 'card', icon: <AppstoreOutlined/>},
                     ]}
                 />
 
-                <Button type="default" icon={<FilterOutlined />} size={'medium'} />
+                <Button type="default" icon={<FilterOutlined/>} size={'medium'}/>
             </Space>
         )
         if (isMockData) {
@@ -72,7 +74,7 @@ function EventList() {
     }, []);
 
     const loadMore = async () => {
-        if (isMockData){
+        if (isMockData) {
             if (events.length >= loadedEvents.length) {
                 setHasMore(false);
                 return;
@@ -86,7 +88,7 @@ function EventList() {
             if (events.length + nextEvents.length >= loadedEvents.length) {
                 setHasMore(false); // No more events to load after this batch
             }
-        } else{
+        } else {
             alert('todo eve list')
         }
     }
@@ -95,56 +97,85 @@ function EventList() {
         <>
             {anyInList(events) &&
                 <>
-                    <List className={globalStyles.itemList}>
-                        {events.map((item, index) => (
-                            <List.Item key={index} arrowIcon={false} onClick={() => {
-                                let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.EventId);
-                                setPage(setDynamicPages, item.EventName, route);
-                                navigate(route);
-                            }}>
-                                {equalString(displayFormatStyle, 'list') ?
-                                    (
-                                        <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
-                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                                <div className={globalStyles?.cardIconBlock}>
-                                                    <i className={globalStyles.entityTypeCircleIcon} style={{backgroundColor: item.CategoryBackgroundColor}}></i>
-                                                </div>
+                    <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)} style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
+                        <>
+                            {events.map((item, index) => (
+                                <List.Item span={12}
+                                           key={index}
+                                           arrowIcon={false}
+                                           onClick={() => {
+                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.EventId);
+                                               setPage(setDynamicPages, item.EventName, route);
+                                               navigate(route);
+                                           }}>
+                                    {isListDisplay ?
+                                        (
+                                            <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
+                                                <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                                    <div className={globalStyles?.cardIconBlock}>
+                                                        <i className={globalStyles.entityTypeCircleIcon}
+                                                           style={{backgroundColor: item.CategoryBackgroundColor}}></i>
+                                                    </div>
 
-                                                <div>
-                                                    <Title level={5} className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
-                                                        <Ellipsis direction='end' content={item.EventName}/>
-                                                    </Title>
+                                                    <div>
+                                                        <Title level={5}
+                                                               className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
+                                                            <Ellipsis direction='end' content={item.EventName}/>
+                                                        </Title>
 
-                                                    <Text><small><Ellipsis direction='end' content={item.CategoryName}/></small></Text>
-                                                </div>
-                                            </Flex>
+                                                        <Text>
+                                                            <small>
+                                                                <Ellipsis direction='end'
+                                                                               content={item.CategoryName}/>
+                                                            </small>
+                                                        </Text>
+                                                    </div>
+                                                </Flex>
 
-                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                                <div className={globalStyles?.cardIconBlock}>
-                                                    <SVG icon={'calendar-time'} color={token.colorPrimary}/>
-                                                </div>
+                                                <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                                    <div className={globalStyles?.cardIconBlock}>
+                                                        <SVG icon={'calendar-time'} color={token.colorPrimary}/>
+                                                    </div>
 
-                                                <div>
-                                                    <Text>Thu, Aug 22nd - Sat, Aug 24th {isNullOrEmpty(item.TotalUpcomingDatesCount) ? '' : <strong>({item.TotalUpcomingDatesCount} dates)</strong> }</Text>
-                                                    <Text style={{display : 'block'}}>10a - 10:30a</Text>
-                                                </div>
-                                            </Flex>
+                                                    <div>
+                                                        <Text>Thu, Aug 22nd - Sat, Aug
+                                                            24th {isNullOrEmpty(item.TotalUpcomingDatesCount) ? '' :
+                                                                <strong>({item.TotalUpcomingDatesCount} dates)</strong>}</Text>
+                                                        <Text style={{display: 'block'}}>10a - 10:30a</Text>
+                                                    </div>
+                                                </Flex>
 
-                                            <Progress percent={90} status="active" strokeColor={{ from: token.colorPrimary, to: 'red' }} />
+                                                <Progress percent={90} status="active"
+                                                          strokeColor={{from: token.colorPrimary, to: 'red'}}/>
 
-                                            <CardIconLabel icon={'team'} description={item.SlotsInfo} />
-                                        </Card>
-                                    ):
-                                    (
-                                        <>
-                                            test {item.EventName}
-                                        </>
-                                    )
-                                }
-                            </List.Item>
-                        ))}
+                                                <CardIconLabel icon={'team'} description={item.SlotsInfo}/>
+                                            </Card>
+                                        ) :
+                                        (
+                                            <Card className={cx(globalStyles.card, globalStyles.listCard)}
+                                                  style={{borderColor: item.CategoryBackgroundColor}}>
+                                                <div className={globalStyles.listBgColor}
+                                                     style={{backgroundColor: item.CategoryBackgroundColor}}></div>
+                                                <Text>
+                                                    <Ellipsis direction='end'
+                                                              rows={2}
+                                                              content={item.EventName}/>
+                                                </Text>
+                                                <Text>
+                                                    <small>
+                                                        <Ellipsis direction='end'
+                                                                  rows={2}
+                                                                  content={item.EventName}/>
+                                                    </small>
+                                                </Text>
+                                            </Card>
+                                        )
+                                    }
+                                </List.Item>
+                            ))}
+                        </>
                     </List>
-                    <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+                    <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
                 </>
             }
         </>

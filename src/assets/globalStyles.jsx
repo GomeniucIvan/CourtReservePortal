@@ -98,5 +98,36 @@ export const useStyles = createStyles(({ css, token }) => ({
    itemList: css`
       --border-bottom: transparent;
       --adm-color-border: transparent;
+   `,
+   listCardList: css`
+      padding: 0 ${token.padding}px;
+      .adm-list-item-content-main {
+         padding: 0;
+      }
+     .adm-list-body-inner {
+        --padding-left: 0px;
+        --padding-right: 0px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: ${token.padding}px;
+     }
+   `,
+   listCard: css`
+       height: 140px;
+       position: relative;
+
+       * {
+           z-index: 1;
+       }
+   `,
+   listBgColor: css`
+       position: absolute;
+       width: 100%;
+       height: 100%;
+       opacity: 0.06;
+       top: 0;
+       left: 0;
+       z-index: 0 !important;
+       border-radius: ${token.borderRadius}px;
    `
 }));
