@@ -21,5 +21,43 @@ export const useStyles = createStyles(({ css, token }) => ({
    `,
    formNoBottomPadding: css `
     margin-bottom: 0;
+   `,
+   headerRightActions: css`
+      .ant-input {
+         display: none !important;
+         height: 32px;
+      }
+      
+      .ant-input-group{
+         margin-left: -28px;
+
+         .ant-btn{
+            height: 32px;
+            width: 32px;
+            border-radius: ${token.borderRadius}px !important;
+         }
+      }
+      
+      .ant-space-item {
+         .ant-btn-icon-only{
+            height: 32px;
+            width: 32px;
+         }
+      }
+   `,
+   headerSearch: css `
+      
+   `,
+   headerSearchOpened: css `
+      .ant-input {
+         display: initial !important;
+         position: absolute;
+      }
+
+      .ant-input-group{
+         .ant-btn{
+            border-radius: 0px 8px 8px 0px !important;
+         }
+      }
    `
 }));

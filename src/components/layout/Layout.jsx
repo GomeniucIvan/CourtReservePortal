@@ -22,12 +22,11 @@ function Layout() {
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
     }
     
-    // Function to calculate and set the max height for the content area
     const calculateMaxHeight = () => {
-        const windowHeight = window.innerHeight;
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
-        const calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+        const calculatedMaxHeight = viewportHeight - headerHeight - footerHeight;
         setMaxHeight(calculatedMaxHeight);
     };
 
@@ -35,7 +34,18 @@ function Layout() {
         calculateMaxHeight();
 
         window.addEventListener('resize', calculateMaxHeight);
-        return () => window.removeEventListener('resize', calculateMaxHeight);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', calculateMaxHeight);
+            window.visualViewport.addEventListener('scroll', calculateMaxHeight);
+        }
+
+        return () => {
+            window.removeEventListener('resize', calculateMaxHeight);
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', calculateMaxHeight);
+                window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
+            }
+        };
     }, [isFooterVisible, footerContent]);
     
     useEffect(() => {

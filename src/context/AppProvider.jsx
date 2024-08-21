@@ -13,6 +13,7 @@ export const AppProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isMockData, setIsMockData] = useState(true);
     const [dynamicPages, setDynamicPages] = useState([]);
+    const [headerRightIcons, setHeaderRightIcons] = useState(null);
     const stylesToUse = useStyles();
     const { token } = useToken();
     const globalStyles = stylesToUse.styles;
@@ -31,7 +32,9 @@ export const AppProvider = ({ children }) => {
             globalStyles,
             token,
             dynamicPages,
-            setDynamicPages}}>
+            setDynamicPages,
+            setHeaderRightIcons,
+            headerRightIcons}}>
             
             {children}
         </AppContext.Provider>
