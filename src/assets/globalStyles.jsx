@@ -13,7 +13,21 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
    `,
    clickableCard: css`
-   
+    position: relative;
+      &:after {
+         position: absolute;
+         content: '';
+         background-image: url(/svg/hand-pointer.svg);
+         -webkit-background-size: contain;
+         -webkit-background-size: contain;
+         background-size: contain;
+         background-repeat: no-repeat;
+         width: 18px;
+         height: 19px;
+         right: 4px;
+         bottom: 4px;
+         opacity: 0.2;
+      }
    `,
    inputBottomLink: css`
       padding-top: ${token.Custom.buttonPadding}px;
@@ -29,7 +43,7 @@ export const useStyles = createStyles(({ css, token }) => ({
       }
       
       .ant-input-group{
-         margin-left: -28px;
+         margin-left: -30px;
 
          .ant-btn{
             height: 32px;
@@ -43,6 +57,10 @@ export const useStyles = createStyles(({ css, token }) => ({
             height: 32px;
             width: 32px;
          }
+      }
+      
+      svg {
+         fill: #565656;
       }
    `,
    headerSearch: css `
@@ -59,5 +77,9 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-radius: 0px 8px 8px 0px !important;
          }
       }
+   `,
+   itemList: css`
+      --border-bottom: transparent;
+      --adm-color-border: transparent;
    `
 }));

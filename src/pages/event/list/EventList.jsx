@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import mockData from "../../../mocks/event-data.json";
 import {useApp} from "../../../context/AppProvider.jsx";
 import { InfiniteScroll, List } from 'antd-mobile'
-import {anyInList, toBoolean} from "../../../utils/Utils.jsx";
+import {anyInList, equalString, toBoolean} from "../../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
 import {Button, Segmented, Space, Input} from "antd";
@@ -23,11 +23,11 @@ function EventList() {
     const [isSearchOpened, setIsSearchOpened] = useState(false);
     const [displayFormatStyle, setDisplayFormatStyle] = useState(fromLocalStorage('event-list-format', 'list'))
     const [isSearchLoading, setIsSearchLoading] = useState();
-    
+
     useEffect(() => {
-        
+
     }, [])
-    
+
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(
@@ -38,12 +38,12 @@ function EventList() {
                         setIsSearchOpened(true);
                     }
                 }}>
-                    <Search rootClassName={cx(globalStyles.headerSearch, globalStyles.headerSearchOpened )}
+                    <Search rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened )}
                             placeholder={`Search for ${t('Event(s)')}`}
                             style={{ width: 0 }} />
                 </div>
 
-                
+
                 <Segmented
                     defaultValue={displayFormatStyle}
                     onChange={(e) => {
@@ -87,19 +87,30 @@ function EventList() {
             alert('todo eve list')
         }
     }
-    
+
     return (
         <>
             {anyInList(events) &&
                 <>
-                    <List>
+                    <List className={globalStyles.itemList}>
                         {events.map((item, index) => (
-                            <List.Item key={index}  onClick={() => {
+                            <List.Item key={index} arrowIcon={false} onClick={() => {
                                 let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.EventId);
                                 setPage(setDynamicPages, item.EventName, route);
                                 navigate(route);
                             }}>
-                                {item.EventName}
+                                {equalString(displayFormatStyle, 'list') ?
+                                    (
+                                        <>
+                                            {item.EventName}
+                                        </>
+                                    ):
+                                    (
+                                        <>
+                                            test {item.EventName}
+                                        </>
+                                    )
+                                }
                             </List.Item>
                         ))}
                     </List>

@@ -23,11 +23,14 @@ export const AntdProvider = ({ children }) => {
                             controlHeightLG: 46,
                             borderRadius: 8,
                             paddingXS: 8,
-                            marginXS: 8
+                            marginXS: 8,
+                            defaultShadow: 'none',
+                            primaryShadow: 'none',
                         },
                         Input: {
                             borderRadius: 8,
-                            controlHeight: 40
+                            controlHeight: 40,
+                            activeShadow: 'none'
                         },
                         Form: {
                             labelFontSize: 14,
