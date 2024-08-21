@@ -11,6 +11,7 @@ import {Button, Segmented, Space, Input} from "antd";
 import {BarsOutlined, AppstoreOutlined, FilterOutlined, SearchOutlined} from "@ant-design/icons";
 import {t} from "../../../utils/OrganizationUtils.jsx";
 import {cx} from "antd-style";
+import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 const { Search } = Input;
 
 function EventList() {
@@ -20,6 +21,7 @@ function EventList() {
     const [loadedEvents, setLoadedEvents] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [isSearchOpened, setIsSearchOpened] = useState(false);
+    const [displayFormatStyle, setDisplayFormatStyle] = useState(fromLocalStorage('event-list-format', 'list'))
     const [isSearchLoading, setIsSearchLoading] = useState();
     
     useEffect(() => {
@@ -43,9 +45,14 @@ function EventList() {
 
                 
                 <Segmented
+                    defaultValue={displayFormatStyle}
+                    onChange={(e) => {
+                        setDisplayFormatStyle(e);
+                        toLocalStorage('event-list-format', e);
+                    }}
                     options={[
-                        { value: 'List', icon: <BarsOutlined /> },
-                        { value: 'Kanban', icon: <AppstoreOutlined /> },
+                        { value: 'list', icon: <BarsOutlined /> },
+                        { value: 'card', icon: <AppstoreOutlined /> },
                     ]}
                 />
 
