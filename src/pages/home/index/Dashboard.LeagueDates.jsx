@@ -25,7 +25,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
         <SlickSlider>
             {leaguesDates.map((leagueSessionDate, index) => (
                 <div key={index}>
-                    <Card className={cx(styles.card, globalStyles.clickableCard)} onClick={() => navigate(`/league/details/${leagueSessionDate.Id}`)}>
+                    <Card className={cx(globalStyles.card, globalStyles.clickableCard)} onClick={() => navigate(`/league/details/${leagueSessionDate.Id}`)}>
                         <Title level={5} className={styles.noTopPadding}>
                             <CardIconLabel icon={'paddle'} description={`Game Day #${leagueSessionDate.GameDayNumber}`} />
                         </Title>

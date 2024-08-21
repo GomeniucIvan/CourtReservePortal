@@ -6,10 +6,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         background-color: blue;
         border-radius: 0 0 50% 50% / 18px;
     `,
-    card: css`
-        border: 1px solid ${token.colorBorder};
-        position: relative;
-    `,
+
     organizationContainer: css`
         transition: all 100ms ease-in-out;
         border-radius: 10px;
@@ -35,10 +32,6 @@ export const useStyles = createStyles(({ css, token }) => ({
         background: #ffffff;
         border-radius: 11px;
         border: 1px solid;
-    `,
-    cardItemTitle: css`
-        margin: 0;
-        margin-right: 25px;
     `,
     cardItemDescription: css`
         letter-spacing: 0.1px;
@@ -77,16 +70,6 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-bottom-right-radius: 0;
             border-bottom-left-radius: 0;
         }
-        
-    `,
-    circleIcon: css`
-        width: 18px;
-        height: 18px;
-        border-radius: 50px;
-        display: block;
-    `,
-    noBottomPadding: css`
-        margin-bottom: 0 !important;
     `,
     noTopPadding: css`
         margin-top: 0 !important;

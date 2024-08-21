@@ -12,6 +12,19 @@ export const useStyles = createStyles(({ css, token }) => ({
            padding-left: 14px !important;
         }
    `,
+   card: css`
+        border: 1px solid ${token.colorBorder};
+        position: relative;
+    `,
+   noBottomPadding: css`
+        margin-bottom: 0 !important;
+    `,
+   entityTypeCircleIcon: css`
+        width: 18px;
+        height: 18px;
+        border-radius: 50px;
+        display: block;
+    `,
    clickableCard: css`
     position: relative;
       &:after {
@@ -34,8 +47,12 @@ export const useStyles = createStyles(({ css, token }) => ({
       padding-bottom: ${token.Form.itemMarginBottom}px;
    `,
    formNoBottomPadding: css `
-    margin-bottom: 0;
+        margin-bottom: 0;
    `,
+   cardItemTitle: css`
+        margin: 0;
+        margin-right: 25px;
+    `,
    headerRightActions: css`
       .ant-input {
          display: none !important;

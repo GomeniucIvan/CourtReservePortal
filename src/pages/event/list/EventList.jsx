@@ -3,19 +3,22 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import mockData from "../../../mocks/event-data.json";
 import {useApp} from "../../../context/AppProvider.jsx";
-import { InfiniteScroll, List } from 'antd-mobile'
-import {anyInList, equalString, toBoolean} from "../../../utils/Utils.jsx";
+import {Card, Ellipsis, InfiniteScroll, List} from 'antd-mobile'
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
-import {Button, Segmented, Space, Input} from "antd";
+import {Button, Segmented, Space, Input, Flex, Tag, Typography, Progress} from "antd";
 import {BarsOutlined, AppstoreOutlined, FilterOutlined, SearchOutlined} from "@ant-design/icons";
 import {t} from "../../../utils/OrganizationUtils.jsx";
 import {cx} from "antd-style";
 import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
+import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
+import SVG from "../../../components/svg/SVG.jsx";
 const { Search } = Input;
+const { Title, Text } = Typography;
 
 function EventList() {
-    const{isMockData, setIsFooterVisible, setDynamicPages, setHeaderRightIcons, globalStyles} = useApp();
+    const{isMockData, setIsFooterVisible, setDynamicPages, setHeaderRightIcons, globalStyles, token} = useApp();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loadedEvents, setLoadedEvents] = useState([]);
@@ -101,9 +104,36 @@ function EventList() {
                             }}>
                                 {equalString(displayFormatStyle, 'list') ?
                                     (
-                                        <>
-                                            {item.EventName}
-                                        </>
+                                        <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
+                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                                <div className={globalStyles?.cardIconBlock}>
+                                                    <i className={globalStyles.entityTypeCircleIcon} style={{backgroundColor: item.CategoryBackgroundColor}}></i>
+                                                </div>
+
+                                                <div>
+                                                    <Title level={5} className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
+                                                        <Ellipsis direction='end' content={item.EventName}/>
+                                                    </Title>
+
+                                                    <Text><small><Ellipsis direction='end' content={item.CategoryName}/></small></Text>
+                                                </div>
+                                            </Flex>
+
+                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                                <div className={globalStyles?.cardIconBlock}>
+                                                    <SVG icon={'calendar-time'} color={token.colorPrimary}/>
+                                                </div>
+
+                                                <div>
+                                                    <Text>Thu, Aug 22nd - Sat, Aug 24th {isNullOrEmpty(item.TotalUpcomingDatesCount) ? '' : <strong>({item.TotalUpcomingDatesCount} dates)</strong> }</Text>
+                                                    <Text style={{display : 'block'}}>10a - 10:30a</Text>
+                                                </div>
+                                            </Flex>
+
+                                            <Progress percent={90} status="active" strokeColor={{ from: token.colorPrimary, to: 'red' }} />
+
+                                            <CardIconLabel icon={'team'} description={item.SlotsInfo} />
+                                        </Card>
                                     ):
                                     (
                                         <>

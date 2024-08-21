@@ -1,7 +1,7 @@
 ﻿import { createStyles } from 'antd-style';
 
 export const useStyles = createStyles(({ css, token }) => ({
-    card: css `
+    cardPrimary: css `
         position: relative;
         border: 1px solid ${token.colorPrimary};
         .ant-card-body {

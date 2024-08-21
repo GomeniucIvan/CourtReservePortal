@@ -31,12 +31,12 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
 
     const announcementCard = (globalAnn, isUrgent) => {
         return (
-            <Card className={cx(styles.card, globalStyles.clickableCard)} onClick={() => {
+            <Card className={cx(globalStyles.card, globalStyles.clickableCard)} onClick={() => {
                 let route = toRoute(HomeRouteNames.ANNOUNCEMENT_DETAILS, 'id', globalAnn.Id);
                 setPage(setDynamicPages, globalAnn.Title, route);
                 navigate(route);
             }}>
-                <Title level={5} className={cx(styles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
+                <Title level={5} className={cx(globalStyles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
                     <Ellipsis direction='end' content={globalAnn.Title} />
                 </Title>
 

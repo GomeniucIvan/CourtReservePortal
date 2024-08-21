@@ -18,7 +18,7 @@ function CardLinks({links}) {
                 <>
                     {links.map((link, index) => (
                         <Col span={8} key={index}>
-                            <Card className={styles.card}>
+                            <Card className={styles.cardPrimary}>
                                 <Text className={styles.cardName}>
                                     <Ellipsis direction='end' rows={2} content={link.Name}/>
                                 </Text>
