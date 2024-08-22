@@ -33,7 +33,7 @@ function Layout() {
                 navigate('/dashboard');
             }
         }
-    }, [location.pathname]);
+    }, []);
     
     
     const calculateMaxHeight = () => {
@@ -75,6 +75,10 @@ function Layout() {
             }
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;
+            }
+            .adm-list {
+                --padding-left: ${token.padding}px;
+                --padding-right: ${token.padding}px;
             }
             
             .adm-center-popup-body .adm-button{

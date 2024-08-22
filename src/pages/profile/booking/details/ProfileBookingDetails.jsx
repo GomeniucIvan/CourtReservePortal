@@ -11,7 +11,6 @@ function ProfileBookingDetails() {
     const navigate = useNavigate();
     let { id } = useParams();
     
-    const [isSearchOpened, setIsSearchOpened] = useState(false);
     const {
         setIsFooterVisible,
         setHeaderRightIcons,
