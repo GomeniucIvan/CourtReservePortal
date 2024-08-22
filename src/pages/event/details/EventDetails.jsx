@@ -19,15 +19,12 @@ function EventDetails() {
         } else{
             alert('todo home index')
         }
+        resetFetch();
     }
 
     useEffect(() => {
         if (shouldFetch) {
-            const fetchData = async () => {
-                await loadData(true);
-                resetFetch();
-            };
-            fetchData();
+            loadData(true);
         }
     }, [shouldFetch, resetFetch]);
     

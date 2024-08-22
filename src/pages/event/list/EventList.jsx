@@ -22,7 +22,7 @@ const {Search} = Input;
 const {Title, Text} = Typography;
 
 function EventList() {
-    const {isMockData, setIsFooterVisible, setDynamicPages, setHeaderRightIcons, globalStyles, token} = useApp();
+    const {isMockData, setIsFooterVisible, setDynamicPages, setHeaderRightIcons, globalStyles, token, shouldFetch, resetFetch} = useApp();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loadedEvents, setLoadedEvents] = useState([]);
@@ -31,6 +31,24 @@ function EventList() {
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('event-list-format', 'list'), 'list'));
     const [isFilterOpened, setIsFilterOpened] = useState(false);
 
+    const loadData = (refresh) => {
+        if (isMockData) {
+            const list = mockData.list.List;
+            setEvents(list.slice(0, 20));
+            setLoadedEvents(list);
+        } else {
+            alert('todo eve list')
+        }
+
+        resetFetch();
+    }
+
+    useEffect(() => {
+        if (shouldFetch) {
+            loadData(true);
+        }
+    }, [shouldFetch, resetFetch]);
+    
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(
@@ -62,13 +80,8 @@ function EventList() {
                 <Button type="default" icon={<FilterOutlined/>} size={'medium'} onClick={() => setIsFilterOpened(true)}/>
             </Space>
         )
-        if (isMockData) {
-            const list = mockData.list.List;
-            setEvents(list.slice(0, 20));
-            setLoadedEvents(list);
-        } else {
-            alert('todo eve list')
-        }
+
+        loadData();
     }, []);
 
     const loadMore = async () => {

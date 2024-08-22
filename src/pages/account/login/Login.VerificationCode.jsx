@@ -94,20 +94,8 @@ function LoginVerificationCode() {
     }, [formik?.values?.passcode]);
 
     useEffect(() => {
-        setIsFooterVisible(true);
-
-        setFooterContent(
-            <PaddingBlock topBottom={true}>
-                <Button type="primary"
-                        block
-                        htmlType="submit"
-                        loading={isLoading}
-                        onClick={formik.handleSubmit}>
-                    Continue
-                </Button>
-            </PaddingBlock>
-        );
-    }, [isLoading]);
+        setIsFooterVisible(false);
+    }, []);
     
     return (
         <>
@@ -134,6 +122,14 @@ function LoginVerificationCode() {
                         </Col>
                     </Row>
                 </Form>
+
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        loading={isLoading}
+                        onClick={formik.handleSubmit}>
+                    Continue
+                </Button>
             </PaddingBlock>
         </>
     )

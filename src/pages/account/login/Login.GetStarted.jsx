@@ -21,30 +21,8 @@ function LoginGetStarted() {
     const { token } = useToken();
 
     useEffect(() => {
-        setIsFooterVisible(true);
-
-        setFooterContent(
-            <PaddingBlock topBottom={true}>
-                <Button type="primary"
-                        block htmlType="submit"
-                        loading={isLoading}
-                        onClick={startFormik.handleSubmit}
-                >
-                    Login
-                </Button>
-                <Paragraph className={'sm-padding'}>
-                    By continuing, you agree to CourtReserve’s{' '}
-                    <Link href="https://ant.design" target="_blank">
-                        Terms of Service{' '}
-                    </Link>
-                    and{' '}
-                    <Link href="https://ant.design" target="_blank">
-                        Privacy Policy
-                    </Link>
-                </Paragraph>
-            </PaddingBlock>
-        );
-    }, [isLoading]);
+        setIsFooterVisible(false);
+    }, []);
 
     const startInitialValues = {
         email: ''
@@ -107,6 +85,24 @@ function LoginGetStarted() {
                                placeholder='Enter your email'
                                required='true'
                     />
+
+                    <Button type="primary"
+                            block htmlType="submit"
+                            loading={isLoading}
+                            onClick={startFormik.handleSubmit}
+                    >
+                        Login
+                    </Button>
+                    <Paragraph className={'sm-padding'}>
+                        By continuing, you agree to CourtReserve’s{' '}
+                        <Link href="https://ant.design" target="_blank">
+                            Terms of Service{' '}
+                        </Link>
+                        and{' '}
+                        <Link href="https://ant.design" target="_blank">
+                            Privacy Policy
+                        </Link>
+                    </Paragraph>
                 </PageForm>
             </PaddingBlock>
         </>

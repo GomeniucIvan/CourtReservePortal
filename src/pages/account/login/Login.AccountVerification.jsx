@@ -34,20 +34,8 @@ function LoginAccountVerification() {
     }, []);
 
     useEffect(() => {
-        setIsFooterVisible(true);
-        
-        setFooterContent(
-            <PaddingBlock topBottom={true}>
-                <Button type="primary"
-                        block
-                        htmlType="submit"
-                        loading={isLoading}
-                        onClick={formik.handleSubmit}>
-                    Continue
-                </Button>
-            </PaddingBlock>
-        );
-    }, [isLoading]);
+        setIsFooterVisible(false);
+    }, []);
     
     const validationSchema = Yup.object({
         email: Yup.string().required('Email is required.'),
@@ -140,6 +128,14 @@ function LoginAccountVerification() {
                            Forgot Password
                        </Link>
                    </Flex>
+
+                   <Button type="primary"
+                           block
+                           htmlType="submit"
+                           loading={isLoading}
+                           onClick={formik.handleSubmit}>
+                       Continue
+                   </Button>
                </PageForm>
            </PaddingBlock>
        </>

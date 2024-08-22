@@ -20,7 +20,7 @@ export const AppProvider = ({ children }) => {
     
     const globalStyles = stylesToUse.styles;
     const refreshData = () => setShouldFetch(true);
-    const resetFetch = () => setShouldFetch(false);
+    const resetFetch = () => {if (shouldFetch){setShouldFetch(false)}};
     
     return (
         <AppContext.Provider value={{

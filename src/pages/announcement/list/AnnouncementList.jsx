@@ -11,18 +11,29 @@ import {isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 function AnnouncementList() {
     const navigate = useNavigate();
     const { styles } = useStyles();
-    const{isMockData, setIsFooterVisible} = useApp();
+    const{isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons} = useApp();
     const [announcements, setAnnouncements] = useState([]);
 
-    useEffect(() => {
-        setIsFooterVisible(true);
-        
+    const loadData = (refresh) => {
         if (isMockData){
             const list = mockData.dashboard.announcement_list;
             setAnnouncements(list);
         } else{
             alert('todo ann list')
         }
+        resetFetch();
+    }
+
+    useEffect(() => {
+        if (shouldFetch) {
+            loadData(true);
+        }
+    }, [shouldFetch, resetFetch]);
+    
+    useEffect(() => {
+        setIsFooterVisible(true);
+        setHeaderRightIcons(null);
+        loadData();
     }, []);
 
 

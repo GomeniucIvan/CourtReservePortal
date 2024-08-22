@@ -12,12 +12,10 @@ function AnnouncementDetails() {
     const navigate = useNavigate();
     let { id } = useParams();
     const { styles } = useStyles();
-    const{isMockData, setIsFooterVisible} = useApp();
+    const{isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons} = useApp();
     const [announcements, setAnnouncements] = useState([]);
 
-    useEffect(() => {
-        setIsFooterVisible(true);
-
+    const loadData = (refresh) => {
         if (isMockData){
             const list = mockData.dashboard.announcement_list;
             if (anyInList(list)){
@@ -26,6 +24,21 @@ function AnnouncementDetails() {
         } else{
             alert('todo ann list')
         }
+
+        resetFetch();
+    }
+
+    useEffect(() => {
+        if (shouldFetch) {
+            loadData(true);
+        }
+    }, [shouldFetch, resetFetch]);
+    
+    useEffect(() => {
+        setIsFooterVisible(true);
+        setHeaderRightIcons(null);
+
+        loadData();
     }, []);
     
     return (
