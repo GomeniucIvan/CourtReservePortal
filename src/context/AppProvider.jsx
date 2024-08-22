@@ -16,7 +16,11 @@ export const AppProvider = ({ children }) => {
     const [headerRightIcons, setHeaderRightIcons] = useState(null);
     const stylesToUse = useStyles();
     const { token } = useToken();
+    const [shouldFetch, setShouldFetch] = useState(false);
+    
     const globalStyles = stylesToUse.styles;
+    const refreshData = () => setShouldFetch(true);
+    const resetFetch = () => setShouldFetch(false);
     
     return (
         <AppContext.Provider value={{
@@ -34,7 +38,10 @@ export const AppProvider = ({ children }) => {
             dynamicPages,
             setDynamicPages,
             setHeaderRightIcons,
-            headerRightIcons}}>
+            headerRightIcons,
+            shouldFetch, 
+            refreshData,
+            resetFetch}}>
             
             {children}
         </AppContext.Provider>

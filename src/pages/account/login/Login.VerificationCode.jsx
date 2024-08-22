@@ -13,6 +13,7 @@ import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
+import {toAuthLocalStorage} from "../../../storage/AppStorage.jsx";
 const { Paragraph, Title, Text } = Typography;
 const { useToken } = theme;
 
@@ -20,7 +21,6 @@ function LoginVerificationCode() {
     const navigate = useNavigate();
     const { token } = useToken();
     const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, globalStyles, setFooterContent } = useApp();
-    const {setIsLoggedIn, setIsOrgMember} = useAuth();
     
     const email = formikData?.email;
     const password = formikData?.password;
@@ -64,10 +64,10 @@ function LoginVerificationCode() {
 
                     if (memberExists) {
                         setFormikData(null);
-                        setIsLoggedIn(true);
-                        setIsOrgMember(true);
-                        setIsLoading(false);
                         navigate(HomeRouteNames.INDEX);
+                        toAuthLocalStorage('member', {email: values.email});
+                        
+                        setIsLoading(false);
                     } else {
                         ModalClose({
                             title: 'Passcode',

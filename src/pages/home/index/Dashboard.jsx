@@ -12,26 +12,42 @@ import CardLinks from "../../../components/cardlinks/CardLinks.jsx";
 import {cx} from "antd-style";
 import {Typography} from "antd";
 const { Title } = Typography;
+import { sleep } from 'antd-mobile/es/utils/sleep'
 
 function Dashboard() {
     const {token} = useApp();
     const navigate = useNavigate();
     const { styles } = useStyles();
-    const { isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent } = useApp();
+    const { isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch } = useApp();
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [organizations, setOrganizations] = useState([]);
-    
-    useEffect(() => {
-        setIsFooterVisible(true);
-        setFooterContent('');
+
+    const loadData = async () => {
         if (isMockData){
             const dashboardData = mockData.dashboard.index;
             setDashboardData(dashboardData);
         } else{
             alert('todo home index')
         }
+    }
+    
+    useEffect(() => {
+        if (shouldFetch) {
+            const fetchData = async () => {
+                await sleep(1000);
+                await loadData();
+                resetFetch();
+            };
+            fetchData();
+        }
+    }, [shouldFetch, resetFetch]);
+    
+    useEffect(() => {
+        setIsFooterVisible(true);
+        setFooterContent('');
+        loadData();
     }, []);
     
     return (

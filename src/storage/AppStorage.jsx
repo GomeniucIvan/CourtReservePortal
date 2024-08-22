@@ -1,4 +1,5 @@
 const appLocalStorage = 'courtreserve-online';
+const authLocalStorage = 'courtreserve-auth';
 
 export const toLocalStorage = (key, value) => {
     const storedData = JSON.parse(localStorage.getItem(appLocalStorage)) || {};
@@ -10,3 +11,18 @@ export const fromLocalStorage = (key, defaultValue) => {
     const storedData = JSON.parse(localStorage.getItem(appLocalStorage)) || {};
     return storedData[key] !== undefined ? storedData[key] : defaultValue;
 };
+
+export const toAuthLocalStorage = (key, value) => {
+    const storedData = JSON.parse(localStorage.getItem(authLocalStorage)) || {};
+    storedData[key] = value;
+    localStorage.setItem(authLocalStorage, JSON.stringify(storedData));
+};
+
+export const fromAuthLocalStorage = (key, defaultValue) => {
+    const storedData = JSON.parse(localStorage.getItem(authLocalStorage)) || {};
+    return storedData[key] !== undefined ? storedData[key] : defaultValue;
+};
+
+export const authMember = () => {
+    return  fromAuthLocalStorage('member');
+}

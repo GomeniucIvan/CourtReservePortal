@@ -1,4 +1,4 @@
-﻿import {Route, Routes, useLocation} from 'react-router-dom';
+﻿import {Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import AppRoutes from "../../routes/AppRoutes.jsx";
 import "./Layout.module.less";
 import Header from "../header/Header.jsx";
@@ -7,6 +7,8 @@ import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
+import {authMember} from "../../storage/AppStorage.jsx";
+import {PullToRefresh} from "antd-mobile";
 
 function Layout() {
     const location = useLocation();
@@ -14,13 +16,23 @@ function Layout() {
     const headerRef = useRef(null);
     const footerRef = useRef(null);
     const { styles } = useStyles();
+    const navigate = useNavigate()
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, isFooterLoading, dynamicPages, token } = useApp();
+    const { footerContent, isFooterVisible, dynamicPages, token, refreshData } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
     }
+    
+    useEffect(() =>{
+        if (isNullOrEmpty(authMember())){
+            navigate('/');
+        } else{
+            navigate('/dashboard');
+        }
+    }, [])
+    
     
     const calculateMaxHeight = () => {
         const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -81,18 +93,20 @@ function Layout() {
                 }
 
                 <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
-                    <Routes>
-                        {AppRoutes.map((route, index) => {
-                            const {element, path, ...rest} = route;
+                    <PullToRefresh onRefresh={refreshData}>
+                        <Routes>
+                            {AppRoutes.map((route, index) => {
+                                const {element, path, ...rest} = route;
 
-                            return <Route
-                                onUpdate={() => window.scrollTo(0, 0)}
-                                key={index}
-                                path={path}
-                                {...rest}
-                                element={element}/>;
-                        })}
-                    </Routes>
+                                return <Route
+                                    onUpdate={() => window.scrollTo(0, 0)}
+                                    key={index}
+                                    path={path}
+                                    {...rest}
+                                    element={element}/>;
+                            })}
+                        </Routes>
+                    </PullToRefresh>
                 </div>
 
                 <div ref={footerRef}>

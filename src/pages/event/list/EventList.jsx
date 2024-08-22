@@ -15,6 +15,8 @@ import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx"
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import SVG from "../../../components/svg/SVG.jsx";
 import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.jsx";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 
 const {Search} = Input;
 const {Title, Text} = Typography;
@@ -27,6 +29,7 @@ function EventList() {
     const [hasMore, setHasMore] = useState(true);
     const [isSearchOpened, setIsSearchOpened] = useState(false);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('event-list-format', 'list'), 'list'));
+    const [isFilterOpened, setIsFilterOpened] = useState(false);
 
     useEffect(() => {
 
@@ -61,7 +64,7 @@ function EventList() {
                     ]}
                 />
 
-                <Button type="default" icon={<FilterOutlined/>} size={'medium'}/>
+                <Button type="default" icon={<FilterOutlined/>} size={'medium'} onClick={() => setIsFilterOpened(true)}/>
             </Space>
         )
         if (isMockData) {
@@ -97,7 +100,8 @@ function EventList() {
         <>
             {anyInList(events) &&
                 <>
-                    <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)} style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
+                    <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
+                          style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
                         <>
                             {events.map((item, index) => (
                                 <List.Item span={12}
@@ -126,7 +130,7 @@ function EventList() {
                                                         <Text>
                                                             <small>
                                                                 <Ellipsis direction='end'
-                                                                               content={item.CategoryName}/>
+                                                                          content={item.CategoryName}/>
                                                             </small>
                                                         </Text>
                                                     </div>
@@ -152,8 +156,9 @@ function EventList() {
                                             </Card>
                                         ) :
                                         (
-                                            <Card className={cx(globalStyles.card, globalStyles.listCard)}
-                                                  style={{borderColor: item.CategoryBackgroundColor}}>
+                                            <Card
+                                                className={cx(globalStyles.card, globalStyles.listCard, globalStyles.clickableCard)}
+                                                style={{borderColor: item.CategoryBackgroundColor}}>
                                                 <div className={globalStyles.listBgColor}
                                                      style={{backgroundColor: item.CategoryBackgroundColor}}></div>
                                                 <Text>
@@ -176,6 +181,17 @@ function EventList() {
                         </>
                     </List>
                     <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
+
+                    <DrawerBottom showDrawer={isFilterOpened}
+                                  closeDrawer={() => setIsFilterOpened(false)}
+                                  showButton={true}
+                                  confirmButtonText={'Filter'}
+                                  label='Filter'
+                                  onConfirmButtonClick={() => {
+                                      setIsFilterOpened(false);
+                                  }}>
+                        <div>test</div>
+                    </DrawerBottom>
                 </>
             }
         </>

@@ -3,15 +3,11 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isOrgMember, setIsOrgMember] = useState(false);
+    const [isLoggedIn] = useState(false);
     
     return (
         <AuthContext.Provider value={{
-            isLoggedIn,
-            setIsLoggedIn,
-            isOrgMember,
-            setIsOrgMember}}>
+            isLoggedIn}}>
             {children}
         </AuthContext.Provider>
     );

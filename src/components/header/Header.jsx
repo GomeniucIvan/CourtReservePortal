@@ -6,13 +6,13 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {NavBar} from "antd-mobile";
 import {useAuth} from "../../context/AuthProvider.jsx";
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
+import {authMember} from "../../storage/AppStorage.jsx";
 
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { isLoading, headerRightIcons } = useApp();
     const { styles } = useStyles();
-    const {isLoggedIn} = useAuth();
     
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
@@ -29,7 +29,7 @@ const Header = forwardRef((props, ref) => {
         if (lastPath) {
             navigate(`${lastPath.path}`);
         } else {
-            if (isLoggedIn){
+            if (!isNullOrEmpty(authMember())){
                 navigate(`/dashboard`);   
             } else {
                 navigate(`/`); 
