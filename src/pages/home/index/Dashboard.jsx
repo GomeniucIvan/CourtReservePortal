@@ -16,15 +16,14 @@ import { sleep } from 'antd-mobile/es/utils/sleep'
 
 function Dashboard() {
     const {token} = useApp();
-    const navigate = useNavigate();
     const { styles } = useStyles();
-    const { isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch } = useApp();
+    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch } = useApp();
     const [selectedOrganization, setSelectedOrganization] = useState(null);
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [organizations, setOrganizations] = useState([]);
 
-    const loadData = async () => {
+    const loadData = async (refresh) => {
         if (isMockData){
             const dashboardData = mockData.dashboard.index;
             setDashboardData(dashboardData);
@@ -36,8 +35,7 @@ function Dashboard() {
     useEffect(() => {
         if (shouldFetch) {
             const fetchData = async () => {
-                await sleep(1000);
-                await loadData();
+                await loadData(true);
                 resetFetch();
             };
             fetchData();

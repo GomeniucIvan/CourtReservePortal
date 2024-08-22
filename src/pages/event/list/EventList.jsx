@@ -32,10 +32,6 @@ function EventList() {
     const [isFilterOpened, setIsFilterOpened] = useState(false);
 
     useEffect(() => {
-
-    }, [])
-
-    useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
@@ -50,7 +46,6 @@ function EventList() {
                         placeholder={`Search for ${t('Event(s)')}`}
                         style={{width: 0}}/>
                 </div>
-
 
                 <Segmented
                     defaultValue={!isListDisplay ? 'card' : 'list'}
