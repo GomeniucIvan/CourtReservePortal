@@ -38,7 +38,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
                       setPage(setDynamicPages, globalAnn.Title, route);
                       navigate(route);
                   }}>
-                <Title level={5} className={cx(globalStyles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
+                <Title level={5} className={cx(globalStyles.cardItemTitle, isUrgent && globalStyles.urgentcardItemTitle)}>
                     <Ellipsis direction='end' content={globalAnn.Title}/>
                 </Title>
 
@@ -61,7 +61,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
                     {announcements.map((globalAnn, index) => (
                         <div key={index}>
                             {toBoolean(globalAnn.IsUrgent) ? (
-                                <Badge.Ribbon text='Urgent' color="red" className={styles.urgentRibbon}>
+                                <Badge.Ribbon text='Urgent' color="red" className={globalStyles.urgentRibbon}>
                                     {announcementCard(globalAnn, true)}
                                 </Badge.Ribbon>
                             ) : (

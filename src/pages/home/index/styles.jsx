@@ -51,12 +51,6 @@ export const useStyles = createStyles(({ css, token }) => ({
     urgentHideAnnouncementButton: css`
         right: 56px;
     `,
-    urgentcardItemTitle: css `
-        margin-right: 80px;
-    `,
-    urgentRibbon: css `
-        top: 12px;
-    `,
     segmentCard: css `
         //margin: 0px ${token.padding}px;
         --adm-card-body-padding-block: 0px;

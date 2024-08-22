@@ -19,19 +19,21 @@ function Layout() {
     const navigate = useNavigate()
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, dynamicPages, token, refreshData } = useApp();
+    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
     }
-    
-    useEffect(() =>{
-        if (isNullOrEmpty(authMember())){
+
+    useEffect(() => {
+        if (isNullOrEmpty(authMember())) {
             navigate('/');
-        } else{
-            navigate('/dashboard');
+        } else {
+            if (location.pathname === '/') {
+                navigate('/dashboard');
+            }
         }
-    }, [])
+    }, [location.pathname]);
     
     
     const calculateMaxHeight = () => {

@@ -112,7 +112,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         gap: ${token.padding}px;
      }
    `,
-   listCard: css`
+   listCardGrid: css`
        height: 140px;
        position: relative;
 
@@ -129,5 +129,11 @@ export const useStyles = createStyles(({ css, token }) => ({
        left: 0;
        z-index: 0 !important;
        border-radius: ${token.borderRadius}px;
-   `
+   `,
+   urgentcardItemTitle: css `
+        margin-right: 80px;
+    `,
+   urgentRibbon: css `
+        top: 12px;
+    `,
 }));

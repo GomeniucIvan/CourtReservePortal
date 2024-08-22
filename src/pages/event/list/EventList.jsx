@@ -20,7 +20,16 @@ const {Search} = Input;
 const {Title, Text} = Typography;
 
 function EventList() {
-    const {isMockData, setIsFooterVisible, setDynamicPages, setHeaderRightIcons, globalStyles, token, shouldFetch, resetFetch} = useApp();
+    const {
+        isMockData,
+        setIsFooterVisible,
+        setDynamicPages,
+        setHeaderRightIcons,
+        globalStyles,
+        token,
+        shouldFetch,
+        resetFetch
+    } = useApp();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loadedEvents, setLoadedEvents] = useState([]);
@@ -46,7 +55,7 @@ function EventList() {
             loadData(true);
         }
     }, [shouldFetch, resetFetch]);
-    
+
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(
@@ -75,7 +84,8 @@ function EventList() {
                     ]}
                 />
 
-                <Button type="default" icon={<FilterOutlined/>} size={'medium'} onClick={() => setIsFilterOpened(true)}/>
+                <Button type="default" icon={<FilterOutlined/>} size={'medium'}
+                        onClick={() => setIsFilterOpened(true)}/>
             </Space>
         )
 
@@ -163,7 +173,7 @@ function EventList() {
                                         ) :
                                         (
                                             <Card
-                                                className={cx(globalStyles.card, globalStyles.listCard, globalStyles.clickableCard)}
+                                                className={cx(globalStyles.card, globalStyles.listCardGrid, globalStyles.clickableCard)}
                                                 style={{borderColor: item.CategoryBackgroundColor}}>
                                                 <div className={globalStyles.listBgColor}
                                                      style={{backgroundColor: item.CategoryBackgroundColor}}></div>

@@ -39,7 +39,7 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
                     </div>
 
                     <div>
-                        <Title level={5} className={cx(globalStyles.cardItemTitle, isUnpaid && styles.urgentcardItemTitle, globalStyles.noBottomPadding)}>
+                        <Title level={5} className={cx(globalStyles.cardItemTitle, isUnpaid && globalStyles.urgentcardItemTitle, globalStyles.noBottomPadding)}>
                             <Ellipsis direction='end' content={booking.Title}/>
                         </Title>
 
@@ -62,13 +62,13 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
     }
     
     return (
-        <EntityCard title={t('Reservations')} link={'/reservations/:orgId'} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={t('Reservations')} link={ProfileRouteNames.RESERVATION_LIST} isFetching={isFetching} addPadding={true}>
             {anyInList(bookings) ? (
                 <SlickSlider>
                     {bookings.map((booking, index) => (
                         <div key={index}>
                             {toBoolean(booking.IsUnpaid) ? (
-                                <Badge.Ribbon text='Unpaid' color={'orange'} className={styles.urgentRibbon}>
+                                <Badge.Ribbon text='Unpaid' color={'orange'} className={globalStyles.urgentRibbon}>
                                     {bookingTemplate(booking, true)}
                                 </Badge.Ribbon>
                             ) : (

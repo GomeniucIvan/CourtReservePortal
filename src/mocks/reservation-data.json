@@ -267,7 +267,8 @@
         "AnyCourtTypes": null,
         "AnyCourts": null,
         "IsWaitlistRow": null,
-        "CourtWaitlistDisplay": ""
+        "CourtWaitlistDisplay": "",
+        "IsUnpaid": true
       }
     ],
     "IsMobileLayout": false,
