@@ -93,7 +93,11 @@ function Layout() {
                 }
 
                 <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
-                    <PullToRefresh onRefresh={refreshData}>
+                    <PullToRefresh onRefresh={refreshData}
+                                   pullingText={'Pull down to refresh.'}
+                                   refreshingText={'Loading...'} 
+                                   completeText={'Refresh successful.'} 
+                                   canReleaseText={'Release to refresh immediately.'}>
                         <Routes>
                             {AppRoutes.map((route, index) => {
                                 const {element, path, ...rest} = route;
