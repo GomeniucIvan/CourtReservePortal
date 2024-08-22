@@ -1,25 +1,14 @@
-import EventList from "../pages/event/list/EventList.jsx";
-import EventCategoryList from "../pages/event/categories/EventCategoryList.jsx";
-import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
-import EventRegistration from "../pages/event/registration/EventRegistration.jsx";
+import ProfileBookingList from "../pages/profile/booking/list/ProfileBookingList.jsx";
+
+export const ProfileRouteNames = {
+    RESERVATION_DETAILS: `/reservation/details/:id`,
+};
 
 const ProfileRoutes = [
     {
-        path: '/event-list/:orgId',
-        element: <EventList />
-    },
-    {
-        path: '/event-category-list/:orgId',
-        element: <EventCategoryList />
-    },
-    {
-        path: '/event-calendar/:orgId',
-        element: <EventCalendar />
-    },
-    {
-        path: '/event-registration/:orgId/:resId',
-        element: <EventRegistration />
-    },
+        path: ProfileRouteNames.RESERVATION_DETAILS,
+        element: <ProfileBookingList />
+    }
 ];
 
 export default ProfileRoutes;

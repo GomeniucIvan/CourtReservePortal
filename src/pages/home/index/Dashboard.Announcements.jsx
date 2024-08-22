@@ -3,10 +3,11 @@ import {anyInList, toBoolean} from "../../../utils/Utils.jsx";
 import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
 import {Typography, Badge} from "antd";
-import { Ellipsis } from 'antd-mobile'
+import {Ellipsis} from 'antd-mobile'
 import {CloseOutline} from "antd-mobile-icons";
-const { Text, Title } = Typography;
-import { Button, Card } from 'antd-mobile'
+
+const {Text, Title} = Typography;
+import {Button, Card} from 'antd-mobile'
 import {cx} from "antd-style";
 import {useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
@@ -14,13 +15,13 @@ import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {useEffect} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 
-const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
+const DashboardAnnouncements = ({dashboardData, isFetching}) => {
     let {setDynamicPages, globalStyles} = useApp();
     let announcements = dashboardData?.GlobalAnnouncements;
     let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
-    const { styles } = useStyles();
+    const {styles} = useStyles();
     const navigate = useNavigate();
-    
+
     if (!toBoolean(showAnnouncementsBlock)) {
         return '';
     }
@@ -31,20 +32,21 @@ const DashboardAnnouncements = ({ dashboardData, isFetching }) => {
 
     const announcementCard = (globalAnn, isUrgent) => {
         return (
-            <Card className={cx(globalStyles.card, globalStyles.clickableCard)} onClick={() => {
-                let route = toRoute(HomeRouteNames.ANNOUNCEMENT_DETAILS, 'id', globalAnn.Id);
-                setPage(setDynamicPages, globalAnn.Title, route);
-                navigate(route);
-            }}>
+            <Card className={cx(globalStyles.card, globalStyles.clickableCard)}
+                  onClick={() => {
+                      let route = toRoute(HomeRouteNames.ANNOUNCEMENT_DETAILS, 'id', globalAnn.Id);
+                      setPage(setDynamicPages, globalAnn.Title, route);
+                      navigate(route);
+                  }}>
                 <Title level={5} className={cx(globalStyles.cardItemTitle, isUrgent && styles.urgentcardItemTitle)}>
-                    <Ellipsis direction='end' content={globalAnn.Title} />
+                    <Ellipsis direction='end' content={globalAnn.Title}/>
                 </Title>
 
                 <Button className={cx(styles.hideAnnouncementButton, isUrgent && styles.urgentHideAnnouncementButton)}>
-                    <CloseOutline />
+                    <CloseOutline/>
                 </Button>
                 <Text className={styles.cardItemDescription}>
-                    <Ellipsis direction='end' rows={2} content={(globalAnn.Content || globalAnn.ContextText)} />
+                    <Ellipsis direction='end' rows={2} content={(globalAnn.Content || globalAnn.ContextText)}/>
                 </Text>
                 <Text><small>{globalAnn.UpdatedOnDisplay}</small></Text>
             </Card>

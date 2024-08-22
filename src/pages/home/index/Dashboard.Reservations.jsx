@@ -9,13 +9,17 @@ const { Text, Title } = Typography;
 import {useStyles} from "./styles.jsx";
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import {useApp} from "../../../context/AppProvider.jsx";
+import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
+import {useNavigate} from "react-router-dom";
 
 const DashboardReservations = ({dashboardData, isFetching}) => {
     let showMyBookings = dashboardData?.ShowMyBookings;
     let bookings = dashboardData?.Bookings;
     const { styles } = useStyles();
-    
-    const {globalStyles, token} = useApp();
+    const {globalStyles, token, setDynamicPages} = useApp();
+    const navigate = useNavigate();
     
     if (!toBoolean(showMyBookings)) {
         return '';
@@ -23,7 +27,12 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
 
     const bookingTemplate = (booking, isUnpaid) => {
         return (
-            <Card className={cx(globalStyles.card, globalStyles.clickableCard)} onClick={() => navigate(`/announcement/details/${globalAnn.Id}`)}>
+            <Card className={cx(globalStyles.card, globalStyles.clickableCard)}
+                  onClick={() => {
+                      let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', booking.ReservationId);
+                      setPage(setDynamicPages, booking.Title, route);
+                      navigate(route);
+                  }}>
                 <Flex gap={token.Custom.cardIconPadding} align={'center'}>
                     <div className={globalStyles?.cardIconBlock}>
                         <i className={globalStyles.entityTypeCircleIcon} style={{backgroundColor: booking.TypeBgColor}}></i>

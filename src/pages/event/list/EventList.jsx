@@ -1,5 +1,4 @@
-﻿import styles from './EventList.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import mockData from "../../../mocks/event-data.json";
 import {useApp} from "../../../context/AppProvider.jsx";
@@ -7,7 +6,7 @@ import {Card, Ellipsis, List} from 'antd-mobile'
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
-import {Button, Segmented, Space, Input, Flex, Typography, Progress, Row, Col} from "antd";
+import {Button, Segmented, Space, Input, Flex, Typography, Progress} from "antd";
 import {BarsOutlined, AppstoreOutlined, FilterOutlined} from "@ant-design/icons";
 import {t} from "../../../utils/OrganizationUtils.jsx";
 import {cx} from "antd-style";
@@ -15,7 +14,6 @@ import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx"
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import SVG from "../../../components/svg/SVG.jsx";
 import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.jsx";
-import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 
 const {Search} = Input;
