@@ -1,5 +1,5 @@
 ﻿import lessStyles from './ProfileBookingList.module.less'
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
@@ -22,6 +22,7 @@ const {Title, Text} = Typography;
 
 function ProfileBookingList() {
     const navigate = useNavigate();
+    
     const [isSearchOpened, setIsSearchOpened] = useState(false);
     const {
         setIsFooterVisible,
@@ -30,7 +31,8 @@ function ProfileBookingList() {
         isMockData,
         globalStyles,
         setDynamicPages,
-        token
+        token,
+        setFooterContent
     } = useApp();
     const [bookings, setBookings] = useState([]);
     const [isFilterOpened, setIsFilterOpened] = useState(false);
@@ -54,6 +56,7 @@ function ProfileBookingList() {
 
     useEffect(() => {
         setIsFooterVisible(true);
+        setFooterContent('');
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
                 {/*//onSearch={onSearch}*/}
@@ -167,9 +170,15 @@ function ProfileBookingList() {
                                        key={index}
                                        arrowIcon={false}
                                        onClick={() => {
-                                           let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.EventId);
-                                           setPage(setDynamicPages, item.EventName, route);
-                                           navigate(route);
+                                           if (isNullOrEmpty(booking.EventId)) {
+                                               let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', booking.ReservationId);
+                                               setPage(setDynamicPages, booking.ReservationTypeName, route);
+                                               navigate(route);
+                                           } else {
+                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', booking.ReservationId);
+                                               setPage(setDynamicPages, booking.EventName, route);
+                                               navigate(route);
+                                           }
                                        }}>
                                 {toBoolean(booking.IsUnpaid) ? (
                                     <Badge.Ribbon text='Unpaid' color={'orange'} className={globalStyles.urgentRibbon}>
