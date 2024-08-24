@@ -44,6 +44,8 @@ function Layout() {
         setMaxHeight(calculatedMaxHeight);
     };
     
+    
+    //window port unavailable to resize correctly with pull and reload
     // const calculateMaxHeight = () => {
     //     const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     //     const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;

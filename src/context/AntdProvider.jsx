@@ -40,7 +40,7 @@ export const AntdProvider = ({ children }) => {
                         Form: {
                             labelFontSize: 14,
                             verticalLabelPadding: '0 0 8px',
-                            labelColonMarginInlineStart: 4,
+                            labelColonMarginInlineStart: 0,
                             colorError: "rgb(255,77,80)",
                             itemMarginBottom: 16,
                             labelRequiredMarkColor: "rgb(255,77,80)",

@@ -1,14 +1,25 @@
-﻿import React, { Component } from 'react';
-import {toBoolean } from "../../utils/Utils.jsx";
+﻿import React from 'react';
+import {toBoolean} from "../../utils/Utils.jsx";
 import {Popup} from "antd-mobile";
 import {Flex, Typography, Button} from "antd";
 import {CloseOutline, SearchOutline} from "antd-mobile-icons";
 import {useApp} from "../../context/AppProvider.jsx";
-import {useNavigate} from "react-router-dom";
-const { Title } = Typography;
+import {useStyles} from "./styles.jsx";
+const {Title} = Typography;
 
-const DrawerBottom = ({ showDrawer, closeDrawer, children,label, addSearch, showButton, confirmButtonText,onConfirmButtonClick }) => {
+const DrawerBottom = ({
+                          showDrawer,
+                          closeDrawer,
+                          children,
+                          label,
+                          addSearch,
+                          showButton,
+                          confirmButtonText,
+                          onConfirmButtonClick,
+                          maxHeightVh = 60
+                      }) => {
     const {token} = useApp();
+    const {styles} = useStyles();
     
     return (
         <Popup
@@ -19,28 +30,37 @@ const DrawerBottom = ({ showDrawer, closeDrawer, children,label, addSearch, show
             onClose={() => {
                 closeDrawer();
             }}
-            bodyStyle={{ maxHeight: '50vh' }}
+            bodyStyle={{
+                height: 'auto',
+                maxHeight: `${maxHeightVh}vh`,
+                display: 'flex',
+                flexDirection: 'column'
+            }}
         >
-            <div> 
+            <>
                 <Flex justify={'space-between'} align={'center'} style={{padding: `${token.padding}px`}}>
                     <Title level={4} style={{margin: 0}}>{label}</Title>
 
                     <Flex gap={token.Custom.buttonPadding}>
-                        {addSearch && <Button type="default" icon={<SearchOutline />} size={'middle'} />}
-                        <Button type="default" icon={<CloseOutline />} size={'middle'} onClick={() => closeDrawer()} />
+                        {addSearch && <Button type="default" icon={<SearchOutline/>} size={'middle'}/>}
+                        <Button type="default" icon={<CloseOutline/>} size={'middle'} onClick={() => closeDrawer()}/>
                     </Flex>
                 </Flex>
-
-                {children}
+                
+                <div className={styles.drawerBottom}>
+                    {children}
+                </div>
 
                 {showButton &&
-                    <div style={{padding: `${token.padding}px` }}>
+                    <div className={styles.drawerButton}>
                         <Button type='primary' block onClick={() => {
                             onConfirmButtonClick();
-                        }}>{confirmButtonText}</Button>
+                        }}>
+                            {confirmButtonText}
+                        </Button>
                     </div>
                 }
-            </div>
+            </>
         </Popup>
     )
 }

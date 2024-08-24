@@ -1,11 +1,12 @@
 import {useEffect, useRef, useState} from "react";
-import {Select} from "antd";
+import {Select, Typography} from "antd";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
+const { Paragraph } = Typography;
 
 const FormSelect = ({
                         label,
@@ -164,7 +165,9 @@ const FormSelect = ({
                 </Select>
 
                 {hasError && meta && typeof meta.error === 'string' ? (
-                    <div className='form-invalid'>{meta.error}</div>
+                    <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
+                        {meta.error}
+                    </Paragraph>
                 ) : null}
             </div>
 

@@ -157,5 +157,9 @@ export const useStyles = createStyles(({ css, token }) => ({
        margin-right: 0;
        padding-right: 2px;
     }
+   `,
+   alertDivider: css`
+      margin: 5px 0;
+      border-color: ${token.colorInfoBorder};
    `
 }));
