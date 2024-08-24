@@ -50,6 +50,7 @@ function ReservationRegistration() {
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
     const [guests, setGuests] = useState([]);
     const [selectedGuest, setSelectedGuest] = useState(null);
+    const [isPlayersSearch, setIsPlayersSearch] = useState(false);
 
     const initialValues = {
         reservationTypeId: '',
@@ -94,7 +95,7 @@ function ReservationRegistration() {
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
-        setFooterContent(<PaddingBlock>
+        setFooterContent(<PaddingBlock topBottom={true}>
             <Button type="primary"
                     block
                     htmlType="submit"
@@ -195,6 +196,16 @@ function ReservationRegistration() {
                 : guest
         ));
         setSelectedGuest(null);
+    }
+
+    const onPlayersSearch = (searchVal) => {
+        if (isMockData){
+            setIsPlayersSearch(true);
+            
+            setTimeout(function(){
+                setIsPlayersSearch(false);
+            }, 2000);
+        }
     }
 
     return (
@@ -313,64 +324,67 @@ function ReservationRegistration() {
                         message={<div><strong>Reservation TypeName</strong> min number... 5 minutes note</div>}
                         type="info"/>
 
-                   <div>
-                       <Text style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Player(s)</Text>
-                       <Card className={cx(globalStyles.card, styles.playersCard)}>
-                           <Flex vertical>
-                               <Flex justify={'space-between'} align={'center'}>
-                                   <Flex gap={token.Custom.cardIconPadding}>
-                                       <Flex justify={'center'} align={'center'}
-                                             style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
-                                           <Title level={5} className={cx(globalStyles.noSpace)}>NM</Title>
-                                       </Flex>
+                    <div>
+                        <Text
+                            style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Player(s)</Text>
+                        <Card className={cx(globalStyles.card, styles.playersCard)}>
+                            <Flex vertical>
+                                <Flex justify={'space-between'} align={'center'}>
+                                    <Flex gap={token.Custom.cardIconPadding}>
+                                        <Flex justify={'center'} align={'center'}
+                                              style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
+                                            <Title level={5} className={cx(globalStyles.noSpace)}>NM</Title>
+                                        </Flex>
 
-                                       <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                           <Text>
-                                               <Ellipsis direction='end' content={'Nicholas McDonaghue'}/>
-                                           </Text>
-                                           <Text type="secondary">$2.50</Text>
-                                       </Flex>
-                                   </Flex>
+                                        <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                            <Text>
+                                                <Ellipsis direction='end' content={'Nicholas McDonaghue'}/>
+                                            </Text>
+                                            <Text type="secondary">$2.50</Text>
+                                        </Flex>
+                                    </Flex>
 
-                                   <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
-                               </Flex>
+                                    <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
+                                </Flex>
 
-                               <Divider className={styles.playersDivider}/>
-                               <Flex justify={'space-between'} align={'center'}>
-                                   <Flex gap={token.Custom.cardIconPadding}>
-                                       <Flex justify={'center'} align={'center'}
-                                             style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
-                                           <Title level={5} className={cx(globalStyles.noSpace)}>SM</Title>
-                                       </Flex>
+                                <Divider className={styles.playersDivider}/>
+                                <Flex justify={'space-between'} align={'center'}>
+                                    <Flex gap={token.Custom.cardIconPadding}>
+                                        <Flex justify={'center'} align={'center'}
+                                              style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
+                                            <Title level={5} className={cx(globalStyles.noSpace)}>SM</Title>
+                                        </Flex>
 
-                                       <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                           <Text>
-                                               <Ellipsis direction='end' content={'Smith Valmont'}/>
-                                           </Text>
-                                           <Text type="secondary">$2.50</Text>
-                                       </Flex>
-                                   </Flex>
+                                        <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                            <Text>
+                                                <Ellipsis direction='end' content={'Smith Valmont'}/>
+                                            </Text>
+                                            <Text type="secondary">$2.50</Text>
+                                        </Flex>
+                                    </Flex>
 
-                                   <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
-                               </Flex>
+                                    <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
+                                </Flex>
 
-                               <Button type="primary"
-                                       block
-                                       ghost
-                                       htmlType={'button'}
-                                       style={{marginTop: `${token.padding}px`}}
-                                       onClick={() => {
-                                           setShowSearchPlayers(true)
-                                       }}>
-                                   Search Player(s)
-                               </Button>
-                           </Flex>
-                       </Card>
-                   </div>
+                                <Button type="primary"
+                                        block
+                                        ghost
+                                        htmlType={'button'}
+                                        style={{marginTop: `${token.padding}px`}}
+                                        onClick={() => {
+                                            setShowSearchPlayers(true)
+                                        }}>
+                                    Search Player(s)
+                                </Button>
+                            </Flex>
+                        </Card>
+                    </div>
 
                     <div>
-                        <Text style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Guest(s)</Text>
-                        <Card className={cx(globalStyles.card, anyInList(guests) ? styles.playersCard : styles.noPlayersCard)}>
+                        <Text
+                            style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Guest(s)</Text>
+                        <Card
+                            className={cx(globalStyles.card, anyInList(guests) ? styles.playersCard : styles.noPlayersCard)}>
                             <Flex vertical>
                                 {guests.map((guest, index) => {
                                     const isLastIndex = index === guests.length - 1;
@@ -381,7 +395,8 @@ function ReservationRegistration() {
                                         `${firstName} ${lastName}`;
 
                                     return (
-                                        <div key={index} style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
+                                        <div key={index}
+                                             style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
                                             <Flex justify={'space-between'}
                                                   align={'center'}
                                                   onClick={() => {
@@ -572,15 +587,24 @@ function ReservationRegistration() {
 
             {/*Search player*/}
             <DrawerBottom
-                maxHeightVh={90}
+                maxHeightVh={80}
                 showDrawer={showSearchPlayers}
                 closeDrawer={addPlayers}
                 label={'Search Player'}
+                onSearch={onPlayersSearch}
                 showButton={true}
-                confirmButtonText={'Save'}
+                searchType={2}
+                addSearch={true}
+                isSearchLoading={isPlayersSearch}
+                confirmButtonText={'Close'}
                 onConfirmButtonClick={addPlayers}
             >
-                search
+                <PaddingBlock>
+                    {/*//todo iv change to dynamic calculation*/}
+                    <Flex vertical style={{minHeight: `calc(80vh - 98px - 72px)`}}>
+                        test
+                    </Flex>
+                </PaddingBlock>
             </DrawerBottom>
 
             {/*Search player*/}

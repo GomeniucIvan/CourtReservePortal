@@ -161,5 +161,23 @@ export const useStyles = createStyles(({ css, token }) => ({
    alertDivider: css`
       margin: 5px 0;
       border-color: ${token.colorInfoBorder};
+   `,
+   search: css `
+    .ant-input-affix-wrapper {
+       height: ${token.Input.controlHeight}px;
+    }
+      
+      .anticon-close-circle {
+         svg {
+            font-size: 18px;
+            margin-top: 4px;
+         }
+      }
+
+      .ant-input-affix-wrapper-focused {
+         .ant-input-search-button {
+            border-color: ${token.colorPrimary};
+         }
+      }
    `
 }));

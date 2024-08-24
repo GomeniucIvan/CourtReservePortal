@@ -1,11 +1,14 @@
 ﻿import React from 'react';
-import {toBoolean} from "../../utils/Utils.jsx";
+import {equalString, toBoolean} from "../../utils/Utils.jsx";
 import {Popup} from "antd-mobile";
-import {Flex, Typography, Button} from "antd";
+import {Flex, Typography, Button, Input} from "antd";
 import {CloseOutline, SearchOutline} from "antd-mobile-icons";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
-const {Title} = Typography;
+import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
+
+const {Title, Text} = Typography;
+const {Search} = Input;
 
 const DrawerBottom = ({
                           showDrawer,
@@ -13,14 +16,23 @@ const DrawerBottom = ({
                           children,
                           label,
                           addSearch,
+                          searchType = 1, // 1 header icon, bottom search like search players
                           showButton,
                           confirmButtonText,
                           onConfirmButtonClick,
-                          maxHeightVh = 60
+                          onSearch,
+                          maxHeightVh = 60,
+                          isSearchLoading
                       }) => {
-    const {token} = useApp();
+    const {token, globalStyles} = useApp();
     const {styles} = useStyles();
-    
+
+    const oInputSearch = (e) => {
+        if (onSearch && typeof onSearch === 'function') {
+            onSearch(e.target.value);
+        }
+    }
+
     return (
         <Popup
             visible={toBoolean(showDrawer)}
@@ -38,15 +50,36 @@ const DrawerBottom = ({
             }}
         >
             <>
-                <Flex justify={'space-between'} align={'center'} style={{padding: `${token.padding}px`}}>
-                    <Title level={4} style={{margin: 0}}>{label}</Title>
+                <Flex vertical>
+                    {(!addSearch || !equalString(searchType, 2) )&&
+                        <Flex justify={'space-between'} align={'center'} style={{padding: `${token.padding}px`}}>
+                            <Title level={4} style={{margin: 0}}>{label}</Title>
 
-                    <Flex gap={token.Custom.buttonPadding}>
-                        {addSearch && <Button type="default" icon={<SearchOutline/>} size={'middle'}/>}
-                        <Button type="default" icon={<CloseOutline/>} size={'middle'} onClick={() => closeDrawer()}/>
-                    </Flex>
+                            <Flex gap={token.Custom.buttonPadding}>
+                                {(addSearch && equalString(searchType, 1)) &&
+                                    <Button type="default" icon={<SearchOutline/>} size={'middle'}/>}
+                                <Button type="default" icon={<CloseOutline/>} size={'middle'}
+                                        onClick={() => closeDrawer()}/>
+                            </Flex>
+                        </Flex>
+                    }
+
+                    {(addSearch && equalString(searchType, 2)) &&
+                        <PaddingBlock topBottom={true}>
+                            <Text style={{marginBottom: `${token.Custom.buttonPadding/2}px`, display: 'block'}}>
+                                <strong>
+                                    Search player(s)
+                                </strong>
+                            </Text>
+                            <Search placeholder="Type to search player(s)"
+                                    allowClear
+                                    rootClassName={globalStyles.search}
+                                    loading={toBoolean(isSearchLoading)} 
+                                    onChange={oInputSearch}/>
+                        </PaddingBlock>
+                    }
                 </Flex>
-                
+
                 <div className={styles.drawerBottom}>
                     {children}
                 </div>

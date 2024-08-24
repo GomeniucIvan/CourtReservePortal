@@ -19,7 +19,7 @@ function Layout() {
     const navigate = useNavigate()
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData } = useApp();
+    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData,  } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
@@ -41,6 +41,7 @@ function Layout() {
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
         const calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+        
         setMaxHeight(calculatedMaxHeight);
     };
     
@@ -70,7 +71,7 @@ function Layout() {
                 window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
             }
         };
-    }, []);
+    }, [isFooterVisible, footerContent]);
     
     useEffect(() => {
         calculateMaxHeight();
