@@ -17,6 +17,11 @@ export const useStyles = createStyles(({ css, token }) => ({
             padding: 10px;
         }
     `,
+  noPlayersCard: css`
+    .ant-card-body {
+      padding: 0px;
+    }
+  `,
     playersDivider: css`
         margin: 12px 0;
     `

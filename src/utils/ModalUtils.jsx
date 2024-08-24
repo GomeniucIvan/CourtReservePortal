@@ -1,33 +1,25 @@
 import { Modal } from 'antd-mobile'
-
- export const ModalWarning = (data) => {
-//     Modal.confirm({
-//         title: 'Custom Title',
-//         content: '人在天边月上明',
-//         centered: true,
-//         okText: 'Confirm',
-//         cancelText: 'Cancel',
-//         okType: 'primary',
-//         onOk: () => {
-//             console.log('Confirmed');
-//         },
-//         onCancel: () => {
-//             console.log('Cancelled');
-//         },
-//     });
-}
+import {equalString} from "./Utils.jsx";
 
 export const ModalRemove = (data) => {
-    Modal.confirm({
+    Modal.show({
         content: data.content,
         closeOnAction: true,
-        onConfirm: data.onConfirm,
+        onAction: (e) => {
+            if (equalString(e?.key, 'remove')) {
+                data.onRemove(e);
+            }
+        },
         actions: [
             {
-                key: 'close',
-                text: 'Close',
+                key: 'remove',
+                text: 'Remove',
                 primary: true,
-            }
+            },
+            {
+                key: 'cancel',
+                text: 'Cancel',
+            },
         ],
     })
 }

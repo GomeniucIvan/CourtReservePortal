@@ -16,7 +16,7 @@ import {cx} from "antd-style";
 import SVG from "../../components/svg/SVG.jsx";
 import {Ellipsis} from "antd-mobile";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
-import {focus, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {anyInList, focus, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import FormTextarea from "../../form/formtextarea/FormTextArea.jsx";
 import {Modal} from 'antd-mobile'
 import {ModalClose, ModalRemove} from "../../utils/ModalUtils.jsx";
@@ -369,8 +369,8 @@ function ReservationRegistration() {
                    </div>
 
                     <div>
-                        <Text style={{marginBottom: `${token.Custom.buttonPadding}`, display: 'block'}}>Guest(s)</Text>
-                        <Card className={cx(globalStyles.card, styles.playersCard)}>
+                        <Text style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Guest(s)</Text>
+                        <Card className={cx(globalStyles.card, anyInList(guests) ? styles.playersCard : styles.noPlayersCard)}>
                             <Flex vertical>
                                 {guests.map((guest, index) => {
                                     const isLastIndex = index === guests.length - 1;
@@ -615,12 +615,14 @@ function ReservationRegistration() {
                             <Button type="primary"
                                     danger
                                     block
+                                    ghost
                                     htmlType={'button'}
                                     onClick={() => {
                                         ModalRemove({
                                             content: 'Are you sure you want to remove Guest?',
                                             showIcon: false,
-                                            onConfirm: () => {
+                                            onRemove: (e) => {
+                                                console.log(e)
                                                 setGuests(prevGuests => prevGuests.filter(g => g !== selectedGuest));
                                                 setSelectedGuest(null);
                                             }

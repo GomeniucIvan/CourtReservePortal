@@ -8,7 +8,7 @@ import {Button, Form, theme, Typography, Modal} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
-import {ModalClose, ModalWarning} from "../../../utils/ModalUtils.jsx";
+import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {focus} from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import PageForm from "../../../form/pageform/PageForm.jsx";
