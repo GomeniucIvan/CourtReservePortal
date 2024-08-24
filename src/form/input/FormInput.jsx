@@ -23,8 +23,7 @@ const FormInput = ({ label,
                        isExpiryDate,
                        className,
                        ...props }) => {
-    const { token } = useApp();
-    const {styles} = useStyles();
+    const { token, globalStyles } = useApp();
     
     let field = '';
     let meta = null;
@@ -75,7 +74,7 @@ const FormInput = ({ label,
     }
 
     return (
-        <div className={cx(styles.formBlock, className) }>
+        <div className={cx(globalStyles.formBlock, className) }>
             <label htmlFor={name}
                    style={{
                        fontSize: token.Form.labelFontSize,

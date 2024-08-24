@@ -65,9 +65,6 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-bottom-left-radius: 0;
         }
     `,
-    noTopPadding: css`
-        margin-top: 0 !important;
-    `,
     leagueBlock: css`
         position: relative;
         margin: 2px ${token.padding}px 0px 16px;

@@ -32,6 +32,11 @@ export const AntdProvider = ({ children }) => {
                             controlHeight: 40,
                             activeShadow: 'none'
                         },
+                        Select: {
+                            borderRadius: 8,
+                            controlHeight: 40,
+                            activeShadow: 'none'
+                        },
                         Form: {
                             labelFontSize: 14,
                             verticalLabelPadding: '0 0 8px',

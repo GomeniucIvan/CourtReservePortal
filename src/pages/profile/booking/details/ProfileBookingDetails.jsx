@@ -1,8 +1,9 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {Input, Typography} from "antd";
+import {Button, Input, Typography} from "antd";
 import {useApp} from "../../../../context/AppProvider.jsx";
 import mockData from "../../../../mocks/reservation-data.json";
+import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
 
 const {Search} = Input;
 const {Title, Text} = Typography;
@@ -10,6 +11,8 @@ const {Title, Text} = Typography;
 function ProfileBookingDetails() {
     const navigate = useNavigate();
     let { id } = useParams();
+    const [booking, setBooking] = useState(null);
+    const [isFilterOpened, setIsFilterOpened] = useState(false);
     
     const {
         setIsFooterVisible,
@@ -21,9 +24,8 @@ function ProfileBookingDetails() {
         setDynamicPages,
         token
     } = useApp();
-    const [booking, setBooking] = useState(null);
-    const [isFilterOpened, setIsFilterOpened] = useState(false);
 
+    
     const loadData = (refresh) => {
         if (isMockData) {
             const details = mockData.details;
@@ -45,7 +47,7 @@ function ProfileBookingDetails() {
     
     return (
         <>
-           res details {id}
+           <Button onClick={()=> navigate(ProfileRouteNames.RESERVATION_CREATE)}>Create res</Button>
         </>
     )
 }

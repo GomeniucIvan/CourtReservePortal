@@ -136,4 +136,10 @@ export const useStyles = createStyles(({ css, token }) => ({
    urgentRibbon: css `
         top: 12px;
     `,
+   formBlock: css`
+        margin-bottom: ${token.Form.itemMarginBottom}px;
+  `,
+   noTopPadding: css`
+        margin-top: 0 !important;
+    `,
 }));
