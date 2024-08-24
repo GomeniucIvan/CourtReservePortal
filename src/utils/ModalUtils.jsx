@@ -17,6 +17,21 @@ import { Modal } from 'antd-mobile'
 //     });
 }
 
+export const ModalRemove = (data) => {
+    Modal.confirm({
+        content: data.content,
+        closeOnAction: true,
+        onConfirm: data.onConfirm,
+        actions: [
+            {
+                key: 'close',
+                text: 'Close',
+                primary: true,
+            }
+        ],
+    })
+}
+
 export const ModalClose = (data) => {
     Modal.show({
         content: data.content,
