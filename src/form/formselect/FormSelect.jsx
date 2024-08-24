@@ -1,10 +1,12 @@
-import {useEffect, useRef, useState} from "react";
-import {Input, Select, Typography} from "antd";
-import {useStyles} from "./styles.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import { useEffect, useRef, useState } from "react";
+import { Select, Typography, Radio } from "antd";
+import { useStyles } from "./styles.jsx";
+import { equalString, isNullOrEmpty, toBoolean } from "../../utils/Utils.jsx";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
-import {useApp} from "../../context/AppProvider.jsx";
-import {cx} from "antd-style";
+import { useApp } from "../../context/AppProvider.jsx";
+import { cx } from "antd-style";
+import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
+import PaddingBlock from "../../components/paddingblock/PaddingBlock.jsx";
 const { Paragraph } = Typography;
 
 const FormSelect = ({ label,
@@ -24,7 +26,6 @@ const FormSelect = ({ label,
                         ...props }) => {
 
     if (toBoolean(isMulti) && toBoolean(isMobile)) {
-        //todo fix multiple should be for web as well
         return (
             <HtmlMultiSelect
                 label={label}
@@ -40,8 +41,6 @@ const FormSelect = ({ label,
         )
     }
 
-
-    //const [options, setOptions] = useState(list);
     const [selectedOption, setSelectedOption] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [showClearButton, setShowClearButton] = useState(false);
@@ -51,10 +50,10 @@ const FormSelect = ({ label,
     const isRequired = toBoolean(required);
     const { token, globalStyles } = useApp();
     const {styles} = useStyles();
-    
+
     let field = '';
     let meta = null;
-    
+
     if (form && typeof form.getFieldProps === 'function') {
         field = form.getFieldProps(name);
         meta = form.getFieldMeta(name);
@@ -153,7 +152,10 @@ const FormSelect = ({ label,
                     status={hasError ? 'error' : ''}
                 >
                     {options.map((option) => (
-                        <Select.Option key={option[propValue]} value={option[propValue]}>
+                        <Select.Option
+                            key={option[propValue] || `${name}_${option[propText]}`}
+                            value={option[propValue]}
+                        >
                             {option[propText]}
                         </Select.Option>
                     ))}
@@ -165,19 +167,23 @@ const FormSelect = ({ label,
             </div>
 
             {!toBoolean(disabled) &&
-                <DrawerBottom showDrawer={isDrawerOpen} closeDrawer={closeDrawer} label={label} showButton={showClearButton}
-                              confirmButtonText={'Clear'} onConfirmButtonClick={() => setSelectedOption(null)}
-                              selectedValue={selectedOption}>
-                    <>
-                        {options.map((option, index) => (
-                            <div key={`${name}_${option[propValue]}`} onClick={() => onValueSelect(option)}
-                                 className={`${equalString(option[propValue], (isNullOrEmpty(selectedOption) ? -99 : selectedOption[propValue])) ? 'drawer-item-selected' : ''}`}>
-                                <div className='drawer-item'>
-                                    {option[propText]}
-                                </div>
-                            </div>
-                        ))}
-                    </>
+                <DrawerBottom
+                    showDrawer={isDrawerOpen}
+                    closeDrawer={closeDrawer}
+                    label={label}
+                    showButton={showClearButton}
+                    confirmButtonText={'Clear'}
+                    onConfirmButtonClick={() => setSelectedOption(null)}
+                    selectedValue={selectedOption}
+                >
+                    <FormDrawerRadio
+                        options={options}
+                        selectedCurrentValue={selectedOption?.[propValue]}
+                        onValueSelect={onValueSelect}
+                        propText={propText}
+                        propValue={propValue}
+                        name={name}
+                    />
                 </DrawerBottom>
             }
         </>
