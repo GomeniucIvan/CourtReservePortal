@@ -109,7 +109,7 @@ function ReservationRegistration() {
                          propText='Name'
                          propValue='Id' />
             
-            <FormSwitch label={'test'}/>
+            <FormSwitch label={'Allow Players to join this Reservation'}/>
             
         </PaddingBlock>
     )

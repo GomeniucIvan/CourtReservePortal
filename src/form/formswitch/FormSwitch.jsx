@@ -5,7 +5,7 @@ import {Ellipsis} from "antd-mobile";
 import {useState} from "react";
 const {Text} = Typography;
 
-const FormSwitch = ({ checked, label, disabled }) => {
+const FormSwitch = ({ checked, label, disabled, rows = 1 }) => {
     const [isChecked, setIsChecked] = useState(checked);
 
     const handleClick = () => {
@@ -17,7 +17,7 @@ const FormSwitch = ({ checked, label, disabled }) => {
     return (
         <Flex justify={"space-between"} align={"center"} style={{height: 44}}>
             <Text onClick={handleClick}>
-                <Ellipsis direction='end' content={'Long name test to check display Long name test to check display Long name test to check display'}/>
+                <Ellipsis direction='end' rows={rows} content={label}/>
             </Text>
             
             <Switch disabled={disabled} checked={isChecked} onChange={handleClick} />
