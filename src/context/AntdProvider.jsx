@@ -42,7 +42,7 @@ export const AntdProvider = ({ children }) => {
                             verticalLabelPadding: '0 0 8px',
                             labelColonMarginInlineStart: 4,
                             colorError: "rgb(255,77,80)",
-                            itemMarginBottom: 20,
+                            itemMarginBottom: 16,
                             labelRequiredMarkColor: "rgb(255,77,80)",
                             marginXXS: 4,
                             colorBorder: "rgb(217,217,217)"

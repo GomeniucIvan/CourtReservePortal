@@ -8,6 +8,9 @@ import FormSelect from "../../form/formselect/FormSelect.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {useApp} from "../../context/AppProvider.jsx";
+import InlineBlock from "../../components/inlineblock/InlineBlock.jsx";
+import FormInput from "../../form/input/FormInput.jsx";
+import FormSwitch from "../../form/formswitch/FormSwitch.jsx";
 const {Title, Text} = Typography;
 
 function ReservationRegistration() {
@@ -80,6 +83,33 @@ function ReservationRegistration() {
                          required={true}
                          propText='Name'
                          propValue='Id' />
+            
+            <InlineBlock>
+                <FormInput label="Duration"
+                           form={formik}
+                           name='duration'
+                           required={true}
+                           disabled={true}
+                           placeholder='Select Duration'
+                />
+
+                <FormInput label="End Time"
+                           form={formik}
+                           required={true}
+                           name='endTime'
+                           placeholder='Select End Time'
+                />
+            </InlineBlock>
+
+            <FormSelect  form={formik}
+                         name={`courtIds`}
+                         label='Court(s)'
+                         options={reservationTypes}
+                         required={true}
+                         propText='Name'
+                         propValue='Id' />
+            
+            <FormSwitch label={'test'}/>
             
         </PaddingBlock>
     )
