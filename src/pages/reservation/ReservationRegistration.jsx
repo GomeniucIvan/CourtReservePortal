@@ -18,7 +18,7 @@ import {Ellipsis} from "antd-mobile";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import {focus, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import FormTextarea from "../../form/formtextarea/FormTextArea.jsx";
-import { Modal } from 'antd-mobile'
+import {Modal} from 'antd-mobile'
 import {ModalClose, ModalRemove} from "../../utils/ModalUtils.jsx";
 
 const {Title, Text, Link} = Typography;
@@ -50,7 +50,7 @@ function ReservationRegistration() {
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
     const [guests, setGuests] = useState([]);
     const [selectedGuest, setSelectedGuest] = useState(null);
-    
+
     const initialValues = {
         reservationTypeId: '',
         duration: '',
@@ -186,12 +186,17 @@ function ReservationRegistration() {
     const updateSelectedGuest = () => {
         setGuests(prevGuests => prevGuests.map(guest =>
             guest === selectedGuest
-                ? { ...guest, FirstName: formik.values.guestFirstName, LastName: formik.values.guestLastName, Email: formik.values.guestEmail }
+                ? {
+                    ...guest,
+                    FirstName: formik.values.guestFirstName,
+                    LastName: formik.values.guestLastName,
+                    Email: formik.values.guestEmail
+                }
                 : guest
         ));
         setSelectedGuest(null);
     }
-    
+
     return (
         <>
             <PaddingBlock topBottom={true}>
@@ -308,113 +313,119 @@ function ReservationRegistration() {
                         message={<div><strong>Reservation TypeName</strong> min number... 5 minutes note</div>}
                         type="info"/>
 
-                    <Card className={cx(globalStyles.card, styles.playersCard)}>
-                        <Flex vertical>
-                            <Flex justify={'space-between'} align={'center'}>
-                                <Flex gap={token.Custom.cardIconPadding}>
-                                    <Flex justify={'center'} align={'center'}
-                                          style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
-                                        <Title level={5} className={cx(globalStyles.noSpace)}>NM</Title>
-                                    </Flex>
+                   <div>
+                       <Text style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Player(s)</Text>
+                       <Card className={cx(globalStyles.card, styles.playersCard)}>
+                           <Flex vertical>
+                               <Flex justify={'space-between'} align={'center'}>
+                                   <Flex gap={token.Custom.cardIconPadding}>
+                                       <Flex justify={'center'} align={'center'}
+                                             style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
+                                           <Title level={5} className={cx(globalStyles.noSpace)}>NM</Title>
+                                       </Flex>
 
-                                    <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                        <Text>
-                                            <Ellipsis direction='end' content={'Nicholas McDonaghue'}/>
-                                        </Text>
-                                        <Text type="secondary">$2.50</Text>
-                                    </Flex>
-                                </Flex>
+                                       <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                           <Text>
+                                               <Ellipsis direction='end' content={'Nicholas McDonaghue'}/>
+                                           </Text>
+                                           <Text type="secondary">$2.50</Text>
+                                       </Flex>
+                                   </Flex>
 
-                                <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
-                            </Flex>
+                                   <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
+                               </Flex>
 
-                            <Divider className={styles.playersDivider}/>
-                            <Flex justify={'space-between'} align={'center'}>
-                                <Flex gap={token.Custom.cardIconPadding}>
-                                    <Flex justify={'center'} align={'center'}
-                                          style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
-                                        <Title level={5} className={cx(globalStyles.noSpace)}>SM</Title>
-                                    </Flex>
+                               <Divider className={styles.playersDivider}/>
+                               <Flex justify={'space-between'} align={'center'}>
+                                   <Flex gap={token.Custom.cardIconPadding}>
+                                       <Flex justify={'center'} align={'center'}
+                                             style={{width: 48, height: 48, borderRadius: 50, backgroundColor: 'red'}}>
+                                           <Title level={5} className={cx(globalStyles.noSpace)}>SM</Title>
+                                       </Flex>
 
-                                    <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                        <Text>
-                                            <Ellipsis direction='end' content={'Smith Valmont'}/>
-                                        </Text>
-                                        <Text type="secondary">$2.50</Text>
-                                    </Flex>
-                                </Flex>
+                                       <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                           <Text>
+                                               <Ellipsis direction='end' content={'Smith Valmont'}/>
+                                           </Text>
+                                           <Text type="secondary">$2.50</Text>
+                                       </Flex>
+                                   </Flex>
 
-                                <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
-                            </Flex>
+                                   <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
+                               </Flex>
 
-                            <Button type="primary"
-                                    block
-                                    ghost
-                                    htmlType={'button'}
-                                    style={{marginTop: `${token.padding}px`}}
-                                    onClick={() => {
-                                        setShowSearchPlayers(true)
-                                    }}>
-                                Search Player(s)
-                            </Button>
-                        </Flex>
-                    </Card>
+                               <Button type="primary"
+                                       block
+                                       ghost
+                                       htmlType={'button'}
+                                       style={{marginTop: `${token.padding}px`}}
+                                       onClick={() => {
+                                           setShowSearchPlayers(true)
+                                       }}>
+                                   Search Player(s)
+                               </Button>
+                           </Flex>
+                       </Card>
+                   </div>
 
-                    <Card className={cx(globalStyles.card, styles.playersCard)}>
-                        <Flex vertical>
-                            {guests.map((guest, index) => {
-                                const isLastIndex = index === guests.length - 1;
-                                const firstName = guest?.FirstName;
-                                const lastName = guest?.LastName;
-                                const displayFullName = isNullOrEmpty(firstName) && isNullOrEmpty(lastName) ? 
-                                    `Guest #${index + 1}` :
-                                    `${firstName} ${lastName}`;
+                    <div>
+                        <Text style={{marginBottom: `${token.Custom.buttonPadding}`, display: 'block'}}>Guest(s)</Text>
+                        <Card className={cx(globalStyles.card, styles.playersCard)}>
+                            <Flex vertical>
+                                {guests.map((guest, index) => {
+                                    const isLastIndex = index === guests.length - 1;
+                                    const firstName = guest?.FirstName;
+                                    const lastName = guest?.LastName;
+                                    const displayFullName = isNullOrEmpty(firstName) && isNullOrEmpty(lastName) ?
+                                        `Guest #${index + 1}` :
+                                        `${firstName} ${lastName}`;
 
-                                return (
-                                    <div key={index} style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
-                                        <Flex justify={'space-between'}
-                                              align={'center'} 
-                                              onClick={() => {
-                                                  setSelectedGuest(guest);
-                                              }}>
-                                            <Flex gap={token.Custom.cardIconPadding}>
-                                                <Flex justify={'center'} align={'center'}
-                                                      style={{
-                                                          width: 48,
-                                                          height: 48,
-                                                          borderRadius: 50,
-                                                          backgroundColor: 'red'
-                                                      }}>
-                                                    <Title level={5} className={cx(globalStyles.noSpace)}>NM</Title>
+                                    return (
+                                        <div key={index} style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
+                                            <Flex justify={'space-between'}
+                                                  align={'center'}
+                                                  onClick={() => {
+                                                      setSelectedGuest(guest);
+                                                  }}>
+                                                <Flex gap={token.Custom.cardIconPadding}>
+                                                    <Flex justify={'center'} align={'center'}
+                                                          style={{
+                                                              width: 48,
+                                                              height: 48,
+                                                              borderRadius: 50,
+                                                              backgroundColor: 'red'
+                                                          }}>
+                                                        <Title level={5} className={cx(globalStyles.noSpace)}>NM</Title>
+                                                    </Flex>
+
+                                                    <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                                        <Text>
+                                                            <Ellipsis direction='end' content={displayFullName}/>
+                                                        </Text>
+                                                        <Text type="secondary">$2.50</Text>
+                                                    </Flex>
                                                 </Flex>
 
-                                                <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                                    <Text>
-                                                        <Ellipsis direction='end' content={displayFullName}/>
-                                                    </Text>
-                                                    <Text type="secondary">$2.50</Text>
-                                                </Flex>
+                                                <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
                                             </Flex>
-
-                                            <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
-                                        </Flex>
-                                        {(!isLastIndex) &&
-                                            <Divider className={styles.playersDivider}/>
-                                        }
-                                    </div>
-                                )
-                            })}
-                            <Button type="primary"
-                                    block
-                                    ghost
-                                    htmlType={'button'}
-                                    onClick={() => {
-                                        setGuests((prevGuests) => [...prevGuests, {}]);
-                                    }}>
-                                Add Guest
-                            </Button>
-                        </Flex>
-                    </Card>
+                                            {(!isLastIndex) &&
+                                                <Divider className={styles.playersDivider}/>
+                                            }
+                                        </div>
+                                    )
+                                })}
+                                <Button type="primary"
+                                        block
+                                        ghost
+                                        htmlType={'button'}
+                                        onClick={() => {
+                                            setGuests((prevGuests) => [...prevGuests, {}]);
+                                        }}>
+                                    Add Guest
+                                </Button>
+                            </Flex>
+                        </Card>
+                    </div>
                 </Flex>
 
                 <Divider className={globalStyles.formDivider}/>
@@ -598,7 +609,7 @@ function ReservationRegistration() {
                                required={true}
                                name='guestEmail'
                     />
-                    
+
                     <div style={{paddingBottom: `${token.padding}px`}}>
                         <InlineBlock>
                             <Button type="primary"
