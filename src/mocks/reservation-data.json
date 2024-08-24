@@ -1302,5 +1302,37 @@
     "CanSelectCourt": false,
     "IsCourtRequired": false,
     "RedirectPage": null
+  },
+  "loading": {
+    "Durations": [
+      {
+        "Disabled": false,
+        "Group": null,
+        "Selected": false,
+        "Text": "30 minutes",
+        "Value": "30"
+      },
+      {
+        "Disabled": false,
+        "Group": null,
+        "Selected": false,
+        "Text": "1 hour",
+        "Value": "60"
+      },
+      {
+        "Disabled": false,
+        "Group": null,
+        "Selected": true,
+        "Text": "1 hour & 30 minutes",
+        "Value": "90"
+      },
+      {
+        "Disabled": false,
+        "Group": null,
+        "Selected": false,
+        "Text": "2 hours",
+        "Value": "120"
+      }
+    ]
   }
 }

@@ -137,9 +137,25 @@ export const useStyles = createStyles(({ css, token }) => ({
         top: 12px;
     `,
    formBlock: css`
-        margin-bottom: ${token.Form.itemMarginBottom}px;
-  `,
+       margin-bottom: ${token.Form.itemMarginBottom}px;
+       width: 100%;
+   `,
    noTopPadding: css`
         margin-top: 0 !important;
     `,
+   formDivider: css`
+      width: calc(100% + ${token.padding * 2}px);
+      margin-left: -${token.padding}px;
+   `,
+   noSpace: css`
+       margin: 0;
+       padding: 0;
+       margin-bottom: 0px !important;
+   `,
+   checkboxWithLink: css`
+    span {
+       margin-right: 0;
+       padding-right: 2px;
+    }
+   `
 }));

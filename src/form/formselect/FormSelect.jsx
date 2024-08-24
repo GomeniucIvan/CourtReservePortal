@@ -1,15 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import { Select, Typography, Radio } from "antd";
-import { useStyles } from "./styles.jsx";
-import { equalString, isNullOrEmpty, toBoolean } from "../../utils/Utils.jsx";
+import {useEffect, useRef, useState} from "react";
+import {Select} from "antd";
+import {useStyles} from "./styles.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
-import { useApp } from "../../context/AppProvider.jsx";
-import { cx } from "antd-style";
+import {useApp} from "../../context/AppProvider.jsx";
+import {cx} from "antd-style";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
-import PaddingBlock from "../../components/paddingblock/PaddingBlock.jsx";
-const { Paragraph } = Typography;
 
-const FormSelect = ({ label,
+const FormSelect = ({
+                        label,
                         form,
                         propText = "Text",
                         propValue = "Value",
@@ -22,8 +21,10 @@ const FormSelect = ({ label,
                         sLoading,
                         menu,
                         type,
+                        loading,
                         isMulti,
-                        ...props }) => {
+                        ...props
+                    }) => {
 
     if (toBoolean(isMulti) && toBoolean(isMobile)) {
         return (
@@ -48,7 +49,7 @@ const FormSelect = ({ label,
     const [innerPlaceholder, setInnerPlaceholder] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const isRequired = toBoolean(required);
-    const { token, globalStyles } = useApp();
+    const {token, globalStyles} = useApp();
     const {styles} = useStyles();
 
     let field = '';
@@ -142,6 +143,7 @@ const FormSelect = ({ label,
                     placeholder={innerPlaceholder}
                     value={selectedOption?.[propValue]}
                     open={false}
+                    loading={toBoolean(loading)}
                     onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
                     onChange={(value) => {
                         const selectedOptionInList = options.find(option => equalString(option[propValue], value));

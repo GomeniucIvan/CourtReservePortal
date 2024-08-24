@@ -34,15 +34,23 @@ function Layout() {
             }
         }
     }, []);
-    
-    
+
+
     const calculateMaxHeight = () => {
-        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const windowHeight = window.innerHeight;
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
-        const calculatedMaxHeight = viewportHeight - headerHeight - footerHeight;
+        const calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
         setMaxHeight(calculatedMaxHeight);
     };
+    
+    // const calculateMaxHeight = () => {
+    //     const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    //     const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
+    //     const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
+    //     const calculatedMaxHeight = viewportHeight - headerHeight - footerHeight;
+    //     setMaxHeight(calculatedMaxHeight);
+    // };
 
     useEffect(() => {
         calculateMaxHeight();
@@ -60,7 +68,7 @@ function Layout() {
                 window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
             }
         };
-    }, [isFooterVisible, footerContent]);
+    }, []);
     
     useEffect(() => {
         calculateMaxHeight();
@@ -90,42 +98,40 @@ function Layout() {
     }, [token]);
     
     return (
-        <>
-            <div className={styles.root}>
-                {currentRoute &&
-                    <div ref={headerRef}>
-                        <Header route={currentRoute}/>
-                    </div>
-                }
-
-                <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
-                    <PullToRefresh onRefresh={refreshData}
-                                   pullingText={'Pull down to refresh.'}
-                                   refreshingText={'Loading...'} 
-                                   completeText={'Refresh successful.'} 
-                                   canReleaseText={'Release to refresh immediately.'}>
-                        <Routes>
-                            {AppRoutes.map((route, index) => {
-                                const {element, path, ...rest} = route;
-
-                                return <Route
-                                    onUpdate={() => window.scrollTo(0, 0)}
-                                    key={index}
-                                    path={path}
-                                    {...rest}
-                                    element={element}/>;
-                            })}
-                        </Routes>
-                    </PullToRefresh>
+        <div className={styles.root}>
+            {currentRoute &&
+                <div ref={headerRef}>
+                    <Header route={currentRoute}/>
                 </div>
+            }
 
-                <div ref={footerRef}>
-                    {isFooterVisible && (
-                        <> {footerContent ? footerContent : <Footer/>} </>
-                    )}
-                </div>
+            <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
+                <PullToRefresh onRefresh={refreshData}
+                               pullingText={'Pull down to refresh.'}
+                               refreshingText={'Loading...'}
+                               completeText={'Refresh successful.'}
+                               canReleaseText={'Release to refresh immediately.'}>
+                    <Routes>
+                        {AppRoutes.map((route, index) => {
+                            const {element, path, ...rest} = route;
+
+                            return <Route
+                                onUpdate={() => window.scrollTo(0, 0)}
+                                key={index}
+                                path={path}
+                                {...rest}
+                                element={element}/>;
+                        })}
+                    </Routes>
+                </PullToRefresh>
             </div>
-        </>
+
+            <div ref={footerRef}>
+                {isFooterVisible && (
+                    <> {footerContent ? footerContent : <Footer/>} </>
+                )}
+            </div>
+        </div>
     )
 }
 
