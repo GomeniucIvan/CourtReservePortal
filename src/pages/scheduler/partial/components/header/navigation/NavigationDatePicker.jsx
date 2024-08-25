@@ -3,7 +3,6 @@ import {Calendar} from "@progress/kendo-react-dateinputs";
 import {useInternationalization} from "@progress/kendo-react-intl";
 import {Button} from "@progress/kendo-react-buttons";
 import {ZonedDate, getDate, MS_PER_DAY} from "@progress/kendo-date-math";
-import {Popup} from "@progress/kendo-react-popup";
 import {useWindow, useAsyncFocusBlur} from "@progress/kendo-react-common";
 import {calendarIcon} from "@progress/kendo-svg-icons";
 import {
@@ -158,18 +157,18 @@ export const NavigationDatePicker = React.forwardRef((
                     ? text
                     : shortText}
             </Button>
-            <Popup
-                anchor={button.current?.element}
-                show={show}
-            >
-                <Calendar
-                    ref={calendar}
-                    onFocus={onFocus}
-                    onBlur={onBlur}
-                    onChange={handleChange}
-                    value={value}
-                />
-            </Popup>
+            {/*<Popup*/}
+            {/*    anchor={button.current?.element}*/}
+            {/*    show={show}*/}
+            {/*>*/}
+            {/*    <Calendar*/}
+            {/*        ref={calendar}*/}
+            {/*        onFocus={onFocus}*/}
+            {/*        onBlur={onBlur}*/}
+            {/*        onChange={handleChange}*/}
+            {/*        value={value}*/}
+            {/*    />*/}
+            {/*</Popup>*/}
         </React.Fragment>
 
     );
