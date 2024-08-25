@@ -793,6 +793,13 @@
         "Selected": false,
         "Text": "Misc Fee 1",
         "Value": "87844"
+      },
+      {
+        "Disabled": false,
+        "Group": null,
+        "Selected": false,
+        "Text": "Misc Fee 2",
+        "Value": "87845"
       }
     ],
     "ReservationMiscFees": [],
@@ -1351,7 +1358,7 @@
       "OrganizedPlayerDisplay": "igor test ",
       "IsReservationCreator": false,
       "ReservationMemberId": null,
-      "IsFavoriteMember": false
+      "IsFavoriteMember": true
     },
     {
       "MemberId": 5520105,
@@ -1438,7 +1445,7 @@
       "OrganizedPlayerDisplay": "asdasd Aprilll",
       "IsReservationCreator": false,
       "ReservationMemberId": null,
-      "IsFavoriteMember": false
+      "IsFavoriteMember": true
     },
     {
       "MemberId": 5520105,
@@ -1455,7 +1462,7 @@
       "OrganizedPlayerDisplay": "Igor testasdg ",
       "IsReservationCreator": false,
       "ReservationMemberId": null,
-      "IsFavoriteMember": false
+      "IsFavoriteMember": true
     },
     {
       "MemberId": 1507306,
@@ -1472,7 +1479,7 @@
       "OrganizedPlayerDisplay": "Test atasdasd ",
       "IsReservationCreator": false,
       "ReservationMemberId": null,
-      "IsFavoriteMember": false
+      "IsFavoriteMember": true
     }
   ]
 }

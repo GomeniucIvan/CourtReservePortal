@@ -68,10 +68,10 @@ const DrawerBottom = ({
                         <PaddingBlock topBottom={true}>
                             <Text style={{marginBottom: `${token.Custom.buttonPadding/2}px`, display: 'block'}}>
                                 <strong>
-                                    Search player(s)
+                                    {label}
                                 </strong>
                             </Text>
-                            <Search placeholder="Type to search player(s)"
+                            <Search placeholder={`Type to ${label}`}
                                     allowClear
                                     rootClassName={globalStyles.search}
                                     loading={toBoolean(isSearchLoading)} 

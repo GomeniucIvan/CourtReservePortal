@@ -51,7 +51,11 @@ function ReservationRegistration() {
     const [guests, setGuests] = useState([]);
     const [selectedGuest, setSelectedGuest] = useState(null);
     const [isPlayersSearch, setIsPlayersSearch] = useState(false);
-
+    const [searchingPlayers, setSearchingPlayers] = useState([]);
+    const [searchPlayersText, setSearchPlayersText] = useState('');
+    const [showMiscItems, setShowMiscItems] = useState(false);
+    const [miscItems, setMiscItems] = useState([]);
+    
     const initialValues = {
         reservationTypeId: '',
         duration: '',
@@ -79,6 +83,7 @@ function ReservationRegistration() {
             setReservation(resv);
             setReservationTypes(resv.ReservationTypes);
             setMatchTypes(resv.MatchTypes);
+            setMiscItems(resv.MiscFeesSelectListItems);
         } else {
             alert('todo res registation')
         }
@@ -199,14 +204,30 @@ function ReservationRegistration() {
     }
 
     const onPlayersSearch = (searchVal) => {
-        if (isMockData){
+        if (isMockData) {
             setIsPlayersSearch(true);
-            
-            setTimeout(function(){
+
+            setTimeout(function () {
                 setIsPlayersSearch(false);
+                setSearchPlayersText(searchVal);
             }, 2000);
         }
     }
+
+    useEffect(() => {
+        if (isMockData) {
+            let data = mockData;
+            if (showSearchPlayers) {
+                if (isNullOrEmpty(searchPlayersText)) {
+                    setSearchingPlayers(data.favplayers);
+                } else {
+                    setSearchingPlayers(data.players);
+                }
+            } else {
+                //setSearchingPlayers([]);
+            }
+        }
+    }, [showSearchPlayers, searchPlayersText]);
 
     return (
         <>
@@ -329,7 +350,7 @@ function ReservationRegistration() {
                             style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Player(s)</Text>
                         <Card className={cx(globalStyles.card, styles.playersCard)}>
                             <Flex vertical>
-                                
+
                                 <Flex justify={'space-between'} align={'center'}>
                                     <Flex gap={token.Custom.cardIconPadding}>
                                         <Flex justify={'center'} align={'center'}
@@ -372,7 +393,7 @@ function ReservationRegistration() {
 
                                         }
                                     })}>
-                                        <SVG icon={'remove-user'} size={23} color={token.colorError}/>
+                                        <SVG icon={'circle-minus'} size={23} color={token.colorError}/>
                                     </div>
                                 </Flex>
 
@@ -430,9 +451,9 @@ function ReservationRegistration() {
                                                         <Text type="secondary">$2.50</Text>
                                                     </Flex>
                                                 </Flex>
-                                                
+
                                                 <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
-                                                
+
                                             </Flex>
                                             {(!isLastIndex) &&
                                                 <Divider className={styles.playersDivider}/>
@@ -463,7 +484,7 @@ function ReservationRegistration() {
                             <Text type="secondary">(0)</Text>
                         </Flex>
 
-                        <Link href="https://ant.design">
+                        <Link onClick={() => {setShowMiscItems(true)}}>
                             <Flex gap={token.Custom.cardIconPadding} align={'center'}>
                                 <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
                                 <strong>Add Items</strong>
@@ -601,7 +622,7 @@ function ReservationRegistration() {
                 maxHeightVh={80}
                 showDrawer={showSearchPlayers}
                 closeDrawer={addPlayers}
-                label={'Search Player'}
+                label={'Search Player(s)'}
                 onSearch={onPlayersSearch}
                 showButton={true}
                 searchType={2}
@@ -613,12 +634,53 @@ function ReservationRegistration() {
                 <PaddingBlock>
                     {/*//todo iv change to dynamic calculation*/}
                     <Flex vertical style={{minHeight: `calc(80vh - 98px - 72px)`}}>
-                        test
+                        {anyInList(searchingPlayers) &&
+                            <Flex vertical gap={token.padding}>
+                                {searchingPlayers.map((player, index) => (
+                                    <div key={index}>
+                                        <Flex justify={'space-between'} align={'center'}>
+                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                                <Flex justify={'center'} align={'center'}
+                                                      style={{
+                                                          width: 48,
+                                                          height: 48,
+                                                          borderRadius: 50,
+                                                          backgroundColor: 'red'
+                                                      }}>
+                                                    <Title level={5} className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
+                                                </Flex>
+
+                                                <Text>
+                                                    <Ellipsis direction='end' content={player.DisplayName}/>
+                                                </Text>
+                                            </Flex>
+
+                                            <Flex gap={token.padding}>
+                                                <div onClick={() => {
+                                                    alert('todo')
+                                                }}>
+                                                    {toBoolean(player.IsFavoriteMember) ?
+                                                        (<SVG icon={'hearth-filled'} size={24} color={token.colorPrimary}/>) : 
+                                                        (<SVG icon={'hearth'} size={24} color={token.colorPrimary}/>)}
+                                                    
+                                                </div>
+                                                
+                                                <div onClick={() => {
+                                                    alert('todo')
+                                                }}>
+                                                    <SVG icon={'circle-plus'} size={24} color={token.colorPrimary}/>
+                                                </div>
+                                            </Flex>
+                                        </Flex>
+                                    </div>
+                                ))}
+                            </Flex>
+                        }
                     </Flex>
                 </PaddingBlock>
             </DrawerBottom>
 
-            {/*Search player*/}
+            {/*Edit guest*/}
             <DrawerBottom
                 maxHeightVh={80}
                 showDrawer={!isNullOrEmpty(selectedGuest)}
@@ -676,6 +738,45 @@ function ReservationRegistration() {
                     </div>
                 </PaddingBlock>
             </DrawerBottom>
+
+            {/*Misc item*/}
+            <DrawerBottom
+                maxHeightVh={60}
+                showDrawer={showMiscItems}
+                closeDrawer={() => {setShowMiscItems(false)}}
+                label={'Miscellaneous Items'}
+                showButton={true}
+                confirmButtonText={'Save'}
+                onConfirmButtonClick={() => {setShowMiscItems(false)}}
+            >
+                <PaddingBlock>
+                    {anyInList(miscItems) &&
+                        <Flex vertical>
+                            {miscItems.map((miscItem, index) => {
+                                const isLastIndex = index === miscItems.length - 1;
+                                
+                                return (
+                                   <div key={index} >
+                                       <Flex justify={'space-between'} align={'center'}>
+                                           <Title level={5} className={cx(globalStyles.noSpace)}>{miscItem.Text}</Title>
+
+                                           <Flex gap={token.padding} align={'center'}>
+                                               <SVG icon={'circle-minus'} size={30} color={token.colorError}/>
+                                               <Title level={5} className={cx(globalStyles.noSpace)}>0</Title>
+                                               <SVG icon={'circle-plus'} size={30} color={token.colorPrimary}/>
+                                           </Flex>
+                                       </Flex>
+
+                                       {!isLastIndex &&
+                                           <Divider className={styles.playersDivider}/> 
+                                       }
+                                   </div>
+                                )
+                            })}
+                        </Flex>
+                    }
+                </PaddingBlock>
+            </DrawerBottom>  
         </>
     )
 }
