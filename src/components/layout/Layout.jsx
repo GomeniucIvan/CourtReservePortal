@@ -19,12 +19,23 @@ function Layout() {
     const navigate = useNavigate()
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData,  } = useApp();
+    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData, showHeader } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
     }
 
+    if (isNullOrEmpty(currentRoute)){
+        const pathParts = location.pathname.split('/').filter(Boolean);
+        const lastPart = pathParts[pathParts.length - 1];
+        const isNumberRegex = /^\d+$/.test(lastPart);
+        
+        if (isNumberRegex){
+            const replacePath = location.pathname.replace(lastPart, ':id');
+            currentRoute = AppRoutes.find(route => route.path === replacePath);
+        }
+    }
+    
     useEffect(() => {
         if (isNullOrEmpty(authMember())) {
             navigate('/');

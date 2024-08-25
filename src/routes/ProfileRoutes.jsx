@@ -16,7 +16,9 @@ const ProfileRoutes = [
     },
     {
         path: ProfileRouteNames.RESERVATION_DETAILS,
-        element: <ProfileBookingDetails />
+        element: <ProfileBookingDetails />,
+        title: 'Reservation Details',
+        header: true
     },
     {
         path: ProfileRouteNames.RESERVATION_CREATE,

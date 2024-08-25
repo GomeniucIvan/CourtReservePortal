@@ -4,6 +4,7 @@ import {Button, Input, Typography} from "antd";
 import {useApp} from "../../../../context/AppProvider.jsx";
 import mockData from "../../../../mocks/reservation-data.json";
 import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
+import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
 
 const {Search} = Input;
 const {Title, Text} = Typography;
@@ -46,9 +47,11 @@ function ProfileBookingDetails() {
     }, []);
     
     return (
-        <>
+        <PaddingBlock>
+            <Title level={4}>{booking?.ReservationTypeName}</Title>
+            
            <Button onClick={()=> navigate(ProfileRouteNames.RESERVATION_CREATE)}>Create res</Button>
-        </>
+        </PaddingBlock>
     )
 }
 
