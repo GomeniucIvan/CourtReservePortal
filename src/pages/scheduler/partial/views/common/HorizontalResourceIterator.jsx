@@ -24,7 +24,8 @@ const renderResourcesRecursively = (args) => {
   const { resources, rowContent, nested, children, groupIndex, rowContentProps, childRowContent } = args;
 
   if (groupIndex === resources.length) {
-    return renderResources({ resources, rowContent, children, nested, groupIndex, rowContentProps, childRowContent });
+    return (<></>);
+    // return renderResources({ resources, rowContent, children, nested, groupIndex, rowContentProps, childRowContent });
   }
 
   const expandedResources = expandResources(resources, groupIndex);
