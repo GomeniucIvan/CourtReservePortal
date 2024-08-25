@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
+    "@progress/kendo-data-query": "^1.7.0",
     "@progress/kendo-date-math": "^1.5.13",
     "@progress/kendo-react-buttons": "^8.2.0",
     "@progress/kendo-react-common": "^8.2.0",
@@ -26,6 +27,7 @@
     "antd-mobile": "^5.37.1",
     "antd-mobile-icons": "^0.3.0",
     "antd-style": "^3.6.2",
+    "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "js-cookie": "^3.0.5",
     "moment-timezone": "^0.5.45",

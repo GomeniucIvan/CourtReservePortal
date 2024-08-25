@@ -8,7 +8,6 @@ import { SchedulerHeader } from "./components/header/SchedulerHeader.mjs";
 import { SchedulerNavigation } from "./components/header/navigation/SchedulerNavigation.mjs";
 import { SchedulerViewSelector } from "./components/header/view-selector/SchedulerViewSelector.mjs";
 import { addMonths, addDays } from "@progress/kendo-date-math";
-import { ButtonGroup as BG, Button as But, ToolbarSpacer } from "@progress/kendo-react-buttons";
 import { today, messages, previousTitle, nextTitle } from "./messages/index.mjs";
 import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
 import { ViewSelectorList } from "./components/header/view-selector/ViewSelectorList.mjs";
@@ -21,6 +20,8 @@ import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.mjs";
 import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs";
 import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineView.mjs";
 import {Button, Flex, Radio} from 'antd';
+import {toBoolean} from "../../../utils/Utils.jsx";
+import {CaretLeftOutlined, CaretRightOutlined} from "@ant-design/icons";
 
 const DEFAULT_DATE_FORMAT = '{0:D}';
 const DEFAULT_SHORT_DATE_FORMAT = '{0:d}';
@@ -429,7 +430,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                 ref={element}
                 id={props.id}
                 style={style}
-                className={`${className} rct-sched-wrapper`}
+                className={`${className}`}
                 tabIndex={props.tabIndex ?? schedulerDefaultProps.tabIndex}
 
                 // Aria
@@ -444,23 +445,25 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                 onBlur={handleBlur}
             >
                 <Header>
-                    <Navigation>
-                        <Flex justify={'space-between'}>
-                            <Button type={'default'} onClick={handleTodayClick}>{todayText}</Button>
+                    <Flex justify={'space-between'} style={{width: '100%'}}>
+                        <Button type={'default'} onClick={handleTodayClick}>{todayText}</Button>
 
-                            <Radio.Group value={0}>
-                                <Radio.Button onClick={handlePrevClick}>prev</Radio.Button>
-                                <NavigationDatePicker
-                                    value={date}
-                                    onChange={handleDatePickerChange}
-                                />
-                                <Radio.Button onClick={handleNextClick}>Next</Radio.Button>
-                            </Radio.Group>
-                        </Flex>
-                    </Navigation>
+                        <Radio.Group value={0} size={'large'}>
+                            <Radio.Button onClick={handlePrevClick}>
+                                <CaretLeftOutlined />
+                            </Radio.Button>
+                            <NavigationDatePicker
+                                value={date}
+                                onChange={handleDatePickerChange}
+                            />
+                            <Radio.Button onClick={handleNextClick}>
+                                <CaretRightOutlined />
+                            </Radio.Button>
+                        </Radio.Group>
+                    </Flex>
 
-                    <ToolbarSpacer />
-                    <ViewSelectorList />
+                    {/*<ToolbarSpacer />*/}
+                    {!toBoolean(props.hideDaySelection) && <ViewSelectorList />}
                 </Header>
                 {view && (<view.type
                     editable={props.editable ?? schedulerDefaultProps.editable}

@@ -13,6 +13,7 @@ function Scheduler({
                        schedulerStartTime = '10:00',
                        schedulerEndTime = '12:00',
                        orgId,
+                       hideDaySelection = true,
                        interval = 15,
                        customSchedulerId
                    }) {
@@ -29,8 +30,8 @@ function Scheduler({
 
     let schedulerHub = {};
     let timeZone = 'Etc/UTC';
-    const { styles } = useStyles();
-    
+    const {styles} = useStyles();
+
     useEffect(() => {
         let fakeCourts = [{
             CourtId: "1", Text: "Court1", Value: "CourtVal1"
@@ -271,28 +272,28 @@ function Scheduler({
         if ((courtId === -1 && isNullOrEmpty(customSchedulerId)) || (!isNullOrEmpty(customSchedulerId) && courtId == -1) || (!isNullOrEmpty(customSchedulerId) && courtId == customSchedulerId)) {
             return (<SchedulerSlot {...props} onDoubleClick={() => onDoubleClickCreate(courtId)}>
 
-                </SchedulerSlot>);
+            </SchedulerSlot>);
         }
 
         if (hideReserveButtonsOnAdminSchedulers) {
             return (<SchedulerSlot {...props} onDoubleClick={() => onDoubleClickCreate(courtId)}>
-                    <div className='slot-btn-dbl' start={props.zonedStart}
-                         end={props.zonedEnd}
-                         courtid={courtId}>
+                <div className='slot-btn-dbl' start={props.zonedStart}
+                     end={props.zonedEnd}
+                     courtid={courtId}>
 
-                    </div>
-                </SchedulerSlot>);
+                </div>
+            </SchedulerSlot>);
         }
 
         return (<SchedulerSlot {...props} onDoubleClick={() => onDoubleClickCreate(courtId)}>
-                <button start={props.zonedStart}
-                        end={props.zonedEnd}
-                        courtid={courtId}
-                        type='button'
-                        onClick={() => openReservationCreateModal(courtId, props.zonedStart, props.zonedEnd)}
-                        className={`btn btn-xs btn-default slot-btn ${shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'hide' : ''}`}>Reserve
-                </button>
-            </SchedulerSlot>)
+            <button start={props.zonedStart}
+                    end={props.zonedEnd}
+                    courtid={courtId}
+                    type='button'
+                    onClick={() => openReservationCreateModal(courtId, props.zonedStart, props.zonedEnd)}
+                    className={`btn btn-xs btn-default slot-btn ${shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'hide' : ''}`}>Reserve
+            </button>
+        </SchedulerSlot>)
     }
 
     const handleDateChange = (event) => {
@@ -397,6 +398,7 @@ function Scheduler({
         <div className={cx(styles.scheduler)}>
             <InnerScheduler
                 data={events}
+                hideDaySelection={hideDaySelection}
                 timezone={timeZone}
                 date={selectedDate}
                 defaultDate={selectedDate}
@@ -438,7 +440,7 @@ function Scheduler({
                 />
             </InnerScheduler>
         </div>
-       );
+    );
 }
 
 export default Scheduler
