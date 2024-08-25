@@ -1,8 +1,8 @@
 import Dashboard from "../pages/home/index/Dashboard.jsx";
-import Scheduler from "../pages/scheduler/Scheduler.jsx";
 import AnnouncementDetails from "../pages/announcement/details/AnnouncementDetails.jsx";
 import AnnouncementList from "../pages/announcement/list/AnnouncementList.jsx";
 import LeagueList from "../pages/league/list/LeagueList.jsx";
+import ExpandedScheduler from "../pages/scheduler/ExpandedScheduler.jsx";
 
 export const HomeRouteNames = {
     INDEX: '/dashboard',
@@ -20,7 +20,7 @@ const HomeRoutes = [
     },
     {
         path: HomeRouteNames.SCHEDULER,
-        element: <Scheduler />,
+        element: <ExpandedScheduler />,
         title: 'Scheduler'
     },
     {
@@ -38,7 +38,7 @@ const HomeRoutes = [
         path: HomeRouteNames.LEAGUES_LIST,
         element: <LeagueList />,
         title: 'Leagues'
-    },
+    }
 ];
 
 export default HomeRoutes;
