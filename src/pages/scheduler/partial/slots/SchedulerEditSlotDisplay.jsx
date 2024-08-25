@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Keys } from "@progress/kendo-react-common";
 import { setField, isGroupped, getField, findFirstItem } from "../utils/index.mjs";
-import { SchedulerForm } from "../components/SchedulerForm.mjs";
 import { SchedulerViewSlot } from "./SchedulerViewSlotDisplay.jsx";
 import { useControlledState } from "../hooks/useControlledState.mjs";
 import { useSchedulerFieldsContext } from "../context/SchedulerContext.mjs";
@@ -271,7 +270,7 @@ export const SchedulerEditSlot = React.forwardRef((props, ref) => {
 
 export const schedulerEditSlotDefaultProps = {
     viewSlot: SchedulerViewSlot,
-    form: SchedulerForm
+    form: null
 };
 
 SchedulerEditSlot.displayName = 'KendoReactSchedulerEditSlot';
