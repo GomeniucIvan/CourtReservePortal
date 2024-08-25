@@ -12,7 +12,7 @@ import { BaseView as B } from "../../components/BaseView.mjs";
 import { ZonedDate as y, MS_PER_DAY as v, firstDayInWeek as z, firstDayOfMonth as H, getDate as N, addDays as K, lastDayOfMonth as L } from "@progress/kendo-date-math";
 import { classNames as W } from "@progress/kendo-react-common";
 import { VerticalResourceIterator as V } from "../common/VerticalResourceIterator.mjs";
-import { HorizontalResourceIterator as b } from "../common/HorizontalResourceIterator.mjs";
+import { HorizontalResourceIterator as b } from "../common/HorizontalResourceIterator.jsx";
 import { mapItemsToSlots as G, mapSlotsToItems as Z, orderSort as j, toUTCDateTime as A } from "../../utils/index.mjs";
 import { monthViewTitle as P, messages as q } from "../../messages/index.mjs";
 import { SchedulerEditSlot as J } from "../../slots/SchedulerEditSlotDisplay.jsx";

@@ -9,7 +9,7 @@
 import * as t from "react";
 import { BaseView as re } from "../../components/BaseView.mjs";
 import { MS_PER_DAY as oe, MS_PER_MINUTE as ne, ZonedDate as z, Day as B, getDate as ae, addDays as ie } from "@progress/kendo-date-math";
-import { HorizontalResourceIterator as L } from "../common/HorizontalResourceIterator.mjs";
+import { HorizontalResourceIterator as L } from "../common/HorizontalResourceIterator.jsx";
 import { TimelineViewRowContent as se } from "./TimelineViewRowContent.mjs";
 import { TimelineViewAllEventsRowContent as le } from "./TimelineViewAllEventsRowContent.mjs";
 import { VerticalResourceIterator as Z } from "../common/VerticalResourceIterator.mjs";

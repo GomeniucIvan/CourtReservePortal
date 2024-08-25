@@ -1,5 +1,4 @@
 import * as React from "react";
-import {Calendar} from "@progress/kendo-react-dateinputs";
 import {useInternationalization} from "@progress/kendo-react-intl";
 import {Button} from "@progress/kendo-react-buttons";
 import {ZonedDate, getDate, MS_PER_DAY} from "@progress/kendo-date-math";

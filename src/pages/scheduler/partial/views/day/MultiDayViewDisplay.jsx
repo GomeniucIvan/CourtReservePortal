@@ -2,10 +2,9 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { MS_PER_DAY, ZonedDate, Day, getDate, addDays } from "@progress/kendo-date-math";
 import { BaseView } from "../../components/BaseView.mjs";
-import { HorizontalResourceIterator } from "../common/HorizontalResourceIterator.mjs";
+import { HorizontalResourceIterator } from "../common/HorizontalResourceIterator.jsx";
 import { DayViewGroupRowContent } from "./DayViewGroupRowContent.mjs";
 import { VerticalResourceIterator } from "../common/VerticalResourceIterator.mjs";
-import { DayViewAllDayRowContent } from "./DayViewAllDayRowContent.mjs";
 import { DayViewRowContent } from "./DayViewRowContent.mjs";
 import { classNames } from "@progress/kendo-react-common";
 import { isInTimeRange, mapItemsToSlots, mapSlotsToItems, isInDaysRange, intersects, last, first, toUTCDateTime } from "../../utils/index.mjs";
@@ -200,39 +199,6 @@ export const MultiDayView = (props) => {
         </SchedulerResourceIteratorContext.Consumer>
     );
 
-    const allDaySlots = (
-        <SchedulerResourceIteratorContext.Consumer>
-            {({ groupIndex }) => (
-                <div key={groupIndex} className="k-scheduler-row">
-                    {dayRanges.map((_, rangeIndex) => (
-                        daySlots
-                            .filter(s => s.group.index === groupIndex && s.range.index === rangeIndex)
-                            .map((slot, slotIndex, filtered) => (
-                                <EditSlot
-                                    {...slot}
-                                    onDataAction={props.onDataAction}
-                                    form={props.form}
-                                    slot={props.slot}
-                                    viewSlot={props.viewSlot}
-                                    key={`${slot.start.getTime()}:${slot.group.index}`}
-                                    row={0}
-                                    col={orientation === 'horizontal' ? ((filtered.length * (groupIndex || 0)) + slotIndex) : slotIndex}
-                                    isWorkDay={
-                                        0 <= ((slot.zonedStart.getDay() + (numberOfDays - workWeekStart)))
-                                        && ((slot.zonedStart.getDay() + (numberOfDays - workWeekStart))
-                                            % numberOfDays)
-                                        <= ((workWeekEnd + (numberOfDays - workWeekStart)))
-                                    }
-                                    expandable={true}
-                                />
-                            ))
-
-                    ))}
-                </div>
-            )}
-        </SchedulerResourceIteratorContext.Consumer>
-    );
-
     const className = React.useMemo(
         () => classNames(
             'k-scheduler-day-view',
@@ -263,14 +229,6 @@ export const MultiDayView = (props) => {
                                 childRowContent={DayViewGroupRowContent}
                             >
                                 {head}
-                            </HorizontalResourceIterator>
-                            <HorizontalResourceIterator
-                                group={group}
-                                resources={propResources}
-                                rowContent={DayViewAllDayRowContent}
-                                childRowContent={DayViewAllDayRowContent}
-                            >
-                                {allDaySlots}
                             </HorizontalResourceIterator>
                             {dayItems.map((item) => (
                                 <EditItem
@@ -367,35 +325,6 @@ export const MultiDayView = (props) => {
                                 <SchedulerResourceIteratorContext.Consumer>
                                     {({ groupIndex }) => (
                                         <React.Fragment key={groupIndex}>
-                                            <div className="k-scheduler-row">
-                                                <DayViewAllDayRowContent groupIndex={groupIndex}>
-                                                    {dayRanges.map((_, rangeIndex) => {
-                                                        const groupOffset = timeSlots
-                                                            .filter(s => s.group.index === groupIndex && s.range.index === FIRST_INDEX)
-                                                            .length;
-
-                                                        return (
-                                                            daySlots
-                                                                .filter(s => s.group.index === groupIndex && s.range.index === rangeIndex)
-                                                                .map((slot, slotIndex) => (
-                                                                    <EditSlot
-                                                                        slot={props.slot}
-                                                                        viewSlot={props.viewSlot}
-                                                                        form={props.form}
-                                                                        {...slot}
-                                                                        onDataAction={props.onDataAction}
-                                                                        key={`${slot.start.getTime()}:${slot.group.index}`}
-                                                                        className={'k-scheduler-alldays-slot'}
-                                                                        row={((groupOffset * (groupIndex || 0)))
-                                                                            + ((groupIndex || 0) * GRID_OFFSET)}
-                                                                        col={slotIndex}
-                                                                        expandable={true}
-                                                                    />
-                                                                ))
-                                                        );
-                                                    })}
-                                                </DayViewAllDayRowContent>
-                                            </div>
                                             {timeSlots
                                                 .filter(s => s.group.index === groupIndex && s.range.index === FIRST_INDEX)
                                                 .map((root, rootIndex, filtered) => (
