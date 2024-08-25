@@ -329,6 +329,7 @@ function ReservationRegistration() {
                             style={{marginBottom: `${token.Custom.buttonPadding}px`, display: 'block'}}>Player(s)</Text>
                         <Card className={cx(globalStyles.card, styles.playersCard)}>
                             <Flex vertical>
+                                
                                 <Flex justify={'space-between'} align={'center'}>
                                     <Flex gap={token.Custom.cardIconPadding}>
                                         <Flex justify={'center'} align={'center'}
@@ -344,7 +345,7 @@ function ReservationRegistration() {
                                         </Flex>
                                     </Flex>
 
-                                    <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
+                                    <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
                                 </Flex>
 
                                 <Divider className={styles.playersDivider}/>
@@ -363,7 +364,16 @@ function ReservationRegistration() {
                                         </Flex>
                                     </Flex>
 
-                                    <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
+                                    <div onClick={() => ModalRemove({
+                                        content: 'Are you sure you want to remove Smith Valmont?',
+                                        showIcon: false,
+                                        onRemove: (e) => {
+                                            console.log(e)
+
+                                        }
+                                    })}>
+                                        <SVG icon={'remove-user'} size={23} color={token.colorError}/>
+                                    </div>
                                 </Flex>
 
                                 <Button type="primary"
@@ -420,8 +430,9 @@ function ReservationRegistration() {
                                                         <Text type="secondary">$2.50</Text>
                                                     </Flex>
                                                 </Flex>
-
-                                                <SVG icon={'edit-user'} size={20} color={token.colorLink}/>
+                                                
+                                                <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
+                                                
                                             </Flex>
                                             {(!isLastIndex) &&
                                                 <Divider className={styles.playersDivider}/>

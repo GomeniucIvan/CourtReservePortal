@@ -15,7 +15,7 @@ function IframeContent({ content, id }) {
 
     const styledContent = `
         <style>
-            body { margin: 0; }
+            body { margin: 0;overflow: hidden; }
             img {
                 max-width: 100% !important;
                 height: auto;

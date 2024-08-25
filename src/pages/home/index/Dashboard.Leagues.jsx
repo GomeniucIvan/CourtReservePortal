@@ -11,13 +11,14 @@ import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import {useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {useApp} from "../../../context/AppProvider.jsx";
+import FormDrawerRadio from "../../../form/formradio/FormDrawerRadio.jsx";
 const { Text } = Typography;
 
 const DashboardLeagues = ({ dashboardData, isFetching }) => {
     let [showLeaguesDrawer, setShowLeaguesDrawer] = useState(false);
     let [leagueDatesLoading, setLeagueDatesLoading] = useState(false);
     let [leagueItems, setLeagueItems] = useState([]);
-    let [selectedLeagueIdArray, setSelectedLeagueIdArray] = useState([]);
+    let [selectedLeagueId, setSelectedLeagueId] = useState(null);
     let [selectedLeagueName, setSelectedLeagueName] = useState('');
 
     let myLeaguesDropdown = dashboardData?.MyLeaguesDropdown;
@@ -33,21 +34,18 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
     }
 
     useEffect(() => {
-        if (!isNullOrEmpty(dashboardData?.SelectedLeagueSessionId) && !anyInList(selectedLeagueIdArray)){
+        if (!isNullOrEmpty(dashboardData?.SelectedLeagueSessionId) && isNullOrEmpty(selectedLeagueId)){
             const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, dashboardData?.SelectedLeagueSessionId));
-            setSelectedLeagueIdArray([`${dashboardData?.SelectedLeagueSessionId}`]);
+            setSelectedLeagueId(dashboardData?.SelectedLeagueSessionId);
             setSelectedLeagueName(selectedLeague.Name);
         }
     }, [dashboardData]);
     
     useEffect(() => {
         if (anyInList(myLeaguesDropdown)) {
-            setLeagueItems(myLeaguesDropdown.map((gameDay) => ({
-                key: gameDay.Id.toString(),
-                label: gameDay.Name,
-            })))
+            setLeagueItems(myLeaguesDropdown);
         } else{
-            setLeagueItems([]) 
+            setLeagueItems([]);
         }
     }, [myLeaguesDropdown]);
     
@@ -85,24 +83,19 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
                                       navigation(HomeRouteNames.LEAGUES_LIST);
                                   }}>
 
-                        <Menu
-                            className={globalStyles.drawerMenu}
-                            defaultSelectedKeys={selectedLeagueIdArray}
-                            mode={'inline'}
-                            items={leagueItems}
-                            onClick={(e) => {
-                                const selectedLeagueIdKey = e.key;
-                                if (selectedLeagueIdArray.some(leagueId => equalString(leagueId, selectedLeagueIdKey))) {
-                                    setShowLeaguesDrawer(false);
-                                }
-                            }}
-                            onSelect={(e) => {
-                                const selectedLeagueIdKey = e.key;
-                                const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, selectedLeagueIdKey));
-                                setSelectedLeagueName(selectedLeague.Name)
-                                setSelectedLeagueIdArray([selectedLeagueIdKey]);
+                        <FormDrawerRadio
+                            options={leagueItems}
+                            selectedCurrentValue={selectedLeagueId}
+                            propText={'Name'}
+                            propValue={'Id'}
+                            onValueSelect={(e) => {
+                                const selectedLeagueId = e.Id;
+                                const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, selectedLeagueId));
+                                setSelectedLeagueName(selectedLeague.Name);
+                                setSelectedLeagueId(selectedLeagueId);
                                 setShowLeaguesDrawer(false);
                             }}
+                            name={'league_selector'}
                         />
                     </DrawerBottom>
                 </div>
