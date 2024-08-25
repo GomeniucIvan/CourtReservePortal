@@ -8,12 +8,10 @@ import { SchedulerHeader } from "./components/header/SchedulerHeader.mjs";
 import { SchedulerNavigation } from "./components/header/navigation/SchedulerNavigation.mjs";
 import { SchedulerViewSelector } from "./components/header/view-selector/SchedulerViewSelector.mjs";
 import { addMonths, addDays } from "@progress/kendo-date-math";
-import { SchedulerFooter } from "./components/footer/SchedulerFooter.mjs";
 import { ButtonGroup, Button, ToolbarSpacer } from "@progress/kendo-react-buttons";
 import { today, messages, previousTitle, nextTitle, showFullDay, showWorkDay } from "./messages/index.mjs";
 import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
 import { ViewSelectorList } from "./components/header/view-selector/ViewSelectorList.mjs";
-import { BusinessHours } from "./components/footer/bussiness-hours/BussinessHours.mjs";
 import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
 import { caretAltRightIcon, caretAltLeftIcon, clockIcon } from "@progress/kendo-svg-icons";
 import { DATA_ACTION } from "./constants/index.mjs";
@@ -407,7 +405,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
     const nextText = localization.toLanguageString(nextTitle, messages[nextTitle]);
 
     const Header = view.props.header || props.header || schedulerDefaultProps.header;
-    const Footer = view.props.footer || props.footer || schedulerDefaultProps.footer;
 
     const Navigation = SchedulerNavigation;
 
@@ -507,26 +504,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                     showWorkHours={showWorkHours}
                     {...view.props}
                 />)}
-                <Footer>
-                    {(slotDuration && slotDuration < (24 * 60)) && (
-                        <BusinessHours>
-                            <Button
-                                tabIndex={-1}
-                                onClick={handleShowWorkHoursClick}
-                                icon="clock"
-                                svgIcon={clockIcon}
-                            >
-                                {localization.toLanguageString(
-                                    showWorkHours
-                                        ? showFullDay
-                                        : showWorkDay,
-                                    messages[showWorkHours
-                                        ? showFullDay
-                                        : showWorkDay])}
-                            </Button>
-                        </BusinessHours>
-                    )}
-                </Footer>
             </div>
         </SchedulerContext>
     );
@@ -539,7 +516,6 @@ export const schedulerDefaultProps = {
     editable: false,
     defaultDate: new Date(),
     header: SchedulerHeader,
-    footer: SchedulerFooter,
     navigation: SchedulerNavigation,
     viewSelector: SchedulerViewSelector
 };

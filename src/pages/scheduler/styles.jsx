@@ -2,21 +2,6 @@
 
 export const useStyles = createStyles(({ css, token }) => ({
     scheduler: css`
-        background-color: red;
-
-        .k-sr-only {
-            position: absolute;
-            left: -1px;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-        }
-
-        .k-theme-test-class,
-        .k-common-test-class {
-            opacity: 0;
-        }
-
         .k-body {
             font-size: var(--kendo-font-size, inherit);
             font-family: var(--kendo-font-family, inherit);
@@ -26,54 +11,6 @@ export const useStyles = createStyles(({ css, token }) => ({
             color: var(--kendo-body-text, initial);
             background-color: var(--kendo-body-bg, initial);
             margin: 0;
-        }
-
-        .k-hstack, .k-hbox {
-            display: flex;
-            flex-flow: row nowrap;
-        }
-
-        .k-vstack, .k-vbox {
-            display: flex;
-            flex-flow: column nowrap;
-        }
-
-        .k-spacer, .k-flex {
-            flex: 1 1 auto;
-        }
-
-        .k-spacer-sized {
-            flex: none;
-        }
-
-        .k-float-wrap::after, .k-floatwrap::after {
-            content: "";
-            display: block;
-            clear: both;
-        }
-
-        .k-flex-layout {
-            display: flex;
-        }
-
-        .k-separator {
-            width: auto;
-            height: 0;
-            border-width: 1px 0 0;
-            border-style: solid;
-            border-color: inherit;
-            display: block;
-            flex-grow: 0 !important;
-            flex-shrink: 0 !important;
-            align-self: stretch;
-        }
-
-        .k-separator-horizontal,
-        .k-vstack > .k-separator,
-        .k-vbox > .k-separator {
-            width: auto;
-            height: 0;
-            border-width: 1px 0 0;
         }
 
         .k-separator-vertical,
