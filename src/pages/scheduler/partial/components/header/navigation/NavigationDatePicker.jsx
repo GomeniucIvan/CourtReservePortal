@@ -12,6 +12,7 @@ import {
     useSchedulerDateContext
 } from "../../../context/SchedulerContext.mjs";
 import {toUTCDateTime} from "../../../utils/index.mjs";
+import {Radio} from "antd";
 
 export const NavigationDatePicker = React.forwardRef((
     props,
@@ -138,6 +139,12 @@ export const NavigationDatePicker = React.forwardRef((
 
     const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
 
+    return (
+        <Radio.Button onClick={handleClick}>
+            {media === 'desktop' ? text : shortText}
+        </Radio.Button>
+    )
+    
     return (
         <React.Fragment>
             <Button

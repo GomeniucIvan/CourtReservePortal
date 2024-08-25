@@ -8,7 +8,7 @@ import { SchedulerHeader } from "./components/header/SchedulerHeader.mjs";
 import { SchedulerNavigation } from "./components/header/navigation/SchedulerNavigation.mjs";
 import { SchedulerViewSelector } from "./components/header/view-selector/SchedulerViewSelector.mjs";
 import { addMonths, addDays } from "@progress/kendo-date-math";
-import { ButtonGroup, Button, ToolbarSpacer } from "@progress/kendo-react-buttons";
+import { ButtonGroup as BG, Button as But, ToolbarSpacer } from "@progress/kendo-react-buttons";
 import { today, messages, previousTitle, nextTitle } from "./messages/index.mjs";
 import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
 import { ViewSelectorList } from "./components/header/view-selector/ViewSelectorList.mjs";
@@ -20,6 +20,7 @@ import { MonthView, monthViewDefaultProps } from "./views/month/MonthView.mjs";
 import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.mjs";
 import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs";
 import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineView.mjs";
+import {Button, Flex, Radio} from 'antd';
 
 const DEFAULT_DATE_FORMAT = '{0:D}';
 const DEFAULT_SHORT_DATE_FORMAT = '{0:d}';
@@ -188,7 +189,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                         created.push(action.dataItem);
                     } else {
                         updated.push(action.dataItem);
-
                     }
                 }
             }
@@ -364,11 +364,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         [setDate]
     );
 
-    const handleShowWorkHoursClick = React.useCallback(
-        () => { setShowWorkHours(!showWorkHours); },
-        [setShowWorkHours, showWorkHours]
-    );
-
     const handleFocus = React.useCallback(
         () => {
             if (element.current) {
@@ -450,40 +445,20 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
             >
                 <Header>
                     <Navigation>
-                        <ButtonGroup className="k-scheduler-navigation">
-                            <Button
-                                role="button"
-                                tabIndex={-1}
-                                title={todayText}
-                                aria-label={todayText}
-                                onClick={handleTodayClick}
-                            >
-                                {todayText}
-                            </Button>
-                            <Button
-                                role="button"
-                                tabIndex={-1}
-                                icon={dir === 'rtl' ? 'caret-alt-right' : 'caret-alt-left'}
-                                svgIcon={dir === 'rtl' ? caretAltRightIcon : caretAltLeftIcon}
-                                title={previousText}
-                                aria-label={previousText}
-                                onClick={handlePrevClick}
-                            />
-                            <Button
-                                role="button"
-                                tabIndex={-1}
-                                icon={dir === 'rtl' ? 'caret-alt-left' : 'caret-alt-right'}
-                                svgIcon={dir === 'rtl' ? caretAltLeftIcon : caretAltRightIcon}
-                                title={nextText}
-                                aria-label={nextText}
-                                onClick={handleNextClick}
-                            />
-                        </ButtonGroup>
+                        <Flex justify={'space-between'}>
+                            <Button type={'default'} onClick={handleTodayClick}>{todayText}</Button>
+
+                            <Radio.Group value={0}>
+                                <Radio.Button onClick={handlePrevClick}>prev</Radio.Button>
+                                <NavigationDatePicker
+                                    value={date}
+                                    onChange={handleDatePickerChange}
+                                />
+                                <Radio.Button onClick={handleNextClick}>Next</Radio.Button>
+                            </Radio.Group>
+                        </Flex>
                     </Navigation>
-                    <NavigationDatePicker
-                        value={date}
-                        onChange={handleDatePickerChange}
-                    />
+
                     <ToolbarSpacer />
                     <ViewSelectorList />
                 </Header>
