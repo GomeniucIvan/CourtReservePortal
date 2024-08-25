@@ -1,5 +1,4 @@
 ﻿import * as React from "react";
-import PropTypes from "prop-types";
 import { getModelFields, toSchedulerGroups, findMaster, setField, getField, getToday } from "./utils/index.mjs";
 import { validatePackage, shouldShowValidationUI, useRtl as useDir, clone, classNames } from "@progress/kendo-react-common";
 import { SchedulerContext } from "./context/SchedulerContext.mjs";
@@ -12,7 +11,7 @@ import { addMonths, addDays } from "@progress/kendo-date-math";
 import { SchedulerFooter } from "./components/footer/SchedulerFooter.mjs";
 import { ButtonGroup, Button, ToolbarSpacer } from "@progress/kendo-react-buttons";
 import { today, messages, previousTitle, nextTitle, showFullDay, showWorkDay } from "./messages/index.mjs";
-import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.mjs";
+import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
 import { ViewSelectorList } from "./components/header/view-selector/ViewSelectorList.mjs";
 import { BusinessHours } from "./components/footer/bussiness-hours/BussinessHours.mjs";
 import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
