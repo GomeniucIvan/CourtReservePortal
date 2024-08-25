@@ -179,5 +179,17 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-color: ${token.colorPrimary};
          }
       }
+   `,
+   tabs: css `
+    .ant-tabs-nav-wrap {
+       padding: 0 ${token.padding}px;
+       .ant-tabs-nav-list {
+          width: 100%;
+          
+          .ant-tabs-tab {
+             margin: auto;
+          }
+       }
+    }
    `
 }));

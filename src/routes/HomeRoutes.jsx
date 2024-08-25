@@ -6,7 +6,7 @@ import LeagueList from "../pages/league/list/LeagueList.jsx";
 
 export const HomeRouteNames = {
     INDEX: '/dashboard',
-    SCHEDULER: '/scheduler/:orgId',
+    SCHEDULER: '/scheduler',
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/announcement/list`,
     LEAGUES_LIST: `/leagues/list`,
@@ -31,7 +31,8 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.ANNOUNCEMENT_DETAILS,
         element: <AnnouncementDetails />,
-        title: 'Details'
+        title: 'Details',
+        header: true
     },
     {
         path: HomeRouteNames.LEAGUES_LIST,

@@ -1,7 +1,7 @@
 ﻿import { ReactSVG } from 'react-svg'
 import {toBoolean} from "../../utils/Utils.jsx";
 
-const SGV = ({ icon, color = 'black', size = '24', preventFill = false }) => {
+const SGV = ({ icon, color = 'black', size = '24', preventFill = false, preventStroke = true }) => {
     return (
         <ReactSVG
             src={`/svg/${icon}.svg`}
@@ -14,6 +14,10 @@ const SGV = ({ icon, color = 'black', size = '24', preventFill = false }) => {
                     if (!toBoolean(preventFill)) {
                         path.setAttribute('stroke', 'transparent');
                         path.setAttribute('fill', color);
+                    }
+                    
+                    if (!toBoolean(preventStroke)){
+                        path.setAttribute('stroke', color);
                     }
                 });
             }}

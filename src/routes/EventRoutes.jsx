@@ -18,7 +18,8 @@ const EventRoutes = [
     {
         path: EventRouteNames.EVENT_DETAILS,
         element: <EventDetails />,
-        title: ''
+        title: 'Event Details',
+        header: true
     },
     {
         path: '/event-category-list/:orgId',
