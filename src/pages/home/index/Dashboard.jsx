@@ -10,9 +10,10 @@ import DashboardLeagues from "./Dashboard.Leagues.jsx";
 import DashboardOpenMatches from "./Dashboard.OpenMatches.jsx";
 import CardLinks from "../../../components/cardlinks/CardLinks.jsx";
 import {cx} from "antd-style";
-import {Typography} from "antd";
+import {Button, Typography} from "antd";
 const { Title } = Typography;
 import { sleep } from 'antd-mobile/es/utils/sleep'
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 
 function Dashboard() {
     const {token} = useApp();
@@ -22,7 +23,8 @@ function Dashboard() {
     const [isFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [organizations, setOrganizations] = useState([]);
-
+    const navigate = useNavigate();
+    
     const loadData = async (refresh) => {
         if (isMockData){
             const dashboardData = mockData.dashboard.index;
@@ -51,7 +53,8 @@ function Dashboard() {
     return (
         <>
             <div className={styles.orgArea}>
-                {/*<DashboardOrganizations setSelectedOrganization={setSelectedOrganization} selectedOrganization={selectedOrganization} />*/}
+                <Button onClick={navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
+                <Button onClick={navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
             </div>
 
             <DashboardAnnouncements dashboardData={dashboardData} isFetching={isFetching}/>

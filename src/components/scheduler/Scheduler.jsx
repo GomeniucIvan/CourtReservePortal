@@ -6,6 +6,9 @@ import {DayView} from "./partial/views/day/DayViewDisplay.jsx";
 import {SchedulerSlot} from "./partial/slots/SchedulerSlotDisplay.jsx";
 import {cx} from "antd-style";
 import {useStyles} from "./styles.jsx";
+import {WeekView} from "./partial/views/week/WeekView.mjs";
+import {MonthView} from "./partial/views/month/MonthView.mjs";
+import {AgendaView} from "./partial/views/agenda/AgendaView.mjs";
 
 function Scheduler({
                        readUrl,
@@ -15,7 +18,9 @@ function Scheduler({
                        orgId,
                        hideDaySelection = true,
                        interval = 15,
-                       customSchedulerId
+                       customSchedulerId,
+                       isCalendar,
+                       selectedView
                    }) {
 
     const [events, setEvents] = useState([]);
@@ -33,6 +38,10 @@ function Scheduler({
     const {styles} = useStyles();
 
     useEffect(() => {
+        
+        
+        
+        
         let fakeCourts = [{
             CourtId: "1", Text: "Court1", Value: "CourtVal1"
         }, {
@@ -405,6 +414,7 @@ function Scheduler({
                 onDateChange={handleDateChange}
                 onDataChange={handleDataChange}
                 modelFields={modelFields}
+                selectedView={selectedView}
                 editable={{
                     add: doNotShowMultipleReservations,
                     remove: false,
@@ -438,6 +448,10 @@ function Scheduler({
                     slotDuration={interval}
                     slotDivisions={1}
                 />
+
+                <WeekView />
+                <MonthView />
+                <AgendaView />
             </InnerScheduler>
         </div>
     );

@@ -3,10 +3,12 @@ import AnnouncementDetails from "../pages/announcement/details/AnnouncementDetai
 import AnnouncementList from "../pages/announcement/list/AnnouncementList.jsx";
 import LeagueList from "../pages/league/list/LeagueList.jsx";
 import ExpandedScheduler from "../pages/scheduler/ExpandedScheduler.jsx";
+import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 
 export const HomeRouteNames = {
     INDEX: '/dashboard',
     SCHEDULER: '/scheduler',
+    CALENDAR: '/calendar',
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/announcement/list`,
     LEAGUES_LIST: `/leagues/list`,
@@ -38,6 +40,11 @@ const HomeRoutes = [
         path: HomeRouteNames.LEAGUES_LIST,
         element: <LeagueList />,
         title: 'Leagues'
+    },
+    {
+        path: HomeRouteNames.CALENDAR,
+        element: <EventCalendar />,
+        title: 'Event Calendar'
     }
 ];
 

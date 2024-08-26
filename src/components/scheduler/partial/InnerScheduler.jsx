@@ -10,7 +10,7 @@ import { SchedulerViewSelector } from "./components/header/view-selector/Schedul
 import { addMonths, addDays } from "@progress/kendo-date-math";
 import { today, messages, previousTitle, nextTitle } from "./messages/index.mjs";
 import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
-import { ViewSelectorList } from "./components/header/view-selector/ViewSelectorList.mjs";
+import { ViewSelectorList } from "./components/header/view-selector/ViewSelectorList.jsx";
 import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
 import { caretAltRightIcon, caretAltLeftIcon, clockIcon } from "@progress/kendo-svg-icons";
 import { DATA_ACTION } from "./constants/index.mjs";
@@ -20,7 +20,7 @@ import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.mjs";
 import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs";
 import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineView.mjs";
 import {Button, Flex, Radio} from 'antd';
-import {toBoolean} from "../../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {CaretLeftOutlined, CaretRightOutlined} from "@ant-design/icons";
 
 const DEFAULT_DATE_FORMAT = '{0:D}';
@@ -74,7 +74,9 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         setShowWorkHours
     ] = useControlledState(true);
 
-    const view = views.find((currentView) => currentView.props.name === activeViewName)
+    console.log(props.selectedView)
+    
+    const view = views.find((currentView) => isNullOrEmpty(props.selectedView) ? equalString(currentView.props.name, activeViewName) : equalString(currentView.props.name, props.selectedView))
         || views[0]
         || defaultView;
 
@@ -391,9 +393,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         [props.className, props.rtl, dir]);
 
     const todayText = localization.toLanguageString(today, messages[today]);
-    const previousText = localization.toLanguageString(previousTitle, messages[previousTitle]);
-    const nextText = localization.toLanguageString(nextTitle, messages[nextTitle]);
-
     const Header = view.props.header || props.header || schedulerDefaultProps.header;
 
     const Navigation = SchedulerNavigation;
@@ -457,7 +456,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                     </Flex>
 
                     {/*<ToolbarSpacer />*/}
-                    {!toBoolean(props.hideDaySelection) && <ViewSelectorList />}
+                    {/*<ViewSelectorList />*/}
                 </Header>
                 {view && (<view.type
                     editable={props.editable ?? schedulerDefaultProps.editable}
