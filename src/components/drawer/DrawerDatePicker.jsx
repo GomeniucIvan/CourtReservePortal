@@ -12,7 +12,7 @@ const {Title} = Typography;
 
 const DrawerDatePicker = ({
                               show,
-                              value = '2019-09-03',
+                              value,
                               minDate,
                               maxDate,
                               dateFormat = dateFormatByUiCulture(),
@@ -33,6 +33,12 @@ const DrawerDatePicker = ({
         return drawerContainerRef.current || document.body;
     };
 
+    const onDatePickerChange = (date, dateString) => {
+        if (onChange && typeof onChange === 'function') {
+            onChange(date.$d);
+        }
+    }
+    
     return (
         <Popup
             visible={toBoolean(show)}
@@ -58,12 +64,12 @@ const DrawerDatePicker = ({
                 <div className={styles.datePickerDrawer} ref={drawerContainerRef}>
                     <DatePicker
                         value={fixedDate ? dayjs(fixedDate) : null}
-                        minDate={dayjs(fixDate(minDate))}
-                        maxDate={dayjs(fixDate(maxDate))}
+                        minDate={minDate ? dayjs(fixDate(minDate)) : null}
+                        maxDate={maxDate ? dayjs(fixDate(maxDate)) : null}
                         format={dateFormat}
                         status={hasError ? 'error' : ''}
                         open={true}
-                        onChange={onChange}
+                        onChange={onDatePickerChange}
                         getPopupContainer={getPopupContainer}
                     />
                 </div>

@@ -271,12 +271,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
 
     const handleDateChange = React.useCallback(
         (newDate, event) => {
-
-            const elementDiv = element.current;
-            if (elementDiv) {
-                elementDiv.classList.add('--loading');
-            }
-
             setTimeout(function () {
                 setDate(newDate, {
                     ...event,
