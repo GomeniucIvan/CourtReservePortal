@@ -1,33 +1,35 @@
-﻿import React, { useRef } from 'react';
-import { Button, DatePicker, Flex, Typography } from "antd";
+﻿import React, {useRef} from 'react';
+import {Button, DatePicker, Flex, Typography} from "antd";
 import dayjs from "dayjs";
-import { isNullOrEmpty, toBoolean } from "../../utils/Utils.jsx";
-import { Popup } from "antd-mobile";
-import { CloseOutline } from "antd-mobile-icons";
+import {toBoolean} from "../../utils/Utils.jsx";
+import {Popup} from "antd-mobile";
+import {CloseOutline} from "antd-mobile-icons";
 import {useStyles} from "./styles.jsx";
-import { useApp } from "../../context/AppProvider.jsx";
-const { Title } = Typography;
+import {useApp} from "../../context/AppProvider.jsx";
+import {dateFormatByUiCulture, fixDate} from "../../utils/DateUtils.jsx";
+
+const {Title} = Typography;
 
 const DrawerDatePicker = ({
                               show,
                               value = '2019-09-03',
                               minDate,
                               maxDate,
-                              dateFormat = 'YYYY-MM-DD',
+                              dateFormat = dateFormatByUiCulture(),
                               onClose,
+                              hasError,
                               label = 'Date Picker',
                               allowClear,
                               onChange
                           }) => {
 
-    const { token } = useApp();
+    const {token} = useApp();
     const {styles} = useStyles();
-    
-    // Create a ref for the drawer container
+
     const drawerContainerRef = useRef(null);
+    const fixedDate = fixDate(value);
 
     const getPopupContainer = () => {
-        // Return the ref's current DOM element as the container
         return drawerContainerRef.current || document.body;
     };
 
@@ -45,21 +47,22 @@ const DrawerDatePicker = ({
         >
             <>
                 <Flex vertical>
-                    <Flex justify={'space-between'} align={'center'} style={{ padding: `${token.padding}px` }}>
-                        <Title level={4} style={{ margin: 0 }}>{label}</Title>
+                    <Flex justify={'space-between'} align={'center'} style={{padding: `${token.padding}px`}}>
+                        <Title level={4} style={{margin: 0}}>{label}</Title>
 
-                        <Button type="default" icon={<CloseOutline />} size={'middle'}
-                                onClick={onClose} />
+                        <Button type="default" icon={<CloseOutline/>} size={'middle'}
+                                onClick={onClose}/>
                     </Flex>
                 </Flex>
 
-                {/* Attach the ref to the drawer container */}
                 <div className={styles.datePickerDrawer} ref={drawerContainerRef}>
                     <DatePicker
-                        defaultValue={isNullOrEmpty(value) ? null : dayjs(value, dateFormat)}
-                        minDate={isNullOrEmpty(minDate) ? null : dayjs(minDate, dateFormat)}
+                        value={fixedDate ? dayjs(fixedDate) : null}
+                        minDate={dayjs(fixDate(minDate))}
+                        maxDate={dayjs(fixDate(maxDate))}
+                        format={dateFormat}
+                        status={hasError ? 'error' : ''}
                         open={true}
-                        maxDate={isNullOrEmpty(maxDate) ? null : dayjs(maxDate, dateFormat)}
                         onChange={onChange}
                         getPopupContainer={getPopupContainer}
                     />
