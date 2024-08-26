@@ -1,9 +1,8 @@
 import * as React from "react";
 import {useInternationalization} from "@progress/kendo-react-intl";
-import {Button} from "@progress/kendo-react-buttons";
 import {ZonedDate, getDate, MS_PER_DAY} from "@progress/kendo-date-math";
 import {useWindow, useAsyncFocusBlur} from "@progress/kendo-react-common";
-import {calendarIcon} from "@progress/kendo-svg-icons";
+import dayjs from 'dayjs';
 
 import {
     useSchedulerPropsContext,
@@ -15,7 +14,6 @@ import {
 import {toUTCDateTime} from "../../../utils/index.mjs";
 import {Radio} from "antd";
 import DrawerDatePicker from "../../../../../../components/drawer/DrawerDatePicker.jsx";
-import {Calendar} from "@progress/kendo-react-dateinputs";
 
 export const NavigationDatePicker = React.forwardRef((
     props,
@@ -56,15 +54,18 @@ export const NavigationDatePicker = React.forwardRef((
             : dateRange.zonedEnd.addDays(-1)
     );
 
-    const shortText = intl.format(
-        shortDateFormat,
-        isMonthView
-            ? date
-            : dateRange.zonedStart,
-        isMonthView
-            ? date
-            : dateRange.zonedEnd.addDays(-1)
-    );
+    const shortText = dayjs(date).format('ddd, MMM D');
+
+    // const shortText = intl.format(
+    //     '{0: ddd, MMM D}',
+    //         isMonthView
+    //             ? date
+    //             : dateRange.zonedStart,
+    //         isMonthView
+    //             ? date
+    //             : dateRange.zonedEnd.addDays(-1)
+    //     );
+
 
     const handleClick = React.useCallback(
         () => {
@@ -90,7 +91,6 @@ export const NavigationDatePicker = React.forwardRef((
 
     const handleChange = React.useCallback(
         (event) => {
-            console.log(event)
             if (props.onChange) {
                 const normalizedValue = ZonedDate.fromUTCDate(toUTCDateTime(event.value), timezone);
 
@@ -141,10 +141,14 @@ export const NavigationDatePicker = React.forwardRef((
     );
 
     const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
-
     return (
         <>
-            <Radio.Button onClick={handleClick}>
+            <Radio.Button
+                onClick={handleClick}
+                style={{
+                    minWidth: '130px',
+                    textAlign: 'center'
+                }}>
                 {media === 'desktop' ? text : shortText}
             </Radio.Button>
 
