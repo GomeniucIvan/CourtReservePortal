@@ -51,8 +51,8 @@ function Dashboard() {
     return (
         <>
             <div className={styles.orgArea}>
-                <Button onClick={navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
-                <Button onClick={navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
+                <Button onClick={() => navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
+                <Button onClick={() => navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
             </div>
 
             <DashboardAnnouncements dashboardData={dashboardData} isFetching={isFetching}/>
