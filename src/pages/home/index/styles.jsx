@@ -56,7 +56,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         --adm-card-body-padding-block: 0px;
         
         .adm-card-body {
-            border: 2px solid whitesmoke;
+            border: 2px solid ${token.colorBgLayout};
             border-radius: 6px;
         }
         

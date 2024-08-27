@@ -86,6 +86,8 @@ function Layout() {
                 --adm-color-primary: ${token.colorPrimary};
                 --adm-color-background: ${token.colorBgContainer};
                 --adm-color-weak: ${token.colorText};
+                --adm-color-border: ${token.colorBorder};
+                --adm-color-text: ${token.colorText};
             }
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;
@@ -102,6 +104,7 @@ function Layout() {
             .adm-pull-to-refresh-head {
                 background-color: ${token.colorBgContainer};
             }
+            
             .ant-app {
                 background-color: ${token.colorBgContainer};
             }

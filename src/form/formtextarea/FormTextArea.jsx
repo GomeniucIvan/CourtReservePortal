@@ -35,6 +35,7 @@ const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isReq
                        fontSize: token.Form.labelFontSize,
                        padding: token.Form.verticalLabelPadding,
                        marginLeft: token.Form.labelColonMarginInlineStart,
+                       color: token.colorText,
                        display: 'block'
                    }}>
                 {label}
