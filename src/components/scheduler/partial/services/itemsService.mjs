@@ -3,7 +3,7 @@ import { intersects } from "../utils/index.jsx";
 import { ZonedDate } from "@progress/kendo-date-math";
 
 
-const orderBy = (data, descriptors) => {
+export const orderBy = (data, descriptors) => {
   return [...data].sort((a, b) => {
     for (const descriptor of descriptors) {
       const field = descriptor.field;

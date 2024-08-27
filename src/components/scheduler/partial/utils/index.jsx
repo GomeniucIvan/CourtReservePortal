@@ -1,7 +1,7 @@
 import { getDate } from "@progress/kendo-date-math";
 import { toGroupResources, toFlatGroupResources } from "../views/common/utilsJava.js";
 import { getter, setter } from "@progress/kendo-react-common";
-import { orderBy } from "@progress/kendo-data-query";
+import {orderBy} from "../services/itemsService.mjs";
 
 
 export const first = (arr) => arr[0];

@@ -11,7 +11,6 @@ import { addMonths, addDays } from "@progress/kendo-date-math";
 import { today, messages, previousTitle, nextTitle } from "./messages/index.mjs";
 import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
 import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
-import { caretAltRightIcon, caretAltLeftIcon, clockIcon } from "@progress/kendo-svg-icons";
 import { DATA_ACTION } from "./constants/index.mjs";
 import { AgendaView, agendaViewDefaultProps } from "./views/agenda/AgendaView.mjs";
 import { MonthView, monthViewDefaultProps } from "./views/month/MonthView.jsx";
