@@ -131,6 +131,7 @@ const FormSelect = ({
                            fontSize: token.Form.labelFontSize,
                            padding: token.Form.verticalLabelPadding,
                            marginLeft: token.Form.labelColonMarginInlineStart,
+                           color: token.colorText,
                            display: 'block'
                        }}>
                     {label}

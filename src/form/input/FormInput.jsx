@@ -30,7 +30,8 @@ const FormInput = ({ label,
     const isRequired = toBoolean(required);
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
-
+    const {styles} = useStyles();
+    
     const inputRef = useRef(null);
 
     if (form && typeof form.getFieldProps === 'function') {
@@ -74,7 +75,7 @@ const FormInput = ({ label,
     }
 
     return (
-        <div className={cx(globalStyles.formBlock, className) }>
+        <div className={cx(globalStyles.formBlock, className, styles.input) }>
             <label htmlFor={name}
                    style={{
                        fontSize: token.Form.labelFontSize,

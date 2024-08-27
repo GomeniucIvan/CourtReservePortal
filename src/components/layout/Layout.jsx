@@ -6,9 +6,10 @@ import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
-import {isNullOrEmpty} from "../../utils/Utils.jsx";
+import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {authMember} from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
+import LayoutExtra from "./LayoutExtra.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -19,7 +20,7 @@ function Layout() {
     const navigate = useNavigate()
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData, showHeader, setAvailableHeight } = useApp();
+    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
@@ -55,16 +56,6 @@ function Layout() {
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
     };
-    
-    
-    //window port unavailable to resize correctly with pull and reload
-    // const calculateMaxHeight = () => {
-    //     const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    //     const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
-    //     const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
-    //     const calculatedMaxHeight = viewportHeight - headerHeight - footerHeight;
-    //     setMaxHeight(calculatedMaxHeight);
-    // };
 
     useEffect(() => {
         calculateMaxHeight();
@@ -111,6 +102,9 @@ function Layout() {
             .adm-pull-to-refresh-head {
                 background-color: ${token.colorBgContainer};
             }
+            .ant-app {
+                background-color: ${token.colorBgContainer};
+            }
             `;
         document.head.appendChild(style);
     }, [token]);
@@ -124,6 +118,8 @@ function Layout() {
             }
 
             <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
+                <LayoutExtra />
+                
                 <PullToRefresh onRefresh={refreshData}
                                pullingText={'Pull down to refresh.'}
                                refreshingText={'Loading...'}

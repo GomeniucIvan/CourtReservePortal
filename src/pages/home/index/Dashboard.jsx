@@ -1,6 +1,6 @@
 ﻿import {useStyles} from "./styles.jsx";
 import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
 import mockData from "../../../mocks/home-data.json";
 import DashboardAnnouncements from "./Dashboard.Announcements.jsx";
@@ -12,13 +12,11 @@ import CardLinks from "../../../components/cardlinks/CardLinks.jsx";
 import {cx} from "antd-style";
 import {Button, Typography} from "antd";
 const { Title } = Typography;
-import { sleep } from 'antd-mobile/es/utils/sleep'
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 
 function Dashboard() {
-    const {token} = useApp();
     const { styles } = useStyles();
-    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch } = useApp();
+    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token } = useApp();
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [isFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);

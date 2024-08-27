@@ -15,4 +15,8 @@ export const useStyles = createStyles(({ css, token }) => ({
             margin: ${token.Button.paddingXS/2}px 0px;
         }
   `,
+    layoutExtra: css`
+        position: absolute;
+        right: 20px;
+    `
 }));
