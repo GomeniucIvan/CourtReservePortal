@@ -20,7 +20,8 @@ function Scheduler({
                        interval = 15,
                        customSchedulerId,
                        isCalendar,
-                       selectedView
+                       selectedView,
+                       courts
                    }) {
 
     const [events, setEvents] = useState([]);
@@ -28,7 +29,7 @@ function Scheduler({
     const [startTimeString, setStartTimeString] = useState(schedulerStartTime);
     const [endTimeString, setEndTimeString] = useState(schedulerEndTime);
     const [allowSchedulerDragAndDrop, setAllowSchedulerDragAndDrop] = useState(false);
-    const [courtsData, setCourtsData] = useState([]);
+    const [courtsData, setCourtsData] = useState(courts);
     const doNotShowMultipleReservations = true;
     const hideReserveButtonsOnAdminSchedulers = false;
     const souldHideReserveButton = false;
@@ -38,17 +39,7 @@ function Scheduler({
     const {styles} = useStyles();
 
     useEffect(() => {
-        
-        
-        
-        
-        let fakeCourts = [{
-            CourtId: "1", Text: "Court1", Value: "CourtVal1"
-        }, {
-            CourtId: "2", Text: "Court2", Value: "CourtVal2"
-        }]
 
-        setCourtsData(fakeCourts)
     }, []);
 
     // schedulerHub = $.connection.courtSchedulerViewHub;

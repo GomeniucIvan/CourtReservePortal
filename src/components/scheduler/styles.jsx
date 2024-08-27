@@ -55,6 +55,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         .k-scheduler-layout-flex .k-scheduler-cell.k-heading-cell {
             justify-content: center;
             font-weight: bold;
+            width: 120px;
         }
 
         .k-scheduler .k-calendar .k-other-month {
@@ -507,6 +508,7 @@ export const useStyles = createStyles(({ css, token }) => ({
             z-index: 1;
             border-top: 1px solid;
             border-color: ${token.colorBorder} !important;
+            table-layout: fixed;
         }
 
         .k-scheduler-layout > tbody > tr > td {
