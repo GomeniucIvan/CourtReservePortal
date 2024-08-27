@@ -509,6 +509,7 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-top: 1px solid;
             border-color: ${token.colorBorder} !important;
             table-layout: fixed;
+            display: grid;
         }
 
         .k-scheduler-layout > tbody > tr > td {

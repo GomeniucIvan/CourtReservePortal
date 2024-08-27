@@ -11,6 +11,8 @@ export const HorizontalResourceIterator = (props) => {
 
   const groupIndex = 0;
 
+  console.log(props)
+  
   return (
       <div className="k-scheduler-group k-group-horizontal">
         {nested
@@ -23,9 +25,10 @@ export const HorizontalResourceIterator = (props) => {
 const renderResourcesRecursively = (args) => {
   const { resources, rowContent, nested, children, groupIndex, rowContentProps, childRowContent } = args;
 
+  
   if (groupIndex === resources.length) {
-    return (<></>);
-    // return renderResources({ resources, rowContent, children, nested, groupIndex, rowContentProps, childRowContent });
+    //return (<></>);
+    return renderResources({ resources, rowContent, children, nested, groupIndex, rowContentProps, childRowContent });
   }
 
   const expandedResources = expandResources(resources, groupIndex);

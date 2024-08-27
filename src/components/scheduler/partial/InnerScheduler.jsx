@@ -18,7 +18,7 @@ import { AgendaView, agendaViewDefaultProps } from "./views/agenda/AgendaView.mj
 import { MonthView, monthViewDefaultProps } from "./views/month/MonthView.mjs";
 import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.mjs";
 import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs";
-import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineView.mjs";
+import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineView.jsx";
 import {Button, Flex, Radio} from 'antd';
 import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {CaretLeftOutlined, CaretRightOutlined} from "@ant-design/icons";
