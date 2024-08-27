@@ -1,9 +1,7 @@
 import * as React from "react";
 import { useLocalization} from "@progress/kendo-react-intl";
-import { DropDownButton} from "@progress/kendo-react-buttons";
 import { useWindow, classNames, IconWrap } from "@progress/kendo-react-common";
-import { caretAltDownIcon } from "@progress/kendo-svg-icons";
-import { ViewSelectorItem } from "./ViewSelectorItem.mjs";
+import { ViewSelectorItem } from "./ViewSelectorItem.jsx";
 import { useSchedulerViewsContext, useSchedulerActiveViewContext } from "../../../context/SchedulerContext.mjs";
 
 
@@ -62,30 +60,30 @@ export const ViewSelectorList = React.forwardRef(() => {
             role='group'
             ref={element}
         >
-            {(activeView && media === 'mobile') && (
-                <DropDownButton
-                    className="k-views-dropdown"
-                    onItemClick={handleItemClick}
-                    popupSettings={{ popupClass: 'k-scheduler-toolbar' }}
-                    textField="title"
-                    items={views.map((v) => ({
-                        ...v.props,
-                        selected: v.props.name === activeViewName,
-                        title:
-                            typeof v.props.title === 'function'
-                                ? v.props.title.call(undefined, localization)
-                                : v.props.title
-                    }))}
-                    text={(
-                        <React.Fragment>
-                            {typeof activeView.props.title === 'function'
-                                ? activeView.props.title.call(undefined, localization)
-                                : activeView.props.title}
-                            <IconWrap name="caret-alt-down" icon={caretAltDownIcon} />
-                        </React.Fragment>
-                    )}
-                />
-            )}
+            {/*{(activeView && media === 'mobile') && (*/}
+            {/*    <DropDownButton*/}
+            {/*        className="k-views-dropdown"*/}
+            {/*        onItemClick={handleItemClick}*/}
+            {/*        popupSettings={{ popupClass: 'k-scheduler-toolbar' }}*/}
+            {/*        textField="title"*/}
+            {/*        items={views.map((v) => ({*/}
+            {/*            ...v.props,*/}
+            {/*            selected: v.props.name === activeViewName,*/}
+            {/*            title:*/}
+            {/*                typeof v.props.title === 'function'*/}
+            {/*                    ? v.props.title.call(undefined, localization)*/}
+            {/*                    : v.props.title*/}
+            {/*        }))}*/}
+            {/*        text={(*/}
+            {/*            <React.Fragment>*/}
+            {/*                {typeof activeView.props.title === 'function'*/}
+            {/*                    ? activeView.props.title.call(undefined, localization)*/}
+            {/*                    : activeView.props.title}*/}
+            {/*                <IconWrap name="caret-alt-down" icon={caretAltDownIcon} />*/}
+            {/*            </React.Fragment>*/}
+            {/*        )}*/}
+            {/*    />*/}
+            {/*)}*/}
             {(media === 'desktop') && (
                 <>
                     {views.map((view) => (

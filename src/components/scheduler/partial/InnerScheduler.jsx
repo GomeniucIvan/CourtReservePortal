@@ -4,13 +4,12 @@ import { useRtl as useDir, clone, classNames } from "@progress/kendo-react-commo
 import { SchedulerContext } from "./context/SchedulerContext.mjs";
 import { useControlledState } from "./hooks/useControlledState.mjs";
 import { useInternationalization, useLocalization } from "@progress/kendo-react-intl";
-import { SchedulerHeader } from "./components/header/SchedulerHeader.mjs";
-import { SchedulerNavigation } from "./components/header/navigation/SchedulerNavigation.mjs";
-import { SchedulerViewSelector } from "./components/header/view-selector/SchedulerViewSelector.mjs";
+import { SchedulerHeader } from "./components/header/SchedulerHeader.jsx";
+import { SchedulerNavigation } from "./components/header/navigation/SchedulerNavigation.jsx";
+import { SchedulerViewSelector } from "./components/header/view-selector/SchedulerViewSelector.jsx";
 import { addMonths, addDays } from "@progress/kendo-date-math";
 import { today, messages, previousTitle, nextTitle } from "./messages/index.mjs";
 import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
-import { ViewSelectorList } from "./components/header/view-selector/ViewSelectorList.jsx";
 import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
 import { caretAltRightIcon, caretAltLeftIcon, clockIcon } from "@progress/kendo-svg-icons";
 import { DATA_ACTION } from "./constants/index.mjs";

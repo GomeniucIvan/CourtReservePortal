@@ -19,7 +19,7 @@ import { toRanges as ee } from "../../services/rangeService.mjs";
 import { toOccurrences as te } from "../../services/occurrenceService.mjs";
 import { toItems as ae } from "../../services/itemsService.mjs";
 import { mapItemsToSlots as le, mapSlotsToItems as re, toUTCDateTime as x } from "../../utils/index.mjs";
-import { SchedulerEditTask as ce } from "../../tasks/SchedulerEditTask.mjs";
+import { SchedulerEditTask as ce } from "../../tasks/SchedulerEditTask.jsx";
 import { SchedulerEditSlot as se } from "../../slots/SchedulerEditSlotDisplay.jsx";
 import { useSchedulerPropsContext as oe, useSchedulerDataContext as ne, useSchedulerGroupsContext as me, useSchedulerFieldsContext as ie, useSchedulerDateRangeContext as de } from "../../context/SchedulerContext.mjs";
 import { SchedulerResourceIteratorContext as F } from "../../context/SchedulerResourceIteratorContext.mjs";

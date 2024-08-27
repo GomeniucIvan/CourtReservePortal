@@ -13,7 +13,6 @@
     "@ant-design/icons": "^5.4.0",
     "@progress/kendo-data-query": "^1.7.0",
     "@progress/kendo-date-math": "^1.5.13",
-    "@progress/kendo-react-buttons": "^8.2.0",
     "@progress/kendo-react-common": "^8.2.0",
     "@progress/kendo-react-dateinputs": "^8.2.0",
     "@progress/kendo-react-dialogs": "^8.2.0",

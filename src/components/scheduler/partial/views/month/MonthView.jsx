@@ -14,7 +14,7 @@ import { toRanges} from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
 import { toOccurrences} from "../../services/occurrenceService.mjs";
 import { toItems} from "../../services/itemsService.mjs";
-import { ShowMoreItemsButton } from "../../components/ShowMoreItemsButton.mjs";
+import { ShowMoreItemsButton } from "../../components/ShowMoreItemsButton.jsx";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
 import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerDateContext, useSchedulerActiveViewContext, useSchedulerViewsContext, useSchedulerGroupsContext, useSchedulerOrientationContext, useSchedulerDateRangeContext, useSchedulerFieldsContext } from "../../context/SchedulerContext.mjs";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";

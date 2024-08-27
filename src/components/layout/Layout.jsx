@@ -114,8 +114,6 @@ function Layout() {
     
     const disablePullDownToRefresh = currentRoute?.disablePullDown;
     
-    console.log(disablePullDownToRefresh)
-    
     return (
         <div className={styles.root}>
             {currentRoute &&

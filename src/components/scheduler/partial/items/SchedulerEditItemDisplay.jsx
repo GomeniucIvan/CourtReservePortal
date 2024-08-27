@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { SchedulerOccurrenceDialog } from "../components/SchedulerOccurrenceDialog.jsx";
-import { SchedulerRemoveDialog } from "../components/SchedulerRemoveDialog.mjs";
 import { useId, Keys } from "@progress/kendo-react-common";
 import { SchedulerDrag } from "../views/common/SchedulerDrag.mjs";
 import { SchedulerResize } from "../views/common/SchedulerResize.mjs";
@@ -773,8 +771,8 @@ export const schedulerEditItemDefaultProps = {
     drag: SchedulerDrag,
     resize: SchedulerResize,
     form: null, //todo iv
-    occurrenceDialog: SchedulerOccurrenceDialog,
-    removeDialog: SchedulerRemoveDialog,
+    occurrenceDialog: null, //todo iv
+    removeDialog: null, //todo iv
     onClickAction: (event, _, state) => [
         {
             type: (event.syntheticEvent.metaKey || event.syntheticEvent.ctrlKey)
