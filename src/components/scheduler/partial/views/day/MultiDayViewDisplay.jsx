@@ -20,6 +20,7 @@ import { toRanges } from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
 import { toOccurrences } from "../../services/occurrenceService.mjs";
 import { toItems } from "../../services/itemsService.mjs";
+import {toBoolean} from "../../../../../utils/Utils.jsx";
 
 
 const FIRST_INDEX = 0;
@@ -206,7 +207,7 @@ export const MultiDayView = (props) => {
         ),
         [props.className]
     );
-
+    
     return (
         <>
             <BaseView
@@ -226,6 +227,7 @@ export const MultiDayView = (props) => {
                                 group={group}
                                 resources={propResources}
                                 rowContent={DayViewGroupRowContent}
+                                hideDateRow={toBoolean(props.hideDateRow)}
                                 childRowContent={DayViewGroupRowContent}
                             >
                                 {head}
@@ -266,6 +268,7 @@ export const MultiDayView = (props) => {
                                                 group={group}
                                                 resources={propResources}
                                                 rowContent={DayViewRowContent}
+                                                hideDateRow={toBoolean(props.hideDateRow)}
                                                 rowContentProps={{
                                                     timeHeaderCell: props.timeHeaderCell,
                                                     isMaster: (rootIndex % slotDivisions === 0),
@@ -451,7 +454,8 @@ export const multiDayViewDefaultProps = {
     slotDivisions: 2,
     slotDuration: 60,
     showCurrentTime: true,
-    defaultShowWorkHours: true
+    defaultShowWorkHours: true,
+    hideDateRow: false
 };
 
 MultiDayView.propTypes = {

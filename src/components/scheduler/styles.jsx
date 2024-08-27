@@ -38,20 +38,6 @@ export const useStyles = createStyles(({ css, token }) => ({
             min-width: 0;
         }
 
-        .k-scheduler-layout-flex .k-scheduler-cell {
-            display: flex;
-            flex: 1 1 100%;
-            padding-block: var(--kendo-spacing-2, .5rem);
-            padding-inline: var(--kendo-spacing-2, .5rem);
-            min-height: 1.5em;
-            overflow: hidden;
-            white-space: nowrap;
-            border-style: solid;
-            border-width: 0 1px 1px 0;
-            vertical-align: top;
-            box-sizing: content-box;
-        }
-
         .k-scheduler-layout-flex .k-scheduler-cell.k-heading-cell {
             justify-content: center;
             width: 120px;
@@ -408,8 +394,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         .k-scheduler-layout-flex .k-scheduler-cell {
             display: flex;
             flex: 1 1 100%;
-            padding-block: 8px;
-            padding-inline: 8px;
+            padding: 0;
             min-height: 1.5em;
             overflow: hidden;
             white-space: nowrap;
@@ -511,12 +496,19 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
 
         .k-time-cell,
+        .k-scheduler-cell.k-side-cell {
+            padding-right: 4px !important;
+            padding-top: 4px !important;
+        }
+        
+        .k-time-cell,
         .k-side-cell {
             position: sticky;
             left: 0;
             background-color: ${token.colorBgBase};
             color: ${token.colorText};
             z-index: 1;
+            font-size: 12px;
         }
 
         .k-header-resource, .k-scheduler-date-heading {

@@ -42,6 +42,8 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         onDataChange
     } = props;
 
+    console.log(22);
+    
     const element = React.useRef(null);
     const scheduler = React.useRef(null);
 
@@ -473,6 +475,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                     form={props.form}
                     onDataAction={handleDataAction}
                     showWorkHours={showWorkHours}
+                    hideDateRow={props.hideDateRow}
                     {...view.props}
                 />)}
             </div>

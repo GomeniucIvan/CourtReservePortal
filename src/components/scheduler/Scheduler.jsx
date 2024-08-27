@@ -9,6 +9,8 @@ import {useStyles} from "./styles.jsx";
 import {WeekView} from "./partial/views/week/WeekView.mjs";
 import {MonthView} from "./partial/views/month/MonthView.mjs";
 import {AgendaView} from "./partial/views/agenda/AgendaView.mjs";
+import {Typography} from "antd";
+const { Text } = Typography;
 
 function Scheduler({
                        readUrl,
@@ -287,13 +289,20 @@ function Scheduler({
         }
 
         return (<SchedulerSlot {...props} onDoubleClick={() => onDoubleClickCreate(courtId)}>
-            <button start={props.zonedStart}
-                    end={props.zonedEnd}
-                    courtid={courtId}
-                    type='button'
-                    onClick={() => openReservationCreateModal(courtId, props.zonedStart, props.zonedEnd)}
-                    className={`btn btn-xs btn-default slot-btn ${shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'hide' : ''}`}>Reserve
-            </button>
+            <Text
+                start={props.zonedStart}
+                end={props.zonedEnd}
+                courtid={courtId}
+                onClick={() => openReservationCreateModal(courtId, props.zonedStart, props.zonedEnd)}
+                style={{
+                    height: '40px',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`}}>
+
+                Reserve
+            </Text>
         </SchedulerSlot>)
     }
 
@@ -440,6 +449,7 @@ function Scheduler({
                     workDayEnd={endTimeString}
                     slotDuration={interval}
                     slotDivisions={1}
+                    hideDateRow={true}
                 />
 
                 <WeekView />

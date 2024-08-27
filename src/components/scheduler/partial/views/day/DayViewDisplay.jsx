@@ -14,6 +14,7 @@ export const dayViewDefaultProps = {
     slotDivisions: 2,
     selectedDateFormat: '{0:D}',
     selectedShortDateFormat: '{0:d}',
+    hideDateRow: false
 };
 
 DayView.displayName = 'KendoReactSchedulerDayView';

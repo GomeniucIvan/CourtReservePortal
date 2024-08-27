@@ -7,27 +7,28 @@ export const HorizontalResourceIterator = (props) => {
   const { nested, children, rowContentProps } = props;
   const rowContent = props.rowContent || DefaultRowContent;
   const childRowContent = props.childRowContent || rowContent;
-  const resources = toGroupResources(props.group, props.resources);
-
-  const groupIndex = 0;
-
-  console.log(props)
+  const hideDateRow = props.hideDateRow || false;
   
+  const resources = React.useMemo(() => toGroupResources(props.group, props.resources), [props.group, props.resources]);
+  
+  const groupIndex = 0;
   return (
       <div className="k-scheduler-group k-group-horizontal">
         {nested
-            ? renderResourcesRecursively({ resources, children, nested, groupIndex, rowContent, rowContentProps, childRowContent })
-            : renderResources({ resources, children, rowContent, nested: !!nested, groupIndex, rowContentProps, childRowContent })}
+            ? renderResourcesRecursively({ resources, children, nested, groupIndex, rowContent, rowContentProps, childRowContent, hideDateRow })
+            : renderResources({ resources, children, rowContent, nested: !!nested, groupIndex, rowContentProps, childRowContent, hideDateRow })}
       </div>
   );
 };
 
 const renderResourcesRecursively = (args) => {
-  const { resources, rowContent, nested, children, groupIndex, rowContentProps, childRowContent } = args;
+  const { resources, rowContent, nested, children, groupIndex, rowContentProps, childRowContent, hideDateRow } = args;
 
+  if (hideDateRow && groupIndex === resources.length){
+    return (<></>);
+  }
   
   if (groupIndex === resources.length) {
-    //return (<></>);
     return renderResources({ resources, rowContent, children, nested, groupIndex, rowContentProps, childRowContent });
   }
 
@@ -62,6 +63,7 @@ const renderResourcesRecursively = (args) => {
           nested,
           rowContent,
           childRowContent,
+          hideDateRow,
           groupIndex: groupIndex + 1
         })}
       </React.Fragment>
@@ -69,15 +71,15 @@ const renderResourcesRecursively = (args) => {
 };
 
 const renderResources = (args) => {
-  const { resources, childRowContent, children, rowContentProps } = args;
+  const { resources, childRowContent, children, rowContentProps, hideDateRow } = args;
 
   const deepestResources = expandResources(resources, resources.length - 1);
   const ChildRowContent = childRowContent;
 
   const hasGroups = resources.length > 0;
-
+  
   return (
-      <div className="k-scheduler-row">
+      <div className="k-scheduler-row k-date-row-header">
         <ChildRowContent resources={resources}  {...rowContentProps}>
           {(deepestResources.length ? deepestResources : EMPTY_RESOURCE).map((resource, groupIndex) => (
               <div key={groupIndex} className="k-scheduler-cell k-group-cell">
