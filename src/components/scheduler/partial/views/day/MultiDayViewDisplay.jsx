@@ -28,6 +28,7 @@ const GRID_OFFSET = 1;
 const EMPTY_CELL = <div className="k-scheduler-cell k-side-cell" />;
 
 export const MultiDayView = (props) => {
+    console.log(props)
     const {
         group,
         timezone,
@@ -298,6 +299,8 @@ export const MultiDayView = (props) => {
                                                                             slot={props.slot}
                                                                             viewSlot={props.viewSlot}
                                                                             form={props.form}
+                                                                            useTextSchedulerSlot={props.useTextSchedulerSlot}
+                                                                            openReservationCreateModal={props.openReservationCreateModal}
                                                                             row={rootIndex + GRID_OFFSET}
                                                                             col={(timeRanges.length * (groupIndex || 0)) + rangeIndex}
                                                                             isWorkHour={

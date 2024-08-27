@@ -17,11 +17,11 @@ function ExpandedScheduler() {
     const doNotShowMultipleReservations = true;
     const shouldHideReserveButton = false;
     const [courts, setCourts] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
     
     //todo
     const startTimeString = '8:00';
     const endTimeString = '20:00';
-    const selectedDate = new Date();
     const events = [];
     let timeZone = 'Etc/UTC';
     let interval = 15;
@@ -68,15 +68,19 @@ function ExpandedScheduler() {
     }
     
     const handleDateChange = (event) => {
-
+        const selectedDate = event.value;
+        setSelectedDate(selectedDate);
     }
     
-    const handleDataChange = () => {
-        
+    const handleDataChange = (e) => {
     }
 
-    const openReservationCreateModal = () => {
+    const openReservationCreateModal = (e) => {
+        let courtId = e.currentTarget.getAttribute('entytyid');
+        let start = e.currentTarget.getAttribute('start');
+        let end = e.currentTarget.getAttribute('end');
         
+        console.log('CourtId: ' + courtId)
     }
     
     const CustomSlot = (props) => {
@@ -156,6 +160,8 @@ function ExpandedScheduler() {
                interval={interval}
                item={InnerSchedulerItem}
                slot={CustomSlot}
+               useTextSchedulerSlot={true}
+               openReservationCreateModal={openReservationCreateModal}
                resources={[{
                    name: 'Courts',
                    data: courts,

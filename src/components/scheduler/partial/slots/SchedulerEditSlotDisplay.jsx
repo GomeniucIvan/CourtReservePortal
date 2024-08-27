@@ -21,7 +21,8 @@ export const SchedulerEditSlot = React.forwardRef((props, ref) => {
         form: propForm,
         formItem: propFormItem,
         onFormItemChange,
-
+        useTextSchedulerSlot,
+        openReservationCreateModal,
         ...viewSlotProps
     } = props;
 
@@ -245,25 +246,26 @@ export const SchedulerEditSlot = React.forwardRef((props, ref) => {
             <ViewSlot
                 {...viewSlotProps}
                 _ref={slot}
-                selected={selected}
+                // selected={selected}
                 tabIndex={tabIndex}
-
+                useTextSchedulerSlot={useTextSchedulerSlot}
+                openReservationCreateModal={openReservationCreateModal}
                 // Focus
-                onFocus={handleFocus}
+                // onFocus={handleFocus}
 
                 // Mouse
                 onDoubleClick={handleDoubleClick}
 
                 // Keyboard
-                onKeyDown={handleKeyDown}
+                // onKeyDown={handleKeyDown}
             />
-            {(formItem) && (
-                <Form
-                    dataItem={formItem}
-                    onSubmit={handleEditFormSubmit}
-                    onClose={handleEditFormClose}
-                    onCancel={handleEditFormCancel}
-                />)}
+            {/*{(formItem) && (*/}
+            {/*    <Form*/}
+            {/*        dataItem={formItem}*/}
+            {/*        onSubmit={handleEditFormSubmit}*/}
+            {/*        onClose={handleEditFormClose}*/}
+            {/*        onCancel={handleEditFormCancel}*/}
+            {/*    />)}*/}
         </SchedulerEditSlotContext>
     );
 });

@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { classNames } from "@progress/kendo-react-common";
 import { useSchedulerSlot } from "../hooks/useSchedulerSlotDisplay.js";
-
+import {toBoolean} from "../../../../utils/Utils.jsx";
+import {Typography} from "antd";
+const {Text} = Typography;
 
 export const SchedulerSlot = React.forwardRef((
     props,
@@ -23,7 +25,9 @@ export const SchedulerSlot = React.forwardRef((
         // Keyboard
         onKeyDown,
         onKeyPress,
-        onKeyUp
+        onKeyUp,
+        useTextSchedulerSlot,
+        openReservationCreateModal
     } = props;
 
     const { slot, element } = useSchedulerSlot(props, ref);
@@ -35,7 +39,7 @@ export const SchedulerSlot = React.forwardRef((
         : props.selected
             ? 0
             : -1;
-
+    
     const className = React.useMemo(
         () => {
             const isWorkHour = props.isWorkHour ?? schedulerSlotDefaultProps.isWorkHour;
@@ -207,6 +211,31 @@ export const SchedulerSlot = React.forwardRef((
         [onKeyUp, slot]
     );
 
+    
+    if (toBoolean(useTextSchedulerSlot)){
+        return (
+            <div className={'k-scheduler-cell k-slot-cell'}>
+
+                <Text
+                    start={props.start.getTime()}
+                    end={props.end.getTime()}
+                    entytyid={props.group.resources[0].Value}
+                    onClick={openReservationCreateModal}
+                    style={{
+                        height: '40px',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        display: 'flex'
+                        //display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`
+                    }}
+                >
+                    Reserve
+                </Text>      
+            </div>
+        );
+    }
+    
     return (
         <div
             ref={element}
@@ -224,10 +253,10 @@ export const SchedulerSlot = React.forwardRef((
 
             // Mouse
             onClick={handleClick}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
+            // onMouseEnter={handleMouseEnter}
+            // onMouseLeave={handleMouseLeave}
+            // onMouseOver={handleMouseOver}
+            // onMouseOut={handleMouseOut}
             onDoubleClick={handleDoubleClick}
 
             // Keyboard

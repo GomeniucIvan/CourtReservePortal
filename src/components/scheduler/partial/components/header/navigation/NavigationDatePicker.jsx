@@ -67,7 +67,6 @@ export const NavigationDatePicker = React.forwardRef((
     //             : dateRange.zonedEnd.addDays(-1)
     //     );
 
-
     const handleClick = React.useCallback(
         () => {
             setShow(!show);
@@ -114,6 +113,8 @@ export const NavigationDatePicker = React.forwardRef((
         }
     }, [getWindow]);
 
+    console.log(8)
+    
     React.useEffect(() => {
         calculateMedia();
         const resizeObserver = (getWindow()).ResizeObserver;
@@ -130,18 +131,18 @@ export const NavigationDatePicker = React.forwardRef((
         };
     }, [calculateMedia, element, getWindow]);
 
-    React.useEffect(
-        () => {
-            if (show && focused) {
-                if (calendar.current) {
-                    calendar.current.focus();
-                }
-            }
-        },
-        [focused, show]
-    );
+    // React.useEffect(
+    //     () => {
+    //         if (show && focused) {
+    //             if (calendar.current) {
+    //                 calendar.current.focus();
+    //             }
+    //         }
+    //     },
+    //     [focused, show]
+    // );
 
-    const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
+    // const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
     return (
         <>
             <Radio.Button

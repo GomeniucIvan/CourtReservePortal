@@ -464,6 +464,8 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                        editable={props.editable ?? schedulerDefaultProps.editable}
                        key={view.props.name}
                        item={props.item}
+                       useTextSchedulerSlot={props.useTextSchedulerSlot}
+                       openReservationCreateModal={props.openReservationCreateModal}
                        viewItem={props.viewItem}
                        editItem={props.editItem}
                        task={props.task}
