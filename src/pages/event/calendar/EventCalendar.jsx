@@ -29,7 +29,7 @@ function EventCalendar() {
     
     return (
         <div>
-            <Scheduler isCalendar={true} selectedView={selectedView}/>
+            <Scheduler isCalendar={true} courts={[]} selectedView={selectedView}/>
         </div>
     )
 }

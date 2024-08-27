@@ -22,6 +22,8 @@ import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineVie
 import {Button, Flex, Radio} from 'antd';
 import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {CaretLeftOutlined, CaretRightOutlined} from "@ant-design/icons";
+import {useStyles} from "./styles.jsx";
+import {cx} from "antd-style";
 
 const DEFAULT_DATE_FORMAT = '{0:D}';
 const DEFAULT_SHORT_DATE_FORMAT = '{0:d}';
@@ -42,11 +44,10 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         onDataChange
     } = props;
 
-    console.log(22);
-    
     const element = React.useRef(null);
     const scheduler = React.useRef(null);
-
+    const {styles} = useStyles();
+    
     React.useImperativeHandle(scheduler, () => ({ props, element: element.current }));
     React.useImperativeHandle(ref, () => scheduler.current);
 
@@ -76,8 +77,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         setShowWorkHours
     ] = useControlledState(true);
 
-    console.log(props.selectedView)
-    
     const view = views.find((currentView) => isNullOrEmpty(props.selectedView) ? equalString(currentView.props.name, activeViewName) : equalString(currentView.props.name, props.selectedView))
         || views[0]
         || defaultView;
@@ -402,84 +401,86 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
     const [eventSelection, setEventSelection] = React.useState(null);
 
     return (
-        <SchedulerContext
-            // Static
-            element={element}
-            props={props}
-            views={views}
-            fields={fields}
-            groups={groups}
-            dateRange={dateRange}
-            orientation={orientation}
-            dateFormat={{ dateFormat, shortDateFormat }}
+       <div className={cx(styles.scheduler)}>
+           <SchedulerContext
+               // Static
+               element={element}
+               props={props}
+               views={views}
+               fields={fields}
+               groups={groups}
+               dateRange={dateRange}
+               orientation={orientation}
+               dateFormat={{ dateFormat, shortDateFormat }}
 
-            // State
-            date={[date, handleDateChange]}
-            activeView={[activeViewName, handleActiveViewNameChange]}
-            selection={[eventSelection, setEventSelection]}
+               // State
+               date={[date, handleDateChange]}
+               activeView={[activeViewName, handleActiveViewNameChange]}
+               selection={[eventSelection, setEventSelection]}
 
-            // Reducers
-            data={[data, handleDataAction]}
-        >
-            <div
-                ref={element}
-                id={props.id}
-                style={style}
-                className={`${className}`}
-                tabIndex={props.tabIndex ?? schedulerDefaultProps.tabIndex}
+               // Reducers
+               data={[data, handleDataAction]}
+           >
+               <div
+                   ref={element}
+                   id={props.id}
+                   style={style}
+                   className={`${className}`}
+                   tabIndex={props.tabIndex ?? schedulerDefaultProps.tabIndex}
 
-                // Aria
-                dir={dir}
-                role={props.role || DEFAULT_SCHEDULER_ROLE}
-                aria-label={props.ariaLabel}
-                aria-labelledby={props.ariaLabelledby}
-                aria-activedescendant={(eventSelection && eventSelection.props.id) || undefined}
+                   // Aria
+                   dir={dir}
+                   role={props.role || DEFAULT_SCHEDULER_ROLE}
+                   aria-label={props.ariaLabel}
+                   aria-labelledby={props.ariaLabelledby}
+                   aria-activedescendant={(eventSelection && eventSelection.props.id) || undefined}
 
-                // Handlers
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-            >
-                <Header>
-                    <Flex justify={'space-between'} style={{width: '100%'}}>
-                        <Button type={'default'} onClick={handleTodayClick}>{todayText}</Button>
+                   // Handlers
+                   onFocus={handleFocus}
+                   onBlur={handleBlur}
+               >
+                   <Header>
+                       <Flex justify={'space-between'} style={{width: '100%'}}>
+                           <Button type={'default'} onClick={handleTodayClick}>{todayText}</Button>
 
-                        <Radio.Group value={0} size={'large'}>
-                            <Radio.Button onClick={handlePrevClick}>
-                                <CaretLeftOutlined />
-                            </Radio.Button>
-                            <NavigationDatePicker
-                                value={date}
-                                onChange={handleDatePickerChange}
-                            />
-                            <Radio.Button onClick={handleNextClick}>
-                                <CaretRightOutlined />
-                            </Radio.Button>
-                        </Radio.Group>
-                    </Flex>
+                           <Radio.Group value={0} size={'large'}>
+                               <Radio.Button onClick={handlePrevClick}>
+                                   <CaretLeftOutlined />
+                               </Radio.Button>
+                               <NavigationDatePicker
+                                   value={date}
+                                   onChange={handleDatePickerChange}
+                               />
+                               <Radio.Button onClick={handleNextClick}>
+                                   <CaretRightOutlined />
+                               </Radio.Button>
+                           </Radio.Group>
+                       </Flex>
 
-                    {/*<ToolbarSpacer />*/}
-                    {/*<ViewSelectorList />*/}
-                </Header>
-                {view && (<view.type
-                    editable={props.editable ?? schedulerDefaultProps.editable}
-                    key={view.props.name}
-                    item={props.item}
-                    viewItem={props.viewItem}
-                    editItem={props.editItem}
-                    task={props.task}
-                    viewTask={props.viewTask}
-                    editTask={props.viewTask}
-                    slot={props.slot}
-                    viewSlot={props.viewSlot}
-                    editSlot={props.editSlot}
-                    form={props.form}
-                    onDataAction={handleDataAction}
-                    showWorkHours={showWorkHours}
-                    hideDateRow={props.hideDateRow}
-                    {...view.props}
-                />)}
-            </div>
-        </SchedulerContext>
+                       {/*<ToolbarSpacer />*/}
+                       {/*<ViewSelectorList />*/}
+                   </Header>
+                   {view && (<view.type
+                       editable={props.editable ?? schedulerDefaultProps.editable}
+                       key={view.props.name}
+                       item={props.item}
+                       viewItem={props.viewItem}
+                       editItem={props.editItem}
+                       task={props.task}
+                       viewTask={props.viewTask}
+                       editTask={props.viewTask}
+                       slot={props.slot}
+                       viewSlot={props.viewSlot}
+                       editSlot={props.editSlot}
+                       form={props.form}
+                       onDataAction={handleDataAction}
+                       showWorkHours={showWorkHours}
+                       hideDateRow={props.hideDateRow}
+                       {...view.props}
+                   />)}
+               </div>
+           </SchedulerContext>
+       </div>
     );
 });
 

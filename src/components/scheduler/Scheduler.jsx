@@ -5,7 +5,6 @@ import InnerSchedulerItem from "./partial/InnerSchedulerItem.jsx";
 import {DayView} from "./partial/views/day/DayViewDisplay.jsx";
 import {SchedulerSlot} from "./partial/slots/SchedulerSlotDisplay.jsx";
 import {cx} from "antd-style";
-import {useStyles} from "./styles.jsx";
 import {WeekView} from "./partial/views/week/WeekView.mjs";
 import {MonthView} from "./partial/views/month/MonthView.mjs";
 import {AgendaView} from "./partial/views/agenda/AgendaView.mjs";
@@ -39,7 +38,6 @@ function Scheduler({
 
     let schedulerHub = {};
     let timeZone = 'Etc/UTC';
-    const {styles} = useStyles();
 
     useEffect(() => {
 
@@ -405,7 +403,7 @@ function Scheduler({
     }
 
     return (
-        <div className={cx(styles.scheduler)}>
+        <div>
             <InnerScheduler
                 data={events}
                 hideDaySelection={hideDaySelection}
