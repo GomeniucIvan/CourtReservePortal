@@ -512,6 +512,14 @@ export const useStyles = createStyles(({ css, token }) => ({
             display: grid;
         }
 
+        .k-time-cell,
+        .k-side-cell {
+            position: sticky;
+            left: 0;
+            background-color: ${token.colorBgBase};
+            z-index: 1;
+        }
+
         .k-scheduler-layout > tbody > tr > td {
             padding: 0;
             vertical-align: top;

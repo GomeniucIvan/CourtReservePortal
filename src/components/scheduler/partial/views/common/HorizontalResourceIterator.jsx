@@ -40,7 +40,7 @@ const renderResourcesRecursively = (args) => {
             ? (<div className="k-scheduler-row">
               <RowContent resources={resources} groupIndex={groupIndex} {...rowContentProps}>
                 {expandedResources.map((expandedResource, expandedResourceIndex) => (
-                    <div key={expandedResourceIndex} className="k-scheduler-cell k-heading-cell">
+                    <div key={expandedResourceIndex} className="k-scheduler-cell k-heading-cell 2">
                       {expandedResource.text}
                     </div>
                 ))}
