@@ -43,7 +43,8 @@ export const NavigationDatePicker = React.forwardRef((
     const [date] = useSchedulerDateContext();
 
     const isMonthView = dateRange.end.getTime() - dateRange.start.getTime() > MS_PER_DAY * 27;
-
+    const isWeekOrAgenda = !isMonthView && dateRange.end.getTime() - dateRange.start.getTime() === MS_PER_DAY * 7;
+    
     const text = intl.format(
         dateFormat,
         isMonthView
@@ -54,7 +55,7 @@ export const NavigationDatePicker = React.forwardRef((
             : dateRange.zonedEnd.addDays(-1)
     );
 
-    const shortText = dayjs(date).format('ddd, MMM D');
+    const shortText = isMonthView ? dayjs(date).format('MMMM YYYY') : isWeekOrAgenda ? (`${dayjs(dateRange.start).format('MMM D')} - ${dayjs(dateRange.end).format('MMM D')}`) : dayjs(date).format('ddd, MMM D');
 
     // const shortText = intl.format(
     //     '{0: ddd, MMM D}',
