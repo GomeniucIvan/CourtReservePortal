@@ -1,14 +1,20 @@
-﻿import Scheduler from "../../components/scheduler/Scheduler.jsx";
-import mockData from "../../mocks/scheduler-data.json";
+﻿import mockData from "../../mocks/scheduler-data.json";
 import {useApp} from "../../context/AppProvider.jsx";
-import InnerSchedulerItem from "../../components/scheduler/partial/InnerSchedulerItem.jsx";
 import React, {useEffect, useState} from "react";
 import {DayView} from "../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {InnerScheduler} from "../../components/scheduler/partial/InnerScheduler.jsx";
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
 import {SchedulerSlot} from "../../components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
 import {Typography} from "antd";
+import {useNavigate} from "react-router-dom";
+import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 const {Text} = Typography
+import '@progress/kendo-date-math/tz/America/New_York';
+import {
+    SchedulerProportionalViewItem
+} from "../../components/scheduler/partial/items/SchedulerProportionalViewItem.mjs";
+import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/SchedulerViewSlotDisplay.jsx";
+import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 
 function ExpandedScheduler() {
     const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData} = useApp();
@@ -18,12 +24,13 @@ function ExpandedScheduler() {
     const shouldHideReserveButton = false;
     const [courts, setCourts] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [events, setEvents] = useState([]);
+    const navigate = useNavigate();
     
     //todo
     const startTimeString = '8:00';
     const endTimeString = '20:00';
-    const events = [];
-    let timeZone = 'Etc/UTC';
+    let timeZone = 'America/New_York';
     let interval = 15;
     let customSchedulerId = null;
 
@@ -35,6 +42,20 @@ function ExpandedScheduler() {
            setTimeout(function(){
                setCourts(mockData.courts)
            }, 100);
+
+            setTimeout(function(){
+
+                const formattedEvents = mockData.reservations.map(event => ({
+                    ...event,
+                    Start: new Date(event.Start),
+                    start: new Date(event.Start),
+                    End: new Date(event.End),
+                    end: new Date(event.End),
+                    isAllDay: false
+                }));
+                
+                setEvents(formattedEvents)
+            }, 400);
         }
     }, []);
     
@@ -81,6 +102,8 @@ function ExpandedScheduler() {
         let end = e.currentTarget.getAttribute('end');
         
         console.log('CourtId: ' + courtId)
+
+        navigate(ProfileRouteNames.RESERVATION_CREATE);
     }
     
     const CustomSlot = (props) => {
@@ -133,6 +156,18 @@ function ExpandedScheduler() {
         endTimezone: "EndTimezone",
         isAllDay: "isAllDay",
     };
+
+    const CustomViewSlot = (props) => {
+        return (
+            <SchedulerViewSlot
+                {...props}
+                style={{
+                    ...props.style,
+                    cursor:  "no-drop",
+                }}
+            />
+        );
+    };
     
     return (
        <>
@@ -141,25 +176,18 @@ function ExpandedScheduler() {
                hideDaySelection={true}
                timezone={timeZone}
                date={selectedDate}
+               editable={false}
                defaultDate={selectedDate}
                onDateChange={handleDateChange}
                onDataChange={handleDataChange}
                modelFields={modelFields}
                height={availableHeight}
-               editable={{
-                   add: doNotShowMultipleReservations,
-                   remove: false,
-                   drag: allowSchedulerDragAndDrop,
-                   resize: allowSchedulerDragAndDrop,
-                   select: allowSchedulerDragAndDrop,
-                   edit: false,
-               }}
+               viewSlot={CustomViewSlot}
                group={{
                    resources: ["Courts"],
                }}
                interval={interval}
-               item={InnerSchedulerItem}
-               slot={CustomSlot}
+               item={ExpandedSchedulerItem}
                useTextSchedulerSlot={true}
                openReservationCreateModal={openReservationCreateModal}
                resources={[{
@@ -172,6 +200,7 @@ function ExpandedScheduler() {
                }]}
            >
                <DayView
+                   viewItem={SchedulerProportionalViewItem}
                    startTime={startTimeString}
                    endTime={endTimeString}
                    workDayStart={startTimeString}

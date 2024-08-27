@@ -4,21 +4,21 @@ import {Button, Segmented, Space} from "antd";
 import {FilterOutlined} from "@ant-design/icons";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {InnerScheduler} from "../../../components/scheduler/partial/InnerScheduler.jsx";
-import InnerSchedulerItem from "../../../components/scheduler/partial/InnerSchedulerItem.jsx";
 import {DayView} from "../../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {WeekView} from "../../../components/scheduler/partial/views/week/WeekView.mjs";
-import {MonthView} from "../../../components/scheduler/partial/views/month/MonthView.mjs";
+import {MonthView} from "../../../components/scheduler/partial/views/month/MonthView.jsx";
 import {AgendaView} from "../../../components/scheduler/partial/views/agenda/AgendaView.mjs";
-import {isNullOrEmpty} from "../../../utils/Utils.jsx";
-import {SchedulerSlot} from "../../../components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
 import {Typography} from "antd";
+import mockData from "../../../mocks/scheduler-data.json";
+
 const {Text} = Typography
 
 function EventCalendar() {
     const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent} = useApp();
     const [isFilterOpened, setIsFilterOpened] = useState(false);
     const [selectedView, setSelectedView] = useState('Day');
-    const {availableHeight} = useApp();
+    const {availableHeight, isMockData} = useApp();
+    const [events, setEvents] = useState([]);
     
     const hideReserveButtonsOnAdminSchedulers = false;
     const allowSchedulerDragAndDrop = false;
@@ -29,11 +29,11 @@ function EventCalendar() {
     const startTimeString = '8:00';
     const endTimeString = '20:00';
     const selectedDate = new Date();
-    const events = [];
-    let timeZone = 'Etc/UTC';
+
+    let timeZone = 'America/New_York';
     let interval = 15;
     let customSchedulerId = null;
-    
+
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(null);
@@ -51,6 +51,21 @@ function EventCalendar() {
                         onClick={() => setIsFilterOpened(true)}/>
             </Space>
         )
+
+        if (isMockData){
+            setTimeout(function(){
+                const formattedEvents = mockData.calendar_events.map(event => ({
+                    ...event,
+                    Start: new Date(event.Start),
+                    start: new Date(event.Start),
+                    End: new Date(event.End),
+                    end: new Date(event.End),
+                    isAllDay: false
+                }));
+
+                setEvents(formattedEvents)
+            }, 400);
+        }
     }, []);
 
 
@@ -95,47 +110,6 @@ function EventCalendar() {
 
     }
 
-    const CustomSlot = (props) => {
-        
-        return (<></>);
-        
-        
-        const courtId = props.group.resources[0].Value;
-
-        if ((courtId === -1 && isNullOrEmpty(customSchedulerId)) || (!isNullOrEmpty(customSchedulerId) && courtId == -1) || (!isNullOrEmpty(customSchedulerId) && courtId == customSchedulerId)) {
-            return (<SchedulerSlot {...props} onDoubleClick={() => onDoubleClickCreate(courtId)}>
-
-            </SchedulerSlot>);
-        }
-
-        if (hideReserveButtonsOnAdminSchedulers) {
-            return (<SchedulerSlot {...props} onDoubleClick={() => onDoubleClickCreate(courtId)}>
-                <div className='slot-btn-dbl' start={props.zonedStart}
-                     end={props.zonedEnd}
-                     courtid={courtId}>
-
-                </div>
-            </SchedulerSlot>);
-        }
-
-        return (<SchedulerSlot {...props} onDoubleClick={() => onDoubleClickCreate(courtId)}>
-            <Text
-                start={props.zonedStart}
-                end={props.zonedEnd}
-                courtid={courtId}
-                onClick={() => openReservationCreateModal(courtId, props.zonedStart, props.zonedEnd)}
-                style={{
-                    height: '40px',
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`}}>
-
-                Reserve
-            </Text>
-        </SchedulerSlot>)
-    }
-
     const modelFields = {
         id: "UqId",
         title: "Title",
@@ -149,7 +123,7 @@ function EventCalendar() {
         endTimezone: "EndTimezone",
         isAllDay: "isAllDay",
     };
-    
+
     return (
         <div>
             <InnerScheduler
@@ -172,8 +146,6 @@ function EventCalendar() {
                     edit: false,
                 }}
                 interval={interval}
-                item={InnerSchedulerItem}
-                slot={CustomSlot}
             >
 
                 <DayView
@@ -186,9 +158,9 @@ function EventCalendar() {
                     hideDateRow={false}
                 />
 
-                <WeekView />
-                <MonthView />
-                <AgendaView />
+                <WeekView/>
+                <MonthView/>
+                <AgendaView/>
             </InnerScheduler>
         </div>
     )

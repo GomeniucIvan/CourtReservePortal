@@ -19,6 +19,7 @@ import { ITEMS_FOCUS_ACTION } from "../hooks/use-items-focus.mjs";
 import { SchedulerItemSelectionContext } from "../context/SchedulerContext.mjs";
 import { useEditable } from "../hooks/useEditable.mjs";
 import { SLOTS_FOCUS_ACTION } from "../hooks/use-slots-focus.mjs";
+import {toBoolean} from "../../../../utils/Utils.jsx";
 
 /**
  * Represents the default `editItem` component rendered by the [KendoReact Scheduler component]({% slug overview_scheduler %}).
@@ -29,6 +30,7 @@ export const SchedulerEditItem = React.forwardRef((
     props,
     ref
 ) => {
+    
     // tslint:enable:max-line-length
     const {
         _ref,
@@ -123,7 +125,8 @@ export const SchedulerEditItem = React.forwardRef((
         onFormSubmitAction,
 
         onCancel,
-        onCancelAction
+        onCancelAction,
+        slotDuration
     } = { ...schedulerEditItemDefaultProps, ...props };
 
     const [tabIndex, setTabIndex] = React.useState(props.tabIndex);
@@ -397,18 +400,21 @@ export const SchedulerEditItem = React.forwardRef((
 
     const handleDrag = React.useCallback(
         (event) => {
-            if (onDragAction) {
-                const actions = onDragAction(event, props, state);
+            if (toBoolean(props?.editable?.drag)){
 
-                if (actions) {
-                    Array.isArray(actions)
-                        ? actions.filter(Boolean).map((action) => action && (actionsReducerMap)[action.type]({ ...action, item }, event.dragEvent.originalEvent))
-                        : (actionsReducerMap)[actions.type]({ ...actions, item }, event.dragEvent.originalEvent);
+                if (onDragAction) {
+                    const actions = onDragAction(event, props, state);
+
+                    if (actions) {
+                        Array.isArray(actions)
+                            ? actions.filter(Boolean).map((action) => action && (actionsReducerMap)[action.type]({ ...action, item }, event.dragEvent.originalEvent))
+                            : (actionsReducerMap)[actions.type]({ ...actions, item }, event.dragEvent.originalEvent);
+                    }
                 }
-            }
 
-            if (onDrag) {
-                onDrag.call(undefined, event);
+                if (onDrag) {
+                    onDrag.call(undefined, event);
+                }
             }
         },
         [onDragAction, onDrag, props, actionsReducerMap, state]

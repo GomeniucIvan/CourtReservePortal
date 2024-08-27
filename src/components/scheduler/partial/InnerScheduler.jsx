@@ -15,7 +15,7 @@ import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
 import { caretAltRightIcon, caretAltLeftIcon, clockIcon } from "@progress/kendo-svg-icons";
 import { DATA_ACTION } from "./constants/index.mjs";
 import { AgendaView, agendaViewDefaultProps } from "./views/agenda/AgendaView.mjs";
-import { MonthView, monthViewDefaultProps } from "./views/month/MonthView.mjs";
+import { MonthView, monthViewDefaultProps } from "./views/month/MonthView.jsx";
 import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.mjs";
 import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs";
 import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineView.jsx";
@@ -466,6 +466,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                        item={props.item}
                        useTextSchedulerSlot={props.useTextSchedulerSlot}
                        openReservationCreateModal={props.openReservationCreateModal}
+                       height={props.height}
                        viewItem={props.viewItem}
                        editItem={props.editItem}
                        task={props.task}

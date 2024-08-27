@@ -113,8 +113,6 @@ export const NavigationDatePicker = React.forwardRef((
         }
     }, [getWindow]);
 
-    console.log(8)
-    
     React.useEffect(() => {
         calculateMedia();
         const resizeObserver = (getWindow()).ResizeObserver;

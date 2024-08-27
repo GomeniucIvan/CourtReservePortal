@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BaseView } from "../../components/BaseView.mjs";
+import { BaseView } from "../../components/BaseView.jsx";
 import { MS_PER_DAY, MS_PER_MINUTE, ZonedDate, Day, getDate, addDays } from "@progress/kendo-date-math";
 import { HorizontalResourceIterator} from "../common/HorizontalResourceIterator.jsx";
 import { TimelineViewRowContent } from "./TimelineViewRowContent.mjs";

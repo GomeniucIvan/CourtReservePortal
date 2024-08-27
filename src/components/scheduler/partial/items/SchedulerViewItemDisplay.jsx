@@ -91,8 +91,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
         const rect = getRect(firstSlot.current.element);
         setRect(item.current.element, rect);
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
     const position = () => {
         const element = item.current && item.current.element;
         if (!element) { return; }
@@ -113,8 +112,6 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
                 items.push(i.current);
             }
         });
-
-        //console.log(items)
 
         let order = (props.dragHint || props.resizeHint)
             ? calculateOrder(item.current, props.dragHint ? dragItems : resizeItems, slots, props.ignoreIsAllDay)
@@ -155,17 +152,27 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             return;
         }     
 
-
-        //todo find in elemenet prop
-        const schedulerInterval = interval;
-
+        const schedulerInterval = props.interval;
+        const closeTime = props.closeTime;
+        
         const calculateHeight = () => {
             const totalHeightForOneSlot = rect.height;
             const heightForOneMinute = totalHeightForOneSlot / schedulerInterval;
             const startDate = new Date(props.start);
-            const endDate = new Date(props.end);
+            let endDate = new Date(props.end);
+
+            const endTimeInMinutes = endDate.getHours() * 60 + endDate.getMinutes();
+            const closeTimeInMinutes = closeTime.getHours() * 60 + closeTime.getMinutes();
+
+            if (endTimeInMinutes > closeTimeInMinutes) {
+                console.log(endDate);
+                console.log(closeTime);
+                // Adjust the time of endDate to match closeTime
+                endDate.setHours(closeTime.getHours(), closeTime.getMinutes(), closeTime.getSeconds());
+            }
+            
             const totalEventMinutes = (endDate - startDate) / (1000 * 60);
-            const totalHeightToSet = heightForOneMinute * totalEventMinutes;
+            const totalHeightToSet = heightForOneMinute * totalEventMinutes - 2;
             return totalHeightToSet;
         }
 

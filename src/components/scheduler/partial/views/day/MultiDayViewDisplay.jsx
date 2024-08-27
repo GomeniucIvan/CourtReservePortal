@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { MS_PER_DAY, ZonedDate, Day, getDate, addDays } from "@progress/kendo-date-math";
-import { BaseView } from "../../components/BaseView.mjs";
+import { BaseView } from "../../components/BaseView.jsx";
 import { HorizontalResourceIterator } from "../common/HorizontalResourceIterator.jsx";
 import { DayViewGroupRowContent } from "./DayViewGroupRowContent.mjs";
 import { VerticalResourceIterator } from "../common/VerticalResourceIterator.mjs";
@@ -28,7 +28,7 @@ const GRID_OFFSET = 1;
 const EMPTY_CELL = <div className="k-scheduler-cell k-side-cell" />;
 
 export const MultiDayView = (props) => {
-    console.log(props)
+
     const {
         group,
         timezone,
@@ -36,7 +36,6 @@ export const MultiDayView = (props) => {
     } = useSchedulerPropsContext();
 
     const intl = useInternationalization();
-
     const EditItem = props.editItem || SchedulerEditItem;
     const EditSlot = props.editSlot || SchedulerEditSlot;
 
@@ -177,7 +176,7 @@ export const MultiDayView = (props) => {
 
     React.useMemo(() => mapItemsToSlots(timeItems, timeSlots, false), [timeItems, timeSlots]);
     React.useMemo(() => mapSlotsToItems(timeItems, timeSlots, false), [timeItems, timeSlots]);
-
+    
     const head = (
         <SchedulerResourceIteratorContext.Consumer>
             {({ groupIndex }) => (
@@ -242,6 +241,8 @@ export const MultiDayView = (props) => {
                                     form={props.form}
                                     onDataAction={props.onDataAction}
                                     item={props.item}
+                                    interval={props.slotDuration}
+                                    closeTime={endTime}
                                     viewItem={props.viewItem}
                                     editable={props.editable}
                                     vertical={false}
@@ -391,6 +392,8 @@ export const MultiDayView = (props) => {
                                     {...item}
                                     onDataAction={props.onDataAction}
                                     viewItem={props.viewItem}
+                                    interval={props.slotDuration}
+                                    closeTime={endTime}
                                     item={props.item}
                                     form={props.form}
                                     editable={props.editable}
@@ -408,6 +411,8 @@ export const MultiDayView = (props) => {
                             format={'t'}
                             onDataAction={props.onDataAction}
                             viewItem={props.viewItem}
+                            interval={props.slotDuration}
+                            closeTime={endTime}
                             item={props.item}
                             form={props.form}
                             editable={props.editable}

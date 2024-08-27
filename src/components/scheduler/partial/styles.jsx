@@ -11,6 +11,12 @@ export const useStyles = createStyles(({ css, token }) => ({
             z-index: 1;
         }
 
+        .k-scheduler-monthview  .k-scheduler-head{
+            .k-scheduler-date-heading {
+                height: 40px;
+            }
+        }
+        
         .k-scheduler-layout-flex .k-scheduler-head {
             position: sticky;
             top: 0;
@@ -352,7 +358,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
 
         .k-scheduler-layout-flex .k-scheduler-group {
-            display: flex;
+            display: block;
             flex: 1 1 100%;
             width: 100%;
             min-width: 0;
@@ -403,17 +409,20 @@ export const useStyles = createStyles(({ css, token }) => ({
             vertical-align: top;
             box-sizing: content-box;
             border-color: ${token.colorBorder};
-        }
-
-        .k-scheduler-layout-flex .k-scheduler-cell.k-slot-cell {
-            position: relative;
+            color: ${token.colorText};
         }
 
         .k-scheduler-layout-flex .k-scheduler-cell.k-side-cell {
+            position: sticky;
             justify-content: flex-end;
             flex-grow: 0;
             flex-basis: auto;
             overflow: visible;
+            min-height: 40px;
+            width: 80px;
+            padding-right: 4px !important;
+            padding-top: 4px !important;
+            z-index: 2;
         }
 
         .k-scheduler-layout-flex .k-scheduler-cell.k-major-cell {

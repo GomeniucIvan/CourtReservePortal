@@ -1,12 +1,11 @@
 ﻿import React, {useEffect, useState} from 'react';
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
 import {InnerScheduler} from "./partial/InnerScheduler.jsx";
-import InnerSchedulerItem from "./partial/InnerSchedulerItem.jsx";
 import {DayView} from "./partial/views/day/DayViewDisplay.jsx";
 import {SchedulerSlot} from "./partial/slots/SchedulerSlotDisplay.jsx";
 import {cx} from "antd-style";
 import {WeekView} from "./partial/views/week/WeekView.mjs";
-import {MonthView} from "./partial/views/month/MonthView.mjs";
+import {MonthView} from "./partial/views/month/MonthView.jsx";
 import {AgendaView} from "./partial/views/agenda/AgendaView.mjs";
 import {Typography} from "antd";
 const { Text } = Typography;
@@ -427,7 +426,6 @@ function Scheduler({
                     resources: ["Courts"],
                 }}
                 interval={interval}
-                item={InnerSchedulerItem}
                 slot={CustomSlot}
                 footer={(props) => <React.Fragment/>}
                 resources={[{

@@ -8,7 +8,7 @@
 "use client";
 import * as e from "react";
 import B from "prop-types";
-import { BaseView as Z } from "../../components/BaseView.mjs";
+import { BaseView as Z } from "../../components/BaseView.jsx";
 import { VerticalResourceIterator as C } from "../common/VerticalResourceIterator.mjs";
 import { dateTitle as A, messages as d, timeTitle as z, eventTitle as L, allDay as _, noEvents as M, agendaViewTitle as V } from "../../messages/index.mjs";
 import { DAYS_IN_WEEK_COUNT as p } from "../../constants/index.mjs";

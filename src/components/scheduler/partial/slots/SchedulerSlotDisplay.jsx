@@ -210,31 +210,6 @@ export const SchedulerSlot = React.forwardRef((
         },
         [onKeyUp, slot]
     );
-
-    
-    if (toBoolean(useTextSchedulerSlot)){
-        return (
-            <div className={'k-scheduler-cell k-slot-cell'}>
-
-                <Text
-                    start={props.start.getTime()}
-                    end={props.end.getTime()}
-                    entytyid={props.group.resources[0].Value}
-                    onClick={openReservationCreateModal}
-                    style={{
-                        height: '40px',
-                        width: '100%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        display: 'flex'
-                        //display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`
-                    }}
-                >
-                    Reserve
-                </Text>      
-            </div>
-        );
-    }
     
     return (
         <div
@@ -273,7 +248,28 @@ export const SchedulerSlot = React.forwardRef((
             data-slot-index={props.index}
             data-start-date={props.start}
         >
-            {props.children}
+            {toBoolean(useTextSchedulerSlot) ?
+                ( <div className={'k-scheduler-cell k-slot-cell'}>
+
+                    <Text
+                        start={props.start.getTime()}
+                        end={props.end.getTime()}
+                        entytyid={props.group.resources[0].Value}
+                        onClick={openReservationCreateModal}
+                        style={{
+                            height: '40px',
+                            width: '100%',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            display: 'flex'
+                            //display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`
+                        }}
+                    >
+                        Reserve
+                    </Text>
+                </div>) :
+                (<>{props.children}</>)
+             }
         </div>
     );
 });

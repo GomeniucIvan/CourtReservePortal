@@ -1,17 +1,30 @@
 import React, { useState } from 'react';
-import {SchedulerItem} from "./items/SchedulerItemDisplay.jsx";
+import {SchedulerItem} from "../../components/scheduler/partial/items/SchedulerItemDisplay.jsx";
+import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 
-const InnerSchedulerItem = (props) => {
-    const {
-        useCore,
-    } = props;
+const ExpandedSchedulerItem = (props) => {
     const dataItem = props.dataItem;
-
+    const isUsingCourtWaitListing = false;
+    const hidePaymentInfoOnScheduler = true;
+    const useCore = true;
+    const donTrackMember = true;
+    const hideCheckInFromReservations = true;
+    
+    const displayInstructorsRow = () => {
+        return (<></>);
+    }
+    
+    const canUserEditItem = () => {
+        return false;
+    }
+    
     const isLightVersionEventSlot = typeof dataItem.IsLightVersion !== 'undefined' ? dataItem.IsLightVersion : false;
 
     const [isHovered, setIsHovered] = useState(false);
 
     const renderTooltipInfoIcon = (dataItem) => {
+        return (<></>);
+        
         if (dataItem.ReservationId != 0 && (dataItem.IsCanceled || (canUserEditItem(dataItem) == false && toBoolean(dataItem.IsCanceled) == false) && !dataItem.IsComboReservation)) {
             return (
                 <div className="pull-left kendoTooltip ml-15">
@@ -410,4 +423,4 @@ const InnerSchedulerItem = (props) => {
 };
 
 
-export default InnerSchedulerItem;
+export default ExpandedSchedulerItem;
