@@ -23,7 +23,8 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.SCHEDULER,
         element: <ExpandedScheduler />,
-        title: 'Scheduler'
+        title: 'Scheduler',
+        disablePullDown: true
     },
     {
         path: HomeRouteNames.ANNOUNCEMENT_LIST,
@@ -44,7 +45,8 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.CALENDAR,
         element: <EventCalendar />,
-        title: 'Event Calendar'
+        title: 'Event Calendar',
+        disablePullDown: true
     }
 ];
 

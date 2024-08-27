@@ -10,6 +10,7 @@ import {MonthView} from "../../../components/scheduler/partial/views/month/Month
 import {AgendaView} from "../../../components/scheduler/partial/views/agenda/AgendaView.mjs";
 import {Typography} from "antd";
 import mockData from "../../../mocks/scheduler-data.json";
+import EventCalendarItem from "./EventCalendarItem.jsx";
 
 const {Text} = Typography
 
@@ -155,6 +156,7 @@ function EventCalendar() {
                     workDayEnd={endTimeString}
                     slotDuration={interval}
                     slotDivisions={1}
+                    viewItem={EventCalendarItem}
                     hideDateRow={false}
                 />
 

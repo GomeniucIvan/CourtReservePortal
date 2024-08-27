@@ -180,7 +180,7 @@ export const MultiDayView = (props) => {
     const head = (
         <SchedulerResourceIteratorContext.Consumer>
             {({ groupIndex }) => (
-                <div className="k-scheduler-row" key={groupIndex}>
+                <div className="k-scheduler-row k-group-1" key={groupIndex}>
                     {timeRanges.map((range, rangeIndex) => (
                         <DateHeaderCell
                             as={props.dateHeaderCell}
@@ -282,7 +282,7 @@ export const MultiDayView = (props) => {
                                                     {({ groupIndex }) => (
                                                         <div
                                                             className={classNames(
-                                                                'k-scheduler-row',
+                                                                'k-scheduler-row k-group-2',
                                                                 {
                                                                     'k-middle-row': !((rootIndex + 1) % slotDivisions === 0)
                                                                 })}

@@ -425,6 +425,18 @@ export const useStyles = createStyles(({ css, token }) => ({
             z-index: 2;
         }
 
+        .k-current-time{
+            position: absolute;
+            background-color: red;
+            z-index: 1;
+        }
+        
+        .k-current-time.k-current-time-arrow-right{
+            position: absolute;
+            background-color: red;
+            z-index: 2;
+        }
+        
         .k-scheduler-layout-flex .k-scheduler-cell.k-major-cell {
             border-bottom-width: 0;
         }
@@ -632,7 +644,6 @@ export const useStyles = createStyles(({ css, token }) => ({
             outline: none;
         }
 
-        kendo-scheduler .k-event,
         .k-event {
             border-radius: 4px;
             min-height: 25px;
@@ -646,6 +657,8 @@ export const useStyles = createStyles(({ css, token }) => ({
             position: absolute;
             overflow: hidden;
             padding-right: 8px;
+            touch-action: initial !important;
+            z-index: 0 !important;
         }
 
         kendo-scheduler .k-event > div,

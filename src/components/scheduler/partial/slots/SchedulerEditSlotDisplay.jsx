@@ -226,7 +226,6 @@ export const SchedulerEditSlot = React.forwardRef((props, ref) => {
     React.useEffect(() => {
         const isFirst = slots.length && slots[0].current === slot.current;
 
-
         setTabIndex(props.tabIndex !== undefined
             ? props.tabIndex === null
                 ? undefined
@@ -250,6 +249,7 @@ export const SchedulerEditSlot = React.forwardRef((props, ref) => {
                 tabIndex={tabIndex}
                 useTextSchedulerSlot={useTextSchedulerSlot}
                 openReservationCreateModal={openReservationCreateModal}
+                dataItem={createDataItemFromSlot()}
                 // Focus
                 // onFocus={handleFocus}
 

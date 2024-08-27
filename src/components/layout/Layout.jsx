@@ -112,6 +112,10 @@ function Layout() {
         document.head.appendChild(style);
     }, [token]);
     
+    const disablePullDownToRefresh = currentRoute?.disablePullDown;
+    
+    console.log(disablePullDownToRefresh)
+    
     return (
         <div className={styles.root}>
             {currentRoute &&
@@ -124,6 +128,7 @@ function Layout() {
                 <LayoutExtra />
                 
                 <PullToRefresh onRefresh={refreshData}
+                               disabled={toBoolean(disablePullDownToRefresh)}
                                pullingText={'Pull down to refresh.'}
                                refreshingText={'Loading...'}
                                completeText={'Refresh successful.'}

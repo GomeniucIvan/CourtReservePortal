@@ -372,7 +372,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             </span>}
             {(!props.resizeHint) && (<div title={itemTitle}>
                 {!props.isAllDay && (<SchedulerItemContent className="k-event-template k-event-time ">{itemTitle}</SchedulerItemContent>)}
-                <SchedulerItemContent className="k-event-template">{props.title}</SchedulerItemContent>
+                <SchedulerItemContent className="k-event-template k-event-template-group-1">{props.title}</SchedulerItemContent>
             </div>)}
         </Item>
     );
