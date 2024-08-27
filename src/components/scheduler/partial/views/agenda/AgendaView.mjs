@@ -16,7 +16,7 @@ import { MS_PER_DAY as I, ZonedDate as v, firstDayInWeek as j, getDate as W, add
 import { useDir as H, classNames as J, IconWrap as b } from "@progress/kendo-react-common";
 import { useInternationalization as Q, useLocalization as X } from "@progress/kendo-react-intl";
 import { toRanges as ee } from "../../services/rangeService.mjs";
-import { toOccurrences as te } from "../../services/occurrenceService.mjs";
+import { toOccurrences as te } from "../../services/occurrenceService.jsx";
 import { toItems as ae } from "../../services/itemsService.mjs";
 import { mapItemsToSlots as le, mapSlotsToItems as re, toUTCDateTime as x } from "../../utils/index.mjs";
 import { SchedulerEditTask as ce } from "../../tasks/SchedulerEditTask.jsx";

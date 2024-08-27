@@ -4,7 +4,7 @@ import { SchedulerViewItem as g } from "../../items/SchedulerViewItemDisplay.jsx
 import { useSchedulerPropsContext as w, useSchedulerGroupsContext as R, useSchedulerFieldsContext as p, useSchedulerDateRangeContext as x } from "../../context/SchedulerContext.mjs";
 import { mapItemsToSlots as v } from "../../utils/index.mjs";
 import { useSchedulerViewRangesContext as C, useSchedulerViewSlotsContext as z } from "../../context/SchedulerViewContext.mjs";
-import { toOccurrences as y } from "../../services/occurrenceService.mjs";
+import { toOccurrences as y } from "../../services/occurrenceService.jsx";
 import { toItems as D } from "../../services/itemsService.mjs";
 const V = (e) => {
   const s = C(), { timezone: o } = w(), c = R(), i = p(), r = x(), [d] = z(), S = e.viewItem || u.viewItem, n = t.useMemo(

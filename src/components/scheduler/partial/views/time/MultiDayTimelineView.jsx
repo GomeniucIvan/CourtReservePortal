@@ -9,7 +9,7 @@ import { isInTimeRange, mapItemsToSlots, mapSlotsToItems, toUTCDateTime, isInDay
 import { classNames } from "@progress/kendo-react-common";
 import { toRanges } from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
-import { toOccurrences } from "../../services/occurrenceService.mjs";
+import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
 import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
 import { BORDER_WIDTH } from "../../constants/index.mjs";

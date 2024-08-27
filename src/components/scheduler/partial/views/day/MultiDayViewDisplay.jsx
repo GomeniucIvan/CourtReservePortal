@@ -18,7 +18,7 @@ import { CurrentTimeMarker } from "../../components/CurrentTimeMarket.mjs";
 import { DateHeaderCell } from "../../components/DateHeaderCell.jsx";
 import { toRanges } from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
-import { toOccurrences } from "../../services/occurrenceService.mjs";
+import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
 import {toBoolean} from "../../../../../utils/Utils.jsx";
 

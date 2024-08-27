@@ -1,5 +1,5 @@
 import * as React from "react";
-import { classNames } from "@progress/kendo-react-common";
+import {classNames} from "@progress/kendo-react-common";
 
 export const SchedulerHeader = React.forwardRef((props, ref) => {
     const {
@@ -9,13 +9,17 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
     const element = React.useRef(null);
     const header = React.useRef(null);
 
-    React.useImperativeHandle(header, () => ({ element: element.current, props }));
+    React.useImperativeHandle(header, () => ({element: element.current, props}));
     React.useImperativeHandle(ref, () => header.current);
 
     const rootClassName = React.useMemo(() => classNames('k-scheduler-toolbar', className), [className]);
 
-    return (<></>)
-    
+    return (
+        <div className={rootClassName}>
+            {props.children}
+        </div>
+    )
+
     // return (
     //     <Toolbar
     //         id={props.id}

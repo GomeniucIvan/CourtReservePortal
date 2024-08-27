@@ -12,7 +12,7 @@ import { useInternationalization } from "@progress/kendo-react-intl";
 import { DAYS_IN_WEEK_COUNT } from "../../constants/index.mjs";
 import { toRanges} from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
-import { toOccurrences} from "../../services/occurrenceService.mjs";
+import { toOccurrences} from "../../services/occurrenceService.jsx";
 import { toItems} from "../../services/itemsService.mjs";
 import { ShowMoreItemsButton } from "../../components/ShowMoreItemsButton.jsx";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
