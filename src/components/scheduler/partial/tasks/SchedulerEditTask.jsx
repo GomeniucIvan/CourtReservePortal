@@ -1,7 +1,7 @@
 import * as React from "react";
 import { SchedulerViewTask } from "./SchedulerViewTask.mjs";
 import { useControlledState } from "../hooks/useControlledState.mjs";
-import { findMaster } from "../utils/index.mjs";
+import { findMaster } from "../utils/index.jsx";
 import { DATA_ACTION } from "../constants/index.mjs";
 import { useSchedulerFieldsContext, useSchedulerDataContext } from "../context/SchedulerContext.mjs";
 import { SchedulerEditTaskContext } from "../context/SchedulerEditTaskContext.mjs";

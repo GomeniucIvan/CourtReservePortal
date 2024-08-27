@@ -1,5 +1,5 @@
 import * as e from "react";
-import { defaultModelFields as R, noop as t } from "../utils/index.mjs";
+import { defaultModelFields as R, noop as t } from "../utils/index.jsx";
 import { DEFAULT_GROUP as A } from "../constants/index.mjs";
 import { ZonedDate as i } from "@progress/kendo-date-math";
 const o = e.createContext({ current: null }), L = () => e.useContext(o);

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { intersects } from "../utils/index.mjs";
+import { intersects } from "../utils/index.jsx";
 import { ZonedDate } from "@progress/kendo-date-math";
 
 

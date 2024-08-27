@@ -6,7 +6,7 @@
  *-------------------------------------------------------------------------------------------
  */
 "use client";
-import { findNextItem as u } from "../utils/index.mjs";
+import { findNextItem as u } from "../utils/index.jsx";
 var s = /* @__PURE__ */ ((t) => (t.next = "ITEMS_FOCUS_NEXT", t.prev = "ITEMS_FOCUS_PREV", t))(s || {});
 const m = (t) => [[], (e, n) => {
   switch (e.type) {

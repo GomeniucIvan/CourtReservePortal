@@ -5,7 +5,7 @@ import { ZonedDate, MS_PER_DAY, firstDayInWeek, firstDayOfMonth, getDate, addDay
 import { classNames } from "@progress/kendo-react-common";
 import { VerticalResourceIterator} from "../common/VerticalResourceIterator.mjs";
 import { HorizontalResourceIterator } from "../common/HorizontalResourceIterator.jsx";
-import { mapItemsToSlots, mapSlotsToItems, orderSort, toUTCDateTime } from "../../utils/index.mjs";
+import { mapItemsToSlots, mapSlotsToItems, orderSort, toUTCDateTime } from "../../utils/index.jsx";
 import { monthViewTitle, messages } from "../../messages/index.mjs";
 import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
 import { useInternationalization } from "@progress/kendo-react-intl";

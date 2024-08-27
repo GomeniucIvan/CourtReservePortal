@@ -1,5 +1,5 @@
 import { getter, clone } from "@progress/kendo-react-common";
-import { isMaster} from "../utils/index.mjs";
+import { isMaster} from "../utils/index.jsx";
 
 export const toOccurrences = (data, { dateRange, fields, timezone }) => {
   const result = data

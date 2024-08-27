@@ -5,7 +5,7 @@ import { HorizontalResourceIterator} from "../common/HorizontalResourceIterator.
 import { TimelineViewRowContent } from "./TimelineViewRowContent.mjs";
 import { TimelineViewAllEventsRowContent } from "./TimelineViewAllEventsRowContent.mjs";
 import { VerticalResourceIterator } from "../common/VerticalResourceIterator.mjs";
-import { isInTimeRange, mapItemsToSlots, mapSlotsToItems, toUTCDateTime, isInDaysRange, intersects, last, first, orderSort } from "../../utils/index.mjs";
+import { isInTimeRange, mapItemsToSlots, mapSlotsToItems, toUTCDateTime, isInDaysRange, intersects, last, first, orderSort } from "../../utils/index.jsx";
 import { classNames } from "@progress/kendo-react-common";
 import { toRanges } from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";

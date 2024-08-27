@@ -11,7 +11,7 @@ import { MS_PER_DAY as S, Day as a, ZonedDate as i, getDate as p, addDays as T }
 import { DAYS_IN_WEEK_COUNT as w } from "../../constants/index.mjs";
 import { MultiDayView as E } from "../day/MultiDayViewDisplay.jsx";
 import { workWeekViewTitle as D, messages as R } from "../../messages/index.mjs";
-import { toUTCDateTime as c } from "../../utils/index.mjs";
+import { toUTCDateTime as c } from "../../utils/index.jsx";
 import { useSchedulerDateRangeContext as C } from "../../context/SchedulerContext.mjs";
 const M = (t) => {
   const o = C(), e = Math.round((o.end.getTime() - o.start.getTime()) / S);

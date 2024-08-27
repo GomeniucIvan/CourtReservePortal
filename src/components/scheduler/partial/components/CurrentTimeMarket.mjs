@@ -10,7 +10,7 @@ import * as n from "react";
 import * as T from "react-dom";
 import { cloneDate as M } from "@progress/kendo-date-math";
 import { useDir as C, classNames as z } from "@progress/kendo-react-common";
-import { intersects as P, isInTimeRange as $, first as A } from "../utils/index.mjs";
+import { intersects as P, isInTimeRange as $, first as A } from "../utils/index.jsx";
 import { getRect as d } from "../views/common/utilsJava.js";
 import { useSchedulerElementContext as H, useSchedulerPropsContext as N } from "../context/SchedulerContext.mjs";
 import { useSchedulerViewSlotsContext as O } from "../context/SchedulerViewContext.mjs";

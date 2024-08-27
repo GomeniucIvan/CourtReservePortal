@@ -4,7 +4,7 @@ import { useDir, classNames, useDraggable, IconWrap} from "@progress/kendo-react
 import { useInternationalization, useLocalization} from "@progress/kendo-react-intl";
 import { xIcon, caretAltLeftIcon, caretAltRightIcon} from "@progress/kendo-svg-icons";
 import { deleteTitle, messages} from "../messages/index.mjs";
-import { formatEventTime} from "../utils/index.mjs";
+import { formatEventTime} from "../utils/index.jsx";
 import { useSchedulerItem} from "../hooks/useSchedulerItem.mjs";
 import { useEditable } from "../hooks/useEditable.mjs";
 

@@ -7,7 +7,7 @@
  */
 "use client";
 import * as e from "react";
-import { noop as t } from "../utils/index.mjs";
+import { noop as t } from "../utils/index.jsx";
 const d = e.createContext({});
 d.displayName = "SchedulerViewPropsContext";
 const o = e.createContext([]), p = () => e.useContext(o);

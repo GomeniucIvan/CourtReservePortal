@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Keys } from "@progress/kendo-react-common";
-import { setField, isGroupped, getField, findFirstItem } from "../utils/index.mjs";
+import { setField, isGroupped, getField, findFirstItem } from "../utils/index.jsx";
 import { SchedulerViewSlot } from "./SchedulerViewSlotDisplay.jsx";
 import { useControlledState } from "../hooks/useControlledState.mjs";
 import { useSchedulerFieldsContext } from "../context/SchedulerContext.mjs";

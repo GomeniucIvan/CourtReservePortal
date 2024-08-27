@@ -1,7 +1,7 @@
 import { clone } from "@progress/kendo-react-common";
 import * as React from "react";
 import { useControlledState } from "../../hooks/useControlledState.mjs";
-import { setField, getField, slotDive } from "../../utils/index.mjs";
+import { setField, getField, slotDive } from "../../utils/index.jsx";
 import { DATA_ACTION } from "../../constants/index.mjs";
 import { useSchedulerViewSelectedItemsContext } from "../../context/SchedulerViewContext.mjs";
 import { useSchedulerFieldsContext } from "../../context/SchedulerContext.mjs";

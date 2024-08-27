@@ -1,6 +1,6 @@
 import * as r from "react";
 import { SchedulerItem as ce } from "./SchedulerItemDisplay.jsx";
-import { first as $, last as le, calculateOrder as se, intersects as q } from "../utils/index.mjs";
+import { first as $, last as le, calculateOrder as se, intersects as q } from "../utils/index.jsx";
 import { getRect as R, setRect as B } from "../views/common/utilsJava.js";
 import { BORDER_WIDTH as d } from "../constants/index.mjs";
 import { useInternationalization as oe } from "@progress/kendo-react-intl";

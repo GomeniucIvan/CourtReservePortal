@@ -8,7 +8,7 @@
 "use client";
 import { clone as E } from "@progress/kendo-react-common";
 import { useControlledState as d } from "../../hooks/useControlledState.mjs";
-import { findMaster as M } from "../../utils/index.mjs";
+import { findMaster as M } from "../../utils/index.jsx";
 import { DATA_ACTION as c } from "../../constants/index.mjs";
 import { useSchedulerFieldsContext as T, useSchedulerDataContext as i } from "../../context/SchedulerContext.mjs";
 var p = /* @__PURE__ */ ((e) => (e.set = "FORM_ITEM_SET", e.setMaster = "FORM_ITEM_SET_MASTER", e.reset = "FORM_ITEM_RESET", e.complete = "FORM_ITEM_COMPLETE", e))(p || {});

@@ -3,7 +3,7 @@ import { MultiDayView as u } from "../day/MultiDayViewDisplay.jsx";
 import { DAYS_IN_WEEK_COUNT as r } from "../../constants/index.mjs";
 import { ZonedDate as o, firstDayInWeek as g, getDate as c, addDays as E } from "@progress/kendo-date-math";
 import { weekViewTitle as i, messages as p } from "../../messages/index.mjs";
-import { toUTCDateTime as m } from "../../utils/index.mjs";
+import { toUTCDateTime as m } from "../../utils/index.jsx";
 const y = (e) => /* @__PURE__ */ w.createElement(
   u,
   {

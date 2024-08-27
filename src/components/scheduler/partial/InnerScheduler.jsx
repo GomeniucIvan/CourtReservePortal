@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import { getModelFields, toSchedulerGroups, findMaster, setField, getField, getToday } from "./utils/index.mjs";
+import { getModelFields, toSchedulerGroups, findMaster, setField, getField, getToday } from "./utils/index.jsx";
 import { useRtl as useDir, clone, classNames } from "@progress/kendo-react-common";
 import { SchedulerContext } from "./context/SchedulerContext.mjs";
 import { useControlledState } from "./hooks/useControlledState.mjs";

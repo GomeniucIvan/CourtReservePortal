@@ -11,7 +11,7 @@ import {
     useSchedulerDateRangeContext,
     useSchedulerDateContext
 } from "../../../context/SchedulerContext.mjs";
-import {toUTCDateTime} from "../../../utils/index.mjs";
+import {toUTCDateTime} from "../../../utils/index.jsx";
 import {Radio} from "antd";
 import DrawerDatePicker from "../../../../../../components/drawer/DrawerDatePicker.jsx";
 

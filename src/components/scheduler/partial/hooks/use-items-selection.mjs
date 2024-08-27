@@ -7,7 +7,7 @@
  */
 "use client";
 import * as l from "react";
-import { findNextItem as m } from "../utils/index.mjs";
+import { findNextItem as m } from "../utils/index.jsx";
 var _ = /* @__PURE__ */ ((E) => (E.select = "ITEMS_SELECT_SELECT", E.selectNext = "ITEMS_SELECT_SELECT_NEXT", E.selectPrev = "ITEMS_SELECT_SELECT_PREV", E.reset = "ITEMS_SELECT_RESET", E.add = "ITEMS_SELECT_ADD", E.remove = "ITEMS_SELECT_REMOVE", E))(_ || {});
 const f = (E) => {
   const [s, r] = l.useState([]), T = l.useCallback(
