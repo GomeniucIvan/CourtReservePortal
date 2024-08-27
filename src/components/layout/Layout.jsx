@@ -94,6 +94,7 @@ function Layout() {
             :root {
                 --adm-color-primary: ${token.colorPrimary};
                 --adm-color-background: ${token.colorBgContainer};
+                --adm-color-weak: ${token.colorText};
             }
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;
@@ -106,6 +107,9 @@ function Layout() {
             .adm-center-popup-body .adm-button{
                 height: ${token.Button.controlHeight}px;
                 padding: 0px !important;
+            }
+            .adm-pull-to-refresh-head {
+                background-color: ${token.colorBgContainer};
             }
             `;
         document.head.appendChild(style);
