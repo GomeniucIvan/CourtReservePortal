@@ -2,7 +2,7 @@
 import mockData from "../../mocks/scheduler-data.json";
 import {useApp} from "../../context/AppProvider.jsx";
 import InnerSchedulerItem from "../../components/scheduler/partial/InnerSchedulerItem.jsx";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {DayView} from "../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {InnerScheduler} from "../../components/scheduler/partial/InnerScheduler.jsx";
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
@@ -11,12 +11,12 @@ import {Typography} from "antd";
 const {Text} = Typography
 
 function ExpandedScheduler() {
-    const {availableHeight} = useApp();
-    const courts = mockData.courts;
+    const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData} = useApp();
     const hideReserveButtonsOnAdminSchedulers = false;
     const allowSchedulerDragAndDrop = false;
     const doNotShowMultipleReservations = true;
     const shouldHideReserveButton = false;
+    const [courts, setCourts] = useState([]);
     
     //todo
     const startTimeString = '8:00';
@@ -26,6 +26,17 @@ function ExpandedScheduler() {
     let timeZone = 'Etc/UTC';
     let interval = 15;
     let customSchedulerId = null;
+
+    useEffect(() => {
+        setIsFooterVisible(true);
+        setFooterContent(null);
+        setHeaderRightIcons(null);
+        if (isMockData){
+           setTimeout(function(){
+               setCourts(mockData.courts)
+           }, 100);
+        }
+    }, []);
     
     const shouldHideButton = (courtId, slotStartInc, slotEndInc) => {
         if (!shouldHideReserveButton) {

@@ -15,7 +15,7 @@ import {Typography} from "antd";
 const {Text} = Typography
 
 function EventCalendar() {
-    const {setHeaderRightIcons, globalStyles} = useApp();
+    const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent} = useApp();
     const [isFilterOpened, setIsFilterOpened] = useState(false);
     const [selectedView, setSelectedView] = useState('Day');
     const {availableHeight} = useApp();
@@ -35,6 +35,8 @@ function EventCalendar() {
     let customSchedulerId = null;
     
     useEffect(() => {
+        setIsFooterVisible(true);
+        setFooterContent(null);
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
                 <Segmented
