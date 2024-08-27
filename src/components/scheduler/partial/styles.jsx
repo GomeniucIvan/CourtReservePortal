@@ -609,6 +609,10 @@ export const useStyles = createStyles(({ css, token }) => ({
             white-space: nowrap;
         }
 
+        .k-scheduler-agendaview {
+            color: ${token.colorText};
+        }
+        
         .k-scheduler-content {
             border-color: inherit;
             position: relative;
