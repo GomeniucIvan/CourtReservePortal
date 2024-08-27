@@ -17,6 +17,42 @@ export const useStyles = createStyles(({ css, token }) => ({
   `,
     layoutExtra: css`
         position: absolute;
-        right: 20px;
-    `
+        right: 2px;
+        top: 50%; 
+        transform: translate(0%, -50%); 
+        z-index: 4;
+        background-color: ${token.colorText};
+        display: flex;
+        flex-direction: column;
+        border-radius: ${token.borderRadius}px;
+        padding: ${token.padding/2}px;
+        gap: ${token.padding/2}px;
+        opacity: 0.8;
+        
+        button{
+            min-width: 24px !important;
+            height: 24px !important;
+        }
+    `,
+    themeButton: css`
+        background: linear-gradient(to bottom right, white, black);
+    `,
+    primaryColor: css`
+        background: ${token.colorPrimary};
+    `,
+  colorPickerContainer: css`
+        position: relative;
+    `,
+  colorOptions: css`
+      position: absolute;
+      background-color: ${token.colorText};
+      top: 0;
+      width: 150px;
+      display: flex;
+      left: -158px;
+      border-radius: ${token.borderRadius}px;
+      height: 30px;
+      align-items: center;
+      justify-content: space-around;
+  `
 }));
