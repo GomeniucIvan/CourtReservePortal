@@ -54,7 +54,6 @@ export const useStyles = createStyles(({ css, token }) => ({
 
         .k-scheduler-layout-flex .k-scheduler-cell.k-heading-cell {
             justify-content: center;
-            font-weight: bold;
             width: 120px;
         }
 
@@ -274,6 +273,7 @@ export const useStyles = createStyles(({ css, token }) => ({
             flex-direction: column;
             position: relative;
             -webkit-touch-callout: none;
+            background-color: ${token.colorBgBase};
         }
 
         .k-scheduler table,
@@ -345,6 +345,12 @@ export const useStyles = createStyles(({ css, token }) => ({
             position: relative;
         }
 
+        .k-header-resource {
+            white-space: wrap !important;
+            display: initial !important;
+        }
+        
+        
         .k-scheduler-layout-flex .k-scheduler-head,
         .k-scheduler-layout-flex .k-scheduler-body {
             display: flex;
@@ -416,11 +422,6 @@ export const useStyles = createStyles(({ css, token }) => ({
 
         .k-scheduler-layout-flex .k-scheduler-cell.k-slot-cell {
             position: relative;
-        }
-
-        .k-scheduler-layout-flex .k-scheduler-cell.k-heading-cell {
-            justify-content: center;
-            font-weight: bold;
         }
 
         .k-scheduler-layout-flex .k-scheduler-cell.k-side-cell {
@@ -501,11 +502,8 @@ export const useStyles = createStyles(({ css, token }) => ({
 
         .k-scheduler-layout {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            flex: 1 1 auto;
-            position: relative;
-            z-index: 1;
+            -webkit-flex: 1 1 auto;
+            -ms-flex: 1 1 auto;
             border-top: 1px solid;
             border-color: ${token.colorBorder} !important;
             table-layout: fixed;
@@ -517,9 +515,15 @@ export const useStyles = createStyles(({ css, token }) => ({
             position: sticky;
             left: 0;
             background-color: ${token.colorBgBase};
+            color: ${token.colorText};
             z-index: 1;
         }
 
+        .k-header-resource, .k-scheduler-date-heading {
+            background-color: ${token.colorBgBase};
+            color: ${token.colorText};
+        }
+        
         .k-scheduler-layout > tbody > tr > td {
             padding: 0;
             vertical-align: top;

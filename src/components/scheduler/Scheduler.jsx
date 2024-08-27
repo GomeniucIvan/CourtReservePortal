@@ -13,15 +13,16 @@ import {AgendaView} from "./partial/views/agenda/AgendaView.mjs";
 function Scheduler({
                        readUrl,
                        schedulerDate = new Date(),
-                       schedulerStartTime = '10:00',
-                       schedulerEndTime = '12:00',
+                       schedulerStartTime = '8:00',
+                       schedulerEndTime = '20:00',
                        orgId,
                        hideDaySelection = true,
                        interval = 15,
                        customSchedulerId,
                        isCalendar,
                        selectedView,
-                       courts
+                       courts,
+                       height
                    }) {
 
     const [events, setEvents] = useState([]);
@@ -406,6 +407,7 @@ function Scheduler({
                 onDataChange={handleDataChange}
                 modelFields={modelFields}
                 selectedView={selectedView}
+                height={height}
                 editable={{
                     add: doNotShowMultipleReservations,
                     remove: false,

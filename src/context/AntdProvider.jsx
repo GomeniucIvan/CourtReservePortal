@@ -1,12 +1,13 @@
 ﻿import { ConfigProvider, theme, App } from "antd";
 
 //theme.darkAlgorithm
+//theme.defaultAlgorithm,
 export const AntdProvider = ({ children }) => {
     return (
         <App>
             <ConfigProvider
                 theme={{
-                    algorithm: theme.defaultAlgorithm,
+                    algorithm: theme.darkAlgorithm,
                     token: {
                         colorPrimary: '#873030',
                     },

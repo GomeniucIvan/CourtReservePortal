@@ -38,16 +38,19 @@ const renderResourcesRecursively = (args) => {
       <React.Fragment>
         {nested
             ? (<div className="k-scheduler-row">
-              <RowContent resources={resources} groupIndex={groupIndex} {...rowContentProps}>
-                {expandedResources.map((expandedResource, expandedResourceIndex) => (
-                    <div key={expandedResourceIndex} className="k-scheduler-cell k-heading-cell 2">
-                      {expandedResource.text}
-                    </div>
-                ))}
-              </RowContent>
-            </div>)
-            : (<RowContent resources={resources} groupIndex={groupIndex} {...rowContentProps}>
-              {expandedResources.map((expandedResource, expandedResourceIndex) => (
+                  <RowContent resources={resources} groupIndex={groupIndex} {...rowContentProps}>
+                    {expandedResources.map((expandedResource, expandedResourceIndex) => (
+                        <div
+                            key={expandedResourceIndex}
+                            className="k-scheduler-cell k-heading-cell k-header-resource"
+                            dangerouslySetInnerHTML={{__html: expandedResource.text}}
+                        ></div>
+            ))}
+      </RowContent>
+</div>)
+:
+  (<RowContent resources={resources} groupIndex={groupIndex} {...rowContentProps}>
+    {expandedResources.map((expandedResource, expandedResourceIndex) => (
                   <div key={expandedResourceIndex} className="k-scheduler-cell k-heading-cell">
                     {expandedResource.text}
                   </div>))}

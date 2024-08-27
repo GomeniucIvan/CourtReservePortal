@@ -17,6 +17,7 @@ export const AppProvider = ({ children }) => {
     const stylesToUse = useStyles();
     const { token } = useToken();
     const [shouldFetch, setShouldFetch] = useState(false);
+    const [availableHeight, setAvailableHeight] = useState(null);
     
     const globalStyles = stylesToUse.styles;
     const refreshData = () => setShouldFetch(true);
@@ -41,7 +42,9 @@ export const AppProvider = ({ children }) => {
             headerRightIcons,
             shouldFetch, 
             refreshData,
-            resetFetch}}>
+            resetFetch,
+            availableHeight,
+            setAvailableHeight}}>
             
             {children}
         </AppContext.Provider>

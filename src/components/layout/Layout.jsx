@@ -19,7 +19,7 @@ function Layout() {
     const navigate = useNavigate()
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData, showHeader } = useApp();
+    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, isMockData, showHeader, setAvailableHeight } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => route.path === location.pathname);
@@ -52,7 +52,7 @@ function Layout() {
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
         const calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
-        
+        setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
     };
     
@@ -93,7 +93,7 @@ function Layout() {
         style.innerHTML = `
             :root {
                 --adm-color-primary: ${token.colorPrimary};
-                
+                --adm-color-background: ${token.colorBgContainer};
             }
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;

@@ -15,7 +15,7 @@ import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
 import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerGroupsContext, useSchedulerOrientationContext, useSchedulerFieldsContext, useSchedulerDateRangeContext } from "../../context/SchedulerContext.mjs";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
 import { CurrentTimeMarker } from "../../components/CurrentTimeMarket.mjs";
-import { DateHeaderCell } from "../../components/DateHeaderCell.mjs";
+import { DateHeaderCell } from "../../components/DateHeaderCell.jsx";
 import { toRanges } from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
 import { toOccurrences } from "../../services/occurrenceService.mjs";
@@ -433,7 +433,6 @@ const multiDayViewDateRange = ({ date, numberOfDays = 1, timezone }) => {
     };
 };
 
-/** @hidden */
 export const multiDayViewDefaultProps = {
     name: 'multi-day',
     title: 'Multi Day',

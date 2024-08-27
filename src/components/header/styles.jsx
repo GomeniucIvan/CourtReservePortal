@@ -17,6 +17,8 @@ export const useStyles = createStyles(({ css, token }) => {
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid ${token.colorBorder};
+            background-color: ${token.colorBgBase};
+            color: ${token.colorText};
             
             .adm-nav-bar-title {
                 text-align: start;

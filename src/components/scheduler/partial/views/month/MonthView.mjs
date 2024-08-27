@@ -26,7 +26,7 @@ import { ShowMoreItemsButton as re } from "../../components/ShowMoreItemsButton.
 import { SchedulerEditItem as ae } from "../../items/SchedulerEditItemDisplay.jsx";
 import { useSchedulerPropsContext as ne, useSchedulerDataContext as se, useSchedulerDateContext as me, useSchedulerActiveViewContext as ie, useSchedulerViewsContext as ce, useSchedulerGroupsContext as le, useSchedulerOrientationContext as de, useSchedulerDateRangeContext as ue, useSchedulerFieldsContext as fe } from "../../context/SchedulerContext.mjs";
 import { SchedulerResourceIteratorContext as I } from "../../context/SchedulerResourceIteratorContext.mjs";
-import { DateHeaderCell as he } from "../../components/DateHeaderCell.mjs";
+import { DateHeaderCell as he } from "../../components/DateHeaderCell.jsx";
 const De = { skeleton: "dd" }, _ = (o) => {
   const {
     group: i,

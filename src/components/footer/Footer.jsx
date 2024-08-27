@@ -1,5 +1,6 @@
-﻿import styles from './Footer.module.less';
+﻿import {useStyles} from "./styles.jsx";
 import { useLocation, useNavigate } from 'react-router-dom';
+
 import {
     AppOutline,
     MessageOutline,
@@ -10,7 +11,8 @@ import {
 import {TabBar, Badge} from "antd-mobile";
 
 const Footer = (props) => {
-
+const {styles} = useStyles();
+    
     const tabs = [
         {
             key: 'home',
@@ -37,7 +39,7 @@ const Footer = (props) => {
     ]
 
     return (
-        <TabBar>
+        <TabBar className={styles.footer}>
             {tabs.map(item => (
                 <TabBar.Item
                     key={item.key}
