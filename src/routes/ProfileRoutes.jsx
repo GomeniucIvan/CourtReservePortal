@@ -1,6 +1,6 @@
 import ProfileBookingList from "../pages/profile/booking/list/ProfileBookingList.jsx";
-import ProfileBookingDetails from "../pages/profile/booking/details/ProfileBookingDetails.jsx";
-import ReservationRegistration from "../pages/reservation/ReservationRegistration.jsx";
+import ProfileBookingDetails from "../pages/reservation/details/ReservationDetails.jsx";
+import ReservationRegistration from "../pages/reservation/registration/ReservationRegistration.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`,

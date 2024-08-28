@@ -1,14 +1,13 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Button, Flex, Input, Tabs, Typography} from "antd";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import mockData from "../../../../mocks/reservation-data.json";
-import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
-import CardIconLabel from "../../../../components/cardiconlabel/CardIconLabel.jsx";
-import InlineBlock from "../../../../components/inlineblock/InlineBlock.jsx";
-import {ModalRemove} from "../../../../utils/ModalUtils.jsx";
+import {useApp} from "../../../context/AppProvider.jsx";
+import mockData from "../../../mocks/reservation-data.json";
+import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
+import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
 import {cx} from "antd-style";
+import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 
 const {Search} = Input;
 const {Title, Text} = Typography;

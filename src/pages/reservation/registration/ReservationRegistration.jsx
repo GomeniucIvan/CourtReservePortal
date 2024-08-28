@@ -1,25 +1,24 @@
-﻿import {useStyles} from "./styles.jsx";
+﻿import {useStyles} from "./../styles.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Alert, Button, Card, Checkbox, Divider, Flex, Typography} from "antd";
-import mockData from "../../mocks/reservation-data.json";
-import PaddingBlock from "../../components/paddingblock/PaddingBlock.jsx";
-import FormSelect from "../../form/formselect/FormSelect.jsx";
+import mockData from "../../../mocks/reservation-data.json";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {useApp} from "../../context/AppProvider.jsx";
-import InlineBlock from "../../components/inlineblock/InlineBlock.jsx";
-import FormInput from "../../form/input/FormInput.jsx";
-import FormSwitch from "../../form/formswitch/FormSwitch.jsx";
-import {useLoadingState} from "../../utils/LoadingUtils.jsx";
 import {cx} from "antd-style";
-import SVG from "../../components/svg/SVG.jsx";
 import {Ellipsis} from "antd-mobile";
-import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
-import {anyInList, focus, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import FormTextarea from "../../form/formtextarea/FormTextArea.jsx";
-import {Modal} from 'antd-mobile'
-import {ModalClose, ModalRemove} from "../../utils/ModalUtils.jsx";
+import {useApp} from "../../../context/AppProvider.jsx";
+import {useLoadingState} from "../../../utils/LoadingUtils.jsx";
+import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
+import FormSelect from "../../../form/formselect/FormSelect.jsx";
+import FormInput from "../../../form/input/FormInput.jsx";
+import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
+import SVG from "../../../components/svg/SVG.jsx";
+import {ModalRemove} from "../../../utils/ModalUtils.jsx";
+import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
+import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
 
 const {Title, Text, Link} = Typography;
 

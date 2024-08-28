@@ -7,6 +7,7 @@ import EventList from "../pages/event/list/EventList.jsx";
 export const EventRouteNames = {
     EVENT_LIST: '/event/list',
     EVENT_DETAILS: '/event/details/:id',
+    EVENT_SIGNUP: '/event/signup/:id',
 };
 
 const EventRoutes = [
@@ -20,6 +21,11 @@ const EventRoutes = [
         element: <EventDetails />,
         title: 'Event Details',
         header: true
+    },
+    {
+        path: EventRouteNames.EVENT_SIGNUP,
+        element: <EventRegistration />,
+        title: 'Event Signup'
     },
     {
         path: '/event-category-list/:orgId',
