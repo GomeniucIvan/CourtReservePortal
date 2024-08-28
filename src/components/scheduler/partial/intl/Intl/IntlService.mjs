@@ -1,14 +1,6 @@
-/**
- * @license
- *-------------------------------------------------------------------------------------------
- * Copyright © 2024 Progress Software Corporation. All rights reserved.
- * Licensed under commercial license. See LICENSE.md in the package root for more information
- *-------------------------------------------------------------------------------------------
- */
-"use client";
 import * as e from "@progress/kendo-intl";
-import { validatePackage as a } from "@progress/kendo-react-common";
 import { packageMetadata as o } from "../package-metadata.mjs";
+
 class c {
   /**
    * Creates a new instance of the internationalization service.
@@ -16,7 +8,7 @@ class c {
    * @param locale - The locale that will be used by the internationalization methods.
    */
   constructor(r) {
-    if (this.locale = r, a(o), r === "" && process.env.NODE_ENV !== "production")
+    if (this.locale = r, r === "" && process.env.NODE_ENV !== "production")
       throw "Locale should not be empty string";
   }
   /**
