@@ -13,7 +13,7 @@ import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
 import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
 import { BORDER_WIDTH } from "../../constants/index.mjs";
-import { useInternationalization } from "@progress/kendo-react-intl";
+import { useInternationalization } from "../../intl/index.mjs";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
 import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerOrientationContext, useSchedulerGroupsContext, useSchedulerDateRangeContext, useSchedulerFieldsContext } from "../../context/SchedulerContext.mjs";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";

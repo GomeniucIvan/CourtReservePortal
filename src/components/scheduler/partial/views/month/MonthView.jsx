@@ -8,7 +8,7 @@ import { HorizontalResourceIterator } from "../common/HorizontalResourceIterator
 import { mapItemsToSlots, mapSlotsToItems, orderSort, toUTCDateTime } from "../../utils/index.jsx";
 import { monthViewTitle, messages } from "../../messages/index.mjs";
 import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
-import { useInternationalization } from "@progress/kendo-react-intl";
+import { useInternationalization } from "../../intl/index.mjs";
 import { DAYS_IN_WEEK_COUNT } from "../../constants/index.mjs";
 import { toRanges} from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";

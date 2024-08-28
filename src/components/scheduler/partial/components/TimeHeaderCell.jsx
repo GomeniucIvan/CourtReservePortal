@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { useInternationalization } from "@progress/kendo-react-intl";
+import { useInternationalization } from "../intl/index.mjs";
 import { classNames } from "@progress/kendo-react-common";
 
 export const TimeHeaderCell = React.forwardRef((props, ref) => {

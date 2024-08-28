@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLocalization } from "@progress/kendo-react-intl";
+import { useLocalization } from "../../../intl/index.mjs";
 import { useSchedulerActiveViewContext } from "../../../context/SchedulerContext.mjs";
 
 export const ViewSelectorItem = (props) => {

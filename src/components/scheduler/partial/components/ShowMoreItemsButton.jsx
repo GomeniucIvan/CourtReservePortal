@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLocalization  } from "@progress/kendo-react-intl";
+import { useLocalization  } from "../intl/index.mjs";
 import { moreEvents, messages } from "../messages/index.mjs";
 import {Button} from "antd";
 import {MoreOutlined} from "@ant-design/icons";

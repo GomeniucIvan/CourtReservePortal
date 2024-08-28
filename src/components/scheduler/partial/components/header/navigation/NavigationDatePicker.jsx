@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useInternationalization} from "@progress/kendo-react-intl";
+import {useInternationalization} from "../../../intl/index.mjs";
 import {ZonedDate, getDate, MS_PER_DAY} from "@progress/kendo-date-math";
 import {useWindow, useAsyncFocusBlur} from "@progress/kendo-react-common";
 import dayjs from 'dayjs';

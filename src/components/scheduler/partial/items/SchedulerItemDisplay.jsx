@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 import { useDir, classNames, useDraggable, IconWrap} from "@progress/kendo-react-common";
-import { useInternationalization, useLocalization} from "@progress/kendo-react-intl";
+import { useInternationalization, useLocalization} from "../intl/index.mjs";
 import { xIcon, caretAltLeftIcon, caretAltRightIcon} from "@progress/kendo-svg-icons";
 import { deleteTitle, messages} from "../messages/index.mjs";
 import { formatEventTime} from "../utils/index.jsx";

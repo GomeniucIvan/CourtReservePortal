@@ -3,7 +3,7 @@ import { SchedulerItem as ce } from "./SchedulerItemDisplay.jsx";
 import { first as $, last as le, calculateOrder as se, intersects as q } from "../utils/index.jsx";
 import { getRect as R, setRect as B } from "../views/common/utilsJava.js";
 import { BORDER_WIDTH as d } from "../constants/index.mjs";
-import { useInternationalization as oe } from "@progress/kendo-react-intl";
+import { useInternationalization as oe } from "../intl/index.mjs";
 import { SchedulerItemContent as G } from "./SchedulerItemContent.mjs";
 import { useDir as ae, IconWrap as P } from "@progress/kendo-react-common";
 import { caretAltRightIcon as me, caretAltLeftIcon as ue, arrowRotateCwIcon as de, nonRecurrenceIcon as fe } from "@progress/kendo-svg-icons";

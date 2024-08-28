@@ -1,13 +1,5 @@
-/**
- * @license
- *-------------------------------------------------------------------------------------------
- * Copyright © 2024 Progress Software Corporation. All rights reserved.
- * Licensed under commercial license. See LICENSE.md in the package root for more information
- *-------------------------------------------------------------------------------------------
- */
-"use client";
 import * as e from "react";
-import { useLocalization as R } from "@progress/kendo-react-intl";
+import { useLocalization as R } from "../intl/index.mjs";
 import { deleteTitle as m, messages as g } from "../messages/index.mjs";
 import { classNames as I, IconWrap as r } from "@progress/kendo-react-common";
 import { arrowRotateCwIcon as b, arrowsNoRepeatIcon as E, xIcon as N } from "@progress/kendo-svg-icons";

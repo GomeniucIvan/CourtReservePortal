@@ -14,7 +14,7 @@ import { dateTitle as A, messages as d, timeTitle as z, eventTitle as L, allDay 
 import { DAYS_IN_WEEK_COUNT as p } from "../../constants/index.mjs";
 import { MS_PER_DAY as I, ZonedDate as v, firstDayInWeek as j, getDate as W, addDays as q } from "@progress/kendo-date-math";
 import { useDir as H, classNames as J, IconWrap as b } from "@progress/kendo-react-common";
-import { useInternationalization as Q, useLocalization as X } from "@progress/kendo-react-intl";
+import { useInternationalization as Q, useLocalization as X } from "../../intl/index.mjs";
 import { toRanges as ee } from "../../services/rangeService.mjs";
 import { toOccurrences as te } from "../../services/occurrenceService.jsx";
 import { toItems as ae } from "../../services/itemsService.mjs";

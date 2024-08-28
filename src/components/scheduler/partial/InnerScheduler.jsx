@@ -3,7 +3,7 @@ import { getModelFields, toSchedulerGroups, findMaster, setField, getField, getT
 import { useRtl as useDir, clone, classNames } from "@progress/kendo-react-common";
 import { SchedulerContext } from "./context/SchedulerContext.mjs";
 import { useControlledState } from "./hooks/useControlledState.mjs";
-import { useInternationalization, useLocalization } from "@progress/kendo-react-intl";
+import { useLocalization, useInternationalization } from "./intl/index.mjs";
 import { SchedulerHeader } from "./components/header/SchedulerHeader.jsx";
 import { SchedulerNavigation } from "./components/header/navigation/SchedulerNavigation.jsx";
 import { SchedulerViewSelector } from "./components/header/view-selector/SchedulerViewSelector.jsx";

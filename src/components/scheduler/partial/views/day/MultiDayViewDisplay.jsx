@@ -8,7 +8,7 @@ import { VerticalResourceIterator } from "../common/VerticalResourceIterator.mjs
 import { DayViewRowContent } from "./DayViewRowContent.mjs";
 import { classNames } from "@progress/kendo-react-common";
 import { isInTimeRange, mapItemsToSlots, mapSlotsToItems, isInDaysRange, intersects, last, first, toUTCDateTime } from "../../utils/index.jsx";
-import { useInternationalization } from "@progress/kendo-react-intl";
+import { useInternationalization } from "../../intl/index.mjs";
 import { MS_PER_MINUTE } from "../../constants/index.mjs";
 import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
