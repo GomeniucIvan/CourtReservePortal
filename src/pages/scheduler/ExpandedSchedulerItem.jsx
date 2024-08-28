@@ -1,30 +1,38 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {SchedulerItem} from "../../components/scheduler/partial/items/SchedulerItemDisplay.jsx";
 import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
+import {useApp} from "../../context/AppProvider.jsx";
+import {EventRouteNames} from "../../routes/EventRoutes.jsx";
+import {useNavigate} from "react-router-dom";
 
 const ExpandedSchedulerItem = (props) => {
+    const {setDynamicPages} = useApp();
+    const navigate = useNavigate();
+
     const dataItem = props.dataItem;
     const isUsingCourtWaitListing = false;
     const hidePaymentInfoOnScheduler = true;
     const useCore = true;
     const donTrackMember = true;
     const hideCheckInFromReservations = true;
-    
+
     const displayInstructorsRow = () => {
         return (<></>);
     }
-    
+
     const canUserEditItem = () => {
         return false;
     }
-    
+
     const isLightVersionEventSlot = typeof dataItem.IsLightVersion !== 'undefined' ? dataItem.IsLightVersion : false;
 
     const [isHovered, setIsHovered] = useState(false);
 
     const renderTooltipInfoIcon = (dataItem) => {
         return (<></>);
-        
+
         if (dataItem.ReservationId != 0 && (dataItem.IsCanceled || (canUserEditItem(dataItem) == false && toBoolean(dataItem.IsCanceled) == false) && !dataItem.IsComboReservation)) {
             return (
                 <div className="pull-left kendoTooltip ml-15">
@@ -55,6 +63,8 @@ const ExpandedSchedulerItem = (props) => {
         return null;
     }
 
+    console.log(dataItem)
+    
     return (
         <SchedulerItem
             onMouseEnter={() => setIsHovered(true)}
@@ -65,12 +75,23 @@ const ExpandedSchedulerItem = (props) => {
                 zIndex: isHovered ? '2' : '1'
             }}
         >
-            <span>
+            <span onClick={() => {
+                if (isNullOrEmpty(dataItem.EventId)) {
+                    let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', dataItem.ReservationId);
+                    setPage(setDynamicPages, dataItem.ReservationType, route);
+                    navigate(route);
+                } else {
+                    let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', dataItem.ReservationId);
+                    setPage(setDynamicPages, dataItem.ReservationName, route);
+                    navigate(route);
+                }
+            }}>
                 {dataItem.IsWaitListSlot && dataItem.IsAvailableTemplate && (
-                    <div style={{ backgroundColor: '#cdf5b6', color: '#3a3a3a' }} className={`main-reservation-container --waitlist-event`}>
+                    <div style={{backgroundColor: '#cdf5b6', color: '#3a3a3a'}}
+                         className={`main-reservation-container --waitlist-event`}>
                         <div className='reservation-container'>
                             <div>
-                                <span style={{ fontWeight: 'bold', fontWize: 'larger' }}>
+                                <span style={{fontWeight: 'bold', fontWize: 'larger'}}>
                                     {dataItem.Title}
                                 </span>
                             </div>
@@ -78,15 +99,21 @@ const ExpandedSchedulerItem = (props) => {
                     </div>
                 )}
                 {dataItem.IsWaitListSlot && !dataItem.IsAvailableTemplate && (
-                    <div style={{ background: dataItem.ReservationColor, color: dataItem.ReservationTextColor, cursor: 'pointer' }} className="main-reservation-container --waitlist-event" onDoubleClick={() => onWaitlistMeClicked(dataItem.CourtId, dataItem.Start, dataItem.End)}>
+                    <div style={{
+                        background: dataItem.ReservationColor,
+                        color: dataItem.ReservationTextColor,
+                        cursor: 'pointer'
+                    }} className="main-reservation-container --waitlist-event"
+                         onDoubleClick={() => onWaitlistMeClicked(dataItem.CourtId, dataItem.Start, dataItem.End)}>
                         <div
                             className="reservation-container">
-                            <span style={{ fontWeight: 'bold', fontSize: '11px' }} onClick={() => onWaitlistMeClicked(dataItem.CourtId, dataItem.Start, dataItem.End)}>
+                            <span style={{fontWeight: 'bold', fontSize: '11px'}}
+                                  onClick={() => onWaitlistMeClicked(dataItem.CourtId, dataItem.Start, dataItem.End)}>
                                 Waitlist Player
                             </span>
                             {dataItem.ShowWaitList && (
                                 <a
-                                    style={{ color: 'red', fontSize: '10px' }}
+                                    style={{color: 'red', fontSize: '10px'}}
                                     className="link-reservation-update"
                                     onClick={() => showQueuedMembers(dataItem.start, dataItem.end)}
                                 >
@@ -112,9 +139,11 @@ const ExpandedSchedulerItem = (props) => {
                 }
 
                 {!dataItem.IsWaitListSlot && dataItem.ReservationQueueSlotId == null &&
-                    <div className="main-reservation-container" style={{ background: dataItem.ReservationColor, color: dataItem.ReservationTextColor }}>
+                    <div className="main-reservation-container"
+                         style={{background: dataItem.ReservationColor, color: dataItem.ReservationTextColor}}>
                         {dataItem.IsCanceled && (
-                            <div className="pull-left scheduler-ban-icon" data-toggle="tooltip" data-placement="top" title="Canceled">
+                            <div className="pull-left scheduler-ban-icon" data-toggle="tooltip" data-placement="top"
+                                 title="Canceled">
                                 <i className="fa fa-ban"></i>
                             </div>
                         )}
@@ -135,10 +164,11 @@ const ExpandedSchedulerItem = (props) => {
                         {(dataItem.HasEventCoordinators ||
                             (isLightVersionEventSlot && !isNullOrEmpty(dataItem.InstructorInfoJson)) ||
                             (!isLightVersionEventSlot && dataItem.Instructors != null)) && (
-                                <div className="row ">
-                                    <div className="pull-right scheduler-badges light-instructor-badges" dangerouslySetInnerHTML={{ __html: displayInstructorsRow(dataItem, isLightVersionEventSlot) }}></div>
-                                </div>
-                            )}
+                            <div className="row ">
+                                <div className="pull-right scheduler-badges light-instructor-badges"
+                                     dangerouslySetInnerHTML={{__html: displayInstructorsRow(dataItem, isLightVersionEventSlot)}}></div>
+                            </div>
+                        )}
 
                         {/* Start Open Reservation Region */}
                         {dataItem.IsOpenReservation && !dataItem.IsOpenMatchFinalize && (
@@ -149,10 +179,22 @@ const ExpandedSchedulerItem = (props) => {
                                     </span>}
 
                                     <span className="schedule-reservation-top-right-badge">
-                                        <span className="badge badge-round-radius badge-info owner-badge text-uppercase pm-scheduler-badge" style={{ background: `${dataItem.ReservationTextColor}`, color: `${dataItem.ReservationColor}`, fontWeight: 'unset !important' }}>
+                                        <span
+                                            className="badge badge-round-radius badge-info owner-badge text-uppercase pm-scheduler-badge"
+                                            style={{
+                                                background: `${dataItem.ReservationTextColor}`,
+                                                color: `${dataItem.ReservationColor}`,
+                                                fontWeight: 'unset !important'
+                                            }}>
                                             {dataItem.MatchMakerNumberOfPlayersToDisplay}
                                         </span>
-                                        <span className="badge badge-round-radius badge-info owner-badge text-uppercase pm-scheduler-badge" style={{ background: `${dataItem.ReservationTextColor}`, color: `${dataItem.ReservationColor}`, fontWeight: 'unset !important' }}>
+                                        <span
+                                            className="badge badge-round-radius badge-info owner-badge text-uppercase pm-scheduler-badge"
+                                            style={{
+                                                background: `${dataItem.ReservationTextColor}`,
+                                                color: `${dataItem.ReservationColor}`,
+                                                fontWeight: 'unset !important'
+                                            }}>
                                             OPEN
                                         </span>
 
@@ -171,7 +213,8 @@ const ExpandedSchedulerItem = (props) => {
                             </div>
                         )}
 
-                        {dataItem.IsOrgClosed && <div className="orgClosed" style={{ width: '100%' }}>{dataItem.ReservationName}</div>}
+                        {dataItem.IsOrgClosed &&
+                            <div className="orgClosed" style={{width: '100%'}}>{dataItem.ReservationName}</div>}
                         {dataItem.IsCourtClosed && (
                             <div className="courtClosed" title={dataItem.CourtClosedReason}>
                                 <p>{dataItem.ReservationName}</p>
@@ -181,15 +224,15 @@ const ExpandedSchedulerItem = (props) => {
 
                         {!isNullOrEmpty(dataItem.ClosureTypeId) && dataItem.ClosureTypeId > 0 && (!dataItem.IsRecurring || !allowToEditRecurringReservationsAndClosures) && (
                             <div className="reservation-container" data-closuretypeid={dataItem.ClosureTypeId}>
-                                <div style={{ marginBottom: '5px' }}>
-                                    <span style={{ fontWeight: 'bold' }}>
+                                <div style={{marginBottom: '5px'}}>
+                                    <span style={{fontWeight: 'bold'}}>
                                         {dataItem.ReservationType}
                                     </span>
 
                                     <a
                                         href={`/Closure/UpdateClosure?reservationId=${dataItem.ReservationId}`}
                                         className="link-reservation-update link-closure"
-                                        style={{ color: `${dataItem.ReservationTextColor}`, cursor: 'pointer' }}
+                                        style={{color: `${dataItem.ReservationTextColor}`, cursor: 'pointer'}}
                                     >
                                         <div>
                                             {dataItem.ClosureDisplayDatesAndTimes}
@@ -199,10 +242,10 @@ const ExpandedSchedulerItem = (props) => {
                                     {showNotesOnSchedulers && (
                                         <>
                                             {dataItem.Note && (
-                                                <div style={{ display: 'block' }}>{dataItem.Note}</div>
+                                                <div style={{display: 'block'}}>{dataItem.Note}</div>
                                             )}
                                             {(dataItem.EventNote && isNullOrEmpty(dataItem.Note)) && (
-                                                <div style={{ display: 'block' }}>{dataItem.EventNote}</div>
+                                                <div style={{display: 'block'}}>{dataItem.EventNote}</div>
                                             )}
                                         </>
                                     )}
@@ -213,28 +256,26 @@ const ExpandedSchedulerItem = (props) => {
                         {(dataItem.IsReservedByAnotherCourt && !dataItem.IsOrgClosed) && (
                             <div className="reservation-container" data-reservationid={dataItem.ReservationId}>
                                 {dataItem.ResComboCourts.map((court, index) => (
-                                    <div key={index} style={{ marginBottom: '5px' }}>
-                                        <span style={{ fontWeight: 'bold' }}>{court.Title}</span>
+                                    <div key={index} style={{marginBottom: '5px'}}>
+                                        <span style={{fontWeight: 'bold'}}>{court.Title}</span>
 
-                                        <a
-                                            onClick={() => openModalDialog(`/Reservation/UpdateReservation?reservationId=${court.ReservationId}`, (dataItem.IsEvent ? 'lg' : 'xl'))}
-                                            className="link-reservation-update"
-                                            style={{ color: `${dataItem.ReservationTextColor}`, cursor: 'pointer' }}
-                                        >
-                                            <span>
+                                        <span>
                                                 {court.StartDisplayTime} - {court.EndDisplayTime}
-                                            </span>
-                                        </a>
+                                        </span>
                                     </div>
                                 ))}
                             </div>
                         )}
 
                         {dataItem.IsDynamicSlot && (
-                            <div className="main-reservation-container dynamic-container" style={{ background: 'white', display: 'flex' }}>
+                            <div className="main-reservation-container dynamic-container"
+                                 style={{background: 'white', display: 'flex'}}>
                                 <button
                                     type="button"
-                                    style={isMobileLayout ? { maxHeight: '100% !important', height: '100% !important' } : null}
+                                    style={isMobileLayout ? {
+                                        maxHeight: '100% !important',
+                                        height: '100% !important'
+                                    } : null}
                                     className="btn btn-default slot-btn btn-xs btn-expanded-slot slot-tr-height"
                                     start={dataItem.Start}
                                     end={dataItem.End}
@@ -251,18 +292,12 @@ const ExpandedSchedulerItem = (props) => {
                                 className={`reservation-container ${dataItem.IsEvent ? '--event-event-item' : '--event-reservation-item'} ${dataItem.HasUnpaidItems ? '--unpaid-item' : ''}`}
                             >
                                 <div className="reservation-number-container">
-                                    <a
-                                        onClick={() => openModalDialog(`/Reservation/UpdateReservation?reservationId=${dataItem.ReservationId}`, (dataItem.IsEvent ? 'lg' : 'xl'))}
-                                        className="link-reservation-update"
-                                        style={{ color: `${dataItem.ReservationTextColor}`, cursor: 'pointer' }}
-                                    >
-                                        {dataItem.IsEvent && dataItem.LeagueSessionId == null && (
-                                            <span style={{ display: '' }}>{dataItem.EventCategory}</span>
-                                        )}
-                                    </a>
+                                    {dataItem.IsEvent && dataItem.LeagueSessionId == null && (
+                                        <span style={{display: ''}}>{dataItem.EventCategory}</span>
+                                    )}
                                 </div>
 
-                                <span style={{ fontWeight: 'bold' }}>
+                                <span style={{fontWeight: 'bold'}}>
                                     {dataItem.ReservationName && dataItem.ReservationName.length > 1 && (!useCore || useCore && !dataItem.IsComboReservation) && (
                                         <>
                                             {dataItem.ReservationName}
@@ -281,7 +316,7 @@ const ExpandedSchedulerItem = (props) => {
                                 </span>
 
                                 {dataItem.DisplayResourcesList && (
-                                    <div style={{ display: 'block' }}>{dataItem.DisplayResourcesList}</div>
+                                    <div style={{display: 'block'}}>{dataItem.DisplayResourcesList}</div>
                                 )}
 
                                 {useCore && dataItem.IsComboReservation && (
@@ -289,53 +324,50 @@ const ExpandedSchedulerItem = (props) => {
                                 )}
 
                                 {(!useCore || !dataItem.IsComboReservation) && (
-                                    <a
-                                        onClick={() => openModalDialog(`/Reservation/UpdateReservation?reservationId=${dataItem.ReservationId}`, (dataItem.IsEvent ? 'lg' : 'xl'))}
-                                        className="link-reservation-update"
-                                        style={{ color: `${dataItem.ReservationTextColor}`, cursor: 'pointer' }}
-                                    >
-                                        <div>
-                                            {dataItem.ClosureTypeId > 0 &&
-                                                <>
-                                                    {dataItem.ClosureDisplayDatesAndTimes}
-                                                </>
-                                            }
+                                    <div>
+                                        {dataItem.ClosureTypeId > 0 &&
+                                            <>
+                                                {dataItem.ClosureDisplayDatesAndTimes}
+                                            </>
+                                        }
 
-                                            {(dataItem.ClosureTypeId == null || dataItem.ClosureTypeId <= 0) &&
-                                                <>
-                                                    {dataItem.StartDisplayTime} - {dataItem.EndDisplayTime}
-                                                </>
-                                            }
+                                        {(dataItem.ClosureTypeId == null || dataItem.ClosureTypeId <= 0) &&
+                                            <>
+                                                {dataItem.StartDisplayTime} - {dataItem.EndDisplayTime}
+                                            </>
+                                        }
 
-                                            {dataItem.IsRecurring && <span className="fa fa-repeat">&nbsp;</span>}
+                                        {dataItem.IsRecurring && <span className="fa fa-repeat">&nbsp;</span>}
 
-                                        </div>
-                                    </a>
+                                    </div>
                                 )}
 
                                 {dataItem.RegistrantsCountDisplay > 0 && !hideCheckInFromReservations && !dataItem.IsCanceled && !dataItem.IsOpenReservation && (
-                                    <a
-                                        className="check-in-button"
-                                        onClick={() => openModalDialog(`/Reservation/GetReservationMembers?reservationId=${dataItem.ReservationId}`)}
-                                        style={{ color: `${dataItem.ReservationTextColor}`, cursor: 'pointer', float: 'left' }}
-                                    >
+                                    <>
                                         {dataItem.HasMembersToCheckIn && (
-                                            <i className="fa fa-exclamation-triangle scheduler-triangle" data-toggle="tooltip" data-placement="top" title={`You have ${Organization.MembersEntity.toLowerCase()} to check-in`}></i>
+                                            <i className="fa fa-exclamation-triangle scheduler-triangle"
+                                               data-toggle="tooltip" data-placement="top"
+                                               title={`You have ${Organization.MembersEntity.toLowerCase()} to check-in`}></i>
                                         )}
                                         {!dataItem.HasMembersToCheckIn && (
-                                            <i className="fa fa-check-square scheduler-check" data-toggle="tooltip" data-placement="top" title={`All ${Organization.MembersEntity.toLowerCase()} are check-in`}></i>
+                                            <i className="fa fa-check-square scheduler-check" data-toggle="tooltip"
+                                               data-placement="top"
+                                               title={`All ${Organization.MembersEntity.toLowerCase()} are check-in`}></i>
                                         )}
-                                    </a>
+                                    </>
                                 )}
 
                                 {!hidePaymentInfoOnScheduler && dataItem.HasUnpaidItems && !dataItem.IsCanceled && (
                                     <a
                                         data-toggle="modal"
                                         data-target=".action-modal"
-                                        style={{ cursor: 'pointer' }}
+                                        style={{cursor: 'pointer'}}
                                         data-remote={`/Reservation/GetReservationMembers?reservationId=${dataItem.ReservationId}`}
                                     >
-                                        <i className={`${currencyIcon} unpaid-reservation scheduler-dollar`} style={{ color: `${dataItem.ReservationTextColor}` }} data-toggle="tooltip" data-placement="top" title={`${dataItem.IsEvent ? ' Has unpaid registrants ' : ' This reservation is unpaid '}`}></i>
+                                        <i className={`${currencyIcon} unpaid-reservation scheduler-dollar`}
+                                           style={{color: `${dataItem.ReservationTextColor}`}} data-toggle="tooltip"
+                                           data-placement="top"
+                                           title={`${dataItem.IsEvent ? ' Has unpaid registrants ' : ' This reservation is unpaid '}`}></i>
                                     </a>
                                 )}
 
@@ -348,24 +380,19 @@ const ExpandedSchedulerItem = (props) => {
                                 {donTrackMember != true && (
                                     <>
                                         {dataItem.IsEvent && (
-                                            <a
-                                                onClick={() => openModalDialog(`/Reservation/GetReservationMembers?reservationId=${dataItem.ReservationId}`)}
-                                                data-width="xl"
-                                                className="link-reservation-update link-slot-info"
-                                                style={{ color: `${dataItem.ReservationTextColor}` }}
-                                            >
+                                            <>
                                                 {dataItem.SlotsInfoForAdmin}
-                                            </a>
+                                            </>
                                         )}
 
                                         {dataItem.ShowIsFullInfoForAdmin && (
-                                            <div style={{ display: 'block', paddingTop: '2px', paddingBottom: '1px' }}>
+                                            <div style={{display: 'block', paddingTop: '2px', paddingBottom: '1px'}}>
                                                 <span className="label label-danger full-event">FULL</span>
 
                                                 {dataItem.ShowWaitList && (
                                                     <a
                                                         className="link-reservation-update link-dwl-row"
-                                                        style={{ color: `${dataItem.ReservationTextColor}` }}
+                                                        style={{color: `${dataItem.ReservationTextColor}`}}
                                                         onClick={() => displayWaitListFromScheduler(dataItem.ReservationId)}
                                                     >
                                                         {dataItem.DisplayWaitList}
@@ -375,10 +402,10 @@ const ExpandedSchedulerItem = (props) => {
                                         )}
 
                                         {!dataItem.ShowIsFullInfoForAdmin && dataItem.ShowWaitList && (
-                                            <div style={{ display: 'block', paddingTop: '3px', paddingBottom: '1px' }}>
+                                            <div style={{display: 'block', paddingTop: '3px', paddingBottom: '1px'}}>
                                                 <a
                                                     className="link-reservation-update link-dwl-row2"
-                                                    style={{ color: `${dataItem.ReservationTextColor}` }}
+                                                    style={{color: `${dataItem.ReservationTextColor}`}}
                                                     onClick={() => displayWaitListFromScheduler(dataItem.ReservationId)}
                                                 >
                                                     {dataItem.DisplayWaitList}
@@ -388,26 +415,22 @@ const ExpandedSchedulerItem = (props) => {
 
                                         {((!isLightVersionEventSlot && dataItem.MemberList != null && dataItem.MemberList.length > 0) || (isLightVersionEventSlot && !isNullOrEmpty(dataItem.MembersDisplay))) && (
                                             <>
-                                                <a
-                                                    onClick={() => openModalDialog(`/Reservation/GetReservationMembers?reservationId=${dataItem.ReservationId}`)}
-                                                    data-width="xl"
-                                                    className="link-reservation-update link-memberds-display-row"
-                                                    style={{ color: `${dataItem.ReservationTextColor}` }}
-                                                >
+                                                <>
                                                     {displayPlayers(dataItem, isLightVersionEventSlot)}
-                                                </a>
+                                                </>
                                             </>
                                         )}
 
-                                        <div dangerouslySetInnerHTML={{ __html: displayReservationUdfs(dataItem, isLightVersionEventSlot) }} />
+                                        <div
+                                            dangerouslySetInnerHTML={{__html: displayReservationUdfs(dataItem, isLightVersionEventSlot)}}/>
 
                                         {showNotesOnSchedulers && (
                                             <>
                                                 {dataItem.Note && (
-                                                    <div style={{ display: 'block' }}>{dataItem.Note}</div>
+                                                    <div style={{display: 'block'}}>{dataItem.Note}</div>
                                                 )}
                                                 {dataItem.EventNote && (
-                                                    <div style={{ display: 'block' }}>{dataItem.EventNote}</div>
+                                                    <div style={{display: 'block'}}>{dataItem.EventNote}</div>
                                                 )}
                                             </>
                                         )}
