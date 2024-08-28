@@ -6,7 +6,7 @@ import {SchedulerSlot} from "./partial/slots/SchedulerSlotDisplay.jsx";
 import {cx} from "antd-style";
 import {WeekView} from "./partial/views/week/WeekView.mjs";
 import {MonthView} from "./partial/views/month/MonthView.jsx";
-import {AgendaView} from "./partial/views/agenda/AgendaView.mjs";
+import {AgendaView} from "./partial/views/agenda/AgendaView.jsx";
 import {Typography} from "antd";
 const { Text } = Typography;
 

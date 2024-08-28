@@ -2,7 +2,6 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo
 
 import { useDir, classNames, useDraggable, IconWrap} from "@progress/kendo-react-common";
 import { useInternationalization, useLocalization} from "../intl/index.mjs";
-import { xIcon, caretAltLeftIcon, caretAltRightIcon} from "@progress/kendo-svg-icons";
 import { deleteTitle, messages} from "../messages/index.mjs";
 import { formatEventTime} from "../utils/index.jsx";
 import { useSchedulerItem} from "../hooks/useSchedulerItem.mjs";
@@ -415,22 +414,7 @@ export const SchedulerItem = forwardRef((props, ref) => {
         >
             {props.children}
             {(!props.resizeHint) && <span className="k-event-actions">
-                {editable.remove
-                    && (<a
-                        tabIndex={-1}
-                        aria-hidden="true"
-                        className="k-link k-event-delete"
-                        title={deleteMessage}
-                        aria-label={deleteMessage}
-                        onClick={handleRemoveClick}
-                    >
-                        <IconWrap name="x" icon={xIcon} />
-                    </a>)}
-                {props.head &&
-                    <IconWrap
-                        name={dir === 'rtl' ? 'caret-alt-left' : 'caret-alt-right'}
-                        icon={dir === 'rtl' ? caretAltLeftIcon : caretAltRightIcon}
-                    />}
+                
             </span>}
             {(editable.resize && props.vertical)
                 && (<>

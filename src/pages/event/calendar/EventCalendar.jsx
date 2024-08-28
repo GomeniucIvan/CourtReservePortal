@@ -7,7 +7,7 @@ import {InnerScheduler} from "../../../components/scheduler/partial/InnerSchedul
 import {DayView} from "../../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {WeekView} from "../../../components/scheduler/partial/views/week/WeekView.mjs";
 import {MonthView} from "../../../components/scheduler/partial/views/month/MonthView.jsx";
-import {AgendaView} from "../../../components/scheduler/partial/views/agenda/AgendaView.mjs";
+import {AgendaView} from "../../../components/scheduler/partial/views/agenda/AgendaView.jsx";
 import {Typography} from "antd";
 import mockData from "../../../mocks/scheduler-data.json";
 import EventCalendarItem from "./EventCalendarItem.jsx";

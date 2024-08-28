@@ -12,7 +12,7 @@ import { today, messages, previousTitle, nextTitle } from "./messages/index.mjs"
 import { NavigationDatePicker } from "./components/header/navigation/NavigationDatePicker.jsx";
 import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
 import { DATA_ACTION } from "./constants/index.mjs";
-import { AgendaView, agendaViewDefaultProps } from "./views/agenda/AgendaView.mjs";
+import { AgendaView, agendaViewDefaultProps } from "./views/agenda/AgendaView.jsx";
 import { MonthView, monthViewDefaultProps } from "./views/month/MonthView.jsx";
 import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.mjs";
 import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs";

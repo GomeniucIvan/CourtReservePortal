@@ -6,7 +6,6 @@ import { BORDER_WIDTH } from "../constants/index.mjs";
 import { useInternationalization } from "../intl/index.mjs";
 import { SchedulerItemContent } from "./SchedulerItemContent.mjs";
 import { useDir, IconWrap } from "@progress/kendo-react-common";
-import { caretAltRightIcon , caretAltLeftIcon, arrowRotateCwIcon , arrowsNoRepeatIcon } from "@progress/kendo-svg-icons";
 import { useRowSync } from "../hooks/useRowSync.mjs";
 import { useEditable } from "../hooks/useEditable.mjs";
 import { useSchedulerViewItemsContext, useSchedulerViewSlotsContext } from "../context/SchedulerViewContext.mjs";
@@ -361,14 +360,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             }}
         >
             {(!props.resizeHint) && <span className="k-event-actions">
-                {props.tail &&
-                    <IconWrap
-                        name={dir === 'rtl' ? 'caret-alt-right' : 'caret-alt-left'}
-                        icon={dir === 'rtl' ? caretAltRightIcon : caretAltLeftIcon}
-                    />
-                }
-                {(props.isRecurring && !props.isException) && <IconWrap name="arrow-rotate-cw" icon={arrowRotateCwIcon} />}
-                {(!props.isRecurring && props.isException) && <IconWrap name="arrows-no-repeat" icon={arrowsNoRepeatIcon} />}
+
             </span>}
             {(!props.resizeHint) && (<div title={itemTitle}>
                 {!props.isAllDay && (<SchedulerItemContent className="k-event-template k-event-time ">{itemTitle}</SchedulerItemContent>)}
