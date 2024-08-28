@@ -23,7 +23,7 @@ function ExpandedScheduler() {
     const doNotShowMultipleReservations = true;
     const shouldHideReserveButton = false;
     const [courts, setCourts] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(new Date('8-27-2024 7:00:00'));
     const [events, setEvents] = useState([]);
     const navigate = useNavigate();
     

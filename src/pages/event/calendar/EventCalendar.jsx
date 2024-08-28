@@ -20,6 +20,7 @@ function EventCalendar() {
     const [selectedView, setSelectedView] = useState('Day');
     const {availableHeight, isMockData} = useApp();
     const [events, setEvents] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date('8-27-2024 7:00:00'));
     
     const hideReserveButtonsOnAdminSchedulers = false;
     const allowSchedulerDragAndDrop = false;
@@ -29,7 +30,6 @@ function EventCalendar() {
     //todo
     const startTimeString = '8:00';
     const endTimeString = '20:00';
-    const selectedDate = new Date();
 
     let timeZone = 'America/New_York';
     let interval = 15;
