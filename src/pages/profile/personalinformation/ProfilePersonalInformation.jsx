@@ -10,6 +10,8 @@ import * as Yup from "yup";
 import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
 import {useEffect} from "react";
 import {Button} from "antd";
+import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
+import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
 
 function ProfilePersonalInformation() {
     const navigate = useNavigate();
@@ -113,6 +115,52 @@ function ProfilePersonalInformation() {
                        required={true}
                        name='dateOfBirthString'
             />
+
+            <FormInput label="Address"
+                       form={formik}
+                       required={true}
+                       name='address'
+            />
+
+            <FormInput label="City"
+                       form={formik}
+                       required={true}
+                       name='city'
+            />
+
+            <FormInput label="State"
+                       form={formik}
+                       required={true}
+                       name='state'
+            />
+
+            <FormStateProvince form={formik}
+                               dropdown={true}
+                               nameKey={`state`}
+                               required={true}
+            />
+
+            <FormInput label="Zip Code"
+                       form={formik}
+                       required={true}
+                       name='zipCode'
+            />
+
+            <FormSwitch label={'Hide my Personal Information from my club/organization\'s public member directories'}
+                        form={formik}
+                        rows={2}
+                        name={'hidePersonalInformation'}/>
+
+            <FormSwitch label={'Unsubscribe from my Club/Organization\'s Emails/Alerts/Newsletters'}
+                        form={formik}
+                        rows={2}
+                        name={'unsubscribeFromEmails'}/>
+
+            <FormSwitch label={'Unsubscribe From Organizations Marketing Push Notifications'}
+                        form={formik}
+                        rows={2}
+                        name={'unsubscribeFromPush'}/>
+            
         </PaddingBlock>
     )
 }
