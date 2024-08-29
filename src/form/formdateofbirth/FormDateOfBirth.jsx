@@ -105,17 +105,15 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
     useEffect(() => {
         let daysInMonth;
         if (selectedYear && selectedMonth) {
-            daysInMonth = new Date(selectedYear.Value, selectedMonth.Value, 0).getDate();
+            daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
         } else {
-            // Default to 31 days if no month/year is selected
             daysInMonth = 31;
         }
 
         const newDaysOptions = Array.from({ length: daysInMonth }, (_, i) => ({ Value: i + 1, Text: i + 1 }));
         setDaysOptions(newDaysOptions);
 
-        // Reset selected day if it's out of the new range
-        if (selectedDay && selectedDay.Value > daysInMonth) {
+        if (selectedDay && selectedDay > daysInMonth) {
             setSelectedDay(null);
             form.setFieldValue(name, null);
         }
@@ -127,7 +125,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
         }
 
         if (selectedDay && selectedMonth && selectedYear) {
-            formatDateOfBirthByUiCulture(selectedDay.Value, selectedMonth.Value, selectedYear.Value);
+            formatDateOfBirthByUiCulture(selectedDay, selectedMonth, selectedYear);
         } else {
             form.setFieldValue(name, null);
         }
