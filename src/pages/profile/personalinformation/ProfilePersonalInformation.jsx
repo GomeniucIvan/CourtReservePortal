@@ -18,11 +18,11 @@ function ProfilePersonalInformation() {
     const {setIsLoading, isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent, isLoading} = useApp();
 
     const initialValues = {
-        reservationTypeId: '',
+        dateOfBirthString: '',
     };
 
     const validationSchema = Yup.object({
-        reservationTypeId: Yup.string().required('Reservation Type is require.'),
+
     });
     
     const formik = useFormik({
@@ -111,7 +111,7 @@ function ProfilePersonalInformation() {
             <FormDateOfBirth label="Date of birth"
                        form={formik}
                        required={true}
-                       name='dateofbirth'
+                       name='dateOfBirthString'
             />
         </PaddingBlock>
     )

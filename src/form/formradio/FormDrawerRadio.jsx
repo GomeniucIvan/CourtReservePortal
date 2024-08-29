@@ -9,7 +9,6 @@ const {Title} = Typography;
 const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propText = "Text", propValue = "Value", name }) => {
     const {styles} = useStyles();
     const {globalStyles} = useApp();
-    
     return (
         <>
             <Radio.Group

@@ -8,6 +8,8 @@ import {Select, Typography} from "antd";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
+import FormSelect from "../formselect/FormSelect.jsx";
+import {genderList} from "../../utils/SelectUtils.jsx";
 const { Paragraph } = Typography;
 
 const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dateOfBirthValue, disabled, onDateChange, ...props }, ref) => {
@@ -15,9 +17,9 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
     const [isMonthDrawerOpen, setIsMonthDrawerOpen] = useState(false);
     const [isYearDrawerOpen, setIsYearDrawerOpen] = useState(false);
 
-    const [selectedDay, setSelectedDay] = useState(null);
-    const [selectedMonth, setSelectedMonth] = useState(null);
-    const [selectedYear, setSelectedYear] = useState(null);
+    const [selectedDay, setSelectedDay] = useState(undefined);
+    const [selectedMonth, setSelectedMonth] = useState(undefined);
+    const [selectedYear, setSelectedYear] = useState(undefined);
     const [daysOptions, setDaysOptions] = useState([]);
     const {globalStyles, token} = useApp();
     const styles = useStyles();
@@ -188,8 +190,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
     
     return (
         <div className={cx(globalStyles.formBlock, styles.selectGlobal)}>
-            <label htmlFor={name}
-                   style={{
+            <label style={{
                        fontSize: token.Form.labelFontSize,
                        padding: token.Form.verticalLabelPadding,
                        marginLeft: token.Form.labelColonMarginInlineStart,
@@ -205,45 +206,39 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                 {orderedKeys.map((item, index) => (
                     <div key={index} style={{width: '100%'}}>
                         {equalString(item, 'day') &&
-                            <>
-                                <Select 
-                                    placeholder={'Day'}
-                                    value={selectedDay}
-                                    open={false}
-                                    onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDayDrawerOpen(true)}
-                                    onChange={setSelectedDay}
-                                    disabled={disabled}
-                                    style={{width: '100%'}}
-                                    rootClassName={styles.select}
-                                    status={hasError ? 'error' : ''}
-                                >
-                                    {daysOptions.map((option) => (
-                                        <Select.Option
-                                            key={option.Value}
-                                            value={option.Value}
-                                        >
-                                            {option.Text}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </>
+                            <Select
+                                placeholder={'Day'}
+                                value={isNullOrEmpty(selectedDay) ? undefined : selectedDay}
+                                open={false}
+                                onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDayDrawerOpen(true)}
+                                disabled={disabled}
+                                style={{width: '100%'}}
+                                status={hasError ? 'error' : ''}
+                            >
+                                {daysOptions.map((option) => (
+                                    <Select.Option
+                                        key={option.Value}
+                                        value={option.Value}
+                                    >
+                                        {option.Text}
+                                    </Select.Option>
+                                ))}
+                            </Select>
                         }
 
                         {equalString(item, 'month') &&
                             <Select
-                                placeholder={'Month'}
-                                value={selectedMonth}
+                                placeholder='Month'
+                                value={isNullOrEmpty(selectedMonth) ? undefined : selectedMonth}
                                 open={false}
                                 onDropdownVisibleChange={() => !toBoolean(disabled) && setIsMonthDrawerOpen(true)}
-                                onChange={setSelectedMonth}
-                                disabled={disabled}
                                 style={{width: '100%'}}
                                 className={styles.select}
                                 status={hasError ? 'error' : ''}
                             >
                                 {monthsOptions.map((option) => (
                                     <Select.Option
-                                        key={option.Value}
+                                        key={`month_${option.Value}`}
                                         value={option.Value}
                                     >
                                         {option.Text}
@@ -255,7 +250,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                         {equalString(item, 'year') &&
                             <Select
                                 placeholder={'Year'}
-                                value={selectedYear}
+                                value={isNullOrEmpty(selectedYear) ? undefined : selectedYear}
                                 open={false}
                                 onDropdownVisibleChange={() => !toBoolean(disabled) && setIsYearDrawerOpen(true)}
                                 onChange={setSelectedYear}
@@ -292,12 +287,14 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                 showButton={!isRequired}
                 confirmButtonText={'Clear'}
                 onConfirmButtonClick={() => setSelectedDay(null)}
-                selectedValue={selectedDay}
             >
                 <FormDrawerRadio
                     options={daysOptions}
                     selectedCurrentValue={selectedDay}
-                    onValueSelect={(option) => handleSelectOption(/*day*/ option, /*month*/ null)}
+                    onValueSelect={(option) => {
+                        console.log(option)
+                        handleSelectOption(/*day*/ option.Value, /*month*/ null)
+                    }}
                     name={'dob_day'}
                 />
             </DrawerBottom>
@@ -310,12 +307,14 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                 showButton={!isRequired}
                 confirmButtonText={'Clear'}
                 onConfirmButtonClick={() => setSelectedMonth(null)}
-                selectedValue={selectedMonth}
             >
                 <FormDrawerRadio
                     options={monthsOptions}
                     selectedCurrentValue={selectedMonth}
-                    onValueSelect={(option) => handleSelectOption(/*day*/ null, /*month*/ option)}
+                    onValueSelect={(option) => { 
+                        console.log(option)
+                        handleSelectOption(/*day*/ null, /*month*/ option.Value)
+                    }}
                     name={'dob_month'}
                 />
             </DrawerBottom>
@@ -327,12 +326,11 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                 showButton={!isRequired}
                 confirmButtonText={'Clear'}
                 onConfirmButtonClick={() => setSelectedYear(null)}
-                selectedValue={selectedYear}
             >
                 <FormDrawerRadio
                     options={yearsOptions}
                     selectedCurrentValue={selectedYear}
-                    onValueSelect={(option) => handleSelectOption(/*day*/ null, /*month*/ null, /*year*/ option)}
+                    onValueSelect={(option) => {handleSelectOption(/*day*/ null, /*month*/ null, /*year*/ option.Value)}}
                     name={'dob_year'}
                 />
             </DrawerBottom>
