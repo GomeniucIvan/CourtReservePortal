@@ -4,11 +4,42 @@ import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
 import FormSelect from "../../../form/formselect/FormSelect.jsx";
 import {genderList} from "../../../utils/SelectUtils.jsx";
+import {useFormik} from "formik";
+import {useApp} from "../../../context/AppProvider.jsx";
+import * as Yup from "yup";
+import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
 
 function ProfilePersonalInformation() {
     const navigate = useNavigate();
     let { memberId } = useParams();
 
+    const {setIsLoading, isMockData} = useApp();
+
+    const initialValues = {
+        reservationTypeId: '',
+    };
+
+    const validationSchema = Yup.object({
+        reservationTypeId: Yup.string().required('Reservation Type is require.'),
+    });
+    
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        validateOnBlur: true,
+        validateOnChange: true,
+        onSubmit: async (values, {setStatus, setSubmitting}) => {
+            setIsLoading(true);
+
+            if (isMockData) {
+
+            } else {
+                //todo
+                alert('todo verification')
+            }
+        },
+    });
+    
     return (
         <PaddingBlock>
             <FormInput label="First Name"
@@ -60,8 +91,12 @@ function ProfilePersonalInformation() {
                        required={true}
                        name='phoneNumber'
             />
-            
-            
+
+            <FormDateOfBirth label="Date of birth"
+                       form={formik}
+                       required={true}
+                       name='dateofbirth'
+            />
         </PaddingBlock>
     )
 }

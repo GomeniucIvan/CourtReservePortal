@@ -101,6 +101,17 @@ export const dateFormatByUiCulture = () => {
     }
 }
 
+export const cultureStartingWithDay = (uiCulture) => {
+    const isStartingWithDay = equalString(uiCulture, 'en-GB') ||
+        equalString(uiCulture, 'en-GB') ||
+        equalString(uiCulture, 'en-AU') ||
+        equalString(uiCulture, 'en-IE') ||
+        equalString(uiCulture, 'id-ID') ||
+        equalString(uiCulture, 'en-SG') ||
+        equalString(uiCulture, 'es-GT');
+    return isStartingWithDay;
+}
+
 export const fixDate = (dateString) =>{
     if (!dateString) return null;
 

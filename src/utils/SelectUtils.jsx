@@ -1,6 +1,4 @@
-import Cookies from 'js-cookie';
-
-export const genderList = () => {
+const genders = () => {
     let list = [];
     list.push({Text: "None", Value: 0});
     list.push({Text: "Male", Value: 1});
@@ -8,3 +6,5 @@ export const genderList = () => {
     list.push({Text: "Prefer not to disclose", Value: 2});
     return list;
 }
+
+export const genderList = genders();
