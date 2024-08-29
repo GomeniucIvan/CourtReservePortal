@@ -12,8 +12,9 @@ import {useEffect} from "react";
 import {Button, Tabs} from "antd";
 import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
+import {equalString} from "../../../utils/Utils.jsx";
 
-function ProfilePersonalInformationDetails() {
+function ProfilePersonalInformationDetails({selectedTab}) {
     const navigate = useNavigate();
     let { memberId } = useParams();
 
@@ -43,39 +44,22 @@ function ProfilePersonalInformationDetails() {
             }
         },
     });
-
-    const items = [
-        {
-            key: '1',
-            label: 'Tab 1',
-            children: 'Content of Tab Pane 1',
-        },
-        {
-            key: '2',
-            label: 'Tab 2',
-            children: 'Content of Tab Pane 2',
-        },
-        {
-            key: '3',
-            label: 'Tab 3',
-            children: 'Content of Tab Pane 3',
-        },
-    ];
-    
     
     useEffect(() => {
-        setIsFooterVisible(true);
-        setHeaderRightIcons(null);
-        setFooterContent(<PaddingBlock topBottom={true}>
-            <Button type="primary"
-                    block
-                    htmlType="submit"
-                    loading={isLoading}
-                    onClick={formik.handleSubmit}>
-                Save
-            </Button>
-        </PaddingBlock>);
-    }, []);
+        if (equalString(selectedTab, 'pers')){
+            setIsFooterVisible(true);
+            setHeaderRightIcons(null);
+            setFooterContent(<PaddingBlock topBottom={true}>
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        loading={isLoading}
+                        onClick={formik.handleSubmit}>
+                    Save
+                </Button>
+            </PaddingBlock>);  
+        }
+    }, [selectedTab]);
     
     return (
         <PaddingBlock topBottom={true}>

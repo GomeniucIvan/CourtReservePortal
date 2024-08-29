@@ -2,24 +2,28 @@
 import ProfilePersonalInformationDetails from "./ProfilePersonalInformationDetails.jsx";
 import {cx} from "antd-style";
 import {useApp} from "../../../context/AppProvider.jsx";
+import ProfilePersonalInformationNotification from "./ProfilePersonalInformationNotification.jsx";
+import {useState} from "react";
 
 function ProfilePersonalInformation() {
     const {globalStyles} = useApp();
+    const [selectedTab, setSelectedTab] = useState('pers');
     
     return (
         <Tabs
             rootClassName={cx(globalStyles.tabs)}
-            defaultActiveKey="pers"
+            onChange={(e) => {setSelectedTab(e)}}
+            defaultActiveKey={selectedTab}
             items={[
                 {
                     key: 'pers',
                     label: 'Information',
-                    children: <ProfilePersonalInformationDetails />,
+                    children: <ProfilePersonalInformationDetails selectedTab={selectedTab} />,
                 },
                 {
                     key: 'notifications',
                     label: 'Notifications',
-                    children: 'Content of Tab Pane 2',
+                    children: <ProfilePersonalInformationNotification selectedTab={selectedTab} />,
                 },
                 {
                     key: 'settings',
