@@ -82,26 +82,23 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
             regionCode = 'en-US';
         }
 
-        if (regionCode == "en-GB" ||
-            regionCode == "en-IE" ||
-            regionCode == "en-AU" ||
-            regionCode == "id-ID" ||
-            regionCode == "es-GT" ||
-            regionCode == "nl-AW" ||
-            regionCode == "en-SG" ||
-            regionCode == "en-KE" ||
-            regionCode == "es-MX" ||
-            regionCode == "en-KY") {
+        if (equalString(regionCode, "en-GB") ||
+            equalString(regionCode, "en-IE") ||
+            equalString(regionCode, "en-AU") ||
+            equalString(regionCode, "id-ID") ||
+            equalString(regionCode, "es-GT") ||
+            equalString(regionCode, "nl-AW") ||
+            equalString(regionCode, "en-SG") ||
+            equalString(regionCode, "en-KE") ||
+            equalString(regionCode, "es-MX") ||
+            equalString(regionCode, "en-KY")) {
             form.setFieldValue(name, `${day}/${month}/${year}`);
-            return;
         }
-        else if (regionCode == "tr-TR") {
+        else if (equalString(regionCode, "tr-TR")) {
             form.setFieldValue(name, `${day}.${month}.${year}`);
-            return;
         }
         else {
             form.setFieldValue(name, `${month}/${day}/${year}`);
-            return;
         }
     }
 
