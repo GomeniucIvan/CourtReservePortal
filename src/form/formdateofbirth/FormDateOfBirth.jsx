@@ -220,7 +220,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                                         key={option.Value}
                                         value={option.Value}
                                     >
-                                        {option.Text}
+                                        {option.Text.toString()}
                                     </Select.Option>
                                 ))}
                             </Select>
@@ -241,7 +241,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                                         key={`month_${option.Value}`}
                                         value={option.Value}
                                     >
-                                        {option.Text}
+                                        {option.Text.toString()}
                                     </Select.Option>
                                 ))}
                             </Select>
@@ -264,7 +264,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                                         key={option.Value}
                                         value={option.Value}
                                     >
-                                        {option.Text}
+                                        {option.Text.toString()}
                                     </Select.Option>
                                 ))}
                             </Select>
@@ -292,7 +292,6 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                     options={daysOptions}
                     selectedCurrentValue={selectedDay}
                     onValueSelect={(option) => {
-                        console.log(option)
                         handleSelectOption(/*day*/ option.Value, /*month*/ null)
                     }}
                     name={'dob_day'}
@@ -312,7 +311,6 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
                     options={monthsOptions}
                     selectedCurrentValue={selectedMonth}
                     onValueSelect={(option) => { 
-                        console.log(option)
                         handleSelectOption(/*day*/ null, /*month*/ option.Value)
                     }}
                     name={'dob_month'}

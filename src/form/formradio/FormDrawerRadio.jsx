@@ -1,4 +1,4 @@
-import {equalString} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty} from "../../utils/Utils.jsx";
 import {Radio, Typography} from 'antd';
 import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
@@ -22,7 +22,7 @@ const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propTex
                 {options.map((option) => (
                     <Radio key={`${name}_${option[propValue]}`} value={option[propValue]} className={styles.radioItem}>
                         <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)}>
-                            <Ellipsis direction='end' content={option[propText]}/>
+                            {isNullOrEmpty(option[propText]) ? (<></>) : (<Ellipsis direction='end' content={option[propText].toString()}/>)}
                         </Title>
                     </Radio>
                 ))}
