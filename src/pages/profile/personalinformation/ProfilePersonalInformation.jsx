@@ -8,12 +8,14 @@ import {useFormik} from "formik";
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
+import {useEffect} from "react";
+import {Button} from "antd";
 
 function ProfilePersonalInformation() {
     const navigate = useNavigate();
     let { memberId } = useParams();
 
-    const {setIsLoading, isMockData} = useApp();
+    const {setIsLoading, isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent, isLoading} = useApp();
 
     const initialValues = {
         reservationTypeId: '',
@@ -39,9 +41,23 @@ function ProfilePersonalInformation() {
             }
         },
     });
+
+    useEffect(() => {
+        setIsFooterVisible(true);
+        setHeaderRightIcons(null);
+        setFooterContent(<PaddingBlock topBottom={true}>
+            <Button type="primary"
+                    block
+                    htmlType="submit"
+                    loading={isLoading}
+                    onClick={formik.handleSubmit}>
+                Save
+            </Button>
+        </PaddingBlock>);
+    }, []);
     
     return (
-        <PaddingBlock>
+        <PaddingBlock topBottom={true}>
             <FormInput label="First Name"
                        form={formik}
                        required={true}

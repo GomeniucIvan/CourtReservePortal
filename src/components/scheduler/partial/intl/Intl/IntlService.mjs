@@ -1,5 +1,4 @@
-import * as e from "@progress/kendo-intl";
-import { packageMetadata as o } from "../package-metadata.mjs";
+import * as e from "./utils.mjs";
 
 class c {
   /**
