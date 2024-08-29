@@ -4,7 +4,7 @@ import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {cultureStartingWithDay} from "../../utils/DateUtils.jsx";
 import {cx} from "antd-style";
 import InlineBlock from "../../components/inlineblock/InlineBlock.jsx";
-import {Select, Typography} from "antd";
+import {Input, Select, Typography} from "antd";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
@@ -12,7 +12,7 @@ import FormSelect from "../formselect/FormSelect.jsx";
 import {genderList} from "../../utils/SelectUtils.jsx";
 const { Paragraph } = Typography;
 
-const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dateOfBirthValue, disabled, onDateChange, ...props }, ref) => {
+const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dateOfBirthValue, disabled, onDateChange, displayAge, ...props }, ref) => {
     const [isDayDrawerOpen, setIsDayDrawerOpen] = useState(false);
     const [isMonthDrawerOpen, setIsMonthDrawerOpen] = useState(false);
     const [isYearDrawerOpen, setIsYearDrawerOpen] = useState(false);
@@ -21,6 +21,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
     const [selectedMonth, setSelectedMonth] = useState(undefined);
     const [selectedYear, setSelectedYear] = useState(undefined);
     const [daysOptions, setDaysOptions] = useState([]);
+    const [age, setAge] = useState('');
     const {globalStyles, token} = useApp();
     const styles = useStyles();
     
@@ -33,9 +34,27 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
             setSelectedDay(null);
             setSelectedMonth(null);
             setSelectedYear(null);
+            setAge('');
         }
     }));
 
+    const calculateAge = (day, month, year) => {
+        const dob = new Date(year, month - 1, day);
+        const today = new Date();
+        let years = today.getFullYear() - dob.getFullYear();
+        let months = today.getMonth() - dob.getMonth();
+
+        if (months < 0) {
+            years--;
+            months += 12;
+        } else if (months === 0 && today.getDate() < dob.getDate()) {
+            years--;
+            months = 11;
+        }
+
+        setAge(`${years}-yr ${months}-m`);
+    };
+    
     useEffect(() => {
         if (!isNullOrEmpty(form.values.DateOfBirth) && isNullOrEmpty(dateOfBirthValue)) {
             const date = new Date(form.values.DateOfBirth);
@@ -51,6 +70,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
             setSelectedDay(dayOption);
             setSelectedMonth(monthOption);
             setSelectedYear(yearOption);
+            calculateAge(day, month, year);
         }
         if (!isNullOrEmpty(dateOfBirthValue) && isNullOrEmpty(form.values.DateOfBirth)) {
             const date = new Date(dateOfBirthValue);
@@ -66,6 +86,7 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
             setSelectedDay(dayOption);
             setSelectedMonth(monthOption);
             setSelectedYear(yearOption);
+            calculateAge(day, month, year);
         }
 
     }, [form.values?.DateOfBirth]);
@@ -126,8 +147,10 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
 
         if (selectedDay && selectedMonth && selectedYear) {
             formatDateOfBirthByUiCulture(selectedDay, selectedMonth, selectedYear);
+            calculateAge(selectedDay, selectedMonth, selectedYear);
         } else {
             form.setFieldValue(name, null);
+            setAge('');
         }
     }, [selectedDay, selectedMonth, selectedYear]);
 
@@ -198,74 +221,86 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
             </label>
             
             <InlineBlock>
-                {orderedKeys.map((item, index) => (
-                    <div key={index} style={{width: '100%'}}>
-                        {equalString(item, 'day') &&
-                            <Select
-                                placeholder={'Day'}
-                                value={isNullOrEmpty(selectedDay) ? undefined : selectedDay}
-                                open={false}
-                                onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDayDrawerOpen(true)}
-                                disabled={disabled}
-                                style={{width: '100%'}}
-                                status={hasError ? 'error' : ''}
-                            >
-                                {daysOptions.map((option) => (
-                                    <Select.Option
-                                        key={option.Value}
-                                        value={option.Value}
-                                    >
-                                        {option.Text.toString()}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        }
+                <>
+                    {orderedKeys.map((item, index) => (
+                        <div key={index} style={{width: '100%'}}>
+                            {equalString(item, 'day') &&
+                                <Select
+                                    placeholder={'Day'}
+                                    value={isNullOrEmpty(selectedDay) ? undefined : selectedDay}
+                                    open={false}
+                                    onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDayDrawerOpen(true)}
+                                    disabled={disabled}
+                                    style={{width: '100%'}}
+                                    status={hasError ? 'error' : ''}
+                                >
+                                    {daysOptions.map((option) => (
+                                        <Select.Option
+                                            key={option.Value}
+                                            value={option.Value}
+                                        >
+                                            {option.Text.toString()}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            }
 
-                        {equalString(item, 'month') &&
-                            <Select
-                                placeholder='Month'
-                                value={isNullOrEmpty(selectedMonth) ? undefined : selectedMonth}
-                                open={false}
-                                onDropdownVisibleChange={() => !toBoolean(disabled) && setIsMonthDrawerOpen(true)}
-                                style={{width: '100%'}}
-                                className={styles.select}
-                                status={hasError ? 'error' : ''}
-                            >
-                                {monthsOptions.map((option) => (
-                                    <Select.Option
-                                        key={`month_${option.Value}`}
-                                        value={option.Value}
-                                    >
-                                        {option.Text.toString()}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        }
+                            {equalString(item, 'month') &&
+                                <Select
+                                    placeholder='Month'
+                                    value={isNullOrEmpty(selectedMonth) ? undefined : selectedMonth}
+                                    open={false}
+                                    onDropdownVisibleChange={() => !toBoolean(disabled) && setIsMonthDrawerOpen(true)}
+                                    style={{width: '100%'}}
+                                    className={styles.select}
+                                    status={hasError ? 'error' : ''}
+                                >
+                                    {monthsOptions.map((option) => (
+                                        <Select.Option
+                                            key={`month_${option.Value}`}
+                                            value={option.Value}
+                                        >
+                                            {option.Text.toString()}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            }
 
-                        {equalString(item, 'year') &&
-                            <Select
-                                placeholder={'Year'}
-                                value={isNullOrEmpty(selectedYear) ? undefined : selectedYear}
-                                open={false}
-                                onDropdownVisibleChange={() => !toBoolean(disabled) && setIsYearDrawerOpen(true)}
-                                onChange={setSelectedYear}
-                                disabled={disabled}
-                                style={{width: '100%'}}
-                                className={styles.select}
-                                status={hasError ? 'error' : ''}
-                            >
-                                {yearsOptions.map((option) => (
-                                    <Select.Option
-                                        key={option.Value}
-                                        value={option.Value}
-                                    >
-                                        {option.Text.toString()}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        }
-                    </div>
-                ))}
+                            {equalString(item, 'year') &&
+                                <Select
+                                    placeholder={'Year'}
+                                    value={isNullOrEmpty(selectedYear) ? undefined : selectedYear}
+                                    open={false}
+                                    onDropdownVisibleChange={() => !toBoolean(disabled) && setIsYearDrawerOpen(true)}
+                                    onChange={setSelectedYear}
+                                    disabled={disabled}
+                                    style={{width: '100%'}}
+                                    className={styles.select}
+                                    status={hasError ? 'error' : ''}
+                                >
+                                    {yearsOptions.map((option) => (
+                                        <Select.Option
+                                            key={option.Value}
+                                            value={option.Value}
+                                        >
+                                            {option.Text.toString()}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            }
+                        </div>
+                    ))}
+                    {(toBoolean(displayAge) && !isNullOrEmpty(age)) &&
+                        <Input disabled={true} 
+                               style={{
+                                   width: '300px',
+                                   textAlign: 'center',
+                                   color: token.Custom.ColorPrimaryText,
+                                   fontWeight: 600,
+                                   backgroundColor: token.colorPrimary}}
+                               value={age} />
+                    }
+                </>
             </InlineBlock>
 
             {hasError && meta && typeof meta.error === 'string' ? (

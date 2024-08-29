@@ -25,7 +25,8 @@ export const AntdProvider = ({ children }) => {
                             Custom: {
                                 cardIconPadding: 8,
                                 cardIconWidth: 22,
-                                buttonPadding: 8
+                                buttonPadding: 8,
+                                ColorPrimaryText: 'black'
                             },
 
                             Button: {
