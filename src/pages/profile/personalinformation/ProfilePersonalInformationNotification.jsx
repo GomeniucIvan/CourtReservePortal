@@ -3,11 +3,12 @@ import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useFormik} from "formik";
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
-import {useEffect} from "react";
-import {equalString, isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {useEffect, useState} from "react";
+import {anyInList, equalString, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
 import {Table, Typography} from "antd";
 import {useStyles} from "./styles.jsx";
+import mockData from "../../../mocks/personal-data.json";
 
 const {Column} = Table;
 const {Text} = Typography;
@@ -16,6 +17,8 @@ function ProfilePersonalInformationNotification({selectedTab}) {
     const navigate = useNavigate();
     let {memberId} = useParams();
     const {styles} = useStyles();
+    const [notifications, setNotifications] = useState(null);
+
     const {
         setIsLoading,
         isMockData,
@@ -54,35 +57,46 @@ function ProfilePersonalInformationNotification({selectedTab}) {
             setIsFooterVisible(false);
             setHeaderRightIcons(null);
             setFooterContent('');
+
+            if (isNullOrEmpty(notifications)) {
+                let notificationItems = [];
+
+                if (isMockData) {
+                    const categoryData = mockData.notificationDistinctCategoriesTable;
+                    const notificationData = mockData.notificationsTable;
+
+
+                    categoryData.forEach((category, index) => {
+                        const relatedNotifications = notificationData.filter(notification =>
+                            equalString(notification.NotificationCategory, category.NotificationCategory)
+                        );
+
+                        if (anyInList(relatedNotifications)) {
+                            notificationItems.push({
+                                key: `${category.Id}${index}`,
+                                notification: [category.NotificationCategory, '', ''],
+                                email: false, //todo
+                                sms: false,
+                                push: false,
+                            });
+
+                            relatedNotifications.forEach(notification => {
+                                notificationItems.push({
+                                    key: `${notification.Id}`,
+                                    notification: ['', notification.Name, notification.Description],
+                                    email: notification.IsSubscribed,
+                                    sms: notification.IsTextSubscribed,
+                                    push: notification.IsPushNotificationSubscribed,
+                                });
+                            });
+                        }
+                    });
+                }
+                
+                setNotifications(notificationItems);
+            }
         }
     }, [selectedTab]);
-
-    const data = [
-        {
-            key: '1',
-            notification: ['Stringing Jon', '', ''],
-            email: 32,
-            push: 'New York No. 1 Lake Park',
-        },
-        {
-            key: '2',
-            notification: ['', 'Stringing Job Completed', 'Sent stringing job completion notification to member.'],
-            email: 42,
-            push: 'London No. 1 Lake Park',
-        },
-        {
-            key: '3',
-            notification: ['Leagues', '', ''],
-            email: 32,
-            push: 'Sydney No. 1 Lake Park',
-        },
-        {
-            key: '4',
-            notification: ['', 'League Registration', 'Sent player when is registered to new league.'],
-            email: 42,
-            push: 'London33',
-        },
-    ];
 
     return (
         <>
@@ -98,47 +112,49 @@ function ProfilePersonalInformationNotification({selectedTab}) {
                             name={'UnsubscribeFromOrganizationTextAlerts'}/>
             </PaddingBlock>
 
-            <Table dataSource={data}
-                   size="small"
-                   borderColor={token.colorBorder}
-                   className={styles.table}
-                   pagination={{position: ['none', 'none']}}>
+            {anyInList(notifications) &&
+                <Table dataSource={notifications}
+                       size="small"
+                       borderColor={token.colorBorder}
+                       className={styles.table}
+                       pagination={{position: ['none', 'none']}}>
 
-                <Column title="Notification"
-                        dataIndex="notification"
-                        className={styles.columnNotification}
-                        render={(notification) => {
-                            const groupTitle = notification[0];
-                            const text = notification[1];
-                            const smallText = notification[2];
+                    <Column title="Notification"
+                            dataIndex="notification"
+                            className={styles.columnNotification}
+                            render={(notification) => {
+                                const groupTitle = notification[0];
+                                const text = notification[1];
+                                const smallText = notification[2];
 
-                            if (!isNullOrEmpty(groupTitle)) {
-                                return (<Text><strong>{groupTitle}</strong></Text>);
-                            }
+                                if (!isNullOrEmpty(groupTitle)) {
+                                    return (<Text><strong>{groupTitle}</strong></Text>);
+                                }
 
-                            if (!isNullOrEmpty(text)) {
-                                return (
-                                    <Text>
-                                        <Text>{text}</Text>
-                                        {!isNullOrEmpty(smallText) &&
-                                            <div>
-                                                <Text type="secondary"><small>{text}</small></Text>
-                                            </div>
-                                        }
-                                    </Text>
-                                );
-                            }
-                        }}
-                        key="notification"
-                />
-                <Column title="Email"
-                        className={styles.columnEmail}
-                        dataIndex="email"
-                        key="email"/>
+                                if (!isNullOrEmpty(text)) {
+                                    return (
+                                        <Text>
+                                            <Text>{text}</Text>
+                                            {!isNullOrEmpty(smallText) &&
+                                                <div>
+                                                    <Text type="secondary"><small>{text}</small></Text>
+                                                </div>
+                                            }
+                                        </Text>
+                                    );
+                                }
+                            }}
+                            key="notification"
+                    />
+                    <Column title="Email"
+                            className={styles.columnEmail}
+                            dataIndex="email"
+                            key="email"/>
 
-                <Column title="Push" dataIndex="push" key="push" className={styles.columnPush}/>
+                    <Column title="Push" dataIndex="push" key="push" className={styles.columnPush}/>
 
-            </Table>
+                </Table>
+            }
         </>
     )
 }
