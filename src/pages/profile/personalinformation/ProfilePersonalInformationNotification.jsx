@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import {useEffect, useState} from "react";
 import {anyInList, equalString, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
-import {Table, Typography} from "antd";
+import {Table, Typography, Checkbox} from "antd";
 import {useStyles} from "./styles.jsx";
 import mockData from "../../../mocks/personal-data.json";
 
@@ -18,6 +18,9 @@ function ProfilePersonalInformationNotification({selectedTab}) {
     let {memberId} = useParams();
     const {styles} = useStyles();
     const [notifications, setNotifications] = useState(null);
+    const [indeterminateEmail, setIndeterminateEmail] = useState(false);
+    const [indeterminatePush, setIndeterminatePush] = useState(false);
+    const [indeterminateText, setIndeterminateText] = useState(false);
 
     const {
         setIsLoading,
@@ -115,6 +118,7 @@ function ProfilePersonalInformationNotification({selectedTab}) {
             {anyInList(notifications) &&
                 <Table dataSource={notifications}
                        size="small"
+                       bordered
                        borderColor={token.colorBorder}
                        className={styles.table}
                        pagination={{position: ['none', 'none']}}>
@@ -146,12 +150,65 @@ function ProfilePersonalInformationNotification({selectedTab}) {
                             }}
                             key="notification"
                     />
-                    <Column title="Email"
-                            className={styles.columnEmail}
+                    <Column className={styles.columnEmail}
+                            title={
+                                <Checkbox
+                                    indeterminate={indeterminateEmail}
+                                    // onChange={(e) => handleSelectAllChange(e.target.checked)}
+                                >
+                                    Email
+                                </Checkbox>
+                            }
                             dataIndex="email"
-                            key="email"/>
+                            key="email"
+                            render={(text, record) => {
+                                return (
+                                    <Checkbox
 
-                    <Column title="Push" dataIndex="push" key="push" className={styles.columnPush}/>
+                                        // onChange={(e) => handleSmsSelectionChange(record.key, e.target.checked)}
+                                    >
+
+                                    </Checkbox>
+                                );
+                            }}/>
+
+                    <Column dataIndex="push"
+                            title={
+                                <Checkbox
+                                    // onChange={(e) => handleSelectAllChange(e.target.checked)}
+                                >
+                                    Push
+                                </Checkbox>
+                            }
+                            key="push"
+                            className={styles.columnPush}
+                            render={(text, record) => (
+                                <Checkbox
+                                    
+                                    // onChange={(e) => handleSmsSelectionChange(record.key, e.target.checked)}
+                                >
+
+                                </Checkbox>
+                            )}/>
+
+                    <Column key="text"
+                            title={
+                                <Checkbox
+                                    // onChange={(e) => handleSelectAllChange(e.target.checked)}
+                                >
+                                    Text
+                                </Checkbox>
+                            }
+                            className={styles.columnPush}
+                            render={(text, record) => (
+                                <Checkbox
+                                    
+                                    // onChange={(e) => handleSmsSelectionChange(record.key, e.target.checked)}
+                                >
+                                    
+                                </Checkbox>
+                            )}
+                    />
 
                 </Table>
             }

@@ -3,16 +3,17 @@ import ProfilePersonalInformationDetails from "./ProfilePersonalInformationDetai
 import {cx} from "antd-style";
 import {useApp} from "../../../context/AppProvider.jsx";
 import ProfilePersonalInformationNotification from "./ProfilePersonalInformationNotification.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {selectedTabStorage, setTabStorage} from "../../../storage/AppStorage.jsx";
 
 function ProfilePersonalInformation() {
     const {globalStyles} = useApp();
-    const [selectedTab, setSelectedTab] = useState('pers');
+    const [selectedTab, setSelectedTab] = useState(selectedTabStorage('myprofile', 'pers'));
     
     return (
         <Tabs
             rootClassName={cx(globalStyles.tabs)}
-            onChange={(e) => {setSelectedTab(e)}}
+            onChange={(e) => {setTabStorage('myprofile', e, setSelectedTab)}}
             defaultActiveKey={selectedTab}
             items={[
                 {
