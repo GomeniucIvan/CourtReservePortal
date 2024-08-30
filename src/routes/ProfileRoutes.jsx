@@ -4,7 +4,7 @@ import ReservationRegistration from "../pages/reservation/registration/Reservati
 import ProfilePersonalInformation from "../pages/profile/personalinformation/ProfilePersonalInformation.jsx";
 
 export const ProfileRouteNames = {
-    RESERVATION_LIST: `/profile/reservation/list`,
+    RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
     RESERVATION_CREATE: `/profile/reservation/create`,
     PROFILE_PERSONAL_INFO: `/profile/personalinfo`,

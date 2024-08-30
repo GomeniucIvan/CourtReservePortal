@@ -4,6 +4,7 @@ import AnnouncementList from "../pages/announcement/list/AnnouncementList.jsx";
 import LeagueList from "../pages/league/list/LeagueList.jsx";
 import ExpandedScheduler from "../pages/scheduler/ExpandedScheduler.jsx";
 import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
+import Navigation from "../pages/navigation/Navigation.jsx";
 
 export const HomeRouteNames = {
     INDEX: '/dashboard',
@@ -12,6 +13,7 @@ export const HomeRouteNames = {
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/announcement/list`,
     LEAGUES_LIST: `/leagues/list`,
+    MORE_NAVIGATION: `/more`,
 };
 
 const HomeRoutes = [
@@ -46,6 +48,12 @@ const HomeRoutes = [
         path: HomeRouteNames.CALENDAR,
         element: <EventCalendar />,
         title: 'Event Calendar',
+        disablePullDown: true
+    },
+    {
+        path: HomeRouteNames.MORE_NAVIGATION,
+        element: <Navigation key={'more'}/>,
+        title: 'More',
         disablePullDown: true
     }
 ];

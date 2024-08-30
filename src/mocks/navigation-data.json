@@ -1,0 +1,58 @@
+﻿{
+  "Links": [
+    {
+      "Name": "My Profile",
+      "Type": "Settings",
+      "Url": "/profile/personalinfo",
+      "Icon": "personal"
+    },
+    {
+      "Name": "My Family",
+      "Type": "Settings",
+      "Url": "/profile/family",
+      "Icon": "family"
+    },
+    {
+      "Name": "My Bookings",
+      "Type": "Booking",
+      "Url": "/profile/reservation/list",
+      "Icon": "bookings"
+    },
+    {
+      "Name": "Calendar Feed",
+      "Type": "Settings",
+      "Url": "/calendar/feed",
+      "Icon": "calendar-feed"
+    },
+    {
+      "Name": "My Membership",
+      "Type": "Settings",
+      "Url": "/profile/membership",
+      "Icon": "profile-membership"
+    },
+    {
+      "Name": "Billing",
+      "Type": "Settings",
+      "Url": "/profile/billing",
+      "Icon": "profile-billing"
+    },
+    {
+      "Name": "Payment Profile",
+      "Type": "Settings",
+      "Url": "/profile/payments",
+      "Icon": "profile-payment"
+    },
+    {
+      "Name": "My Organizations",
+      "Type": "Settings",
+      "Url": "/profile/organizations",
+      "Icon": "profile-organization"
+    },
+    {
+      "Name": "Logout",
+      "Type": "Settings",
+      "Url": "/logout",
+      "Icon": "logout"
+    }
+  ]
+}
