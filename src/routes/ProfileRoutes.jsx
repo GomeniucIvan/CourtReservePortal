@@ -2,12 +2,14 @@ import ProfileBookingList from "../pages/profile/booking/list/ProfileBookingList
 import ProfileBookingDetails from "../pages/reservation/details/ReservationDetails.jsx";
 import ReservationRegistration from "../pages/reservation/registration/ReservationRegistration.jsx";
 import ProfilePersonalInformation from "../pages/profile/personalinformation/ProfilePersonalInformation.jsx";
+import ProfileFamilyList from "../pages/profile/family/ProfileFamilyList.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
     RESERVATION_CREATE: `/profile/reservation/create`,
     PROFILE_PERSONAL_INFO: `/profile/personalinfo`,
+    PROFILE_FAMILY_LIST: `/profile/family`,
 };
 
 const ProfileRoutes = [
@@ -31,6 +33,11 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_PERSONAL_INFO,
         element: <ProfilePersonalInformation />,
         title: 'Profile'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_FAMILY_LIST,
+        element: <ProfileFamilyList />,
+        title: 'My Family'
     },
 ];
 
