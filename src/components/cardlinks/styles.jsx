@@ -46,7 +46,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         bottom: 30px;
         
         svg {
-            filter: drop-shadow(-2px 4px 2px rgba(0, 0, 0, .4));
+            filter: drop-shadow(-2px 4px 2px rgba(0, 0, 0, .3));
         }
     `
 }));
