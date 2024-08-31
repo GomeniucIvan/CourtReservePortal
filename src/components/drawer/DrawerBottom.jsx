@@ -21,6 +21,7 @@ const DrawerBottom = ({
                           confirmButtonText,
                           onConfirmButtonClick,
                           onSearch,
+                          dangerButton,
                           maxHeightVh = 60,
                           isSearchLoading
                       }) => {
@@ -86,7 +87,7 @@ const DrawerBottom = ({
 
                 {showButton &&
                     <div className={styles.drawerButton}>
-                        <Button type='primary' block onClick={() => {
+                        <Button type='primary' block danger={toBoolean(dangerButton)} onClick={() => {
                             onConfirmButtonClick();
                         }}>
                             {confirmButtonText}

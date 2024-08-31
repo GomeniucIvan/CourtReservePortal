@@ -36,7 +36,7 @@ function Layout() {
             currentRoute = AppRoutes.find(route => route.path === replacePath);
         }
     }
-    
+
     useEffect(() => {
         if (isNullOrEmpty(authMember())) {
             navigate('/');
@@ -45,7 +45,7 @@ function Layout() {
                 navigate('/dashboard');
             }
         }
-    }, []);
+    }, [location, navigate]);
 
 
     const calculateMaxHeight = () => {

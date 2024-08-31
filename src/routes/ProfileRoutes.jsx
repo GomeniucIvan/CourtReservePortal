@@ -4,6 +4,7 @@ import ReservationRegistration from "../pages/reservation/registration/Reservati
 import ProfilePersonalInformation from "../pages/profile/personalinformation/ProfilePersonalInformation.jsx";
 import ProfileFamilyList from "../pages/profile/family/ProfileFamilyList.jsx";
 import ProfileCalendarFeed from "../pages/profile/calendar/ProfileCalendarFeed.jsx";
+import ProfileMembershipDetails from "../pages/profile/membership/details/ProfileMembershipDetails.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
@@ -13,6 +14,7 @@ export const ProfileRouteNames = {
     PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/profile/family`,
     PROFILE_CALENDAR_FEED: `/profile/calendar`,
+    PROFILE_MEMBERSHIP: `/profile/membership`,
 };
 
 const ProfileRoutes = [
@@ -52,6 +54,11 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_CALENDAR_FEED,
         element: <ProfileCalendarFeed />,
         title: 'Calendar Feed'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_MEMBERSHIP,
+        element: <ProfileMembershipDetails />,
+        title: 'My Membership'
     }
 ];
 
