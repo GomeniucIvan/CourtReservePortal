@@ -5,7 +5,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import mockData from "../../mocks/navigation-data.json";
 
 function Navigation(props) {
-    const {setIsFooterVisible, setHeaderRightIcons, setFooterContent} = useApp();
+    const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, isMockData} = useApp();
     const [navigationLinks, setNavigationLinks] = useState([]);
     
     useEffect(() => {
@@ -13,8 +13,12 @@ function Navigation(props) {
         setHeaderRightIcons(null);
         setFooterContent('');
         
-        const links = mockData.Links;
-        setNavigationLinks(links);
+        if (isMockData){
+            const links = mockData.Links;
+            setNavigationLinks(links);
+        }
+        
+
     }, []);
     
     

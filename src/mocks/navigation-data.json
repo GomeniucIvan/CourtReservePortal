@@ -21,7 +21,7 @@
     {
       "Name": "Calendar Feed",
       "Type": "Settings",
-      "Url": "/calendar/feed",
+      "Url": "/profile/calendar",
       "Icon": "calendar-feed"
     },
     {
