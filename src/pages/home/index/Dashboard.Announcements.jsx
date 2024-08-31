@@ -16,7 +16,7 @@ import {useEffect} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 
 const DashboardAnnouncements = ({dashboardData, isFetching}) => {
-    let {setDynamicPages, globalStyles} = useApp();
+    let {setDynamicPages, globalStyles, token} = useApp();
     let announcements = dashboardData?.GlobalAnnouncements;
     let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
     const {styles} = useStyles();

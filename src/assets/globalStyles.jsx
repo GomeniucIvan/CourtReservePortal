@@ -40,6 +40,7 @@ export const useStyles = createStyles(({ css, token }) => ({
          right: 4px;
          bottom: 4px;
          opacity: 0.2;
+         ${token.Custom.workingTheme === 'dark' && 'filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%);'}
       }
    `,
    inputBottomLink: css`

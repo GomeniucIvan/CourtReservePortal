@@ -88,6 +88,7 @@ function Layout() {
                 --adm-color-weak: ${token.colorText};
                 --adm-color-border: ${token.colorBorder};
                 --adm-color-text: ${token.colorText};
+                background-color: ${token.colorBgContainer};
             }
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;
@@ -147,9 +148,7 @@ function Layout() {
             </div>
 
             <div ref={footerRef}>
-                {isFooterVisible && (
-                    <> {footerContent ? footerContent : <Footer/>} </>
-                )}
+                <Footer isFooterVisible={isFooterVisible} footerContent={footerContent}/>
             </div>
         </div>
     )

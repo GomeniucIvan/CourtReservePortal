@@ -10,10 +10,10 @@ import {
 } from 'antd-mobile-icons'
 import {TabBar, Badge} from "antd-mobile";
 import {useState} from "react";
-import {equalString} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 
-const Footer = (props) => {
+const Footer = ({isFooterVisible, footerContent}) => {
     const {styles} = useStyles();
     const navigate = useNavigate();
     
@@ -54,10 +54,19 @@ const Footer = (props) => {
         },
     ]
 
+    if (!toBoolean(isFooterVisible)){
+        return <></>
+    }
+    
+    if (!isNullOrEmpty(footerContent)){
+        return (<>{footerContent}</>)
+    }
+    
     return (
         <TabBar className={styles.footer} activeKey={activeKey} onChange={onTabBarChange}>
             {tabs.map(item => (
                 <TabBar.Item
+                    onClick={() => {alert(2)}}
                     key={item.key}
                     icon={item.icon}
                     //title={item.title}
