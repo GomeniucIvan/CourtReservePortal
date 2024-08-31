@@ -9,6 +9,7 @@ export const ProfileRouteNames = {
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
     RESERVATION_CREATE: `/profile/reservation/create`,
     PROFILE_PERSONAL_INFO: `/profile/personalinfo`,
+    PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/profile/family`,
 };
 
@@ -33,6 +34,12 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_PERSONAL_INFO,
         element: <ProfilePersonalInformation />,
         title: 'Profile'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_FAMILY_INFO_EDIT,
+        element: <ProfilePersonalInformation />,
+        title: 'Edit',
+        header: true
     },
     {
         path: ProfileRouteNames.PROFILE_FAMILY_LIST,

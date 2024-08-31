@@ -20,12 +20,16 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
     const [selectedDay, setSelectedDay] = useState(undefined);
     const [selectedMonth, setSelectedMonth] = useState(undefined);
     const [selectedYear, setSelectedYear] = useState(undefined);
+    
     const [daysOptions, setDaysOptions] = useState([]);
+    const [monthsOptions, setMonthsOptions] = useState([]);
+    const [yearsOptions, setYearOptions] = useState([]);
+    
     const [age, setAge] = useState('');
     const {globalStyles, token} = useApp();
     const styles = useStyles();
     
-    const minYear = 1900;
+    const minYear = 1950;
     const maxYear = new Date().getFullYear();
     const isRequired = toBoolean(required);
 
@@ -154,16 +158,21 @@ const FormDateOfBirth = React.forwardRef(({ uiCulture, name, form, required, dat
         }
     }, [selectedDay, selectedMonth, selectedYear]);
 
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthsOptions = Array.from({ length: 12 }, (_, i) => ({
-        Value: i + 1,
-        Text: monthNames[i]
-    }));
+    //set lists
+    useEffect(() => {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        setMonthsOptions(Array.from({ length: 12 }, (_, i) => ({
+            Value: i + 1,
+            Text: monthNames[i]
+        })));
+        
+        setYearOptions(Array.from({ length: maxYear - minYear + 1 }, (_, i) => ({
+            Value: maxYear - i,
+            Text: maxYear - i
+        })))
+    }, []);
 
-    const yearsOptions = Array.from({ length: maxYear - minYear + 1 }, (_, i) => ({
-        Value: maxYear - i,
-        Text: maxYear - i
-    }));
+
 
     let field = '';
     let meta = null;
