@@ -5,15 +5,14 @@ import EntityCard from "../../../components/entitycard/EntityCard.jsx";
 import {Typography, Badge} from "antd";
 import {Ellipsis} from 'antd-mobile'
 import {CloseOutline} from "antd-mobile-icons";
-
-const {Text, Title} = Typography;
 import {Button, Card} from 'antd-mobile'
 import {cx} from "antd-style";
 import {useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
-import {useEffect} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
+
+const {Text, Title} = Typography;
 
 const DashboardAnnouncements = ({dashboardData, isFetching}) => {
     let {setDynamicPages, globalStyles, token} = useApp();

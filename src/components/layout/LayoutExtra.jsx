@@ -1,16 +1,20 @@
 ﻿import {useApp} from "../../context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
-import {Button} from "antd";
+import {Button, Image} from "antd";
 import {useAntd} from "../../context/AntdProvider.jsx";
-import {toLocalStorage} from "../../storage/AppStorage.jsx";
+import {fromLocalStorage, toLocalStorage} from "../../storage/AppStorage.jsx";
 import {useState} from "react";
+import {useTranslation} from "react-i18next";
 
 function LayoutExtra() {
     const { isMockData } = useApp();
     const { styles } = useStyles();
     const {setPrimaryColor, setIsDarkMode, isDarkMode} = useAntd();
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+    const [isLanguageOpened, setIsLanguageOpened] = useState(false);
+    const { i18n } = useTranslation();
+    const storageLanguage = fromLocalStorage("language_seo", 'en');
     
     if (!isMockData){
         return(<></>)
@@ -21,6 +25,10 @@ function LayoutExtra() {
         toLocalStorage('darkmode', !isDarkMode);
     }
 
+    const openLanguage = () => {
+        setIsLanguageOpened(!isLanguageOpened);
+    }
+    
     const openPrimaryColor = () => {
         setIsColorPickerOpen(!isColorPickerOpen);
     }
@@ -31,8 +39,51 @@ function LayoutExtra() {
         setIsColorPickerOpen(false);
     }
     
+    const changeLanguage = (selectedLanguage) => {
+        i18n.changeLanguage(selectedLanguage).then(r => {
+            toLocalStorage("language_seo", selectedLanguage);
+            setIsLanguageOpened(false);
+        });
+    }
+    
     return (
         <div className={cx(styles.layoutExtra)}>
+            <div className={styles.languagePickerContainer}>
+                <Button shape="circle" onClick={openLanguage} className={styles.primaryColor}>
+                    <Image
+                        preview={false}
+                        style={{borderRadius: '50px'}}
+                        width={24}
+                        src={`/public/images/${storageLanguage}-flag.png`}
+                    />
+                </Button>
+                {isLanguageOpened && (
+                    <div className={styles.languageOptions}>
+                        <Button shape="circle"
+                                className={styles.colorOption}
+                                onClick={() => {changeLanguage('en')}}>
+                            <Image
+                                preview={false}
+                                style={{borderRadius: '50px'}}
+                                width={24}
+                                src="/public/images/en-flag.png"
+                            />
+                        </Button>
+
+                        <Button shape="circle"
+                                className={styles.colorOption}
+                                onClick={() => {changeLanguage("ru")}}>
+                            <Image
+                                preview={false}
+                                style={{borderRadius: '50px'}}
+                                width={24}
+                                src="/public/images/ru-flag.png"
+                            />
+                        </Button>
+                    </div>
+                )}
+            </div>
+
             <div><Button shape="circle" onClick={changeThemeMode} className={styles.themeButton}/></div>
             <div className={styles.colorPickerContainer}>
                 <Button shape="circle" onClick={openPrimaryColor} className={styles.primaryColor}/>
