@@ -1,15 +1,22 @@
-﻿import {Flex, Typography} from "antd";
-const { Text } = Typography;
-import {useApp} from "../../context/AppProvider.jsx";
+﻿import { useApp } from "../../context/AppProvider.jsx";
 
-function PaddingBlock({children, topBottom = false, leftRight = true}) {
-    const {globalStyles, token} = useApp();
-    
+function PaddingBlock({ children, topBottom = false, leftRight = true, onlyBottom = false }) {
+    const { token } = useApp();
+
+    const paddingTopBottom = topBottom ? token.padding : 0;
+    const paddingLeftRight = leftRight ? token.padding : 0;
+
+    const paddingBottom = onlyBottom ? token.padding : paddingTopBottom;
+
     return (
-        <div style={{padding: `${topBottom ? token.padding : 0}px ${leftRight ?token.padding : 0}px`}}>
+        <div
+            style={{
+                padding: `${paddingTopBottom}px ${paddingLeftRight}px ${paddingBottom}px ${paddingLeftRight}px`
+            }}
+        >
             {children}
         </div>
-    )
+    );
 }
 
-export default PaddingBlock
+export default PaddingBlock;

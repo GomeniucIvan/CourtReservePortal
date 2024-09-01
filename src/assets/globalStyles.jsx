@@ -192,5 +192,9 @@ export const useStyles = createStyles(({ css, token }) => ({
           }
        }
     }
+   `,
+   stickyButton: css`
+      height: ${token.Button.controlHeight}px;
+      padding: 12px 10px;
    `
 }));

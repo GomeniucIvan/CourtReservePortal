@@ -55,7 +55,8 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.PROFILE_CALENDAR_FEED,
         element: <ProfileCalendarFeed />,
-        title: 'Calendar Feed'
+        title: 'Calendar Feed',
+        disablePullDown: true
     },
     {
         path: ProfileRouteNames.PROFILE_MEMBERSHIP,
@@ -65,7 +66,8 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.PROFILE_BILLING,
         element: <ProfileBilling />,
-        title: 'Billing'
+        title: 'Billing',
+        disablePullDown: true
     }
 ];
 
