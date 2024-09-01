@@ -28,7 +28,19 @@ function Dashboard() {
             const dashboardData = mockData.dashboard.index;
             setDashboardData(dashboardData);
         } else{
-            alert('todo home index')
+            fetch('/app/Online/Portal/Index/6969')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                });
         }
     }
     

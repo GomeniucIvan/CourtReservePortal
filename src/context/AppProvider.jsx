@@ -12,7 +12,7 @@ export const AppProvider = ({ children }) => {
     const [isFooterVisible, setIsFooterVisible] = useState(true);
     const [formikData, setFormikData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isMockData, setIsMockData] = useState(true);
+    const [isMockData, setIsMockData] = useState(false);
     const [dynamicPages, setDynamicPages] = useState([]);
     const [headerRightIcons, setHeaderRightIcons] = useState(null);
     const stylesToUse = useStyles();
