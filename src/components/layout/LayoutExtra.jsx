@@ -54,7 +54,7 @@ function LayoutExtra() {
                         preview={false}
                         style={{borderRadius: '50px'}}
                         width={24}
-                        src={`/public/images/${storageLanguage}-flag.png`}
+                        src={`/images/${storageLanguage}-flag.png`}
                     />
                 </Button>
                 {isLanguageOpened && (
@@ -66,7 +66,7 @@ function LayoutExtra() {
                                 preview={false}
                                 style={{borderRadius: '50px'}}
                                 width={24}
-                                src="/public/images/en-flag.png"
+                                src="/images/en-flag.png"
                             />
                         </Button>
 
@@ -77,7 +77,7 @@ function LayoutExtra() {
                                 preview={false}
                                 style={{borderRadius: '50px'}}
                                 width={24}
-                                src="/public/images/ru-flag.png"
+                                src="/images/ru-flag.png"
                             />
                         </Button>
                     </div>
