@@ -4,7 +4,7 @@ const { Text } = Typography;
 import {useApp} from "../../context/AppProvider.jsx";
 import {anyInList} from "../../utils/Utils.jsx";
 import {Card} from "antd";
-import {t} from "../../utils/OrganizationUtils.jsx";
+import {e} from "../../utils/OrganizationUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
 import {useNavigate} from "react-router-dom";
@@ -25,7 +25,7 @@ function CardLinks({links}) {
                                     <Ellipsis direction='end' rows={2} content={link.Name}/>
                                 </Text>
                                 <Text disabled className={styles.cardType}>
-                                    {t(link.Type)}
+                                    {e(link.Type)}
                                 </Text>
 
                                 <div className={styles.bottomBg} />

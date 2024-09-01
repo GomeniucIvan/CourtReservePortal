@@ -1,0 +1,23 @@
+﻿{
+  "scheduler": "Планировщик",
+  "announcements": "Объявления",
+  "announcementDetails": "Детали объявления",
+  "leagues": "Лиги",
+  "eventCalendar": "Календарь событий",
+  "more": "Навигация",
+  "gettingStarted": "Начать",
+  "accountVerification": "Подтверждение аккаунта",
+  "verificationCode": "Код подтверждения",
+  "events": "События",
+  "eventDetails": "Детали события",
+  "eventSignup": "Регистрация на событие",
+  "bookings": "Бронирование(я)",
+  "reservationDetails": "Детали бронирования",
+  "createReservation": "Создать бронирование",
+  "profile": "Профиль",
+  "editProfile": "Редактировать профиль",
+  "myFamily": "Моя семья",
+  "calendarFeed": "Лента календаря",
+  "myMembership": "Мое членство",
+  "billing": "Оплата"
+}

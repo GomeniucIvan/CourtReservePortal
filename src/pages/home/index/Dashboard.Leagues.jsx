@@ -1,11 +1,9 @@
 ﻿import {useEffect, useRef, useState} from "react";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
-import {t} from "../../../utils/OrganizationUtils.jsx";
 import ModernDashboardLeaguesDates from "./Dashboard.LeagueDates.jsx";
 import {Input, Menu, Typography} from "antd";
 import {DownOutline} from "antd-mobile-icons";
-import {Card} from "antd-mobile";
 import {useStyles} from "./styles.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import {useNavigate} from "react-router-dom";
@@ -52,7 +50,7 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
 
     
     return (
-        <EntityCard title={t('Leagues')} link={'/leagues'} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={'Leagues'} link={'/leagues'} isFetching={isFetching} addPadding={true}>
             {showLeaguesBlock &&
                 <div className={styles.leagueBlock}>
                     <Text className={styles.selectLeagueLabel}>

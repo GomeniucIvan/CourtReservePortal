@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
 import {cx} from "antd-style";
-import {t} from "../../../../utils/OrganizationUtils.jsx";
+import {e} from "../../../../utils/OrganizationUtils.jsx";
 import {useApp} from "../../../../context/AppProvider.jsx";
 import mockData from "../../../../mocks/reservation-data.json";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";
@@ -67,7 +67,7 @@ function ProfileBookingList() {
                 }}>
                     <Search
                         rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened)}
-                        placeholder={`Search for ${t('Booking')}`}
+                        placeholder={`Search for ${e('Booking')}`}
                         style={{width: 0}}/>
                 </div>
 

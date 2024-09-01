@@ -8,7 +8,7 @@ import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
 import {Button, Segmented, Space, Input, Flex, Typography, Progress} from "antd";
 import {BarsOutlined, AppstoreOutlined, FilterOutlined} from "@ant-design/icons";
-import {t} from "../../../utils/OrganizationUtils.jsx";
+import {e} from "../../../utils/OrganizationUtils.jsx";
 import {cx} from "antd-style";
 import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
@@ -68,7 +68,7 @@ function EventList() {
                 }}>
                     <Search
                         rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened)}
-                        placeholder={`Search for ${t('Event(s)')}`}
+                        placeholder={`Search for ${e('Event(s)')}`}
                         style={{width: 0}}/>
                 </div>
 

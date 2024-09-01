@@ -1,7 +1,7 @@
 ﻿import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
-import {t} from "../../../utils/OrganizationUtils.jsx";
+import {e} from "../../../utils/OrganizationUtils.jsx";
 import {Badge, Button, Flex, Tag, Typography} from "antd";
 import {Card, Ellipsis, ErrorBlock} from "antd-mobile";
 import {cx} from "antd-style";
@@ -62,7 +62,7 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
     }
     
     return (
-        <EntityCard title={t('Reservations')} link={ProfileRouteNames.RESERVATION_LIST} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={e('Reservations')} link={ProfileRouteNames.RESERVATION_LIST} isFetching={isFetching} addPadding={true}>
             {anyInList(bookings) ? (
                 <SlickSlider>
                     {bookings.map((booking, index) => (

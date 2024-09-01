@@ -5,6 +5,7 @@ import LeagueList from "../pages/league/list/LeagueList.jsx";
 import ExpandedScheduler from "../pages/scheduler/ExpandedScheduler.jsx";
 import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 import Navigation from "../pages/navigation/Navigation.jsx";
+import {useTranslation} from "react-i18next";
 
 export const HomeRouteNames = {
     INDEX: '/dashboard',
@@ -25,35 +26,36 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.SCHEDULER,
         element: <ExpandedScheduler />,
-        title: 'Scheduler',
+        title: 'scheduler',
         disablePullDown: true
     },
     {
         path: HomeRouteNames.ANNOUNCEMENT_LIST,
         element: <AnnouncementList />,
-        title: 'Announcements'
+        title: 'announcements'
     },
     {
         path: HomeRouteNames.ANNOUNCEMENT_DETAILS,
         element: <AnnouncementDetails />,
-        title: 'Details',
+        title: 'announcementDetails',
         header: true
     },
     {
         path: HomeRouteNames.LEAGUES_LIST,
         element: <LeagueList />,
-        title: 'Leagues'
+        title: 'leagues'
     },
     {
         path: HomeRouteNames.CALENDAR,
         element: <EventCalendar />,
-        title: 'Event Calendar',
+        title: 'eventCalendar',
+        entityTitle: true,
         disablePullDown: true
     },
     {
         path: HomeRouteNames.MORE_NAVIGATION,
         element: <Navigation key={'more'}/>,
-        title: 'More',
+        title: 'more',
         disablePullDown: true
     }
 ];

@@ -1,7 +1,7 @@
 ﻿import {useEffect, useState} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {t} from "../../../utils/OrganizationUtils.jsx";
+import {e} from "../../../utils/OrganizationUtils.jsx";
 import {Button, Typography} from "antd";
 import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
 
@@ -20,7 +20,7 @@ function ProfileCalendarFeed() {
 
     return (
         <PaddingBlock topBottom={false}>
-            <Title level={4}>{t('URL to Subscribe to your Events/Reservations in your Calendar')}</Title>
+            <Title level={4}>{e('URL to Subscribe to your Events/Reservations in your Calendar')}</Title>
 
             <Link href={calendarUrl} target="_blank" style={{paddingBottom: token.padding, display: 'block'}}>
                 <Title level={5} type={'link'} style={{color: token.colorLink}}> {calendarUrl}</Title>

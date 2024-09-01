@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
-import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {authMember} from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";
@@ -23,7 +23,7 @@ function Layout() {
     const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight } = useApp();
     
     if (isNullOrEmpty(currentRoute)){
-        currentRoute = dynamicPages.find(route => route.path === location.pathname);
+        currentRoute = dynamicPages.find(route => equalString(route.path, location.pathname));
     }
 
     if (isNullOrEmpty(currentRoute)){

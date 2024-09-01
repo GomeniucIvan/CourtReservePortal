@@ -23,50 +23,50 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.RESERVATION_LIST,
         element: <ProfileBookingList />,
-        title: 'Booking(s)'
+        title: 'bookings'
     },
     {
         path: ProfileRouteNames.RESERVATION_DETAILS,
         element: <ProfileBookingDetails />,
-        title: 'Reservation Details',
+        title: 'reservationDetails',
         header: true
     },
     {
         path: ProfileRouteNames.RESERVATION_CREATE,
         element: <ReservationRegistration />,
-        title: 'Create Reservation'
+        title: 'createReservation'
     },
     {
         path: ProfileRouteNames.PROFILE_PERSONAL_INFO,
         element:  <MyProfile />,
-        title: 'Profile'
+        title: 'profile'
     },
     {
         path: ProfileRouteNames.PROFILE_FAMILY_INFO_EDIT,
         element: <MyProfile />,
-        title: 'Edit',
+        title: 'editProfile',
         header: true
     },
     {
         path: ProfileRouteNames.PROFILE_FAMILY_LIST,
         element: <ProfileFamilyList />,
-        title: 'My Family'
+        title: 'myFamily'
     },
     {
         path: ProfileRouteNames.PROFILE_CALENDAR_FEED,
         element: <ProfileCalendarFeed />,
-        title: 'Calendar Feed',
+        title: 'calendarFeed',
         disablePullDown: true
     },
     {
         path: ProfileRouteNames.PROFILE_MEMBERSHIP,
         element: <ProfileMembershipDetails />,
-        title: 'My Membership'
+        title: 'myMembership'
     },
     {
         path: ProfileRouteNames.PROFILE_BILLING,
         element: <ProfileBilling />,
-        title: 'Billing',
+        title: 'billing',
         disablePullDown: true
     }
 ];

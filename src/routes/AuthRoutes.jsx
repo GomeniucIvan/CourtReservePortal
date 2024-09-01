@@ -19,17 +19,17 @@ const AuthRoutes = [
     {
         path: AuthRouteNames.LOGIN_GET_STARTED,
         element: <LoginGetStarted />,
-        title: 'Getting Started'
+        title: 'gettingStarted'
     },
     {
         path: AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION,
         element: <LoginAccountVerification />,
-        title: 'Account Verification'
+        title: 'accountVerification'
     },
     {
         path: AuthRouteNames.LOGIN_VERIFICATION_CODE,
         element: <LoginVerificationCode />,
-        title: 'Verification Code'
+        title: 'verificationCode'
     },
 ];
 

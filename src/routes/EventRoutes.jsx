@@ -14,18 +14,21 @@ const EventRoutes = [
     {
         path: EventRouteNames.EVENT_LIST,
         element: <EventList />,
-        title: 'Events'
+        title: 'events',
+        entityTitle: true,
     },
     {
         path: EventRouteNames.EVENT_DETAILS,
         element: <EventDetails />,
-        title: 'Event Details',
-        header: true
+        title: 'eventDetails',
+        header: true,
+        entityTitle: true,
     },
     {
         path: EventRouteNames.EVENT_SIGNUP,
         element: <EventRegistration />,
-        title: 'Event Signup'
+        title: 'eventSignup',
+        entityTitle: true,
     },
     {
         path: '/event-category-list/:orgId',
