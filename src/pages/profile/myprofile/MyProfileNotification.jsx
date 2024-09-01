@@ -13,7 +13,7 @@ import mockData from "../../../mocks/personal-data.json";
 const {Column} = Table;
 const {Text} = Typography;
 
-function ProfilePersonalInformationNotification({selectedTab}) {
+function MyProfileNotification({selectedTab}) {
     const navigate = useNavigate();
     let {memberId} = useParams();
     const {styles} = useStyles();
@@ -216,4 +216,4 @@ function ProfilePersonalInformationNotification({selectedTab}) {
     )
 }
 
-export default ProfilePersonalInformationNotification
+export default MyProfileNotification

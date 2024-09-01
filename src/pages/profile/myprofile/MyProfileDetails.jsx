@@ -1,5 +1,4 @@
-﻿import styles from './ProfilePersonalInformation.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
 import FormSelect from "../../../form/formselect/FormSelect.jsx";
@@ -14,7 +13,7 @@ import FormStateProvince from "../../../form/formstateprovince/FormStateProvince
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
 import {equalString} from "../../../utils/Utils.jsx";
 
-function ProfilePersonalInformationDetails({selectedTab}) {
+function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();
     let { memberId } = useParams();
 
@@ -169,4 +168,4 @@ function ProfilePersonalInformationDetails({selectedTab}) {
     )
 }
 
-export default ProfilePersonalInformationDetails
+export default MyProfileDetails

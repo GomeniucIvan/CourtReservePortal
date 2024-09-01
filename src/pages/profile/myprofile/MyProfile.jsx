@@ -1,12 +1,12 @@
 ﻿import {Tabs} from "antd";
-import ProfilePersonalInformationDetails from "./ProfilePersonalInformationDetails.jsx";
 import {cx} from "antd-style";
 import {useApp} from "../../../context/AppProvider.jsx";
-import ProfilePersonalInformationNotification from "./ProfilePersonalInformationNotification.jsx";
 import {useEffect, useState} from "react";
 import {selectedTabStorage, setTabStorage} from "../../../storage/AppStorage.jsx";
+import MyProfileNotification from "./MyProfileNotification.jsx";
+import MyProfileDetails from "./MyProfileDetails.jsx";
 
-function ProfilePersonalInformation() {
+function MyProfile() {
     const {globalStyles} = useApp();
     const [selectedTab, setSelectedTab] = useState(selectedTabStorage('myprofile', 'pers'));
     
@@ -19,12 +19,12 @@ function ProfilePersonalInformation() {
                 {
                     key: 'pers',
                     label: 'Information',
-                    children: <ProfilePersonalInformationDetails selectedTab={selectedTab} />,
+                    children: <MyProfileDetails selectedTab={selectedTab} />,
                 },
                 {
                     key: 'notifications',
                     label: 'Notifications',
-                    children: <ProfilePersonalInformationNotification selectedTab={selectedTab} />,
+                    children: <MyProfileNotification selectedTab={selectedTab} />,
                 },
                 {
                     key: 'settings',
@@ -36,4 +36,4 @@ function ProfilePersonalInformation() {
     )
 }
 
-export default ProfilePersonalInformation
+export default MyProfile

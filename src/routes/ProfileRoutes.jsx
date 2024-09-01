@@ -1,10 +1,11 @@
 import ProfileBookingList from "../pages/profile/booking/list/ProfileBookingList.jsx";
 import ProfileBookingDetails from "../pages/reservation/details/ReservationDetails.jsx";
 import ReservationRegistration from "../pages/reservation/registration/ReservationRegistration.jsx";
-import ProfilePersonalInformation from "../pages/profile/personalinformation/ProfilePersonalInformation.jsx";
 import ProfileFamilyList from "../pages/profile/family/ProfileFamilyList.jsx";
 import ProfileCalendarFeed from "../pages/profile/calendar/ProfileCalendarFeed.jsx";
 import ProfileMembershipDetails from "../pages/profile/membership/details/ProfileMembershipDetails.jsx";
+import ProfileBilling from "../pages/profile/billing/list/ProfileBilling.jsx";
+import MyProfile from "../pages/profile/myprofile/MyProfile.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
@@ -15,6 +16,7 @@ export const ProfileRouteNames = {
     PROFILE_FAMILY_LIST: `/profile/family`,
     PROFILE_CALENDAR_FEED: `/profile/calendar`,
     PROFILE_MEMBERSHIP: `/profile/membership`,
+    PROFILE_BILLING: `/profile/billing`,
 };
 
 const ProfileRoutes = [
@@ -36,12 +38,12 @@ const ProfileRoutes = [
     },
     {
         path: ProfileRouteNames.PROFILE_PERSONAL_INFO,
-        element: <ProfilePersonalInformation />,
+        element:  <MyProfile />,
         title: 'Profile'
     },
     {
         path: ProfileRouteNames.PROFILE_FAMILY_INFO_EDIT,
-        element: <ProfilePersonalInformation />,
+        element: <MyProfile />,
         title: 'Edit',
         header: true
     },
@@ -59,6 +61,11 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_MEMBERSHIP,
         element: <ProfileMembershipDetails />,
         title: 'My Membership'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_BILLING,
+        element: <ProfileBilling />,
+        title: 'Billing'
     }
 ];
 
