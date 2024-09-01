@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import {useEffect} from "react";
-import {focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {focus, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
@@ -15,6 +15,7 @@ const { Paragraph, Title, Link } = Typography;
 const { useToken } = theme;
 import { Modal } from 'antd-mobile'
 import PageForm from "../../../form/pageform/PageForm.jsx";
+import apiService from "../../../api/api.jsx";
 
 function LoginAccountVerification() {
     const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, setFooterContent, globalStyles } = useApp();
@@ -51,7 +52,6 @@ function LoginAccountVerification() {
             setIsLoading(true);
 
             if (isMockData){
-                
                 setTimeout(function (){
                     const memberExists = mockData.login.started.member.email === values.email && mockData.login.started.member.password === values.password;
 
@@ -71,8 +71,28 @@ function LoginAccountVerification() {
                     setIsLoading(false);
                 }, 2000);
             } else{
-                //todo
-                alert('todo verification')
+                apiService.post('/api/create-account/login', {
+                    UserNameOrEmail: values.email,
+                    Password: values.password
+                }).then(response => {
+                    if (!toBoolean(response?.IsValid)){
+                        ModalClose({
+                            title: 'Password',
+                            content: 'The email and password combination you entered is incorrect',
+                            showIcon: false,
+                            onOk: () => {
+                                focus('password');
+                            }
+                        });
+                    } else {
+                        console.log(values)
+                        
+                        setFormikData(values);
+                        navigate(AuthRouteNames.LOGIN_VERIFICATION_CODE);
+                    }
+
+                    setIsLoading(false);
+                });
             }
         },
     });

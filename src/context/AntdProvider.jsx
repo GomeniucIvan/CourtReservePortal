@@ -9,6 +9,8 @@ export const useAntd = () => useContext(AntdContext);
 //theme.darkAlgorithm
 //theme.defaultAlgorithm,
 export const AntdProvider = ({ children }) => {
+    
+    //todo change from cookie
     const [primaryColor, setPrimaryColor] = useState(fromLocalStorage('primary-color', '#873030'));
     const [isDarkMode, setIsDarkMode] = useState(fromLocalStorage('darkmode', 'False'));
     

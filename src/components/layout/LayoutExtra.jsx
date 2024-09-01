@@ -16,7 +16,7 @@ function LayoutExtra() {
     const { i18n } = useTranslation();
     const storageLanguage = fromLocalStorage("language_seo", 'en');
     
-    if (!isMockData){
+    if (!isMockData && 1 == 2){
         return(<></>)
     }
     

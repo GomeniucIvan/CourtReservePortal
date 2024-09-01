@@ -4,13 +4,26 @@ import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {Button} from "antd";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
+import {useAuth} from "../../../context/AuthProvider.jsx";
 
 function Login() {
     const navigate = useNavigate();
-    const { setIsFooterVisible, token } = useApp();
-
+    const { setIsFooterVisible, token, setHeaderRightIcons } = useApp();
+    const {setAuthData, setOrgId, setMemberId} = useAuth();
+    
     useEffect(() => {
         setIsFooterVisible(false);
+        setHeaderRightIcons('');
+        
+        //should clear organization data on logout
+        setOrgId(null);
+        setMemberId(null);
+        setAuthData({
+            timezone: '',
+            uiCulture: '',
+            currency: '',
+            primaryColor: '',
+        });
     }, []);
     
     return (

@@ -6,10 +6,16 @@ import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {authMember} from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";
+import {useAuth} from "../../context/AuthProvider.jsx";
+import {Flex} from "antd";
+import { Skeleton } from 'antd-mobile'
+import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
+import appService from "../../api/app.jsx";
+import {setClientUiCulture} from "../../utils/DateUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -17,10 +23,12 @@ function Layout() {
     const headerRef = useRef(null);
     const footerRef = useRef(null);
     const { styles } = useStyles();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [isFetching, setIsFetching] = useState(true);
     
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight } = useApp();
+    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData } = useApp();
+    const {orgId, setAuthData} = useAuth();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => equalString(route.path, location.pathname));
@@ -39,7 +47,9 @@ function Layout() {
 
     useEffect(() => {
         if (isNullOrEmpty(authMember())) {
-            navigate('/');
+            if (!toBoolean(currentRoute?.unauthorized)){
+                navigate('/');
+            }
         } else {
             if (location.pathname === '/') {
                 navigate('/dashboard');
@@ -114,10 +124,42 @@ function Layout() {
     }, [token]);
     
     const disablePullDownToRefresh = currentRoute?.disablePullDown;
+
+    useEffect(() => {
+        if (isMockData){
+            setIsFetching(false);  
+        } else{
+            if (orgId){
+                setIsFetching(true);
+
+                appService.get('/app/Online/Account/OrganizationData').then(r => {
+                    if (toBoolean(r?.IsValid)){
+                        const data = r.Data;
+
+                        setAuthData({
+                            timezone: data.Timezone,
+                            uiCulture: data.UiCulture,
+                            currency: data.Currency,
+                            primaryColor: data.PrimaryColor
+                        })
+
+                        //easier access
+                        setClientUiCulture(r.UiCulture);
+                    } else{
+                        //logout?
+                    }
+                    
+                    setIsFetching(false);
+                })
+            }
+        }
+    }, [orgId]);
+
+    const skeletonArray = Array.from({ length: 5 });
     
     return (
         <div className={styles.root}>
-            {currentRoute &&
+            {(currentRoute && !toBoolean(isFetching)) &&
                 <div ref={headerRef}>
                     <Header route={currentRoute}/>
                 </div>
@@ -125,30 +167,41 @@ function Layout() {
 
             <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
                 <LayoutExtra />
-                
-                <PullToRefresh onRefresh={refreshData}
-                               disabled={toBoolean(disablePullDownToRefresh)}
-                               pullingText={'Pull down to refresh.'}
-                               refreshingText={'Loading...'}
-                               completeText={'Refresh successful.'}
-                               canReleaseText={'Release to refresh immediately.'}>
-                    <Routes>
-                        {AppRoutes.map((route, index) => {
-                            const {element, path, ...rest} = route;
 
-                            return <Route
-                                onUpdate={() => window.scrollTo(0, 0)}
-                                key={index}
-                                path={path}
-                                {...rest}
-                                element={element}/>;
-                        })}
-                    </Routes>
-                </PullToRefresh>
+                {toBoolean(isFetching) ? (
+                    <PaddingBlock topBottom={true}>
+                        <Flex vertical={true} gap={token.padding}>
+                            {skeletonArray.map((_, index) => (
+                                <Skeleton key={index} animated className={styles.skeleton} />
+                            ))}
+                        </Flex>
+                    </PaddingBlock>
+                    
+                ):(
+                    <PullToRefresh onRefresh={refreshData}
+                                   disabled={toBoolean(disablePullDownToRefresh)}
+                                   pullingText={'Pull down to refresh.'}
+                                   refreshingText={'Loading...'}
+                                   completeText={'Refresh successful.'}
+                                   canReleaseText={'Release to refresh immediately.'}>
+                        <Routes>
+                            {AppRoutes.map((route, index) => {
+                                const {element, path, ...rest} = route;
+
+                                return <Route
+                                    onUpdate={() => window.scrollTo(0, 0)}
+                                    key={index}
+                                    path={path}
+                                    {...rest}
+                                    element={element}/>;
+                            })}
+                        </Routes>
+                    </PullToRefresh>
+                )}
             </div>
 
             <div ref={footerRef}>
-                <Footer isFooterVisible={isFooterVisible} footerContent={footerContent}/>
+                <Footer isFooterVisible={isFooterVisible} footerContent={footerContent} isFetching={isFetching}/>
             </div>
         </div>
     )

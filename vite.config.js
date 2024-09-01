@@ -25,11 +25,11 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/app/, ''),
       },
-      '/back': {
+      '/api': {
         target: config.backTarget,
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/back/, ''),
+        // rewrite: (path) => path.replace(/^\/back/, ''),
       }
     }
   },

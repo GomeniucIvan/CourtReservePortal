@@ -82,5 +82,10 @@ export const useStyles = createStyles(({css, token}) => ({
         height: 34px;
         align-items: center;
         justify-content: space-around;
+    `,
+    skeleton: css`
+        --width: 100%;
+        --height: 250px;
+        --border-radius: ${token.borderRadius}px;
     `
 }));

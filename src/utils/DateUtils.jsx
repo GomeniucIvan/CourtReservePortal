@@ -6,7 +6,11 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-var clientUiCulture = 'en-US';
+let clientUiCulture = 'en-US';
+
+export const setClientUiCulture = (uiCulture) => {
+    clientUiCulture = uiCulture;
+}
 
 export const getClientUiCulture = () => {
     return clientUiCulture;

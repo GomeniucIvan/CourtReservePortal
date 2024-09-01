@@ -7,13 +7,15 @@ import PasscodeInput from "../../../form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
-import {focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {equalString, focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {toAuthLocalStorage} from "../../../storage/AppStorage.jsx";
+import apiService from "../../../api/api.jsx";
+import appService from "../../../api/app.jsx";
 const { Paragraph, Title, Text } = Typography;
 const { useToken } = theme;
 
@@ -21,6 +23,7 @@ function LoginVerificationCode() {
     const navigate = useNavigate();
     const { token } = useToken();
     const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, globalStyles, setFooterContent } = useApp();
+    const {setMemberId, setOrgId} = useAuth();
     
     const email = formikData?.email;
     const password = formikData?.password;
@@ -66,8 +69,6 @@ function LoginVerificationCode() {
                         setFormikData(null);
                         navigate(HomeRouteNames.INDEX);
                         toAuthLocalStorage('member', {email: values.email});
-                        
-                        setIsLoading(false);
                     } else {
                         ModalClose({
                             title: 'Passcode',
@@ -78,9 +79,39 @@ function LoginVerificationCode() {
                             }
                         });
                     }
+                    setIsLoading(false);
+                    
                 }, 2000);
             } else{
-                alert('todo verificationcode')
+                if (!equalString(values.passcode, 333444)){
+                    ModalClose({
+                        title: 'Passcode',
+                        content: 'Entered passcode is incorrect',
+                        showIcon: false,
+                        onOk: () => {
+                            //focus('password');
+                        }
+                    });
+
+                    setIsLoading(false);
+                } else{
+                    appService.post('/app/Online/Account/Login', {
+                        UserNameOrEmail: values.email,
+                        Password: values.password
+                    }).then(response => {
+                        
+                        setFormikData(null);
+                        navigate(HomeRouteNames.INDEX);
+                        setOrgId(response.Data.OrgId);
+                        setMemberId(response.Data.MemberId);
+                        
+                        toAuthLocalStorage('memberData', {
+                            email: values.email,
+                        });
+                        
+                        setIsLoading(false);
+                    });
+                }
             }
         },
     });

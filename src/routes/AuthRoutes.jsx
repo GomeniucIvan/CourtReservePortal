@@ -14,22 +14,26 @@ const AuthRoutes = [
         index: true,
         path: '/',
         element: <Login />,
-        root: true
+        root: true,
+        unauthorized: true
     },
     {
         path: AuthRouteNames.LOGIN_GET_STARTED,
         element: <LoginGetStarted />,
-        title: 'gettingStarted'
+        title: 'gettingStarted',
+        unauthorized: true
     },
     {
         path: AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION,
         element: <LoginAccountVerification />,
-        title: 'accountVerification'
+        title: 'accountVerification',
+        unauthorized: true
     },
     {
         path: AuthRouteNames.LOGIN_VERIFICATION_CODE,
         element: <LoginVerificationCode />,
-        title: 'verificationCode'
+        title: 'verificationCode',
+        unauthorized: true
     },
 ];
 

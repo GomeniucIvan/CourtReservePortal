@@ -13,35 +13,26 @@ import {cx} from "antd-style";
 import {Button, Typography} from "antd";
 const { Title } = Typography;
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import appService from "../../../api/app.jsx";
 
 function Dashboard() {
     const { styles } = useStyles();
-    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token } = useApp();
+    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading } = useApp();
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [isFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [organizations, setOrganizations] = useState([]);
     const navigate = useNavigate();
     
-    const loadData = async (refresh) => {
+    const loadData = (refresh) => {
         if (isMockData){
             const dashboardData = mockData.dashboard.index;
             setDashboardData(dashboardData);
         } else{
-            fetch('/app/Online/Portal/Index/6969')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
 
-                })
-                .catch(error => {
-                    console.error('There was a problem with your fetch operation:', error);
-                });
         }
+        
+        setIsLoading(false);
     }
     
     useEffect(() => {
@@ -77,7 +68,6 @@ function Dashboard() {
                 <Title level={4}>Additional Links</Title>
             </div>
             <CardLinks links={dashboardData?.Links} isFetching={isFetching}/>
-
         </>
     )
 }

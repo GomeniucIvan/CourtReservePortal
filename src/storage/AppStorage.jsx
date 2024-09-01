@@ -36,3 +36,7 @@ export const setTabStorage = (tabKey, selectedTab, setFunction) => {
     toLocalStorage(`tab_${tabKey}`, selectedTab);
     setFunction(selectedTab);
 }
+
+export const clearAllLocalStorage = () => {
+    localStorage.clear();
+};
