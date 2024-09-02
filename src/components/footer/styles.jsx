@@ -7,7 +7,7 @@ export const useStyles = createStyles(({ css, token }) => {
             color: ${token.colorText};
         `,
         skeleton: css`
-            --height: 46px;
+            --height: 42px;
             --width: 100%;
             --border-radius: ${token.borderRadius}px;
         `

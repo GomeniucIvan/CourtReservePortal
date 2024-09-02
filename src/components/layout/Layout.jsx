@@ -19,6 +19,7 @@ import {setClientUiCulture} from "../../utils/DateUtils.jsx";
 import {useAntd} from "../../context/AntdProvider.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
+import apiService, {getBearerToken, setBearerToken} from "../../api/api.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -31,8 +32,8 @@ function Layout() {
     
     const [maxHeight, setMaxHeight] = useState(0);
     const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData } = useApp();
-    const {memberId, orgId, setAuthData} = useAuth();
-    const {setPrimaryColor, shouldLoadOrgData, setShouldLoadOrgData} = useAntd();
+    const {memberId, orgId, setAuthData, shouldLoadOrgData, setShouldLoadOrgData} = useAuth();
+    const {setPrimaryColor} = useAntd();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => equalString(route.path, location.pathname));
@@ -54,7 +55,6 @@ function Layout() {
         const workingMemberId = memberData?.memberId || memberId;
         const workingOrgId = memberData?.orgId || orgId;
         
-        console.log(location.pathname)
         //not authorized
         if (isNullOrEmpty(workingMemberId)){
             //not allowed unauthorized
@@ -164,35 +164,50 @@ function Layout() {
         if (isMockData){
             setIsFetching(false);  
         } else{
-            if (!isNullOrEmpty(orgId) && shouldLoadOrgData && 1 == 2){
+            if (!isNullOrEmpty(orgId) && shouldLoadOrgData){
                 setIsFetching(true);
 
-                appService.get('/app/Online/Account/OrganizationData').then(r => {
-                    if (toBoolean(r?.IsValid)){
-                        const data = r.Data;
+                //logged but without bearer token
+                //should refresh every day?!
+                if (isNullOrEmpty(getBearerToken())){
+                    appService.post('/app/MobileSso/ValidateAndCreateToken').then(r => {
+                        if (toBoolean(r?.IsValid)){
+                            setBearerToken(r.Token);
 
-                        setAuthData({
-                            timezone: data.TimeZone,
-                            uiCulture: data.UiCulture
-                        });
-
-                        //easier access
-                        if (!isNullOrEmpty(data.PrimaryColor)){
-                            setPrimaryColor(data.PrimaryColor); 
+                            loadOrganizationData(orgId);
                         }
-
-                        setClientUiCulture(data.UiCulture);
-                        setShouldLoadOrgData(false);
-                    } else{
-                        //logout?
-                    }
-                    
-                    setIsFetching(false);
-                })
+                    })
+                } else{
+                    loadOrganizationData(orgId);
+                }
             }
         }
     }, [orgId, shouldLoadOrgData]);
 
+    const loadOrganizationData = (orgId) => {
+        apiService.post(`/api/dashboard/orgdata?orgId=${orgId}`).then(r => {
+            if (toBoolean(r?.IsValid)){
+                const data = r.Data;
+
+                // setAuthData({
+                //     timezone: data.TimeZone,
+                //     uiCulture: data.UiCulture
+                // });
+                //
+                // //easier access
+                // if (!isNullOrEmpty(data.PrimaryColor)){
+                //     setPrimaryColor(data.PrimaryColor);
+                // }
+                
+                setShouldLoadOrgData(false);
+            } else{
+                //logout?
+            }
+
+            setIsFetching(false);
+        })
+    }
+    
     const skeletonArray = Array.from({ length: 5 });
     
     return (

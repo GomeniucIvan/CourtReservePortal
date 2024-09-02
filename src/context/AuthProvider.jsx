@@ -1,6 +1,7 @@
 ﻿import {createContext, useContext, useEffect, useState} from 'react';
 import {clearAllLocalStorage, fromAuthLocalStorage} from "../storage/AppStorage.jsx";
 import {nullToEmpty} from "../utils/Utils.jsx";
+import {setClientUiCulture} from "../utils/DateUtils.jsx";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -22,6 +23,8 @@ export const AuthProvider = ({children}) => {
             uiCulture: nullToEmpty(memberData.uiCulture),
             primaryColor: nullToEmpty(memberData.primaryColor),
         })
+
+        setClientUiCulture(memberData.uiCulture);
     }, []);
 
     const logout = async () => {

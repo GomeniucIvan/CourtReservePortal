@@ -9,7 +9,7 @@ import {
     UserOutline,
 } from 'antd-mobile-icons'
 import {TabBar} from "antd-mobile";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
@@ -22,7 +22,15 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {token} = useApp();
     
     const [activeKey, setActiveKey] = useState('home');
-
+    const footerRef = useRef();
+    const [footerHeight, setFooterHeight] = useState();
+    
+    useEffect(() => {
+        if (footerRef.current){
+            setFooterHeight(footerRef.current.getBoundingClientRect().height);
+        }
+    }, [footerRef]);
+    
     const onTabBarChange = (key) => {
         if (isFetching){
             return;
@@ -70,30 +78,45 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         return (<>{footerContent}</>)
     }
 
+    const footerComponent = () => {
+        return (
+            <TabBar className={styles.footer} activeKey={activeKey} onChange={onTabBarChange}>
+                {tabs.map(item => (
+                    <TabBar.Item
+                        key={item.key}
+                        icon={item.icon}
+                        //title={item.title}
+                        badge={item.badge}
+                    />
+                ))}
+            </TabBar>
+        )
+    }
+    
     if (isFetching) {
         return (
-            <PaddingBlock topBottom={true}>
-                <Flex gap={token.padding}>
-                    <Skeleton animated className={styles.skeleton}/>
-                    <Skeleton animated className={styles.skeleton}/>
-                    <Skeleton animated className={styles.skeleton}/>
-                    <Skeleton animated className={styles.skeleton}/>
-                </Flex>
-            </PaddingBlock>
+            <>
+                <div style={{height: `${footerHeight}px`}}>
+                    <PaddingBlock>
+                        <Flex gap={token.padding} justify={'center'}>
+                            <Skeleton animated className={styles.skeleton}/>
+                            <Skeleton animated className={styles.skeleton}/>
+                            <Skeleton animated className={styles.skeleton}/>
+                            <Skeleton animated className={styles.skeleton}/>
+                        </Flex>
+                    </PaddingBlock>
+                </div>
+
+                {/*required for consistent padding*/}
+                <div style={{opacity: 0, position: 'absolute', top: '-100vh'}} ref={footerRef}>
+                    {footerComponent()}
+                </div>
+            </>
         );
     }
 
     return (
-        <TabBar className={styles.footer} activeKey={activeKey} onChange={onTabBarChange}>
-            {tabs.map(item => (
-                <TabBar.Item
-                    key={item.key}
-                    icon={item.icon}
-                    //title={item.title}
-                    badge={item.badge}
-                />
-            ))}
-        </TabBar>
+        footerComponent()
     )
 }
 
