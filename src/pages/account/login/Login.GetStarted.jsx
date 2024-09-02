@@ -76,6 +76,15 @@ function LoginGetStarted() {
                             setFormikData(values);
                             navigate(AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION);
                         }
+                    } else{
+                        ModalClose({
+                            title: 'Error',
+                            content: response.Message,
+                            showIcon: false,
+                            onOk: () => {
+                                focus('email');
+                            }
+                        });
                     }
 
                     setIsLoading(false);
