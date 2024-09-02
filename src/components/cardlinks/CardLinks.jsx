@@ -2,15 +2,19 @@
 import {Col, Row, Typography} from "antd";
 const { Text } = Typography;
 import {useApp} from "../../context/AppProvider.jsx";
-import {anyInList} from "../../utils/Utils.jsx";
+import {anyInList, equalString} from "../../utils/Utils.jsx";
 import {Card} from "antd";
 import {e} from "../../utils/OrganizationUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
 import {useNavigate} from "react-router-dom";
+import {ModalDelete, ModalLogout} from "../../utils/ModalUtils.jsx";
+import {useAuth} from "../../context/AuthProvider.jsx";
+import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 
 function CardLinks({links}) {
-    const {globalStyles, token} = useApp();
+    const {token} = useApp();
+    const {logout} = useAuth();
     const { styles } = useStyles();
     const navigate = useNavigate();
     
@@ -20,7 +24,20 @@ function CardLinks({links}) {
                 <>
                     {links.map((link, index) => (
                         <Col span={8} key={index}>
-                            <Card className={styles.cardPrimary} onClick={() => {navigate(link.Url)}}>
+                            <Card className={styles.cardPrimary} 
+                                  onClick={() => {
+                                      if (equalString(link.Url, '/logout')) {
+                                          ModalLogout({
+                                              onLogout: (e) => {
+                                                  logout().then(r => {
+                                                      navigate(AuthRouteNames.LOGIN);
+                                                  });
+                                              }
+                                          })
+                                      } else {
+                                          navigate(link.Url);
+                                      }
+                                  }}>
                                 <Text className={styles.cardName}>
                                     <Ellipsis direction='end' rows={2} content={link.Name}/>
                                 </Text>

@@ -13,12 +13,10 @@ function Navigation(props) {
         setHeaderRightIcons(null);
         setFooterContent('');
         
-        if (isMockData){
+        if (isMockData || 1 == 1){
             const links = mockData.Links;
             setNavigationLinks(links);
         }
-        
-
     }, []);
     
     

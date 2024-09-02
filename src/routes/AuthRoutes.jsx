@@ -4,6 +4,7 @@ import LoginAccountVerification from "../pages/account/login/Login.AccountVerifi
 import LoginVerificationCode from "../pages/account/login/Login.VerificationCode.jsx";
 
 export const AuthRouteNames = {
+    LOGIN: '/login',
     LOGIN_GET_STARTED: '/login-get-started',
     LOGIN_ACCOUNT_VERIFICATION: '/login-account-verification',
     LOGIN_VERIFICATION_CODE: '/login-verification-code',
@@ -11,8 +12,7 @@ export const AuthRouteNames = {
 
 const AuthRoutes = [
     {
-        index: true,
-        path: '/',
+        path: AuthRouteNames.LOGIN,
         element: <Login />,
         root: true,
         unauthorized: true

@@ -60,6 +60,35 @@ export const ModalRemove = (data) => {
     })
 }
 
+export const ModalLogout = (data) => {
+    Modal.show({
+        content: (
+            <div
+                dangerouslySetInnerHTML={{
+                    __html: 'Are you sure you want to logout?'
+                }}
+            />
+        ),
+        closeOnAction: true,
+        onAction: (e) => {
+            if (equalString(e?.key, 'logout')) {
+                data.onLogout(e);
+            }
+        },
+        actions: [
+            {
+                key: 'logout',
+                text: 'Logout',
+                primary: true,
+            },
+            {
+                key: 'cancel',
+                text: 'Cancel',
+            },
+        ],
+    })
+}
+
 export const ModalClose = (data) => {
     Modal.show({
         content: data.content,

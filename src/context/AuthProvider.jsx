@@ -24,7 +24,7 @@ export const AuthProvider = ({children}) => {
         })
     }, []);
 
-    const logout = () => {
+    const logout = async () => {
         clearAllLocalStorage();
         
         setOrgId(null);
@@ -35,6 +35,8 @@ export const AuthProvider = ({children}) => {
             currency: '',
             primaryColor: '',
         });
+        
+        return true;
     }
     
     return (

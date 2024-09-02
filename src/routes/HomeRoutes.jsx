@@ -8,7 +8,7 @@ import Navigation from "../pages/navigation/Navigation.jsx";
 import {useTranslation} from "react-i18next";
 
 export const HomeRouteNames = {
-    INDEX: '/dashboard',
+    INDEX: '/',
     SCHEDULER: '/scheduler',
     CALENDAR: '/calendar',
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
@@ -19,6 +19,7 @@ export const HomeRouteNames = {
 
 const HomeRoutes = [
     {
+        index: true,
         path: HomeRouteNames.INDEX,
         element: <Dashboard />,
         root: true

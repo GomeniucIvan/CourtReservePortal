@@ -18,6 +18,7 @@ import appService from "../../api/app.jsx";
 import {setClientUiCulture} from "../../utils/DateUtils.jsx";
 import {useAntd} from "../../context/AntdProvider.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
+import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -53,14 +54,13 @@ function Layout() {
         const workingMemberId = memberData?.memberId || memberId;
         const workingOrgId = memberData?.orgId || orgId;
         
-        console.log(workingMemberId)
-        console.log(workingOrgId)
+        console.log(location.pathname)
         //not authorized
         if (isNullOrEmpty(workingMemberId)){
             //not allowed unauthorized
             if (!toBoolean(currentRoute?.unauthorized)){
-                if (!equalString(location.pathname, '/')){
-                    navigate('/');
+                if (!equalString(location.pathname, AuthRouteNames.LOGIN)){
+                    navigate(AuthRouteNames.LOGIN);
                 }
             }
 
@@ -69,8 +69,10 @@ function Layout() {
         
         //authorized without active orgid
         else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)){
-            if (!equalString(location.pathname, '/')){
-                navigate('/');
+            //todo my clubs//allowed path
+            
+            if (!equalString(location.pathname, '/myclubs')){
+                navigate('/myclubs');
             }
 
             setIsFetching(false);
@@ -78,7 +80,11 @@ function Layout() {
 
         //authorized with active orgid
         else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)){
-            if (!equalString(location.pathname, HomeRouteNames.INDEX)){
+            //not allow to access login pages
+            if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
+                equalString(location.pathname, AuthRouteNames.LOGIN_GET_STARTED) ||
+                equalString(location.pathname, AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION) ||
+                equalString(location.pathname, AuthRouteNames.LOGIN_VERIFICATION_CODE)) {
                 navigate(HomeRouteNames.INDEX);
             }
             
