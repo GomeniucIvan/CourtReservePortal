@@ -22,10 +22,9 @@ const { useToken } = theme;
 
 function LoginVerificationCode() {
     const navigate = useNavigate();
-    const { token } = useToken();
     const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, globalStyles, setFooterContent } = useApp();
-    const {setMemberId, setOrgId} = useAuth();
-    const {setAuthData, setShouldLoadOrgData} = useAntd();
+    const {setMemberId, setOrgId, setShouldLoadOrgData, setAuthData} = useAuth();
+    const {setPrimaryColor} = useAntd();
     
     const email = formikData?.email;
     const password = formikData?.password;
@@ -110,16 +109,25 @@ function LoginVerificationCode() {
                             setMemberId(responseData.MemberId);
 
                             setAuthData({
-                                timezone: responseData.Timezone,
-                                uiCulture: responseData.UiCulture,
-                                primaryColor: responseData.PrimaryColor
+                                timezone: responseData.TimeZone,
+                                uiCulture: responseData.UiCulture
                             });
-
-                            navigate(response.Path);
                             
+                            if (!isNullOrEmpty(responseData.PrimaryColor)){
+                                setPrimaryColor(responseData.PrimaryColor);
+                            }
+
                             toAuthLocalStorage('memberData', {
+                                orgId: responseData.OrgId,
                                 email: values.email,
-                            }); 
+                                timezone: responseData.TimeZone,
+                                uiCulture: responseData.TimeZone,
+                                primaryColor: responseData.PrimaryColor,
+                                memberId: responseData.MemberId,
+                            });
+                            
+                            //always last
+                            navigate(response.Path);
                         }
                         
                         setIsLoading(false);

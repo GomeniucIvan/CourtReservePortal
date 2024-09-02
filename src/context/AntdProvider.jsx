@@ -1,7 +1,7 @@
 ﻿import { ConfigProvider, theme, App } from "antd";
-import {createContext, useContext, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import {toBoolean} from "../utils/Utils.jsx";
-import {fromLocalStorage} from "../storage/AppStorage.jsx";
+import {fromLocalStorage, toLocalStorage} from "../storage/AppStorage.jsx";
 const AntdContext = createContext();
 
 export const useAntd = () => useContext(AntdContext);
@@ -13,6 +13,17 @@ export const AntdProvider = ({ children }) => {
     //todo change from cookie
     const [primaryColor, setPrimaryColor] = useState(fromLocalStorage('primary-color', '#873030'));
     const [isDarkMode, setIsDarkMode] = useState(fromLocalStorage('darkmode', 'False'));
+
+    useEffect(() => {
+        if (primaryColor){
+            toLocalStorage('primary-color', primaryColor);
+        }
+
+    }, [primaryColor]);
+
+    useEffect(() => {
+        setIsDarkMode(isDarkMode);
+    }, [isDarkMode]);
     
     return (
         <AntdContext.Provider value={{setPrimaryColor,setIsDarkMode, isDarkMode}}>

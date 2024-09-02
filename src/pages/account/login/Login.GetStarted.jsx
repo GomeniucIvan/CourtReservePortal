@@ -1,25 +1,37 @@
-import { useFormik } from 'formik';
+import {useFormik} from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect} from "react";
-import {Button, Typography } from 'antd';
+import {Button, Typography} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
-import {equalString, focus, toBoolean} from "../../../utils/Utils.jsx";
+import {equalString, focus, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import PageForm from "../../../form/pageform/PageForm.jsx";
-import apiService from "../../../api/api.jsx";
+import apiService, {getBearerToken, setBearerToken} from "../../../api/api.jsx";
 import {useNavigate} from "react-router-dom";
-const { Paragraph, Link, Title } = Typography;
+import {useAuth} from "../../../context/AuthProvider.jsx";
+import appService from "../../../api/app.jsx";
+
+const {Paragraph, Link, Title} = Typography;
 
 function LoginGetStarted() {
-    const { setFormikData, isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent } = useApp();
+    const {setFormikData, isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent} = useApp();
+    
     const navigate = useNavigate();
     useEffect(() => {
         setIsFooterVisible(false);
         setFooterContent('');
+        
+        if (isNullOrEmpty(getBearerToken())){
+            appService.post('/app/MobileSso/ValidateAndCreateToken').then(r => {
+                if (toBoolean(r?.IsValid)){
+                    setBearerToken(r.Token);
+                }
+            })
+        }
     }, []);
 
     const startInitialValues = {
@@ -35,10 +47,10 @@ function LoginGetStarted() {
         validationSchema: startValidationSchema,
         validateOnBlur: true,
         validateOnChange: true,
-        onSubmit: async (values, { setStatus, setSubmitting }) => {
+        onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            if (isMockData){
-                setTimeout(function (){
+            if (isMockData) {
+                setTimeout(function () {
                     const emailExists = mockData.login.started.member.email === values.email;
 
                     if (emailExists) {
@@ -56,14 +68,14 @@ function LoginGetStarted() {
                     }
                     setIsLoading(false);
                 }, 1000);
-            } else{
+            } else {
                 apiService.post('/api/create-account/email-check', {
                     email: values.email,
                     spGuideId: ''
                 }).then(response => {
-                    if (toBoolean(response?.IsValid)){
-                        if (equalString(response.Data, 0)){
-                            setStatus({ email: 'Email not found.' });
+                    if (toBoolean(response?.IsValid)) {
+                        if (equalString(response.Data, 0)) {
+                            setStatus({email: 'Email not found.'});
                             ModalClose({
                                 title: 'Not Found',
                                 content: 'Player with such email not found.',
@@ -72,11 +84,11 @@ function LoginGetStarted() {
                                     focus('email');
                                 }
                             });
-                        } else if (equalString(response.Data, 1)){
+                        } else if (equalString(response.Data, 1)) {
                             setFormikData(values);
                             navigate(AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION);
                         }
-                    } else{
+                    } else {
                         ModalClose({
                             title: 'Error',
                             content: response.Message,

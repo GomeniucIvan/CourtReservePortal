@@ -22,7 +22,6 @@ function LayoutExtra() {
     
     const changeThemeMode = () => {
         setIsDarkMode(!isDarkMode);
-        toLocalStorage('darkmode', !isDarkMode);
     }
 
     const openLanguage = () => {
@@ -35,7 +34,6 @@ function LayoutExtra() {
 
     const handleColorSelect = (color) => {
         setPrimaryColor(color);
-        toLocalStorage('primary-color', color);
         setIsColorPickerOpen(false);
     }
     

@@ -28,8 +28,6 @@ async function initI18next() {
     const resources = await loadResources(); 
     const storageLanguage = fromLocalStorage("language_seo", 'en');
 
-    console.log(resources);
-    
     i18n
         .use(initReactI18next)
         .init({

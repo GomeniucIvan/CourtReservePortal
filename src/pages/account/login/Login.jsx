@@ -1,30 +1,29 @@
 import styles from './Login.module.less'
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {Button} from "antd";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
+import {equalString, isNullOrEmpty} from "../../../utils/Utils.jsx";
 
 function Login() {
     const navigate = useNavigate();
     const { setIsFooterVisible, token, setHeaderRightIcons } = useApp();
-    const {setAuthData, setOrgId, setMemberId} = useAuth();
+    const {memberId, logout} = useAuth();
+    const location = useLocation();
     
     useEffect(() => {
         setIsFooterVisible(false);
         setHeaderRightIcons('');
-        
-        //should clear organization data on logout
-        setOrgId(null);
-        setMemberId(null);
-        setAuthData({
-            timezone: '',
-            uiCulture: '',
-            currency: '',
-            primaryColor: '',
-        });
     }, []);
+
+    useEffect(() => {
+        if (equalString(location.pathname, '/')){
+            //should clear organization data on logout
+            logout();
+        }
+    }, [location]);
     
     return (
         <div className={styles.loginBg} style={{backgroundImage: `url('/mock/images/cartoon-banner.png')`}}>

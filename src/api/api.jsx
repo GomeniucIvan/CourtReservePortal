@@ -1,5 +1,15 @@
 ﻿import axios from 'axios';
 
+let bearerToken = '';
+
+export const setBearerToken = (token) => {
+    bearerToken = token;
+};
+
+export const getBearerToken = () => {
+    return bearerToken;
+};
+
 const axiosInstance = axios.create({
     timeout: 20000,
     headers: {
@@ -10,8 +20,10 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        // Modify config, e.g., add Authorization headers if needed
-        // config.headers.Authorization = `Bearer ${token}`;
+        if (bearerToken) {
+            config.headers.Authorization = `Bearer ${bearerToken}`;
+        }
+
         return config;
     },
     (error) => Promise.reject(error)

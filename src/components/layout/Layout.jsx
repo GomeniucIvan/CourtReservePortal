@@ -7,7 +7,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {authMember, clearAllLocalStorage, toLocalStorage} from "../../storage/AppStorage.jsx";
+import {authMember, clearAllLocalStorage, fromAuthLocalStorage, toLocalStorage} from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
@@ -17,6 +17,7 @@ import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import appService from "../../api/app.jsx";
 import {setClientUiCulture} from "../../utils/DateUtils.jsx";
 import {useAntd} from "../../context/AntdProvider.jsx";
+import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -29,7 +30,7 @@ function Layout() {
     
     const [maxHeight, setMaxHeight] = useState(0);
     const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData } = useApp();
-    const {orgId, setAuthData} = useAuth();
+    const {memberId, orgId, setAuthData} = useAuth();
     const {setPrimaryColor, shouldLoadOrgData, setShouldLoadOrgData} = useAntd();
     
     if (isNullOrEmpty(currentRoute)){
@@ -48,26 +49,39 @@ function Layout() {
     }
 
     useEffect(() => {
+        const memberData = fromAuthLocalStorage('memberData', {});
+        const workingMemberId = memberData?.memberId || memberId;
+        const workingOrgId = memberData?.orgId || orgId;
+        
+        console.log(workingMemberId)
+        console.log(workingOrgId)
         //not authorized
-        if (isNullOrEmpty(authMember())){
-
+        if (isNullOrEmpty(workingMemberId)){
             //not allowed unauthorized
             if (!toBoolean(currentRoute?.unauthorized)){
-                navigate('/');
+                if (!equalString(location.pathname, '/')){
+                    navigate('/');
+                }
             }
 
             setIsFetching(false);
         }
         
         //authorized without active orgid
-        else if (!isNullOrEmpty(authMember()) && isNullOrEmpty(orgId)){
-            navigate('/');
+        else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)){
+            if (!equalString(location.pathname, '/')){
+                navigate('/');
+            }
+
             setIsFetching(false);
         }
 
         //authorized with active orgid
-        else if (!isNullOrEmpty(authMember()) && isNullOrEmpty(orgId)){
-            navigate('/dashboard');
+        else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)){
+            if (!equalString(location.pathname, HomeRouteNames.INDEX)){
+                navigate(HomeRouteNames.INDEX);
+            }
+            
             setIsFetching(false);
         }
     }, [location, navigate]);
@@ -144,7 +158,7 @@ function Layout() {
         if (isMockData){
             setIsFetching(false);  
         } else{
-            if (!isNullOrEmpty(orgId) && shouldLoadOrgData){
+            if (!isNullOrEmpty(orgId) && shouldLoadOrgData && 1 == 2){
                 setIsFetching(true);
 
                 appService.get('/app/Online/Account/OrganizationData').then(r => {
@@ -152,14 +166,15 @@ function Layout() {
                         const data = r.Data;
 
                         setAuthData({
-                            timezone: data.Timezone,
-                            uiCulture: data.UiCulture,
-                            primaryColor: data.PrimaryColor
+                            timezone: data.TimeZone,
+                            uiCulture: data.UiCulture
                         });
 
                         //easier access
-                        setPrimaryColor(data.PrimaryColor);
-                        toLocalStorage('primary-color', data.PrimaryColor);
+                        if (!isNullOrEmpty(data.PrimaryColor)){
+                            setPrimaryColor(data.PrimaryColor); 
+                        }
+
                         setClientUiCulture(data.UiCulture);
                         setShouldLoadOrgData(false);
                     } else{
