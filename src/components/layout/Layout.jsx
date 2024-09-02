@@ -6,8 +6,8 @@ import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
-import {equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {authMember} from "../../storage/AppStorage.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {authMember, clearAllLocalStorage, toLocalStorage} from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
@@ -16,6 +16,7 @@ import { Skeleton } from 'antd-mobile'
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import appService from "../../api/app.jsx";
 import {setClientUiCulture} from "../../utils/DateUtils.jsx";
+import {useAntd} from "../../context/AntdProvider.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -29,6 +30,7 @@ function Layout() {
     const [maxHeight, setMaxHeight] = useState(0);
     const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData } = useApp();
     const {orgId, setAuthData} = useAuth();
+    const {setPrimaryColor, shouldLoadOrgData, setShouldLoadOrgData} = useAntd();
     
     if (isNullOrEmpty(currentRoute)){
         currentRoute = dynamicPages.find(route => equalString(route.path, location.pathname));
@@ -46,14 +48,27 @@ function Layout() {
     }
 
     useEffect(() => {
-        if (isNullOrEmpty(authMember())) {
+        //not authorized
+        if (isNullOrEmpty(authMember())){
+
+            //not allowed unauthorized
             if (!toBoolean(currentRoute?.unauthorized)){
                 navigate('/');
             }
-        } else {
-            if (location.pathname === '/') {
-                navigate('/dashboard');
-            }
+
+            setIsFetching(false);
+        }
+        
+        //authorized without active orgid
+        else if (!isNullOrEmpty(authMember()) && isNullOrEmpty(orgId)){
+            navigate('/');
+            setIsFetching(false);
+        }
+
+        //authorized with active orgid
+        else if (!isNullOrEmpty(authMember()) && isNullOrEmpty(orgId)){
+            navigate('/dashboard');
+            setIsFetching(false);
         }
     }, [location, navigate]);
 
@@ -129,7 +144,7 @@ function Layout() {
         if (isMockData){
             setIsFetching(false);  
         } else{
-            if (orgId){
+            if (!isNullOrEmpty(orgId) && shouldLoadOrgData){
                 setIsFetching(true);
 
                 appService.get('/app/Online/Account/OrganizationData').then(r => {
@@ -139,12 +154,14 @@ function Layout() {
                         setAuthData({
                             timezone: data.Timezone,
                             uiCulture: data.UiCulture,
-                            currency: data.Currency,
                             primaryColor: data.PrimaryColor
-                        })
+                        });
 
                         //easier access
-                        setClientUiCulture(r.UiCulture);
+                        setPrimaryColor(data.PrimaryColor);
+                        toLocalStorage('primary-color', data.PrimaryColor);
+                        setClientUiCulture(data.UiCulture);
+                        setShouldLoadOrgData(false);
                     } else{
                         //logout?
                     }
@@ -153,7 +170,7 @@ function Layout() {
                 })
             }
         }
-    }, [orgId]);
+    }, [orgId, shouldLoadOrgData]);
 
     const skeletonArray = Array.from({ length: 5 });
     

@@ -16,6 +16,7 @@ import {useAuth} from "../../../context/AuthProvider.jsx";
 import {toAuthLocalStorage} from "../../../storage/AppStorage.jsx";
 import apiService from "../../../api/api.jsx";
 import appService from "../../../api/app.jsx";
+import {useAntd} from "../../../context/AntdProvider.jsx";
 const { Paragraph, Title, Text } = Typography;
 const { useToken } = theme;
 
@@ -24,6 +25,7 @@ function LoginVerificationCode() {
     const { token } = useToken();
     const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, globalStyles, setFooterContent } = useApp();
     const {setMemberId, setOrgId} = useAuth();
+    const {setAuthData, setShouldLoadOrgData} = useAntd();
     
     const email = formikData?.email;
     const password = formikData?.password;
@@ -100,14 +102,25 @@ function LoginVerificationCode() {
                         Password: values.password
                     }).then(response => {
                         
-                        setFormikData(null);
-                        navigate(HomeRouteNames.INDEX);
-                        setOrgId(response.Data.OrgId);
-                        setMemberId(response.Data.MemberId);
-                        
-                        toAuthLocalStorage('memberData', {
-                            email: values.email,
-                        });
+                        if (response.IsValid){
+                            setFormikData(null);
+                            const responseData = response.Data;
+                            setShouldLoadOrgData(false);
+                            setOrgId(responseData.OrgId);
+                            setMemberId(responseData.MemberId);
+
+                            setAuthData({
+                                timezone: responseData.Timezone,
+                                uiCulture: responseData.UiCulture,
+                                primaryColor: responseData.PrimaryColor
+                            });
+
+                            navigate(response.Path);
+                            
+                            toAuthLocalStorage('memberData', {
+                                email: values.email,
+                            }); 
+                        }
                         
                         setIsLoading(false);
                     });

@@ -28,8 +28,7 @@ export const authMember = () => {
 }
 
 export const selectedTabStorage = (tabKey, defaultTab) =>{
-    const val = fromLocalStorage(`tab_${tabKey}`, defaultTab);
-    return val;
+    return  fromLocalStorage(`tab_${tabKey}`, defaultTab);
 }
 
 export const setTabStorage = (tabKey, selectedTab, setFunction) => {

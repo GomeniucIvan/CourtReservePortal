@@ -38,7 +38,15 @@ const appService = {
             const response = await axiosInstance.get(url, { params, ...config });
             return response.data;
         } catch (error) {
-            throw error; 
+            console.log('APP41 Error: ');
+            console.log(error);
+
+            return {
+                isValid: false,
+                IsValid: false,
+                Message: 'Something wrong, APP41-Error',
+                message: 'Something wrong, APP41-Error'
+            }
         }
     },
 
@@ -47,7 +55,15 @@ const appService = {
             const response = await axiosInstance.post(url, data, { ...config });
             return response.data;
         } catch (error) {
-            throw error;
+            console.log('APP43 Error: ');
+            console.log(error);
+
+            return {
+                isValid: false,
+                IsValid: false,
+                Message: 'Something wrong, APP43-Error',
+                message: 'Something wrong, APP43-Error'
+            }
         }
     }
 };

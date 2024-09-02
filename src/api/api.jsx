@@ -1,5 +1,4 @@
 ﻿import axios from 'axios';
-import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
 
 const axiosInstance = axios.create({
     timeout: 20000,
@@ -35,7 +34,15 @@ const apiService = {
             const response = await axiosInstance.get(url, { params, ...config });
             return response.data;
         } catch (error) {
-            throw error; 
+            console.log('API43 Error: ');
+            console.log(error);
+
+            return {
+                isValid: false,
+                IsValid: false,
+                Message: 'Something wrong, API43-Error',
+                message: 'Something wrong, API43-Error'
+            }
         }
     },
 
@@ -44,7 +51,15 @@ const apiService = {
             const response = await axiosInstance.post(url, data, { ...config });
             return response.data;
         } catch (error) {
-            throw error;
+            console.log('API49 Error: ');
+            console.log(error);
+            
+            return {
+                isValid: false,
+                IsValid: false,
+                Message: 'Something wrong, API49-Error',
+                message: 'Something wrong, API49-Error'
+            }
         }
     }
 };
