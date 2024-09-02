@@ -15,7 +15,7 @@ const Header = forwardRef((props, ref) => {
     const navigate = useNavigate();
     const {isLoading, headerRightIcons} = useApp();
     const {styles} = useStyles();
-    const {t} = useTranslation();
+    const {t} = useTranslation('header');
 
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
@@ -57,9 +57,6 @@ const Header = forwardRef((props, ref) => {
     if (isNullOrEmpty(props.route?.title)) {
         return (<></>);
     }
-
-    console.log(t('seeAll'))
-    console.log(t('gettingStarted'))
     
     return (
         <NavBar onBack={backToPreviousPage} className={styles.header}

@@ -40,7 +40,7 @@ async function initI18next() {
                 escapeValue: false,
             },
             ns: Object.keys(resources['en'] || {}),
-            defaultNS: 'header',
+            defaultNS: 'common',
         });
 }
 
