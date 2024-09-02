@@ -10,14 +10,14 @@ async function loadResources() {
     for (const path in modules) {
         const match = path.match(/..\/locales\/(.+)\/(.+)\.json$/);
         if (match) {
-            const lang = match[1];      
-            const namespace = match[2]; 
+            const lang = match[1];
+            const namespace = match[2];
 
             if (!resources[lang]) {
                 resources[lang] = {};
             }
 
-            resources[lang][namespace] = modules[path]; 
+            resources[lang][namespace] = modules[path].default || modules[path];
         }
     }
 
@@ -27,6 +27,8 @@ async function loadResources() {
 async function initI18next() {
     const resources = await loadResources(); 
     const storageLanguage = fromLocalStorage("language_seo", 'en');
+
+    console.log(resources);
     
     i18n
         .use(initReactI18next)
@@ -38,7 +40,7 @@ async function initI18next() {
                 escapeValue: false,
             },
             ns: Object.keys(resources['en'] || {}),
-            defaultNS: 'common',
+            defaultNS: 'header',
         });
 }
 

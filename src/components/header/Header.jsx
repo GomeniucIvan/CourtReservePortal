@@ -8,13 +8,14 @@ import {useAuth} from "../../context/AuthProvider.jsx";
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
 import {authMember} from "../../storage/AppStorage.jsx";
 import {useTranslation} from "react-i18next";
+import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
     const {isLoading, headerRightIcons} = useApp();
     const {styles} = useStyles();
-    const {t} = useTranslation('header');
+    const {t} = useTranslation();
 
     useImperativeHandle(ref, () => ({
         navigateBack: () => {
@@ -32,7 +33,7 @@ const Header = forwardRef((props, ref) => {
             navigate(`${lastPath.path}`);
         } else {
             if (!isNullOrEmpty(authMember())) {
-                navigate(`/dashboard`);
+                navigate(HomeRouteNames.INDEX);
             } else {
                 navigate(`/`);
             }
@@ -57,6 +58,9 @@ const Header = forwardRef((props, ref) => {
         return (<></>);
     }
 
+    console.log(t('seeAll'))
+    console.log(t('gettingStarted'))
+    
     return (
         <NavBar onBack={backToPreviousPage} className={styles.header}
                 right={isNullOrEmpty(headerRightIcons) ? null : right}>
