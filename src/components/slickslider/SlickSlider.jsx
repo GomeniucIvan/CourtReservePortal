@@ -78,7 +78,7 @@ export class SlickSlider extends Component {
     afterChangeSlide = (current) => {
         this.setState({ currentSlide: current });
         if (typeof this.props.afterChange === 'function') {
-            this.props.afterChange();
+            this.props.afterChange(current);
         }
     }
 

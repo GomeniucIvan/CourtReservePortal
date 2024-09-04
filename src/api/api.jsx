@@ -1,5 +1,4 @@
 ﻿import axios from 'axios';
-
 let bearerToken = '';
 let requestData = '';
 
@@ -13,6 +12,10 @@ export const getBearerToken = () => {
 
 export const setRequestData = (reqData) => {
     requestData = reqData;
+};
+
+export const getRequestData = () => {
+    return requestData;
 };
 
 const axiosInstance = axios.create({

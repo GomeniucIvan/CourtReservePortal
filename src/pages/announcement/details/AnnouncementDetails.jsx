@@ -4,25 +4,35 @@ import {useApp} from "../../../context/AppProvider.jsx";
 import {useEffect, useState} from "react";
 import mockData from "../../../mocks/home-data.json";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {List, Tag} from "antd";
+import {List, Tag, Typography} from "antd";
 import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
+import appService from "../../../api/app.jsx";
+import {useAuth} from "../../../context/AuthProvider.jsx";
+import {useTranslation} from "react-i18next";
+const {Title} = Typography;
 
 function AnnouncementDetails() {
-    const navigate = useNavigate();
-    let { id } = useParams();
-    const { styles } = useStyles();
-    const{isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons} = useApp();
-    const [announcements, setAnnouncements] = useState([]);
-
+    let {id} = useParams();
+    const {styles} = useStyles();
+    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setHeaderTitle} = useApp();
+    const {orgId} = useAuth();
+    const [announcement, setAnnouncement] = useState(null);
+    const { t } = useTranslation('');
+    
     const loadData = (refresh) => {
-        if (isMockData){
+        if (isMockData) {
             const list = mockData.dashboard.announcement_list;
-            if (anyInList(list)){
-                setAnnouncements([list[0]]);
+            if (anyInList(list)) {
+                setAnnouncement([list[0]]);
             }
-        } else{
-            alert('todo ann list')
+        } else {
+            appService.get(`/app/Online/Announcement/Details?id=${orgId}&globalAnnouncementId=${id}`).then(r => {
+                if (toBoolean(r?.IsValid)){
+                    setAnnouncement(r.Data);
+                    setHeaderTitle(r.Data.Title);
+                }
+            })
         }
 
         resetFetch();
@@ -33,34 +43,25 @@ function AnnouncementDetails() {
             loadData(true);
         }
     }, [shouldFetch, resetFetch]);
-    
+
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
 
-        loadData();
-    }, []);
-    
+        if (id){
+            loadData();
+        }
+    }, [id]);
+
     return (
-        <PaddingBlock leftRight={false}>
-            <List
-                className={styles.list}
-                itemLayout="vertical"
-                dataSource={announcements}
-                renderItem={(item) => {
-                    return (
-                        <List.Item key={item.Id}>
-                            <List.Item.Meta
-                                title={item.Title}
-                                description={<>{item.UpdatedOnDisplay}{toBoolean(item.IsUrgent) && <Tag color="error">Urgent</Tag>}</> }
-                            />
-                            {!isNullOrEmpty(item.Content) &&
-                                <IframeContent content={item.Content} id={item.Id} />
-                            }
-                        </List.Item>
-                    );
-                }}
-            />
+        <PaddingBlock>
+            {!isNullOrEmpty(announcement?.Content) &&
+               <>
+                   <Title level={4}>{announcement?.Title} {toBoolean(announcement?.IsUrgent) && <Tag color="#f50">{t('urgent')}</Tag>}</Title>
+
+                   <IframeContent content={announcement?.Content} id={announcement?.Id}/>
+               </>
+            }
         </PaddingBlock>
     )
 }

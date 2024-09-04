@@ -1,9 +1,10 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
+import {isNullOrEmpty} from "../../utils/Utils.jsx";
 
 function IframeContent({ content, id }) {
     const iframeRef = useRef(null);
     const [iframeHeight, setIframeHeight] = useState('150px');
-
+    
     useEffect(() => {
         const iframe = iframeRef.current;
         if (iframe) {

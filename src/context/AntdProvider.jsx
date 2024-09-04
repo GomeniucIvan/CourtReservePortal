@@ -40,7 +40,7 @@ export const AntdProvider = ({ children }) => {
                                 cardIconWidth: 22,
                                 buttonPadding: 8,
                                 ColorPrimaryText: 'black',
-                                workingTheme: isDarkMode ? 'dark' : 'light'
+                                workingTheme: toBoolean(isDarkMode) ? 'dark' : 'light'
                             },
 
                             Button: {

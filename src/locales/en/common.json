@@ -1,3 +1,11 @@
 ﻿{
-  "seeAll": "See All"
+  "seeAll": "See All",
+  "urgent": "Urgent",
+  "remove": "Remove",
+  "details": "Details",
+  "announcement": {
+    "title": "Announcements",
+    "notFound": "Announcement not found.",
+    "dashboardRemove": "Are you sure you want to remove <b>{{title}}</b> from your list?"
+  }
 }

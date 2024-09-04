@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import {equalString, toBoolean} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Popup} from "antd-mobile";
 import {Flex, Typography, Button, Input} from "antd";
 import {CloseOutline, SearchOutline} from "antd-mobile-icons";
@@ -23,7 +23,8 @@ const DrawerBottom = ({
                           onSearch,
                           dangerButton,
                           maxHeightVh = 60,
-                          isSearchLoading
+                          isSearchLoading,
+                          customFooter
                       }) => {
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
@@ -52,7 +53,7 @@ const DrawerBottom = ({
         >
             <>
                 <Flex vertical>
-                    {(!addSearch || !equalString(searchType, 2) )&&
+                    {(!addSearch || !equalString(searchType, 2)) &&
                         <Flex justify={'space-between'} align={'center'} style={{padding: `${token.padding}px`}}>
                             <Title level={4} style={{margin: 0}}>{label}</Title>
 
@@ -67,7 +68,7 @@ const DrawerBottom = ({
 
                     {(addSearch && equalString(searchType, 2)) &&
                         <PaddingBlock topBottom={true}>
-                            <Text style={{marginBottom: `${token.Custom.buttonPadding/2}px`, display: 'block'}}>
+                            <Text style={{marginBottom: `${token.Custom.buttonPadding / 2}px`, display: 'block'}}>
                                 <strong>
                                     {label}
                                 </strong>
@@ -75,7 +76,7 @@ const DrawerBottom = ({
                             <Search placeholder={`Type to ${label}`}
                                     allowClear
                                     rootClassName={globalStyles.search}
-                                    loading={toBoolean(isSearchLoading)} 
+                                    loading={toBoolean(isSearchLoading)}
                                     onChange={oInputSearch}/>
                         </PaddingBlock>
                     }
@@ -87,12 +88,16 @@ const DrawerBottom = ({
 
                 {showButton &&
                     <div className={styles.drawerButton}>
-                        <Button type='primary' block danger={toBoolean(dangerButton)} onClick={() => {
-                            onConfirmButtonClick();
-                        }}>
-                            {confirmButtonText}
-                        </Button>
+                        {isNullOrEmpty(customFooter) ?
+                            (<Button type='primary' block danger={toBoolean(dangerButton)} onClick={() => {
+                                onConfirmButtonClick();
+                            }}>
+                                {confirmButtonText}
+                            </Button>) :
+                            (<>{customFooter}</>)
+                        }
                     </div>
+
                 }
             </>
         </Popup>

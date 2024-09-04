@@ -161,3 +161,14 @@ export const focus = (name) => {
         document.querySelector('[name="email"]').focus();
     }, 500);
 }
+
+export const textFromHTML = (html, maxCharacters) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    let text = tempDiv.textContent || tempDiv.innerText || '';
+    if (maxCharacters && text.length > maxCharacters) {
+        text = text.substring(0, maxCharacters) + '...';
+    }
+    return text;
+}

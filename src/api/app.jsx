@@ -1,5 +1,10 @@
 ﻿import axios from 'axios';
 import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
+import {getRequestData} from "./api.jsx";
+
+export const apiRoutes = {
+    API2: ''
+}
 
 const axiosInstance = axios.create({
     timeout: 60000,
@@ -64,6 +69,34 @@ const appService = {
                 Message: 'Something wrong, APP43-Error',
                 message: 'Something wrong, APP43-Error'
             }
+        }
+    },
+
+    postRoute: async (route, url, data = {}, config = {}) => {
+        try {
+            const headerToAdd = getRequestData();
+            const headers = { ...config.headers };
+
+            if (headerToAdd) { 
+                headers['RequestData'] = headerToAdd; 
+            }
+
+            const response = await axiosInstance.post(url, data, {
+                ...config,
+                headers
+            });
+
+            return response.data;
+        } catch (error) {
+            console.log('APP43 Error: ');
+            console.log(error);
+
+            return {
+                isValid: false,
+                IsValid: false,
+                Message: 'Something wrong, APP43-Error',
+                message: 'Something wrong, APP43-Error'
+            };
         }
     }
 };
