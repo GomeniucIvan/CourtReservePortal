@@ -23,7 +23,7 @@ import {string} from "yup";
 
 function Dashboard() {
     const { styles } = useStyles();
-    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading } = useApp();
+    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,  } = useApp();
     const {orgId} = useAuth();
     
     const [selectedOrganization, setSelectedOrganization] = useState(null);

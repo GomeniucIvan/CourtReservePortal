@@ -26,6 +26,7 @@ import {useAntd} from "../../context/AntdProvider.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 import apiService, {getBearerToken, setBearerToken, setRequestData} from "../../api/api.jsx";
+import {stringToJson} from "../../utils/ListUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -37,7 +38,8 @@ function Layout() {
     const [isFetching, setIsFetching] = useState(true);
 
     const [maxHeight, setMaxHeight] = useState(0);
-    const {footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData, setIsLoading} = useApp();
+    const {footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData, setIsLoading, setNavigationLinks} = useApp();
+    
     const {
         memberId,
         orgId,
@@ -214,8 +216,10 @@ function Layout() {
                     innerResponse => {
                         if (toBoolean(innerResponse?.IsValid)) {
                             const memberResponseData = innerResponse.Data;
-                            setMemberId(memberResponseData.MemberId);
 
+                            setMemberId(memberResponseData.MemberId);
+                            setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
+                            
                             setAuthData({
                                 timezone: memberResponseData.TimeZone,
                                 uiCulture: memberResponseData.UiCulture

@@ -19,6 +19,7 @@ export const AppProvider = ({ children }) => {
     const { token } = useToken();
     const [shouldFetch, setShouldFetch] = useState(false);
     const [availableHeight, setAvailableHeight] = useState(null);
+    const [navigationLinks, setNavigationLinks] = useState([]);
     
     const globalStyles = stylesToUse.styles;
     const refreshData = () => setShouldFetch(true);
@@ -45,7 +46,11 @@ export const AppProvider = ({ children }) => {
             refreshData,
             resetFetch,
             availableHeight,
-            setAvailableHeight}}>
+            setAvailableHeight,
+            navigationLinks,
+            setNavigationLinks
+        
+        }}>
             
             {children}
         </AppContext.Provider>

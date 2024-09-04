@@ -5,24 +5,23 @@ import {useApp} from "../../context/AppProvider.jsx";
 import mockData from "../../mocks/navigation-data.json";
 
 function Navigation(props) {
-    const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, isMockData} = useApp();
-    const [navigationLinks, setNavigationLinks] = useState([]);
+    const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, isMockData, navigationLinks} = useApp();
+    const [links, setLinks] = useState(navigationLinks);
     
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
         setFooterContent('');
         
-        if (isMockData || 1 == 1){
+        if (isMockData){
             const links = mockData.Links;
-            setNavigationLinks(links);
+            setLinks(links);
         }
     }, []);
     
-    
     return (
         <PaddingBlock topBottom={true} leftRight={false}>
-            <CardLinks links={navigationLinks}/>
+            <CardLinks links={links}/>
         </PaddingBlock>
     )
 }
