@@ -2,7 +2,7 @@
 import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
 
 const axiosInstance = axios.create({
-    timeout: 20000,
+    timeout: 60000,
     headers: {
         'X-Requested-By': 'ReactApp',
         'Content-Type': 'application/json',

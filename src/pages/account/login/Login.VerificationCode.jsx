@@ -2,37 +2,47 @@ import styles from './Login.module.less'
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
-import {theme, Typography, Col, Row, Button,Form} from "antd";
+import {theme, Typography, Col, Row, Button, Form} from "antd";
 import PasscodeInput from "../../../form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
-import {equalString, focus, isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {equalString, focus, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
-import {toAuthLocalStorage} from "../../../storage/AppStorage.jsx";
-import apiService from "../../../api/api.jsx";
+import {toAuthLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
+import apiService, {setRequestData} from "../../../api/api.jsx";
 import appService from "../../../api/app.jsx";
 import {useAntd} from "../../../context/AntdProvider.jsx";
-const { Paragraph, Title, Text } = Typography;
-const { useToken } = theme;
+
+const {Paragraph, Title, Text} = Typography;
+const {useToken} = theme;
 
 function LoginVerificationCode() {
     const navigate = useNavigate();
-    const { formikData, isLoading, setIsLoading, setFormikData, isMockData, setIsFooterVisible, globalStyles, setFooterContent } = useApp();
+    const {
+        formikData,
+        isLoading,
+        setIsLoading,
+        setFormikData,
+        isMockData,
+        setIsFooterVisible,
+        globalStyles,
+        setFooterContent
+    } = useApp();
     const {setMemberId, setOrgId, setShouldLoadOrgData, setAuthData} = useAuth();
     const {setPrimaryColor} = useAntd();
-    
+
     const email = formikData?.email;
     const password = formikData?.password;
-    
+
     useEffect(() => {
         setIsFooterVisible(false);
-        
-        if (isNullOrEmpty(email) || isNullOrEmpty(password)){
+
+        if (isNullOrEmpty(email) || isNullOrEmpty(password)) {
             navigate(AuthRouteNames.LOGIN_GET_STARTED);
         }
     }, []);
@@ -57,12 +67,12 @@ function LoginVerificationCode() {
         validationSchema: validationSchema,
         validateOnBlur: true,
         validateOnChange: true,
-        onSubmit: async (values, { setStatus, setSubmitting }) => {
+        onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
             if (isMockData) {
-                setTimeout(function (){
-                    const memberExists = mockData.login.started.member.email === values.email && 
+                setTimeout(function () {
+                    const memberExists = mockData.login.started.member.email === values.email &&
                         mockData.login.started.member.password === values.password &&
                         mockData.login.started.member.passcode === values.passcode;
 
@@ -81,10 +91,10 @@ function LoginVerificationCode() {
                         });
                     }
                     setIsLoading(false);
-                    
+
                 }, 2000);
-            } else{
-                if (!equalString(values.passcode, 333444)){
+            } else {
+                if (!equalString(values.passcode, 333444)) {
                     ModalClose({
                         title: 'Passcode',
                         content: 'Entered passcode is incorrect',
@@ -95,41 +105,50 @@ function LoginVerificationCode() {
                     });
 
                     setIsLoading(false);
-                } else{
+                } else {
                     appService.post('/app/Online/Account/Login', {
                         UserNameOrEmail: values.email,
                         Password: values.password
                     }).then(response => {
-                        
-                        if (response.IsValid){
+
+                        if (response.IsValid) {
                             setFormikData(null);
                             const responseData = response.Data;
-                            setShouldLoadOrgData(false);
-                            setOrgId(responseData.OrgId);
-                            setMemberId(responseData.MemberId);
+                            setRequestData(responseData.RequestData);
 
-                            setAuthData({
-                                timezone: responseData.TimeZone,
-                                uiCulture: responseData.UiCulture
-                            });
-                            
-                            if (!isNullOrEmpty(responseData.PrimaryColor)){
-                                setPrimaryColor(responseData.PrimaryColor);
-                            }
+                            apiService.post(`/api/dashboard/member-navigation-data?orgId=${responseData.OrgId}&loadWeatherData=true&includeDashboardData=true`).then(
+                                innerResponse => {
+                                    if (toBoolean(innerResponse?.IsValid)){
+                                        const memberResponseData = innerResponse.Data;
+                                        
+                                        setOrgId(memberResponseData.OrganizationId);
+                                        setMemberId(memberResponseData.MemberId);
+                                        setAuthData({
+                                            timezone: memberResponseData.TimeZone,
+                                            uiCulture: memberResponseData.UiCulture
+                                        });
 
-                            toAuthLocalStorage('memberData', {
-                                orgId: responseData.OrgId,
-                                email: values.email,
-                                timezone: responseData.TimeZone,
-                                uiCulture: responseData.TimeZone,
-                                primaryColor: responseData.PrimaryColor,
-                                memberId: responseData.MemberId,
-                            });
-                            
-                            //always last
-                            navigate(response.Path);
+                                        if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
+                                            setPrimaryColor(memberResponseData.DashboardButtonBgColor);
+                                        }
+
+                                        toAuthLocalStorage('memberData', {
+                                            orgId: memberResponseData.OrganizationId,
+                                            timezone: memberResponseData.TimeZone,
+                                            uiCulture: memberResponseData.UiCulture,
+                                            primaryColor: memberResponseData.DashboardButtonBgColor,
+                                            memberId: memberResponseData.MemberId,
+                                        });
+
+                                        toLocalStorage('dashboardData', memberResponseData);
+                                        setShouldLoadOrgData(false);
+
+                                        //always last
+                                        navigate(response.Path);
+                                    }
+                                });
                         }
-                        
+
                         setIsLoading(false);
                     });
                 }
@@ -138,8 +157,8 @@ function LoginVerificationCode() {
     });
 
     useEffect(() => {
-        if (formik?.values?.passcode){
-            if (formik.values.passcode.length === 6){
+        if (formik?.values?.passcode) {
+            if (formik.values.passcode.length === 6) {
                 formik.handleSubmit();
             }
         }
@@ -148,22 +167,23 @@ function LoginVerificationCode() {
     useEffect(() => {
         setIsFooterVisible(false);
     }, []);
-    
+
     return (
         <>
             <PaddingBlock>
                 <Title level={4}>Please Check Your Phone</Title>
 
                 <Paragraph>
-                    We've sent a 6-digit code to <strong>***-***-9650</strong>. The code expires in 15 minutes. Please enter it below.
+                    We've sent a 6-digit code to <strong>***-***-9650</strong>. The code expires in 15 minutes. Please
+                    enter it below.
                 </Paragraph>
 
                 <Form
                     layout={'vertical'}
                     autoComplete="off"
-                    initialValues={{ layout: 'vertical' }}
+                    initialValues={{layout: 'vertical'}}
                 >
-                    <PasscodeInput seperated length={6} name={'passcode'} form={formik} />
+                    <PasscodeInput seperated length={6} name={'passcode'} form={formik}/>
 
                     <Row justify={'space-between'} className={globalStyles.inputBottomLink}>
                         <Col span={12}><Text type="secondary">Didn't get the code?</Text></Col>

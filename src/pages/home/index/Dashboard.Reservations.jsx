@@ -13,11 +13,11 @@ import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
+import {stringToJson} from "../../../utils/ListUtils.jsx";
 
 const DashboardReservations = ({dashboardData, isFetching}) => {
-    let showMyBookings = dashboardData?.ShowMyBookings;
-    let bookings = dashboardData?.Bookings;
-    const { styles } = useStyles();
+    let bookings = stringToJson(dashboardData?.BookingsJson);
+    let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) && anyInList(bookings);
     const {globalStyles, token, setDynamicPages} = useApp();
     const navigate = useNavigate();
     

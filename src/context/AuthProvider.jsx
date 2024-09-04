@@ -2,6 +2,7 @@
 import {clearAllLocalStorage, fromAuthLocalStorage} from "../storage/AppStorage.jsx";
 import {nullToEmpty} from "../utils/Utils.jsx";
 import {setClientUiCulture} from "../utils/DateUtils.jsx";
+import appService from "../api/app.jsx";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -38,6 +39,10 @@ export const AuthProvider = ({children}) => {
             currency: '',
             primaryColor: '',
         });
+        
+        appService.get('/app/online/logout').then(r => {
+            console.log('Login logout');
+        })
         
         return true;
     }

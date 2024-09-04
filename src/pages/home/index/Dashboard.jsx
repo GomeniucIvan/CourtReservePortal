@@ -14,12 +14,20 @@ import {Button, Typography} from "antd";
 const { Title } = Typography;
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import appService from "../../../api/app.jsx";
+import apiService from "../../../api/api.jsx";
+import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {fromLocalStorage, toAuthLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
+import {useAuth} from "../../../context/AuthProvider.jsx";
+import {stringToJson} from "../../../utils/ListUtils.jsx";
+import {string} from "yup";
 
 function Dashboard() {
     const { styles } = useStyles();
     const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading } = useApp();
+    const {orgId} = useAuth();
+    
     const [selectedOrganization, setSelectedOrganization] = useState(null);
-    const [isFetching] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [organizations, setOrganizations] = useState([]);
     const navigate = useNavigate();
@@ -29,7 +37,26 @@ function Dashboard() {
             const dashboardData = mockData.dashboard.index;
             setDashboardData(dashboardData);
         } else{
+            const cachedData = fromLocalStorage('dashboardData');
+            
+            if (refresh){
+                setIsFetching(true);
+            } else{
+                if (!isNullOrEmpty(cachedData)){
+                    setDashboardData(cachedData);
+                    setIsFetching(false);
+                }
+            }
 
+            apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}&loadWeatherData=true&includeDashboardData=true`).then(
+                innerResponse => {
+                    if (toBoolean(innerResponse?.IsValid)) {
+                        const memberResponseData = innerResponse.Data;
+                        setDashboardData(memberResponseData);
+                        toLocalStorage('dashboardData', memberResponseData);
+                        setIsFetching(false);
+                    }
+                });
         }
         
         setIsLoading(false);
@@ -37,8 +64,8 @@ function Dashboard() {
     
     useEffect(() => {
         if (shouldFetch) {
-            const fetchData = async () => {
-                await loadData(true);
+            const fetchData = () => {
+                loadData(true);
                 resetFetch();
             };
             fetchData();
@@ -64,10 +91,14 @@ function Dashboard() {
             <DashboardEvents dashboardData={dashboardData} isFetching={isFetching}/>
             <DashboardLeagues dashboardData={dashboardData} isFetching={isFetching}/>
 
-            <div className={cx(styles.header)} style={{padding: `0px ${token.padding}px`}}>
-                <Title level={4}>Additional Links</Title>
-            </div>
-            <CardLinks links={dashboardData?.Links} isFetching={isFetching}/>
+            {anyInList(stringToJson(dashboardData?.DashboardLinksJson)) &&
+                <>
+                    <div className={cx(styles.header)} style={{padding: `0px ${token.padding}px`}}>
+                        <Title level={4}>Additional Links</Title>
+                    </div>
+                    <CardLinks links={stringToJson(dashboardData?.DashboardLinksJson)} isFetching={isFetching}/>
+                </>
+            }
         </>
     )
 }

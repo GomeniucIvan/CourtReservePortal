@@ -21,7 +21,7 @@ function Login() {
     useEffect(() => {
         if (equalString(location.pathname, AuthRouteNames.LOGIN)){
             //should clear organization data on logout
-            // logout();
+            logout();
         }
     }, [location]);
     

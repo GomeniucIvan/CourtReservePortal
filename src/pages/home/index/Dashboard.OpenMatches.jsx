@@ -1,4 +1,4 @@
-﻿import { equalString } from "../../../utils/Utils.jsx";
+﻿import {equalString, toBoolean} from "../../../utils/Utils.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
 import {Segmented} from "antd";
 import {Card, ErrorBlock, NoticeBar} from "antd-mobile";
@@ -11,9 +11,9 @@ const DashboardOpenMatches = ({ dashboardData, isFetching }) => {
     const { styles } = useStyles();
     let [selectedSegment, setSelectedSegment] = useState('Registered');
 
-    // if (!toBoolean(showOpenMatches)){
-    //     return '';
-    // }
+    if (!toBoolean(showOpenMatches)){
+        return '';
+    }
 
     return (
         <EntityCard title={'Open Matches'} link={'/openMatches'} isFetching={isFetching} addPadding={true}>

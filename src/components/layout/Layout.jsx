@@ -7,44 +7,59 @@ import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {authMember, clearAllLocalStorage, fromAuthLocalStorage, toLocalStorage} from "../../storage/AppStorage.jsx";
+import {
+    authMember,
+    clearAllLocalStorage,
+    fromAuthLocalStorage, fromLocalStorage,
+    toAuthLocalStorage,
+    toLocalStorage
+} from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
 import {Flex} from "antd";
-import { Skeleton } from 'antd-mobile'
+import {Skeleton} from 'antd-mobile'
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import appService from "../../api/app.jsx";
 import {setClientUiCulture} from "../../utils/DateUtils.jsx";
 import {useAntd} from "../../context/AntdProvider.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
-import apiService, {getBearerToken, setBearerToken} from "../../api/api.jsx";
+import apiService, {getBearerToken, setBearerToken, setRequestData} from "../../api/api.jsx";
 
 function Layout() {
     const location = useLocation();
     let currentRoute = AppRoutes.find(route => route.path === location.pathname);
     const headerRef = useRef(null);
     const footerRef = useRef(null);
-    const { styles } = useStyles();
+    const {styles} = useStyles();
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
-    
+
     const [maxHeight, setMaxHeight] = useState(0);
-    const { footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData } = useApp();
-    const {memberId, orgId, setAuthData, shouldLoadOrgData, setShouldLoadOrgData} = useAuth();
-    const {setPrimaryColor} = useAntd();
+    const {footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData, setIsLoading} = useApp();
+    const {
+        memberId,
+        orgId,
+        setAuthData,
+        shouldLoadOrgData,
+        setShouldLoadOrgData,
+        setOrgId,
+        setMemberId
+    } = useAuth();
     
-    if (isNullOrEmpty(currentRoute)){
+    const {setPrimaryColor} = useAntd();
+
+    if (isNullOrEmpty(currentRoute)) {
         currentRoute = dynamicPages.find(route => equalString(route.path, location.pathname));
     }
 
-    if (isNullOrEmpty(currentRoute)){
+    if (isNullOrEmpty(currentRoute)) {
         const pathParts = location.pathname.split('/').filter(Boolean);
         const lastPart = pathParts[pathParts.length - 1];
         const isNumberRegex = /^\d+$/.test(lastPart);
-        
-        if (isNumberRegex){
+
+        if (isNumberRegex) {
             const replacePath = location.pathname.replace(lastPart, ':id');
             currentRoute = AppRoutes.find(route => route.path === replacePath);
         }
@@ -54,24 +69,23 @@ function Layout() {
         const memberData = fromAuthLocalStorage('memberData', {});
         const workingMemberId = memberData?.memberId || memberId;
         const workingOrgId = memberData?.orgId || orgId;
-        
+
         //not authorized
-        if (isNullOrEmpty(workingMemberId)){
+        if (isNullOrEmpty(workingMemberId)) {
             //not allowed unauthorized
-            if (!toBoolean(currentRoute?.unauthorized)){
-                if (!equalString(location.pathname, AuthRouteNames.LOGIN)){
+            if (!toBoolean(currentRoute?.unauthorized)) {
+                if (!equalString(location.pathname, AuthRouteNames.LOGIN)) {
                     navigate(AuthRouteNames.LOGIN);
                 }
             }
 
             setIsFetching(false);
         }
-        
+
         //authorized without active orgid
-        else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)){
+        else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)) {
             //todo my clubs//allowed path
-            
-            if (!equalString(location.pathname, '/myclubs')){
+            if (!equalString(location.pathname, '/myclubs')) {
                 navigate('/myclubs');
             }
 
@@ -79,7 +93,7 @@ function Layout() {
         }
 
         //authorized with active orgid
-        else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)){
+        else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)) {
             //not allow to access login pages
             if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
                 equalString(location.pathname, AuthRouteNames.LOGIN_GET_STARTED) ||
@@ -87,8 +101,11 @@ function Layout() {
                 equalString(location.pathname, AuthRouteNames.LOGIN_VERIFICATION_CODE)) {
                 navigate(HomeRouteNames.INDEX);
             }
+
+            setOrgId(workingOrgId);
             
-            setIsFetching(false);
+            //set from organization load
+            //setIsFetching(false);
         }
     }, [location, navigate]);
 
@@ -119,7 +136,7 @@ function Layout() {
             }
         };
     }, [isFooterVisible, footerContent]);
-    
+
     useEffect(() => {
         calculateMaxHeight();
     }, [location]);
@@ -157,27 +174,27 @@ function Layout() {
             `;
         document.head.appendChild(style);
     }, [token]);
-    
+
     const disablePullDownToRefresh = currentRoute?.disablePullDown;
 
     useEffect(() => {
-        if (isMockData){
-            setIsFetching(false);  
-        } else{
-            if (!isNullOrEmpty(orgId) && shouldLoadOrgData){
+        if (isMockData) {
+            setIsFetching(false);
+        } else {
+            if (!isNullOrEmpty(orgId) && shouldLoadOrgData) {
                 setIsFetching(true);
-
+                setShouldLoadOrgData(false);
+                
                 //logged but without bearer token
                 //should refresh every day?!
-                if (isNullOrEmpty(getBearerToken())){
+                if (isNullOrEmpty(getBearerToken())) {
                     appService.post('/app/MobileSso/ValidateAndCreateToken').then(r => {
-                        if (toBoolean(r?.IsValid)){
+                        if (toBoolean(r?.IsValid)) {
                             setBearerToken(r.Token);
-
                             loadOrganizationData(orgId);
                         }
                     })
-                } else{
+                } else {
                     loadOrganizationData(orgId);
                 }
             }
@@ -185,31 +202,48 @@ function Layout() {
     }, [orgId, shouldLoadOrgData]);
 
     const loadOrganizationData = (orgId) => {
-        apiService.post(`/api/dashboard/orgdata?orgId=${orgId}`).then(r => {
-            if (toBoolean(r?.IsValid)){
-                const data = r.Data;
+        const memberData = fromAuthLocalStorage('memberData', {});
+        const memberId = memberData?.memberId;
+        
+        appService.get(`/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`).then(response => {
+            if (response.IsValid) {
+                const responseData = response.Data;
+                setRequestData(responseData.RequestData);
 
-                // setAuthData({
-                //     timezone: data.TimeZone,
-                //     uiCulture: data.UiCulture
-                // });
-                //
-                // //easier access
-                // if (!isNullOrEmpty(data.PrimaryColor)){
-                //     setPrimaryColor(data.PrimaryColor);
-                // }
-                
-                setShouldLoadOrgData(false);
-            } else{
-                //logout?
+                apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}`).then(
+                    innerResponse => {
+                        if (toBoolean(innerResponse?.IsValid)) {
+                            const memberResponseData = innerResponse.Data;
+                            setMemberId(memberResponseData.MemberId);
+
+                            setAuthData({
+                                timezone: memberResponseData.TimeZone,
+                                uiCulture: memberResponseData.UiCulture
+                            });
+
+                            if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
+                                setPrimaryColor(memberResponseData.DashboardButtonBgColor);
+                            }
+
+                            toAuthLocalStorage('memberData', {
+                                orgId: memberResponseData.OrganizationId,
+                                timezone: memberResponseData.TimeZone,
+                                uiCulture: memberResponseData.UiCulture,
+                                primaryColor: memberResponseData.DashboardButtonBgColor,
+                                memberId: memberResponseData.MemberId,
+                            });
+                            
+                            setIsFetching(false);
+                        }
+                    });
             }
 
-            setIsFetching(false);
-        })
+            setIsLoading(false);
+        });
     }
-    
-    const skeletonArray = Array.from({ length: 5 });
-    
+
+    const skeletonArray = Array.from({length: 5});
+
     return (
         <div className={styles.root}>
             {(currentRoute && !toBoolean(isFetching)) &&
@@ -219,18 +253,18 @@ function Layout() {
             }
 
             <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
-                <LayoutExtra />
+                <LayoutExtra/>
 
                 {toBoolean(isFetching) ? (
                     <PaddingBlock topBottom={true}>
                         <Flex vertical={true} gap={token.padding}>
                             {skeletonArray.map((_, index) => (
-                                <Skeleton key={index} animated className={styles.skeleton} />
+                                <Skeleton key={index} animated className={styles.skeleton}/>
                             ))}
                         </Flex>
                     </PaddingBlock>
-                    
-                ):(
+
+                ) : (
                     <PullToRefresh onRefresh={refreshData}
                                    disabled={toBoolean(disablePullDownToRefresh)}
                                    pullingText={'Pull down to refresh.'}

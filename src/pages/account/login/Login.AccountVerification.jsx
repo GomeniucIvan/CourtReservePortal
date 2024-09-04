@@ -85,8 +85,6 @@ function LoginAccountVerification() {
                             }
                         });
                     } else {
-                        console.log(values)
-                        
                         setFormikData(values);
                         navigate(AuthRouteNames.LOGIN_VERIFICATION_CODE);
                     }

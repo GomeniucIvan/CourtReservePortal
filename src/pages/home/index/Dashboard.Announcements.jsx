@@ -11,13 +11,14 @@ import {useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {useApp} from "../../../context/AppProvider.jsx";
+import {stringToJson} from "../../../utils/ListUtils.jsx";
 
 const {Text, Title} = Typography;
 
 const DashboardAnnouncements = ({dashboardData, isFetching}) => {
     let {setDynamicPages, globalStyles, token} = useApp();
-    let announcements = dashboardData?.GlobalAnnouncements;
-    let showAnnouncementsBlock = dashboardData?.ShowAnnouncementsBlock;
+    let announcements = stringToJson(dashboardData?.GlobalAnnouncementsJson);
+    let showAnnouncementsBlock = toBoolean(dashboardData?.ShowAnnouncementsBlock) && anyInList(announcements);
     const {styles} = useStyles();
     const navigate = useNavigate();
 

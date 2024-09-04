@@ -43,13 +43,13 @@
         {
           "Name": "Meet our team",
           "Type": "Custom page",
-          "Url": "/dashboard/custompage/1",
+          "Url": "/custompage/1",
           "Icon": "landing-page"
         },
         {
           "Name": "Website team",
           "Type": "External link",
-          "Url": "www.google.com",
+          "Url": "",
           "Icon": "www"
         },
         {
@@ -61,7 +61,7 @@
         {
           "Name": "Rank players",
           "Type": "Member group",
-          "Url": "/membergroup/list/0",
+          "Url": "/membergroup/0",
           "Icon": "group"
         }
       ],

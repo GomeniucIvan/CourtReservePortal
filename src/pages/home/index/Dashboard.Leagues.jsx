@@ -10,6 +10,7 @@ import {useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {useApp} from "../../../context/AppProvider.jsx";
 import FormDrawerRadio from "../../../form/formradio/FormDrawerRadio.jsx";
+import {stringToJson} from "../../../utils/ListUtils.jsx";
 const { Text } = Typography;
 
 const DashboardLeagues = ({ dashboardData, isFetching }) => {
@@ -18,24 +19,32 @@ const DashboardLeagues = ({ dashboardData, isFetching }) => {
     let [leagueItems, setLeagueItems] = useState([]);
     let [selectedLeagueId, setSelectedLeagueId] = useState(null);
     let [selectedLeagueName, setSelectedLeagueName] = useState('');
-
-    let myLeaguesDropdown = dashboardData?.MyLeaguesDropdown;
-    let showLeaguesBlock = dashboardData?.ShowLeaguesBlock;
-    let leaguesDates = dashboardData?.LeagueDates
-    let hideLeagues = !anyInList(dashboardData?.MyLeaguesDropdown) || isNullOrEmpty(dashboardData?.SelectedLeagueSessionId);
+    const [myLeaguesDropdown, setMyLeaguesDropdown] = useState([]);
+    const [showLeaguesBlock, setShowLeaguesBlock] = useState(false);
+    const [leaguesDates, setLeaguesDates] = useState([]);
+    const [hideLeagues, setHideLeagues] = useState(false);
+    
     const { styles } = useStyles();
     const navigation = useNavigate();
-    const {globalStyles} = useApp();
     
     if (!toBoolean(showLeaguesBlock) && !toBoolean(hideLeagues)){
         return '';
     }
 
     useEffect(() => {
-        if (!isNullOrEmpty(dashboardData?.SelectedLeagueSessionId) && isNullOrEmpty(selectedLeagueId)){
-            const selectedLeague = myLeaguesDropdown.find(league => equalString(league.Id, dashboardData?.SelectedLeagueSessionId));
-            setSelectedLeagueId(dashboardData?.SelectedLeagueSessionId);
-            setSelectedLeagueName(selectedLeague.Name);
+        if (!isNullOrEmpty(dashboardData)){
+            let myLeagues = stringToJson(dashboardData?.MyLeaguesDropdownJson);
+            
+            setMyLeaguesDropdown(myLeagues);
+            setShowLeaguesBlock(toBoolean(dashboardData?.ShowLeaguesBlock) && anyInList(myLeagues));
+            setLeaguesDates(stringToJson(dashboardData?.LeagueDatesJson));
+            setHideLeagues(!anyInList(myLeagues) || isNullOrEmpty(dashboardData?.SelectedLeagueSessionId));
+            
+            if (!isNullOrEmpty(dashboardData?.SelectedLeagueSessionId) && isNullOrEmpty(selectedLeagueId)){
+                const selectedLeague = myLeagues.find(league => equalString(league.Id, dashboardData?.SelectedLeagueSessionId));
+                setSelectedLeagueId(dashboardData?.SelectedLeagueSessionId);
+                setSelectedLeagueName(selectedLeague.Name);
+            }
         }
     }, [dashboardData]);
     

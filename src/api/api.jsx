@@ -1,6 +1,7 @@
 ﻿import axios from 'axios';
 
 let bearerToken = '';
+let requestData = '';
 
 export const setBearerToken = (token) => {
     bearerToken = token;
@@ -10,8 +11,12 @@ export const getBearerToken = () => {
     return bearerToken;
 };
 
+export const setRequestData = (reqData) => {
+    requestData = reqData;
+};
+
 const axiosInstance = axios.create({
-    timeout: 20000,
+    timeout: 60000,
     headers: {
         'X-Requested-By': 'ReactApp',
         'Content-Type': 'application/json',
@@ -24,6 +29,10 @@ axiosInstance.interceptors.request.use(
             config.headers.Authorization = `Bearer ${bearerToken}`;
         }
 
+        if (requestData) {
+            config.headers.RequestData = requestData;
+        }
+
         return config;
     },
     (error) => Promise.reject(error)
@@ -31,7 +40,7 @@ axiosInstance.interceptors.request.use(
 
 
 axiosInstance.interceptors.response.use(
-    (response) => response, 
+    (response) => response,
     (error) => {
         // 401 unauthorized response
 
@@ -43,8 +52,24 @@ axiosInstance.interceptors.response.use(
 const apiService = {
     get: async (url, params = {}, config = {}) => {
         try {
-            const response = await axiosInstance.get(url, { params, ...config });
-            return response.data;
+            const response = await axiosInstance.get(url, {params, ...config});
+            let responseData = response.data;
+
+            if (responseData) {
+                if (responseData.isValid) {
+                    responseData.IsValid = true;
+                } else if (responseData.IsValid) {
+                    responseData.isValid = true;
+                }
+
+                if (responseData.message) {
+                    responseData.Message = true;
+                } else if (responseData.Message) {
+                    responseData.message = true;
+                }
+            }
+            return responseData;
+
         } catch (error) {
             console.log('API43 Error: ');
             console.log(error);
@@ -60,12 +85,27 @@ const apiService = {
 
     post: async (url, data = {}, config = {}) => {
         try {
-            const response = await axiosInstance.post(url, data, { ...config });
-            return response.data;
+            const response = await axiosInstance.post(url, data, {...config});
+            let responseData = response.data;
+
+            if (responseData) {
+                if (responseData.isValid) {
+                    responseData.IsValid = true;
+                } else if (responseData.IsValid) {
+                    responseData.isValid = true;
+                }
+
+                if (responseData.message) {
+                    responseData.Message = true;
+                } else if (responseData.Message) {
+                    responseData.message = true;
+                }
+            }
+            return responseData;
         } catch (error) {
             console.log('API49 Error: ');
             console.log(error);
-            
+
             return {
                 isValid: false,
                 IsValid: false,
