@@ -18,8 +18,10 @@ const FormRangePicker = ({
                              start,
                              end,
                              hasError,
+                             minDate,
+                             maxDate,
                              dateFormat = dateFormatByUiCulture(),
-                             interval = 30,
+                             intervalDays = 30, //days
                              onChange,
                              filterLabel = 'date.customDates',
                              startDateLabel = 'date.startDate',
@@ -51,22 +53,20 @@ const FormRangePicker = ({
         }
         if (end) {
             setEndDate(end);
-
-            if (onChange && typeof onChange === 'function') {
-                onChange(dates[0].date.$d, dates[1].date.$d);
-            }
-
             setShow(false);
+        }
+
+        if (onChange && typeof onChange === 'function') {
+            onChange(start?.$d, end?.$d);
         }
     };
 
     const disabledDaysDate = (current, {from}) => {
-        return Math.abs(current.diff(from, 'days')) >= interval;
+        return Math.abs(current.diff(from, 'days')) >= intervalDays;
     };
 
     const openDatesPicker = () => {
         setShow(true);
-
         setShowPicker(true);
     }
 
@@ -81,8 +81,11 @@ const FormRangePicker = ({
                 <RangePicker value={[startDate, endDate]}
                              onChange={onRangeChange}
                              allowClear={true}
+                             minDate={minDate ? dayjs(fixDate(minDate)) : null}
+                             maxDate={maxDate ? dayjs(fixDate(maxDate)) : null}
                              onClick={openDatesPicker}
                              disabledDate={disabledDaysDate}
+                             format={dateFormat}
                              open={showPicker}
                              getPopupContainer={getPopupContainer}/>
             </Flex>

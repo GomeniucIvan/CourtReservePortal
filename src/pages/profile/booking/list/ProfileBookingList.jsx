@@ -47,13 +47,14 @@ function ProfileBookingList() {
     
     const [bookings, setBookings] = useState([]);
     const [filterData, setFilterData] = useState(null);
-    const [isFilterOpened, setIsFilterOpened] = useState(false);
+    const [isFilterOpened, setIsFilterOpened] = useState(null);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('booking-list-format', 'list'), 'list'));
     const [hasMore, setHasMore] = useState(false);
     const [selectedType, setSelectedType] = useState('Upcoming');
+    const [isFetching, setIsFetching] = useState(true);
     const { t } = useTranslation('');
     
-    const loadBookings = (incFilterData, type) => {
+    const loadBookings = (incFilterData, type, skip) => {
         if (isNullOrEmpty(incFilterData)){
             incFilterData = filterData;
         }
@@ -65,7 +66,7 @@ function ProfileBookingList() {
             OrgMemberIdsString: incFilterData.OrgMemberIds.join(','),
             BookingTypesString: incFilterData.BookingTypes.join(','),
             DatesString: '',
-            SkipRows: incFilterData.SkipRows,
+            SkipRows: skip || incFilterData.SkipRows,
             CustomDate_Start: incFilterData.CustomDate_Start,
             CustomDate_End: incFilterData.CustomDate_End,
             IsCancelledView : equalString((type || selectedType), 'Cancelled')
@@ -78,10 +79,10 @@ function ProfileBookingList() {
         appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData).then(r => {
             if (toBoolean(r?.IsValid)){
                 const responseData = r.Data;
-                console.log(responseData)
                 
                 setHasMore(responseData.TotalRecords > responseData.SkipRows);
                 setBookings(responseData.List);
+                setIsFetching(false);
             }
         })
     }
@@ -218,13 +219,23 @@ function ProfileBookingList() {
 
     }
 
-    const onFilterMinDateChange = () => {
-        
+    const onCustomDatesChange = (start, end) => {
+        setFilterData((prevData) => ({
+            ...prevData,
+            CustomDate_Start: start,
+            CustomDate_End: end 
+        }));
     }
 
-    const onFilterMaxDateChange = () => {
-
-    }
+    useEffect(() => {
+        //prevent first loading
+        if (!isNullOrEmpty(isFilterOpened)){
+            console.log(77)
+            if (!toBoolean(isFilterOpened) && !toBoolean(isFetching)){
+                loadBookings(null, null, 0);
+            }
+        }
+    }, [isFilterOpened]);
     
     return (
         <>
@@ -263,7 +274,7 @@ function ProfileBookingList() {
             </List>
             <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
 
-            <DrawerBottom showDrawer={isFilterOpened}
+            <DrawerBottom showDrawer={toBoolean(isFilterOpened)}
                           closeDrawer={() => setIsFilterOpened(false)}
                           showButton={true}
                           maxHeightVh={90}
@@ -282,7 +293,12 @@ function ProfileBookingList() {
                                 })) : []}
                                 defaultValue={filterData?.OrgMemberIds || []}
                                 multiple
-                                onChange={(arr, extend) => console.log(arr, extend.items)}
+                                onChange={(selectedValues, extend) => {
+                                    setFilterData((prevData) => ({
+                                        ...prevData,
+                                        OrgMemberIds: selectedValues,
+                                    }));
+                                }}
                             />
                         </Collapse.Panel>
                         <Collapse.Panel key='entity' title={t('profile.entityType')}>
@@ -293,22 +309,34 @@ function ProfileBookingList() {
                                 }))}
                                 defaultValue={filterData?.BookingTypes || []}
                                 multiple
-                                onChange={(arr, extend) => console.log(arr, extend.items)}
+                                onChange={(selectedValues, extend) => {
+                                    setFilterData((prevData) => ({
+                                        ...prevData,
+                                        BookingTypes: selectedValues,
+                                    }));
+                                }}
                             />
                         </Collapse.Panel>
                         <Collapse.Panel key='dates' title={t('profile.date')}>
                             <Selector
                                 options={filterDates.map(item => ({
                                     label: t(item.Text),
-                                    value: `${item.Value}`,
+                                    value: item.Value,
                                 }))}
-                                defaultValue={['1']}
-                                onChange={(arr, extend) => console.log(arr, extend.items)}
+                                defaultValue={[1]}
+                                onChange={(selectedValues, extend) => {
+                                    setFilterData((prevData) => ({
+                                        ...prevData,
+                                        filterDates: selectedValues,
+                                    }));
+                                }}
                             />
 
-                            <div style={{paddingTop: `${token.padding}px`}}>
-                                <FormRangePicker onMinDateChange={onFilterMinDateChange} onMaxDateChange={onFilterMaxDateChange} />
-                            </div>
+                            {(anyInList(filterData?.filterDates) && filterData.filterDates.includes(5)) && (
+                                <div style={{ paddingTop: `${token.padding}px` }}>
+                                    <FormRangePicker onChange={onCustomDatesChange} minDate={filterData?.CurrentDateTime} />
+                                </div>
+                            )}
                         </Collapse.Panel>
                     </Collapse>
                 </PaddingBlock>
