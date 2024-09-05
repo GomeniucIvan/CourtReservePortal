@@ -173,6 +173,9 @@ function Layout() {
             .ant-app {
                 background-color: ${token.colorBgContainer};
             }
+            .magic-dots.slick-dots li.slick-active button::before{
+                color: ${token.colorPrimary} !important;
+            }
             `;
         document.head.appendChild(style);
     }, [token]);

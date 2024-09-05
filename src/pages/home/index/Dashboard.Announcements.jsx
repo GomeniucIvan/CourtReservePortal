@@ -4,7 +4,6 @@ import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
 import {Typography, Badge, Flex, Button} from "antd";
 import {Ellipsis} from 'antd-mobile'
-import {CloseOutline} from "antd-mobile-icons";
 import {Card} from 'antd-mobile'
 import {cx} from "antd-style";
 import {useNavigate} from "react-router-dom";
@@ -16,10 +15,9 @@ import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import {useEffect, useState} from "react";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
-import {ModalDelete, ModalRemove} from "../../../utils/ModalUtils.jsx";
+import {ModalRemove} from "../../../utils/ModalUtils.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
-import {getRequestData, setRequestData} from "../../../api/api.jsx";
 import {useTranslation} from "react-i18next";
 
 const {Text, Title} = Typography;

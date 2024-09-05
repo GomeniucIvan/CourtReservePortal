@@ -3,7 +3,8 @@ import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
 import {getRequestData} from "./api.jsx";
 
 export const apiRoutes = {
-    API2: ''
+    API2: '',
+    CREATE_RESERVATION: ''
 }
 
 const axiosInstance = axios.create({
@@ -72,6 +73,35 @@ const appService = {
         }
     },
 
+    getRoute: async (route, url, params = {}, config = {}) => {
+        try {
+            const headerToAdd = getRequestData();
+            const headers = { ...config.headers };
+
+            if (headerToAdd) {
+                headers['RequestData'] = headerToAdd;
+            }
+
+            const response = await axiosInstance.get(url, {
+                params,
+                ...config,
+                headers 
+            });
+            
+            return response.data;
+        } catch (error) {
+            console.log('APP41 Error: ');
+            console.log(error);
+
+            return {
+                isValid: false,
+                IsValid: false,
+                Message: 'Something wrong, APP41-Error',
+                message: 'Something wrong, APP41-Error'
+            }
+        }
+    },
+    
     postRoute: async (route, url, data = {}, config = {}) => {
         try {
             const headerToAdd = getRequestData();

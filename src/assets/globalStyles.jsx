@@ -196,5 +196,14 @@ export const useStyles = createStyles(({ css, token }) => ({
    stickyButton: css`
       height: ${token.Button.controlHeight}px;
       padding: 12px 10px;
+   `,
+   collapse: css`
+      .adm-list-item {
+         --padding-left: 0;
+         --padding-right: 0;
+         .adm-list-item-content {
+            padding: 0px ${token.padding}px;
+         }
+      }
    `
 }));

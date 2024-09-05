@@ -1,5 +1,5 @@
 ﻿import lessStyles from './ProfileBookingList.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
@@ -9,13 +9,22 @@ import {useApp} from "../../../../context/AppProvider.jsx";
 import mockData from "../../../../mocks/reservation-data.json";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";
 import DrawerBottom from "../../../../components/drawer/DrawerBottom.jsx";
-import {Card, Ellipsis, List} from "antd-mobile";
+import {Card, Ellipsis, List, Selector} from "antd-mobile";
 import {setPage, toRoute} from "../../../../utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
 import CardIconLabel from "../../../../components/cardiconlabel/CardIconLabel.jsx";
 import {fromLocalStorage, toLocalStorage} from "../../../../storage/AppStorage.jsx";
 import {EventRouteNames} from "../../../../routes/EventRoutes.jsx";
 import InfiniteScroll from "../../../../components/infinitescroll/InfiniteScroll.jsx";
+import appService, {apiRoutes} from "../../../../api/app.jsx";
+import {useAuth} from "../../../../context/AuthProvider.jsx";
+import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
+import { Collapse } from 'antd-mobile'
+import {useTranslation} from "react-i18next";
+import * as React from "react";
+import FormRangePicker from "../../../../form/formrangepicker/FormRangePicker.jsx";
+import {bookingTypes, filterDates} from "../../../../utils/ListUtils.jsx";
+
 
 const {Search} = Input;
 const {Title, Text} = Typography;
@@ -34,11 +43,54 @@ function ProfileBookingList() {
         token,
         setFooterContent
     } = useApp();
+    const {orgId} = useAuth();
+    
     const [bookings, setBookings] = useState([]);
+    const [filterData, setFilterData] = useState(null);
     const [isFilterOpened, setIsFilterOpened] = useState(false);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('booking-list-format', 'list'), 'list'));
     const [hasMore, setHasMore] = useState(false);
+    const [selectedType, setSelectedType] = useState('Upcoming');
+    const { t } = useTranslation('');
+    
+    const loadBookings = (incFilterData, type) => {
+        if (isNullOrEmpty(incFilterData)){
+            incFilterData = filterData;
+        }
+        
+        console.log(incFilterData)
+        
+        const filterModel = {
+            OrganizationId: orgId,
+            OrgMemberIdsString: incFilterData.OrgMemberIds.join(','),
+            BookingTypesString: incFilterData.BookingTypes.join(','),
+            DatesString: '',
+            SkipRows: incFilterData.SkipRows,
+            CustomDate_Start: incFilterData.CustomDate_Start,
+            CustomDate_End: incFilterData.CustomDate_End,
+            IsCancelledView : equalString((type || selectedType), 'Cancelled')
+        };
 
+        const postData = {
+            ...filterModel,
+        };
+        
+        appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData).then(r => {
+            if (toBoolean(r?.IsValid)){
+                const responseData = r.Data;
+                console.log(responseData)
+                
+                setHasMore(responseData.TotalRecords > responseData.SkipRows);
+                setBookings(responseData.List);
+            }
+        })
+    }
+
+    const onTypeChange = (type) => {
+        setSelectedType(type);
+        loadBookings(null, type);
+    }
+    
     const loadData = (refresh) => {
         if (isMockData) {
             const list = mockData.list.List;
@@ -48,7 +100,16 @@ function ProfileBookingList() {
             setHasMore(parseInt(totalRecords) > parseInt(skipRows));
             setBookings(list);
         } else {
-            alert('todo res list')
+           if (!refresh){
+               appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}`).then(r => {
+                   if (toBoolean(r?.IsValid)){
+                       setFilterData(r.Data);
+                       loadBookings(r.Data);
+                   }
+               })
+           } else {
+               loadBookings();
+           }
         }
 
         resetFetch();
@@ -159,7 +220,7 @@ function ProfileBookingList() {
 
     return (
         <>
-            <Segmented options={['Upcoming', 'Cancelled']} block style={{margin : `${token.padding}px`, marginBottom: 0 }}/>
+            <Segmented options={['Upcoming', 'Cancelled']} onChange={(e) => {onTypeChange(e)}} block style={{margin : `${token.padding}px`, marginBottom: 0 }}/>
 
             <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
                   style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
@@ -181,7 +242,7 @@ function ProfileBookingList() {
                                            }
                                        }}>
                                 {toBoolean(booking.IsUnpaid) ? (
-                                    <Badge.Ribbon text='Unpaid' color={'orange'} className={globalStyles.urgentRibbon}>
+                                    <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
                                         {bookingTemplate(booking, true)}
                                     </Badge.Ribbon>
                                 ) : (
@@ -197,12 +258,60 @@ function ProfileBookingList() {
             <DrawerBottom showDrawer={isFilterOpened}
                           closeDrawer={() => setIsFilterOpened(false)}
                           showButton={true}
-                          confirmButtonText={'Filter'}
-                          label='Filter'
+                          maxHeightVh={80}
+                          confirmButtonText={t('filter')}
+                          label={t('filter')}
                           onConfirmButtonClick={() => {
                               setIsFilterOpened(false);
                           }}>
-                <div>test</div>
+                <PaddingBlock leftRight={false}>
+                    <Collapse defaultActiveKey={['family', 'entity', 'dates']} className={globalStyles.collapse}>
+                        <Collapse.Panel key='family' title={t('profile.myFamily')}>
+                            <Selector
+                                options={[
+                                    {
+                                        label: 'Mike',
+                                        value: '1',
+                                    },
+                                    {
+                                        label: 'Olla',
+                                        value: '2',
+                                    },
+                                    {
+                                        label: 'Jason',
+                                        value: '3',
+                                    },
+                                ]}
+                                defaultValue={['1', '2', '3']}
+                                multiple
+                                onChange={(arr, extend) => console.log(arr, extend.items)}
+                            />
+                        </Collapse.Panel>
+                        <Collapse.Panel key='entity' title={t('profile.entityType')}>
+                            <Selector
+                                options={bookingTypes.map(item => ({
+                                    label: e(t(item.Text)),
+                                    value: `${item.Value}`,
+                                }))}
+                                defaultValue={['1', '2', '3', '4', '5']}
+                                multiple
+                                onChange={(arr, extend) => console.log(arr, extend.items)}
+                            />
+                        </Collapse.Panel>
+                        <Collapse.Panel key='dates' title={t('profile.date')}>
+                            <Selector
+                                options={filterDates.map(item => ({
+                                    label: t(item.Text),
+                                    value: `${item.Value}`,
+                                }))}
+                                defaultValue={['1']}
+                                onChange={(arr, extend) => console.log(arr, extend.items)}
+                            />
+
+                            <FormRangePicker />
+                        </Collapse.Panel>
+                    </Collapse>
+                </PaddingBlock>
             </DrawerBottom>
         </>
     )

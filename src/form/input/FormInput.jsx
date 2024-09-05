@@ -91,7 +91,7 @@ const FormInput = ({ label,
                 {...props}
                 {...field}
                 onInput={handleInputChange}
-                disabled ={disabled}
+                disabled={disabled}
                 onFocus={handeInputFocus}
                 onBlur={handleInputBlur}
                 name={name}

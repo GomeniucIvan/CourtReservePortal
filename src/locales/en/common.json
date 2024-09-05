@@ -3,9 +3,35 @@
   "urgent": "Urgent",
   "remove": "Remove",
   "details": "Details",
+  "unpaid": "Unpaid",
+  "filter": "Filter",
+  "clear": "Clear",
+  "next": "Next",
+  "reservations": "Reservations",
+  "courtWaitlist": "Court Waitlist",
+  "Lessons": "lessons",
+  "eventRegistered": "Event - Registered",
+  "eventWaitlist": "Event - Waitlist",
   "announcement": {
     "title": "Announcements",
     "notFound": "Announcement not found.",
     "dashboardRemove": "Are you sure you want to remove <b>{{title}}</b> from your list?"
+  },
+  "booking": {
+    "myBookings" : "My Bookings"
+  },
+  "profile": {
+    "myFamily" : "My Family",
+    "entityType" : "Type",
+    "date" : "Date"
+  },
+  "date": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "next7Days": "Next 7 Days",
+    "next30Days": "Next 30 Days",
+    "custom": "Custom",
+    "startDate" : "Start Date",
+    "endDate" : "End Date"
   }
 }

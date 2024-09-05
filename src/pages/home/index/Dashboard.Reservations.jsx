@@ -14,12 +14,14 @@ import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 import {stringToJson} from "../../../utils/ListUtils.jsx";
+import {useTranslation} from "react-i18next";
 
 const DashboardReservations = ({dashboardData, isFetching}) => {
     let bookings = stringToJson(dashboardData?.BookingsJson);
     let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) && anyInList(bookings);
     const {globalStyles, token, setDynamicPages} = useApp();
     const navigate = useNavigate();
+    const { t } = useTranslation('');
     
     if (!toBoolean(showMyBookings)) {
         return '';
@@ -62,13 +64,13 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
     }
     
     return (
-        <EntityCard title={e('Reservations')} link={ProfileRouteNames.RESERVATION_LIST} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={t('booking.myBookings')} link={ProfileRouteNames.RESERVATION_LIST} isFetching={isFetching} addPadding={true}>
             {anyInList(bookings) ? (
                 <SlickSlider>
                     {bookings.map((booking, index) => (
                         <div key={index}>
                             {toBoolean(booking.IsUnpaid) ? (
-                                <Badge.Ribbon text='Unpaid' color={'orange'} className={globalStyles.urgentRibbon}>
+                                <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
                                     {bookingTemplate(booking, true)}
                                 </Badge.Ribbon>
                             ) : (
