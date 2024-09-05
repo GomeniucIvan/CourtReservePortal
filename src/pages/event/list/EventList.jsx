@@ -3,20 +3,20 @@ import {useEffect, useState} from "react";
 import mockData from "../../../mocks/event-data.json";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {Card, Ellipsis, List} from 'antd-mobile'
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty} from "../../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
-import {Button, Segmented, Space, Input, Flex, Typography, Progress} from "antd";
+import {Button, Segmented, Space, Flex, Typography, Progress} from "antd";
 import {BarsOutlined, AppstoreOutlined, FilterOutlined} from "@ant-design/icons";
-import {e} from "../../../utils/OrganizationUtils.jsx";
 import {cx} from "antd-style";
 import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import SVG from "../../../components/svg/SVG.jsx";
 import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
+import HeaderSearch from "../../../components/header/HeaderSearch.jsx";
+import * as React from "react";
 
-const {Search} = Input;
 const {Title, Text} = Typography;
 
 function EventList() {
@@ -30,13 +30,14 @@ function EventList() {
         shouldFetch,
         resetFetch
     } = useApp();
+    
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loadedEvents, setLoadedEvents] = useState([]);
     const [hasMore, setHasMore] = useState(true);
-    const [isSearchOpened, setIsSearchOpened] = useState(false);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('event-list-format', 'list'), 'list'));
     const [isFilterOpened, setIsFilterOpened] = useState(false);
+    const [searchText, setSearchText] = useState('');
 
     const loadData = (refresh) => {
         if (isMockData) {
@@ -60,17 +61,7 @@ function EventList() {
         setIsFooterVisible(true);
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
-                {/*//onSearch={onSearch}*/}
-                <div onClick={() => {
-                    if (!toBoolean(isSearchOpened)) {
-                        setIsSearchOpened(true);
-                    }
-                }}>
-                    <Search
-                        rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened)}
-                        placeholder={`Search for ${e('Event(s)')}`}
-                        style={{width: 0}}/>
-                </div>
+                <HeaderSearch setText={setSearchText}/>
 
                 <Segmented
                     defaultValue={!isListDisplay ? 'card' : 'list'}

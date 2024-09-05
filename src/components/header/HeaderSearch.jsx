@@ -4,6 +4,7 @@ import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Input} from "antd";
 import {cx} from "antd-style";
 import {useApp} from "../../context/AppProvider.jsx";
+import {useTranslation} from "react-i18next";
 
 const {Search} = Input;
 
@@ -14,7 +15,8 @@ const HeaderSearch = ({placeholder = 'typeToFilter', setText, isLoading}) => {
     const [inputWidth, setInputWidth] = useState(0);
     const [enteredValue, setEnteredValue] = useState('');
     const inputRef = useRef();
-
+    const {t} = useTranslation('');
+    
     const debounceTimeout = useRef(null);
 
     useEffect(() => {
@@ -66,7 +68,7 @@ const HeaderSearch = ({placeholder = 'typeToFilter', setText, isLoading}) => {
              }}>
             <Search ref={inputRef}
                     rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened)}
-                    placeholder={placeholder}
+                    placeholder={t(placeholder)}
                     onInput={onSearch}
                     onBlur={onSearchBlur}
                     style={{width: 0, '--input-width': `${inputWidth}px`}}/>
