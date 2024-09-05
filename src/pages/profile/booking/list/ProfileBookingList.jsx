@@ -2,7 +2,7 @@
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
+import {anyInList, containsString, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
 import {cx} from "antd-style";
 import {e} from "../../../../utils/OrganizationUtils.jsx";
 import {useApp} from "../../../../context/AppProvider.jsx";
@@ -19,20 +19,18 @@ import InfiniteScroll from "../../../../components/infinitescroll/InfiniteScroll
 import appService, {apiRoutes} from "../../../../api/app.jsx";
 import {useAuth} from "../../../../context/AuthProvider.jsx";
 import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
-import { Collapse } from 'antd-mobile'
+import {Collapse} from 'antd-mobile'
 import {useTranslation} from "react-i18next";
 import * as React from "react";
 import FormRangePicker from "../../../../form/formrangepicker/FormRangePicker.jsx";
 import {bookingTypes, filterDates} from "../../../../utils/ListUtils.jsx";
+import HeaderSearch from "../../../../components/header/HeaderSearch.jsx";
 
-
-const {Search} = Input;
 const {Title, Text} = Typography;
 
 function ProfileBookingList() {
     const navigate = useNavigate();
-    
-    const [isSearchOpened, setIsSearchOpened] = useState(false);
+
     const {
         setIsFooterVisible,
         setHeaderRightIcons,
@@ -44,23 +42,23 @@ function ProfileBookingList() {
         setFooterContent
     } = useApp();
     const {orgId} = useAuth();
-    
+
     const [bookings, setBookings] = useState([]);
+    const [filteredBookings, setFilteredBookings] = useState(null);
+    const [searchText, setSearchText] = useState(null);
     const [filterData, setFilterData] = useState(null);
     const [isFilterOpened, setIsFilterOpened] = useState(null);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('booking-list-format', 'list'), 'list'));
     const [hasMore, setHasMore] = useState(false);
     const [selectedType, setSelectedType] = useState('Upcoming');
     const [isFetching, setIsFetching] = useState(true);
-    const { t } = useTranslation('');
-    
+    const {t} = useTranslation('');
+
     const loadBookings = (incFilterData, type, skip) => {
-        if (isNullOrEmpty(incFilterData)){
+        if (isNullOrEmpty(incFilterData)) {
             incFilterData = filterData;
         }
-        
-        console.log(incFilterData)
-        
+
         const filterModel = {
             OrganizationId: orgId,
             OrgMemberIdsString: incFilterData.OrgMemberIds.join(','),
@@ -69,19 +67,20 @@ function ProfileBookingList() {
             SkipRows: skip || incFilterData.SkipRows,
             CustomDate_Start: incFilterData.CustomDate_Start,
             CustomDate_End: incFilterData.CustomDate_End,
-            IsCancelledView : equalString((type || selectedType), 'Cancelled')
+            IsCancelledView: equalString((type || selectedType), 'Cancelled')
         };
 
         const postData = {
             ...filterModel,
         };
-        
+
         appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData).then(r => {
-            if (toBoolean(r?.IsValid)){
+            if (toBoolean(r?.IsValid)) {
                 const responseData = r.Data;
-                
+
                 setHasMore(responseData.TotalRecords > responseData.SkipRows);
                 setBookings(responseData.List);
+                setFilteredBookings(responseData.List);
                 setIsFetching(false);
             }
         })
@@ -91,7 +90,7 @@ function ProfileBookingList() {
         setSelectedType(type);
         loadBookings(null, type);
     }
-    
+
     const loadData = (refresh) => {
         if (isMockData) {
             const list = mockData.list.List;
@@ -101,37 +100,42 @@ function ProfileBookingList() {
             setHasMore(parseInt(totalRecords) > parseInt(skipRows));
             setBookings(list);
         } else {
-           if (!refresh){
-               appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}`).then(r => {
-                   if (toBoolean(r?.IsValid)){
-                       setFilterData(r.Data);
-                       loadBookings(r.Data);
-                   }
-               })
-           } else {
-               loadBookings();
-           }
+            if (!refresh) {
+                appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}`).then(r => {
+                    if (toBoolean(r?.IsValid)) {
+                        setFilterData(r.Data);
+                        loadBookings(r.Data);
+                    }
+                })
+            } else {
+                loadBookings();
+            }
         }
 
         resetFetch();
     }
 
     useEffect(() => {
+        if (!isNullOrEmpty(searchText)) {
+            const results = bookings.filter((booking) => {
+                return containsString(booking.ReservationTypeName, searchText) ||
+                    containsString(booking.EventCategoryName, searchText) ||
+                    containsString(booking.TypeName, searchText) ||
+                    containsString(booking.EventName, searchText)
+            });
+
+            setFilteredBookings(results);
+        } else {
+            setFilteredBookings(bookings);
+        }
+    }, [searchText]);
+
+    useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent('');
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
-                {/*//onSearch={onSearch}*/}
-                <div onClick={() => {
-                    if (!toBoolean(isSearchOpened)) {
-                        setIsSearchOpened(true);
-                    }
-                }}>
-                    <Search
-                        rootClassName={cx(globalStyles.headerSearch, isSearchOpened && globalStyles.headerSearchOpened)}
-                        placeholder={`Search for ${e('Booking')}`}
-                        style={{width: 0}}/>
-                </div>
+                <HeaderSearch setText={setSearchText}/>
 
                 <Segmented
                     defaultValue={!isListDisplay ? 'card' : 'list'}
@@ -223,29 +227,30 @@ function ProfileBookingList() {
         setFilterData((prevData) => ({
             ...prevData,
             CustomDate_Start: start,
-            CustomDate_End: end 
+            CustomDate_End: end
         }));
     }
 
     useEffect(() => {
         //prevent first loading
-        if (!isNullOrEmpty(isFilterOpened)){
-            console.log(77)
-            if (!toBoolean(isFilterOpened) && !toBoolean(isFetching)){
+        if (!isNullOrEmpty(isFilterOpened)) {
+            if (!toBoolean(isFilterOpened) && !toBoolean(isFetching)) {
                 loadBookings(null, null, 0);
             }
         }
     }, [isFilterOpened]);
-    
+
     return (
         <>
-            <Segmented options={['Upcoming', 'Cancelled']} onChange={(e) => {onTypeChange(e)}} block style={{margin : `${token.padding}px`, marginBottom: 0 }}/>
+            <Segmented options={['Upcoming', 'Cancelled']} onChange={(e) => {
+                onTypeChange(e)
+            }} block style={{margin: `${token.padding}px`, marginBottom: 0}}/>
 
             <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
                   style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
-                {anyInList(bookings) &&
+                {anyInList(filteredBookings) &&
                     <>
-                        {bookings.map((booking, index) => (
+                        {filteredBookings.map((booking, index) => (
                             <List.Item span={12}
                                        key={index}
                                        arrowIcon={false}
@@ -261,7 +266,8 @@ function ProfileBookingList() {
                                            }
                                        }}>
                                 {toBoolean(booking.IsUnpaid) ? (
-                                    <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
+                                    <Badge.Ribbon text={t('unpaid')} color={'orange'}
+                                                  className={globalStyles.urgentRibbon}>
                                         {bookingTemplate(booking, true)}
                                     </Badge.Ribbon>
                                 ) : (
@@ -333,8 +339,9 @@ function ProfileBookingList() {
                             />
 
                             {(anyInList(filterData?.filterDates) && filterData.filterDates.includes(5)) && (
-                                <div style={{ paddingTop: `${token.padding}px` }}>
-                                    <FormRangePicker onChange={onCustomDatesChange} minDate={filterData?.CurrentDateTime} />
+                                <div style={{paddingTop: `${token.padding}px`}}>
+                                    <FormRangePicker onChange={onCustomDatesChange}
+                                                     minDate={filterData?.CurrentDateTime}/>
                                 </div>
                             )}
                         </Collapse.Panel>

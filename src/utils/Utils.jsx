@@ -25,6 +25,25 @@ export const getValueOrDefault = (data, defaultValue) => {
     }
 }
 
+export const containsString  = (firstItem, secondItem) => {
+    if (isNullOrEmpty(firstItem) && isNullOrEmpty(secondItem)) {
+        return true;
+    }
+
+    if (!isNullOrEmpty(firstItem) && isNullOrEmpty(secondItem)) {
+        return false;
+    }
+
+    if (isNullOrEmpty(firstItem) && !isNullOrEmpty(secondItem)) {
+        return false;
+    }
+
+    const firstItemToString = firstItem.toString().toLowerCase();
+    const secondItemToString = secondItem.toString().toLowerCase();
+
+    return firstItemToString.includes(secondItemToString);
+}
+
 export const equalString = (firstItem, secondItem, isPath) => {
     if (isNullOrEmpty(firstItem) && isNullOrEmpty(secondItem)) {
         return true;

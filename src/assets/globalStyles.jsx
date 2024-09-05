@@ -88,6 +88,8 @@ export const useStyles = createStyles(({ css, token }) => ({
       .ant-input {
          display: initial !important;
          position: absolute;
+         margin-left: calc(var(--input-width) * -1);
+         width: var(--input-width);
       }
 
       .ant-input-group{
