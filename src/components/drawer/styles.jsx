@@ -7,10 +7,21 @@ export const useStyles = createStyles(({ css, token }) => ({
     drawerBottom: css `
         overflow: auto;
     `,
+    rangeDatePickerInput: css`
+        .ant-picker-range {
+            width: 100% !important;
+            height: ${token.Input.controlHeight}px;
+
+            &.ant-picker {
+                opacity: 1 !important;
+                position: initial !important;
+            }
+        }
+    `,
     datePickerDrawer: css`
         .ant-picker-dropdown {
             position: initial !important;
-            
+
             .ant-picker-date-panel,
             .ant-picker-year-panel,
             .ant-picker-month-panel,
@@ -18,9 +29,11 @@ export const useStyles = createStyles(({ css, token }) => ({
                 width: 100%;
             }
         }
-        
+
         .ant-picker {
-            display: none;
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
         }
         
         .ant-picker-panel-container {
@@ -28,7 +41,7 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-top: 1px solid ${token.colorBorderSecondary};
             border-radius: 0;
         }
-        
+
         .ant-picker-body {
             padding: 8px !important;
         }

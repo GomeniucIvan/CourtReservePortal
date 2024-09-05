@@ -218,6 +218,14 @@ function ProfileBookingList() {
 
     }
 
+    const onFilterMinDateChange = () => {
+        
+    }
+
+    const onFilterMaxDateChange = () => {
+
+    }
+    
     return (
         <>
             <Segmented options={['Upcoming', 'Cancelled']} onChange={(e) => {onTypeChange(e)}} block style={{margin : `${token.padding}px`, marginBottom: 0 }}/>
@@ -258,7 +266,7 @@ function ProfileBookingList() {
             <DrawerBottom showDrawer={isFilterOpened}
                           closeDrawer={() => setIsFilterOpened(false)}
                           showButton={true}
-                          maxHeightVh={80}
+                          maxHeightVh={90}
                           confirmButtonText={t('filter')}
                           label={t('filter')}
                           onConfirmButtonClick={() => {
@@ -268,21 +276,11 @@ function ProfileBookingList() {
                     <Collapse defaultActiveKey={['family', 'entity', 'dates']} className={globalStyles.collapse}>
                         <Collapse.Panel key='family' title={t('profile.myFamily')}>
                             <Selector
-                                options={[
-                                    {
-                                        label: 'Mike',
-                                        value: '1',
-                                    },
-                                    {
-                                        label: 'Olla',
-                                        value: '2',
-                                    },
-                                    {
-                                        label: 'Jason',
-                                        value: '3',
-                                    },
-                                ]}
-                                defaultValue={['1', '2', '3']}
+                                options={anyInList(filterData?.FilterFamilyMembers) ? filterData.FilterFamilyMembers.map(item => ({
+                                    label: item.FullName,
+                                    value: item.OrgMemberId,
+                                })) : []}
+                                defaultValue={filterData?.OrgMemberIds || []}
                                 multiple
                                 onChange={(arr, extend) => console.log(arr, extend.items)}
                             />
@@ -291,9 +289,9 @@ function ProfileBookingList() {
                             <Selector
                                 options={bookingTypes.map(item => ({
                                     label: e(t(item.Text)),
-                                    value: `${item.Value}`,
+                                    value: item.Value,
                                 }))}
-                                defaultValue={['1', '2', '3', '4', '5']}
+                                defaultValue={filterData?.BookingTypes || []}
                                 multiple
                                 onChange={(arr, extend) => console.log(arr, extend.items)}
                             />
@@ -308,7 +306,9 @@ function ProfileBookingList() {
                                 onChange={(arr, extend) => console.log(arr, extend.items)}
                             />
 
-                            <FormRangePicker />
+                            <div style={{paddingTop: `${token.padding}px`}}>
+                                <FormRangePicker onMinDateChange={onFilterMinDateChange} onMaxDateChange={onFilterMaxDateChange} />
+                            </div>
                         </Collapse.Panel>
                     </Collapse>
                 </PaddingBlock>

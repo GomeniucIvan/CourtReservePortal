@@ -7,6 +7,7 @@
   "filter": "Filter",
   "clear": "Clear",
   "next": "Next",
+  "close": "Select",
   "reservations": "Reservations",
   "courtWaitlist": "Court Waitlist",
   "Lessons": "lessons",
@@ -32,6 +33,7 @@
     "next30Days": "Next 30 Days",
     "custom": "Custom",
     "startDate" : "Start Date",
-    "endDate" : "End Date"
+    "endDate" : "End Date",
+    "customDates": "Custom Dates"
   }
 }
