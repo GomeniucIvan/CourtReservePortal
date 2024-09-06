@@ -1,12 +1,28 @@
-import {isNullOrEmpty} from "./Utils.jsx";
+import {isNullOrEmpty, toBoolean} from "./Utils.jsx";
+import {fromAuthLocalStorage} from "../storage/AppStorage.jsx";
 
 const bookingTypesFunc = () => {
     const types = [];
+    const memberData = fromAuthLocalStorage('memberData', {});
+
     types.push({Text: 'reservations', Value: 1})
-    types.push({Text: 'courtWaitlist', Value: 2})
-    types.push({Text: 'lessons', Value: 3})
-    types.push({Text: 'eventRegistered', Value: 4})
-    types.push({Text: 'eventWaitlist', Value: 5})
+
+    if (toBoolean(memberData?.isUsingCourtWaitlisting)){
+        types.push({Text: 'courtWaitlist', Value: 2})
+    }
+    
+    if (toBoolean(memberData?.hasActiveInstructors)){
+        types.push({Text: 'lessons', Value: 3});
+    }
+
+    if (!toBoolean(memberData?.myAccountHideMyEvents)){
+        types.push({Text: 'eventRegistered', Value: 4});
+    }
+
+    if (!toBoolean(memberData?.myAccountHideWaitingList)){
+        types.push({Text: 'eventWaitlist', Value: 5});
+    }
+
     return types;
 }
 
@@ -22,10 +38,6 @@ const filterDatesFunc = () => {
 
 export const bookingTypes = bookingTypesFunc();
 export const filterDates = filterDatesFunc();
-
-
-
-
 
 
 const isValidJson = (jsonString) => {

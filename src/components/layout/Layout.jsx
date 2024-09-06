@@ -224,20 +224,31 @@ function Layout() {
                             setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
                             
                             setAuthData({
+                                orgId: memberResponseData.OrganizationId,
                                 timezone: memberResponseData.TimeZone,
-                                uiCulture: memberResponseData.UiCulture
+                                uiCulture: memberResponseData.UiCulture,
+                                primaryColor: memberResponseData.DashboardButtonBgColor,
+                                memberId: memberResponseData.MemberId,
+                                hasActiveInstructors: memberResponseData.HasActiveInstructors,
+                                isUsingCourtWaitlisting: memberResponseData.IsUsingCourtWaitlisting,
+                                myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
+                                myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
                             });
 
                             if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
                                 setPrimaryColor(memberResponseData.DashboardButtonBgColor);
                             }
-
+                            //todo change to use effect
                             toAuthLocalStorage('memberData', {
                                 orgId: memberResponseData.OrganizationId,
                                 timezone: memberResponseData.TimeZone,
                                 uiCulture: memberResponseData.UiCulture,
                                 primaryColor: memberResponseData.DashboardButtonBgColor,
                                 memberId: memberResponseData.MemberId,
+                                hasActiveInstructors: memberResponseData.HasActiveInstructors,
+                                isUsingCourtWaitlisting: memberResponseData.IsUsingCourtWaitlisting,
+                                myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
+                                myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
                             });
                             
                             setIsFetching(false);
