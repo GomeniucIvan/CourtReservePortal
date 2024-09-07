@@ -43,7 +43,7 @@ const appService = {
     get: async (url, params = {}, config = {}) => {
         try {
             const response = await axiosInstance.get(url, { params, ...config });
-            return response.data;
+            return fixResponseData(response.data);
         } catch (error) {
             console.log('APP41 Error: ');
             console.log(error);
@@ -60,8 +60,7 @@ const appService = {
     post: async (url, data = {}, config = {}) => {
         try {
             let response = await axiosInstance.post(url, data, { ...config });
-            let responseData = response.data;
-            return fixResponseData(responseData);
+            return fixResponseData(response.data);
         } catch (error) {
             console.log('APP43 Error: ');
             console.log(error);
@@ -89,8 +88,8 @@ const appService = {
                 ...config,
                 headers 
             });
-            
-            return response.data;
+
+            return fixResponseData(response.data);
         } catch (error) {
             console.log('APP41 Error: ');
             console.log(error);
@@ -118,7 +117,7 @@ const appService = {
                 headers
             });
 
-            return response.data;
+            return fixResponseData(response.data);
         } catch (error) {
             console.log('APP43 Error: ');
             console.log(error);
