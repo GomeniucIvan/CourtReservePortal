@@ -242,7 +242,11 @@ function ProfileBookingList() {
 
     return (
         <>
-            <Segmented options={['Upcoming', 'Cancelled']} onChange={(e) => {
+            <Segmented options={[
+                           { value: 'Upcoming', label: t('booking.upcoming') },
+                           { value: 'Cancelled', label: t('booking.cancelled') },
+                       ]}
+                       onChange={(e) => {
                 onTypeChange(e)
             }} block style={{margin: `${token.padding}px`, marginBottom: 0}}/>
 

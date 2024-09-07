@@ -11,6 +11,7 @@
   "reservations": "Reservations",
   "courtWaitlist": "Court Waitlist",
   "lessons": "Lessons",
+  "lesson": "Lesson",
   "eventRegistered": "Event - Registered",
   "eventWaitlist": "Event - Waitlist",
   "typeToFilter": "Type to filter",
@@ -20,7 +21,24 @@
     "dashboardRemove": "Are you sure you want to remove <b>{{title}}</b> from your list?"
   },
   "booking": {
-    "myBookings" : "My Bookings"
+    "myBookings" : "My Bookings",
+    "upcoming" : "Upcoming",
+    "cancelled" : "Cancelled",
+    "registeredOn" : "Registered On",
+    "priceToPay" : "Price to Pay",
+    "paymentStatus" : "Payment Status"
+  },
+  "reservation" : {
+    "title": "Reservation",
+    "notFound" : "Reservation not found.",
+    "players": "Players ({{count}})",
+    "cancelLesson": "Cancel Lesson",
+    "cancelReservation": "Cancel Reservation",
+    "cancelReservationDescription": "You are about to cancel your {{entity}}. Please note that this action cannot be undone. Once the {{entity}} is canceled, it cannot be restored.",
+    "cancelReservationPenalty": "This {{entity}} is under penalty window.</br> You have <b>{{memberXCancellations}}</b> penalty cancellations.",
+    "cancelReservationAbilityToReserve": "You will not be allowed to reserve courts if you will have more than<b>{{xPenaltyCancellationsToRemoveAbilityToReserve}}</b> penalty cancellations",
+    "cancellationReason": "Cancellation reason",
+    "cancellationReasonRequired": "Cancellation reason is require."
   },
   "profile": {
     "myFamily" : "My Family",

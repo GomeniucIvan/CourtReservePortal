@@ -54,6 +54,9 @@ export const useStyles = createStyles(({ css, token }) => ({
         margin: 0;
         margin-right: 25px;
     `,
+   block: css`
+    display: block;
+   `,
    headerRightActions: css`
       .ant-input {
          display: none !important;
