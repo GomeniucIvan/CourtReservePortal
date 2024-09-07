@@ -327,7 +327,7 @@ function ProfileBookingList() {
                                 }}
                             />
                         </Collapse.Panel>
-                        <Collapse.Panel key='dates' title={t('profile.date')}>
+                        <Collapse.Panel key='dates' title={t('dates')}>
                             <Selector
                                 options={filterDates.map(item => ({
                                     label: t(item.Text),

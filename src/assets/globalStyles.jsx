@@ -146,6 +146,22 @@ export const useStyles = createStyles(({ css, token }) => ({
        margin-bottom: ${token.Form.itemMarginBottom}px;
        width: 100%;
    `,
+   skeletonInput: css`
+       height: ${token.Input.controlHeight}px;
+       width: 100% !important; 
+      .ant-skeleton-input{
+         height: 100% !important;
+         min-width: 100% !important;
+         width: 100% !important;
+      }
+   `,
+   skeletonSwitch: css`
+      width:60px !important;
+   `,
+   skeletonLabel: css`
+       height: ${26}px;
+       margin: 0 0 ${token.Custom.buttonPadding}px;
+   `,
    noTopPadding: css`
         margin-top: 0 !important;
     `,

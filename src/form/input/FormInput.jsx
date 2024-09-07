@@ -1,5 +1,5 @@
 import {useRef, useState} from "react";
-import {Input, Typography} from "antd";
+import {Input, Skeleton, Typography} from "antd";
 const { Paragraph } = Typography;
 import {equalString, toBoolean} from "../../utils/Utils.jsx";
 import {useStyles} from "./styles.jsx";
@@ -22,6 +22,7 @@ const FormInput = ({ label,
                        disableAutoCapitalize,
                        isExpiryDate,
                        className,
+                        loading,
                        ...props }) => {
     const { token, globalStyles } = useApp();
     
@@ -44,7 +45,8 @@ const FormInput = ({ label,
     }
 
     let hasError = meta && meta.error && meta.touched;
-    const addIconToSeePassowd = equalString(name, 'password');
+    
+    addIconToSeePassword = addIconToSeePassword || equalString(name, 'password');
     const handleInputChange = (event) => {
         let { value } = event.target;
 
@@ -74,6 +76,15 @@ const FormInput = ({ label,
         form.handleBlur(e);
     }
 
+    if (toBoolean(loading)){
+        return (
+           <div className={cx(globalStyles.formBlock) }>
+               <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel) }/>
+               <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput) }/>
+           </div>
+        )
+    }
+    
     return (
         <div className={cx(globalStyles.formBlock, className, styles.input) }>
             <label htmlFor={name}
@@ -86,7 +97,7 @@ const FormInput = ({ label,
                 {label}
                 {isRequired && <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
-
+            
             <Input
                 {...props}
                 {...field}

@@ -5,10 +5,12 @@ import {useEffect, useState} from "react";
 import {selectedTabStorage, setTabStorage} from "../../../storage/AppStorage.jsx";
 import MyProfileNotification from "./MyProfileNotification.jsx";
 import MyProfileDetails from "./MyProfileDetails.jsx";
+import {useTranslation} from "react-i18next";
 
 function MyProfile() {
     const {globalStyles} = useApp();
     const [selectedTab, setSelectedTab] = useState(selectedTabStorage('myprofile', 'pers'));
+    const {t} = useTranslation('');
     
     return (
         <Tabs
@@ -18,17 +20,17 @@ function MyProfile() {
             items={[
                 {
                     key: 'pers',
-                    label: 'Information',
+                    label: t('profile.information'),
                     children: <MyProfileDetails selectedTab={selectedTab} />,
                 },
                 {
                     key: 'notifications',
-                    label: 'Notifications',
+                    label: t('profile.notifications'),
                     children: <MyProfileNotification selectedTab={selectedTab} />,
                 },
                 {
                     key: 'settings',
-                    label: 'Settings',
+                    label: t('profile.settings'),
                     children: 'Content of Tab Pane 3',
                 },
             ]}

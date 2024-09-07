@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {Select, Typography} from "antd";
+import {Select, Skeleton, Typography} from "antd";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
@@ -23,6 +23,7 @@ const FormSelect = ({
                         menu,
                         type,
                         loading,
+                        fetching,
                         isMulti,
                         ...props
                     }) => {
@@ -123,6 +124,15 @@ const FormSelect = ({
         }
     }, [])
 
+    if (toBoolean(loading)){
+        return (
+            <div className={cx(globalStyles.formBlock) }>
+                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel) }/>
+                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput) }/>
+            </div>
+        )
+    }
+    
     return (
         <>
             <div className={cx(globalStyles.formBlock, styles.selectGlobal)}>
@@ -145,7 +155,7 @@ const FormSelect = ({
                     placeholder={innerPlaceholder}
                     value={selectedOption?.[propValue]}
                     open={false}
-                    loading={toBoolean(loading)}
+                    loading={toBoolean(fetching)}
                     onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
                     onChange={(value) => {
                         const selectedOptionInList = options.find(option => equalString(option[propValue], value));

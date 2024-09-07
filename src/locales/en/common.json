@@ -15,6 +15,7 @@
   "eventRegistered": "Event - Registered",
   "eventWaitlist": "Event - Waitlist",
   "typeToFilter": "Type to filter",
+  "dates" : "Dates",
   "announcement": {
     "title": "Announcements",
     "notFound": "Announcement not found.",
@@ -44,7 +45,9 @@
   "profile": {
     "myFamily" : "My Family",
     "entityType" : "Type",
-    "date" : "Date"
+    "information": "Information",
+    "notifications": "Notifications",
+    "settings": "Settings"
   },
   "date": {
     "today": "Today",
