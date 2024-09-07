@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Notification from './Notification';
-import {isNullOrEmpty} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty} from "../../utils/Utils.jsx";
 
 const createNotificationContainer = () => {
     let container = document.getElementById('notification-container');
@@ -17,16 +17,20 @@ const createNotificationContainer = () => {
 };
 
 export const pNotify = (title, description, type = 'success', duration) => {
+    if (equalString(type, 'error')){
+        type = 'danger';
+    }
+    
     if (isNullOrEmpty(duration)){
         switch (type) {
             case 'danger':
-                duration = 15;
+                duration = 10;
                 break;
             case 'success':
-                duration = 8;
+                duration = 7;
                 break;
             case 'info':
-                duration = 8;
+                duration = 7;
                 break;
             case 'warning':
                 duration = 10;
@@ -55,9 +59,10 @@ export const pNotify = (title, description, type = 'success', duration) => {
             type={type}
             title={title}
             description={description}
+            duration={duration}
             onClose={removeNotification}
         />
     );
 
-    setTimeout(removeNotification, duration * 1000);
+    setTimeout(removeNotification, (duration * 1000) + 1000); //animation hide 1000
 };

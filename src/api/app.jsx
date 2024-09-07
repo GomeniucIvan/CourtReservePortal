@@ -1,6 +1,7 @@
 ﻿import axios from 'axios';
 import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
 import {getRequestData} from "./api.jsx";
+import {fixResponseData} from "../utils/apiUtils.jsx";
 
 export const apiRoutes = {
     API2: '',
@@ -55,11 +56,12 @@ const appService = {
             }
         }
     },
-
+    
     post: async (url, data = {}, config = {}) => {
         try {
-            const response = await axiosInstance.post(url, data, { ...config });
-            return response.data;
+            let response = await axiosInstance.post(url, data, { ...config });
+            let responseData = response.data;
+            return fixResponseData(responseData);
         } catch (error) {
             console.log('APP43 Error: ');
             console.log(error);

@@ -22,7 +22,6 @@ import {pNotify} from "../../../components/notification/PNotify.jsx";
 const {Title, Text} = Typography;
 
 function ProfileBookingDetails() {
-    const navigate = useNavigate();
     let {id} = useParams();
     const [booking, setBooking] = useState(null);
     const {t} = useTranslation('');
@@ -35,9 +34,9 @@ function ProfileBookingDetails() {
         resetFetch,
         isMockData,
         globalStyles,
-        setDynamicPages,
         token,
-        setIsLoading
+        setIsLoading,
+        isLoading,
     } = useApp();
     const {orgId} = useAuth();
 
@@ -64,7 +63,7 @@ function ProfileBookingDetails() {
 
         loadData();
     }, []);
-
+    
     const tabContent = (key) => {
         if (equalString(key, 'players')) {
             return (
@@ -110,16 +109,36 @@ function ProfileBookingDetails() {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            pNotify('Reservation', 'Reservation cancelled');
             
             if (isMockData) {
-
+                setIsLoading(false);
             } else {
-
+                const postData = {
+                    SelectedReservation: {
+                        Id: booking?.Id,
+                        CancellationReason: values.reason
+                    }
+                }
+                appService.post(`/app/Online/MyProfile/CancelReservation?id=${orgId}`, postData).then(r => {
+                    if (toBoolean(t?.IsValid)){
+                        pNotify(null, t('reservation.successfullyCancelledMessage', {entity: toBoolean(booking.IsLesson) ? t('lesson') : t('reservation.title')}))
+                        loadData();
+                    } else{
+                        pNotify(null, r.Message, 'error');
+                    }
+                    
+                    setIsLoading(false);
+                })
             }
         },
     });
 
+    useEffect(() => {
+        if (!showCancelReservation){
+            cancelFormik.resetForm();
+        }
+    }, [showCancelReservation]);
+    
     return (
         <>
             <PaddingBlock topBottom={true}>
@@ -168,9 +187,10 @@ function ProfileBookingDetails() {
                         </Button>
                     </InlineBlock>
                 </PaddingBlock>
-                <div>
-                    <Button onClick={() => navigate(ProfileRouteNames.RESERVATION_CREATE)}>Create res</Button>
-                </div>
+                
+                {/*<div>*/}
+                {/*    <Button onClick={() => navigate(ProfileRouteNames.RESERVATION_CREATE)}>Create res</Button>*/}
+                {/*</div>*/}
             </PaddingBlock>
 
             <Tabs
@@ -204,6 +224,7 @@ function ProfileBookingDetails() {
                           closeDrawer={() => setShowCancelReservation(false)}
                           showButton={true}
                           dangerButton={true}
+                          confirmButtonLoading={isLoading}
                           confirmButtonText={toBoolean(booking?.IsLesson) ? t('reservation.cancelLesson') : t('reservation.cancelReservation')}
                           label={toBoolean(booking?.IsLesson) ? t('reservation.cancelLesson') : t('reservation.cancelReservation')}
                           onConfirmButtonClick={() => {

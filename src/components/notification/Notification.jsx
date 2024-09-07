@@ -2,11 +2,11 @@
 import {Flex, theme, Typography} from 'antd';
 import {CheckCircleFilled, CloseCircleFilled, InfoCircleFilled, WarningFilled} from '@ant-design/icons';
 import {useStyles} from "./styles.jsx";
-import {equalString} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty} from "../../utils/Utils.jsx";
 const { useToken } = theme;
 const {Title, Text} = Typography;
 
-const Notification = ({type, title, description, onClose}) => {
+const Notification = ({type, title, description, onClose, duration}) => {
     const alertRef = useRef(null);
     const [swipeDistance, setSwipeDistance] = useState({x: 0, y: 0});
     const [startX, setStartX] = useState(0);
@@ -35,6 +35,16 @@ const Notification = ({type, title, description, onClose}) => {
         });
     };
 
+    useEffect(() => {
+        const hideNotificationByDuration = () => {
+            const direction = 'left';
+            setTransition(`transform 0.3s ease-in-out`);
+            handleRemove(direction);
+        }
+        
+        setTimeout(hideNotificationByDuration, duration * 1000)
+    }, [])
+    
     const handleTouchEnd = () => {
         const swipeThresholdX = 30; 
 
@@ -67,7 +77,7 @@ const Notification = ({type, title, description, onClose}) => {
     let colorToFill = token.colorSuccess;
     
     if (equalString(type, 'danger')){
-        colorToFill = token.colorDanger;
+        colorToFill = token.colorError;
     } else if(equalString(type, 'info')){
         colorToFill = token.colorInfo;
     } else if(equalString(type, 'warning')){
@@ -81,6 +91,10 @@ const Notification = ({type, title, description, onClose}) => {
         warning: <WarningFilled style={{color: colorToFill, fontSize: '22px'}}/>,
     };
 
+    if (isNullOrEmpty(title) && isNullOrEmpty(description)){
+        return (<></>);
+    }
+    
     return (
         <div
             style={{
@@ -97,8 +111,17 @@ const Notification = ({type, title, description, onClose}) => {
                 <div className={styles.leftBorder} style={{backgroundColor: colorToFill}}></div>
                 <Flex justify={'start'} align={'start'} style={{paddingTop: '5px'}} className={'icon'}>{iconTypes[type]}</Flex>
                 <div style={{flex: 1}}>
-                    <Title level={4} style={{margin: 0}}>{title}</Title>
-                    <Text>{description}</Text>
+                    {!isNullOrEmpty(title) &&
+                        <>
+                            <Title level={4} style={{margin: 0}}>{title}</Title>
+                            <Text>{description}</Text>
+                        </>
+                    }
+                    {isNullOrEmpty(title) &&
+                        <>
+                            <Title level={5} style={{margin: 0}}>{description}</Title>
+                        </>
+                    }
                 </div>
             </Flex>
         </div>

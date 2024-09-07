@@ -24,7 +24,8 @@ const DrawerBottom = ({
                           dangerButton,
                           maxHeightVh = 60,
                           isSearchLoading,
-                          customFooter
+                          customFooter,
+                          confirmButtonLoading
                       }) => {
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
@@ -89,7 +90,11 @@ const DrawerBottom = ({
                 {showButton &&
                     <div className={styles.drawerButton}>
                         {isNullOrEmpty(customFooter) ?
-                            (<Button type='primary' block danger={toBoolean(dangerButton)} onClick={() => {
+                            (<Button type='primary'
+                                     loading={toBoolean(confirmButtonLoading)}
+                                     block 
+                                     danger={toBoolean(dangerButton)} 
+                                     onClick={() => {
                                 onConfirmButtonClick();
                             }}>
                                 {confirmButtonText}

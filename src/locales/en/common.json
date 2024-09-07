@@ -38,7 +38,8 @@
     "cancelReservationPenalty": "This {{entity}} is under penalty window.</br> You have <b>{{memberXCancellations}}</b> penalty cancellations.",
     "cancelReservationAbilityToReserve": "You will not be allowed to reserve courts if you will have more than<b>{{xPenaltyCancellationsToRemoveAbilityToReserve}}</b> penalty cancellations",
     "cancellationReason": "Cancellation reason",
-    "cancellationReasonRequired": "Cancellation reason is require."
+    "cancellationReasonRequired": "Cancellation reason is require.",
+    "successfullyCancelledMessage": "Your {{entity}} successfully cancelled"
   },
   "profile": {
     "myFamily" : "My Family",
