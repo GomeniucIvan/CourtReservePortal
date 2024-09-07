@@ -1,6 +1,7 @@
 ﻿import React from 'react';
-import { createRoot } from 'react-dom/client'; // Correct import
+import { createRoot } from 'react-dom/client';
 import Notification from './Notification';
+import {isNullOrEmpty} from "../../utils/Utils.jsx";
 
 const createNotificationContainer = () => {
     let container = document.getElementById('notification-container');
@@ -15,17 +16,34 @@ const createNotificationContainer = () => {
     return container;
 };
 
-export const showNotification = (type, title, description, duration) => {
+export const pNotify = (title, description, type = 'success', duration) => {
+    if (isNullOrEmpty(duration)){
+        switch (type) {
+            case 'danger':
+                duration = 15;
+                break;
+            case 'success':
+                duration = 8;
+                break;
+            case 'info':
+                duration = 8;
+                break;
+            case 'warning':
+                duration = 10;
+                break;
+            default:
+                break;
+        } 
+    }
+
     const container = createNotificationContainer();
 
-    duration = 80;
-    
     const notificationWrapper = document.createElement('div');
     container.appendChild(notificationWrapper);
 
     const removeNotification = () => {
         root.unmount();
-        
+
         setTimeout(function(){
             container.remove();
         }, 100);
@@ -42,32 +60,4 @@ export const showNotification = (type, title, description, duration) => {
     );
 
     setTimeout(removeNotification, duration * 1000);
-};
-
-export const pNotify = (type) => {
-    let duration = 3;
-    let title = 'Notification';
-    let description = 'This is a notification.';
-
-    switch (type) {
-        case 'danger':
-            duration = 5;
-            title = 'Error';
-            description = 'There was an error processing your request.';
-            break;
-        case 'success':
-            duration = 3;
-            title = 'Success';
-            description = 'Your action was successful!';
-            break;
-        case 'info':
-            duration = 4;
-            title = 'Information';
-            description = 'Here is some important information.';
-            break;
-        default:
-            break;
-    }
-
-    showNotification(type, title, description, duration);
 };

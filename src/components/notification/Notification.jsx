@@ -1,6 +1,6 @@
 ﻿import React, {useEffect, useRef, useState} from 'react';
 import {Flex, theme, Typography} from 'antd';
-import {CheckCircleFilled, CloseCircleOutlined, InfoCircleOutlined, WarningOutlined} from '@ant-design/icons';
+import {CheckCircleFilled, CloseCircleFilled, InfoCircleFilled, WarningFilled} from '@ant-design/icons';
 import {useStyles} from "./styles.jsx";
 import {equalString} from "../../utils/Utils.jsx";
 const { useToken } = theme;
@@ -76,9 +76,9 @@ const Notification = ({type, title, description, onClose}) => {
     
     const iconTypes = {
         success: <CheckCircleFilled style={{color: colorToFill, fontSize: '22px'}}/>,
-        danger: <CloseCircleOutlined style={{color: colorToFill, fontSize: '22px'}}/>,
-        info: <InfoCircleOutlined style={{color: colorToFill, fontSize: '22px'}}/>,
-        warning: <WarningOutlined style={{color: colorToFill, fontSize: '22px'}}/>,
+        danger: <CloseCircleFilled style={{color: colorToFill, fontSize: '22px'}}/>,
+        info: <InfoCircleFilled style={{color: colorToFill, fontSize: '22px'}}/>,
+        warning: <WarningFilled style={{color: colorToFill, fontSize: '22px'}}/>,
     };
 
     return (

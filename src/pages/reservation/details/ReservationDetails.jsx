@@ -110,7 +110,7 @@ function ProfileBookingDetails() {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            pNotify('success');
+            pNotify('Reservation', 'Reservation cancelled');
             
             if (isMockData) {
 
