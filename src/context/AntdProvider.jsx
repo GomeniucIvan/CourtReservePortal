@@ -22,6 +22,7 @@ export const AntdProvider = ({ children }) => {
     }, [primaryColor]);
 
     useEffect(() => {
+        toLocalStorage('darkmode', isDarkMode);
         setIsDarkMode(isDarkMode);
     }, [isDarkMode]);
     

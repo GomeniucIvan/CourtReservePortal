@@ -147,6 +147,9 @@ function Layout() {
         const style = document.createElement('style');
         style.innerHTML = `
             :root {
+                --ant-notification-colorbg: ${token.colorBgBase};
+                --ant-notification-colortext: ${token.colorText};
+                
                 --adm-color-primary: ${token.colorPrimary};
                 --adm-color-background: ${token.colorBgContainer};
                 --adm-color-weak: ${token.colorText};
@@ -169,7 +172,9 @@ function Layout() {
             .adm-pull-to-refresh-head {
                 background-color: ${token.colorBgContainer};
             }
-            
+            .adm-mask {
+                background: ${token?.Custom?.workingTheme == 'dark' ? 'rgb(77 77 77 / 67%) !important' : 'initial'}
+            }
             .ant-app {
                 background-color: ${token.colorBgContainer};
             }

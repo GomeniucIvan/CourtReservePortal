@@ -1,8 +1,9 @@
 ﻿import React, {useEffect, useRef, useState} from 'react';
-import {Typography} from 'antd';
-import {CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined, WarningOutlined} from '@ant-design/icons';
+import {Flex, theme, Typography} from 'antd';
+import {CheckCircleFilled, CloseCircleOutlined, InfoCircleOutlined, WarningOutlined} from '@ant-design/icons';
 import {useStyles} from "./styles.jsx";
-
+import {equalString} from "../../utils/Utils.jsx";
+const { useToken } = theme;
 const {Title, Text} = Typography;
 
 const Notification = ({type, title, description, onClose}) => {
@@ -12,6 +13,9 @@ const Notification = ({type, title, description, onClose}) => {
     const{styles} = useStyles();
     const [removing, setRemoving] = useState(false);
     const [transition, setTransition] = useState('');
+    
+    //not use from useApp it is not accessible
+    const { token } = useToken();
     
     const handleTouchStart = (e) => {
         setTransition(`none`);
@@ -60,17 +64,26 @@ const Notification = ({type, title, description, onClose}) => {
         }
     }, [removing]);
     
+    let colorToFill = token.colorSuccess;
+    
+    if (equalString(type, 'danger')){
+        colorToFill = token.colorDanger;
+    } else if(equalString(type, 'info')){
+        colorToFill = token.colorInfo;
+    } else if(equalString(type, 'warning')){
+        colorToFill = token.colorWarning;
+    }
+    
     const iconTypes = {
-        success: <CheckCircleOutlined style={{color: '#4caf50', fontSize: '20px'}}/>,
-        danger: <CloseCircleOutlined style={{color: '#f44336', fontSize: '20px'}}/>,
-        info: <InfoCircleOutlined style={{color: '#2196f3', fontSize: '20px'}}/>,
-        warning: <WarningOutlined style={{color: '#ff9800', fontSize: '20px'}}/>,
+        success: <CheckCircleFilled style={{color: colorToFill, fontSize: '22px'}}/>,
+        danger: <CloseCircleOutlined style={{color: colorToFill, fontSize: '22px'}}/>,
+        info: <InfoCircleOutlined style={{color: colorToFill, fontSize: '22px'}}/>,
+        warning: <WarningOutlined style={{color: colorToFill, fontSize: '22px'}}/>,
     };
 
     return (
         <div
             style={{
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                 transform: `translateX(${swipeDistance.x}px)`,
                 transition: transition,
             }}
@@ -80,14 +93,14 @@ const Notification = ({type, title, description, onClose}) => {
             onTouchMove={(e) => handleTouchMove(e)}
             onTouchEnd={(e) => handleTouchEnd(e)}
         >
-            <div style={{marginRight: '10px'}}>{iconTypes[type]}</div>
-            <div style={{flex: 1}}>
-                <Title level={5} style={{margin: 0}}>{title}</Title>
-                <Text>{description}</Text>
-            </div>
-            <button onClick={onClose}
-                    style={{marginLeft: 'auto', cursor: 'pointer', border: 'none', background: 'none'}}>×
-            </button>
+            <Flex gap={token.padding /2} style={{padding: `${token.padding}px`}}>
+                <div className={styles.leftBorder} style={{backgroundColor: colorToFill}}></div>
+                <Flex justify={'start'} align={'start'} style={{paddingTop: '5px'}} className={'icon'}>{iconTypes[type]}</Flex>
+                <div style={{flex: 1}}>
+                    <Title level={4} style={{margin: 0}}>{title}</Title>
+                    <Text>{description}</Text>
+                </div>
+            </Flex>
         </div>
     );
 };

@@ -29,8 +29,7 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
     const {styles} = useStyles();
 
     const headerRef = useRef();
-
-
+    
     const fixHeaderItems = () => {
         if (headerRef.current) {
             setBodyHeight(availableHeight - headerRef.current.offsetHeight - tabsHeight);
