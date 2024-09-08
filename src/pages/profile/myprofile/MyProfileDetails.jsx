@@ -19,6 +19,7 @@ import {dateToString, isNonUsCulture} from "../../../utils/DateUtils.jsx";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
 import FormRatingCategories from "../../../form/formratingcategories/FormRatingCategories.jsx";
 import {getRatingCategoriesList, getUserDefinedFieldsList} from "../../../utils/ListUtils.jsx";
+import {pNotify} from "../../../components/notification/PNotify.jsx";
 
 function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();
@@ -200,7 +201,8 @@ function MyProfileDetails({selectedTab}) {
             const udfs = getUserDefinedFieldsList(values);  
             
             if (isMockData) {
-
+                pNotify(null, t('profile.successfullyUpdate'))
+                setIsLoading(false);
             } else {
                 //todo
                 alert('todo verification')

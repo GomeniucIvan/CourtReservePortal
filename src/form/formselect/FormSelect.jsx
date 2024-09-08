@@ -62,7 +62,7 @@ const FormSelect = ({
             if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
                 field = form.getFieldProps(name);
 
-                if (field && !isNullOrEmpty(field.value)) {
+                if (field && !isNullOrEmpty(field.value)){
                     setInitialValueInitialized(true);
 
                     if (toBoolean(multi)) {
@@ -131,8 +131,10 @@ const FormSelect = ({
         if (toBoolean(multi) && form){
             const currentValue = field?.value;
 
-            if (JSON.stringify(currentValue) !== JSON.stringify(multiSelectedValues)) {
-                form.setFieldValue(name, multiSelectedValues);
+            if (initValueInitialized){
+                if (JSON.stringify(currentValue) !== JSON.stringify(multiSelectedValues)) {
+                    form.setFieldValue(name, multiSelectedValues);
+                }
             }
         }
     }, [multiSelectedValues]);
