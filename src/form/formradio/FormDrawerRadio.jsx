@@ -1,16 +1,18 @@
-import {equalString, isNullOrEmpty} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Radio, Typography} from 'antd';
 import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
 import {Ellipsis} from "antd-mobile";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useEffect, useRef} from "react";
+import {useTranslation} from "react-i18next";
 const {Title} = Typography;
 
 const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propText = "Text", propValue = "Value", name }) => {
     const {styles} = useStyles();
     const {globalStyles} = useApp();
     const radioRefs = useRef({});
+    const {t} = useTranslation('');
     
     useEffect(() => {
         if (selectedCurrentValue && radioRefs.current[selectedCurrentValue] && radioRefs.current[selectedCurrentValue].scrollIntoView) {
@@ -43,7 +45,17 @@ const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propTex
                         }}
                     >
                         <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)}>
-                            {isNullOrEmpty(option[propText]) ? (<></>) : (<Ellipsis direction='end' content={option[propText].toString()}/>)}
+                            {isNullOrEmpty(option[propText]) ? (
+                                <></>
+                            ) : (
+                                <>
+                                    {toBoolean(option?.translate) ? (
+                                        <Ellipsis direction='end' content={t(option[propText]).toString()} />
+                                    ) : (
+                                        <Ellipsis direction='end' content={option[propText].toString()} />
+                                    )}
+                                </>
+                            )}
                         </Title>
                     </Radio>
                 ))}

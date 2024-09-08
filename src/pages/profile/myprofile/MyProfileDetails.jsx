@@ -231,7 +231,7 @@ function MyProfileDetails({selectedTab}) {
                     <FormStateProvince form={formik}
                                        loading={isFetching}
                                        dropdown={true}
-                                       nameKey={`state`}
+                                       name={`state`}
                                        required={toBoolean(profileData?.Address?.IsRequired)}
                     />
 

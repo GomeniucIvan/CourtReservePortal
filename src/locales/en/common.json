@@ -78,5 +78,11 @@
     "customDates": "Custom Dates",
     "dateOfBirth": "Date of birth",
     "dateOfBirthRequired": "Date of birth is required."
+  },
+  "gender": {
+    "none": "None",
+    "male": "Male",
+    "female": "Female",
+    "preferNotToDisclose": "Prefer not to disclose"
   }
 }

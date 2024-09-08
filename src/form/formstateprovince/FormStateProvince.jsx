@@ -7,6 +7,7 @@ import {cx} from "antd-style";
 import {Skeleton} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useTranslation} from "react-i18next";
+import {canadianProvincesList, usaStateList} from "../../utils/SelectUtils.jsx";
 
 const FormStateProvince = ({
                                form,
@@ -30,15 +31,13 @@ const FormStateProvince = ({
     }
     
     if (toBoolean(dropdown)) {
-        const states = [];
-        const canadianStates = [];
-
         return (
             <FormSelect
                 form={form}
                 name={name}
+                fetching={loading}
                 label={isCanada ? t('province') : t('state')}
-                options={isCanada ? canadianStates : states}
+                options={isCanada ? canadianProvincesList : usaStateList}
                 required={required}
                 placeholder={isCanada ? t('province') : ''}
             />
@@ -49,6 +48,7 @@ const FormStateProvince = ({
         <FormInput label={isCanada ? t('province') : t('state')}
                    form={form}
                    name={name}
+                   loading={loading}
                    placeholder={isCanada ? t('province') : t('state')}
                    required={required}
         />

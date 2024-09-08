@@ -29,7 +29,7 @@ const FormSelect = ({
                         ...props
                     }) => {
 
-    if (toBoolean(isMulti) && toBoolean(isMobile)) {
+    if (toBoolean(isMulti)) {
         return (
             <HtmlMultiSelect
                 label={label}
@@ -73,10 +73,7 @@ const FormSelect = ({
     const selectRef = useRef(null);
 
     useEffect(() => {
-        
         if (!fetching){
-            console.log(options)
-            
             if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
                 field = form.getFieldProps(name);
 
@@ -178,7 +175,7 @@ const FormSelect = ({
                             key={index}
                             value={option[propValue]}
                         >
-                            {option[propText]}
+                            {toBoolean(option?.translate) ? t(option[propText]) : option[propText]}
                         </Select.Option>
                     ))}
                 </Select>
