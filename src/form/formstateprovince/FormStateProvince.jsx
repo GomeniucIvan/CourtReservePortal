@@ -6,6 +6,7 @@ import FormInput from "../input/FormInput.jsx";
 import {cx} from "antd-style";
 import {Skeleton} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
+import {useTranslation} from "react-i18next";
 
 const FormStateProvince = ({
                                form,
@@ -17,6 +18,7 @@ const FormStateProvince = ({
     
     const {globalStyles} = useApp();
     const isCanada = isCanadaCulture();
+    const {t} = useTranslation('');
     
     if (toBoolean(loading)) {
         return (
@@ -26,7 +28,7 @@ const FormStateProvince = ({
             </div>
         )
     }
-
+    
     if (toBoolean(dropdown)) {
         const states = [];
         const canadianStates = [];
@@ -35,19 +37,19 @@ const FormStateProvince = ({
             <FormSelect
                 form={form}
                 name={name}
-                label={isCanada ? 'Province' : 'State'}
+                label={isCanada ? t('province') : t('state')}
                 options={isCanada ? canadianStates : states}
                 required={required}
-                placeholder={isCanada ? 'Province' : ''}
+                placeholder={isCanada ? t('province') : ''}
             />
         )
     }
 
     return (
-        <FormInput label={isCanada ? 'Province' : 'State'}
+        <FormInput label={isCanada ? t('province') : t('state')}
                    form={form}
                    name={name}
-                   placeholder={isCanada ? 'Province' : 'State'}
+                   placeholder={isCanada ? t('province') : t('state')}
                    required={required}
         />
     );

@@ -4,11 +4,23 @@ import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
 import {Ellipsis} from "antd-mobile";
 import {useApp} from "../../context/AppProvider.jsx";
+import {useEffect, useRef} from "react";
 const {Title} = Typography;
 
 const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propText = "Text", propValue = "Value", name }) => {
     const {styles} = useStyles();
     const {globalStyles} = useApp();
+    const radioRefs = useRef({});
+    
+    useEffect(() => {
+        if (selectedCurrentValue && radioRefs.current[selectedCurrentValue] && radioRefs.current[selectedCurrentValue].scrollIntoView) {
+            radioRefs.current[selectedCurrentValue].scrollIntoView({
+                behavior: 'auto',
+                block: 'center',
+            });
+        }
+    }, [selectedCurrentValue]);
+    
     return (
         <>
             <Radio.Group
@@ -20,7 +32,16 @@ const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propTex
                 value={selectedCurrentValue}
             >
                 {options.map((option) => (
-                    <Radio key={`${name}_${option[propValue]}`} value={option[propValue]} className={styles.radioItem}>
+                    <Radio
+                        key={`${name}_${option[propValue]}`}
+                        value={option[propValue]}
+                        className={styles.radioItem}
+                        ref={el => {
+                            if (el) {
+                                radioRefs.current[option[propValue]] = el.input;
+                            }
+                        }}
+                    >
                         <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)}>
                             {isNullOrEmpty(option[propText]) ? (<></>) : (<Ellipsis direction='end' content={option[propText].toString()}/>)}
                         </Title>

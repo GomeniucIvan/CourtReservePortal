@@ -16,6 +16,11 @@
   "eventWaitlist": "Event - Waitlist",
   "typeToFilter": "Type to filter",
   "dates" : "Dates",
+  "state": "State",
+  "stateRequired": "State is required.",
+  "province": "Province",
+  "provinceRequired": "Province is required.",
+  
   "announcement": {
     "title": "Announcements",
     "notFound": "Announcement not found.",
@@ -47,7 +52,19 @@
     "entityType" : "Type",
     "information": "Information",
     "notifications": "Notifications",
-    "settings": "Settings"
+    "settings": "Settings",
+    "gender": "Gender",
+    "genderRequired": "Gender is required.",
+    "phoneNumber": "Phone number",
+    "phoneNumberRequired": "Phone number is required.",
+    "membershipNumber": "Membership number",
+    "membershipNumberRequired": "Membership number is required.",
+    "address": "Address",
+    "addressRequired": "Address is required.",
+    "city": "City",
+    "cityRequired": "City is required.",
+    "zipCode": "Zip code",
+    "zipCodeRequired": "Zip code is required."
   },
   "date": {
     "today": "Today",
@@ -57,6 +74,8 @@
     "custom": "Custom",
     "startDate" : "Start Date",
     "endDate" : "End Date",
-    "customDates": "Custom Dates"
+    "customDates": "Custom Dates",
+    "dateOfBirth": "Date of birth",
+    "dateOfBirthRequired": "Date of birth is required."
   }
 }

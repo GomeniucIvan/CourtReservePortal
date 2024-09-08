@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useImperativeHandle, useState} from 'react';
 import {useStyles} from "./styles.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {cultureStartingWithDay} from "../../utils/DateUtils.jsx";
 import {cx} from "antd-style";
 import InlineBlock from "../../components/inlineblock/InlineBlock.jsx";
@@ -8,6 +8,7 @@ import {Flex, Input, Select, Skeleton, Typography} from "antd";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
+import {useTranslation} from "react-i18next";
 
 const {Paragraph} = Typography;
 
@@ -33,16 +34,18 @@ const FormDateOfBirth = React.forwardRef(({
 
     const [daysOptions, setDaysOptions] = useState([]);
     const [monthsOptions, setMonthsOptions] = useState([]);
-    const [yearsOptions, setYearOptions] = useState([]);
+    const [yearOptions, setYearOptions] = useState([]);
 
     const [age, setAge] = useState('');
     const {globalStyles, token} = useApp();
     const styles = useStyles();
-
+    const [isInitialized, setIsInitialized] = useState(false);
+    
     const minYear = 1950;
     const maxYear = new Date().getFullYear();
     const isRequired = toBoolean(required);
-
+    const {t} = useTranslation('');
+    
     useImperativeHandle(ref, () => ({
         reset: () => {
             setSelectedDay(null);
@@ -52,6 +55,31 @@ const FormDateOfBirth = React.forwardRef(({
         }
     }));
 
+    const months = () => {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return Array.from({length: 12}, (_, i) => ({
+            Value: i + 1,
+            Text: monthNames[i]
+        }))
+    }
+
+    const years = () => {
+        return Array.from({length: maxYear - minYear + 1}, (_, i) => ({
+            Value: maxYear - i,
+            Text: maxYear - i
+        }));
+    }
+    
+    const setLists = () => {
+        if (!anyInList(monthsOptions)){
+            setMonthsOptions(months());
+        }
+        
+        if (!anyInList(yearOptions)){
+            setYearOptions(years())
+        }
+    }
+    
     const calculateAge = (day, month, year) => {
         const dob = new Date(year, month - 1, day);
         const today = new Date();
@@ -70,40 +98,50 @@ const FormDateOfBirth = React.forwardRef(({
     };
 
     useEffect(() => {
-        if (!isNullOrEmpty(form.values.DateOfBirth) && isNullOrEmpty(dateOfBirthValue)) {
-            const date = new Date(form.values.DateOfBirth);
-            const day = date.getDate();
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
+        setLists();
+    }, []);
+    
+    useEffect(() => {
+        setLists();
+        if (!toBoolean(loading)){
+            const monthsOptions = months();
+            const yearOptions = years();
+            
+            if (!isNullOrEmpty(form?.values?.[name]) && isNullOrEmpty(dateOfBirthValue)) {
+                const date = new Date(form.values?.[name]);
+                const day = date.getDate();
+                const month = date.getMonth() + 1;
+                const year = date.getFullYear();
 
-            const dayOption = {Value: day, Text: day.toString()};
+                const dayOption = {Value: day, Text: day.toString()};
 
-            const monthOption = monthsOptions.find(option => option.Value === month);
-            const yearOption = yearsOptions.find(option => option.Value === year);
+                const monthOption = monthsOptions.find(option => option.Value === month);
+                const yearOption = yearOptions.find(option => option.Value === year);
 
-            setSelectedDay(dayOption);
-            setSelectedMonth(monthOption);
-            setSelectedYear(yearOption);
-            calculateAge(day, month, year);
+                setSelectedDay(dayOption?.Value);
+                setSelectedMonth(monthOption?.Value);
+                setSelectedYear(yearOption?.Value);
+                calculateAge(day, month, year);
+            }
+            if (!isNullOrEmpty(dateOfBirthValue) && isNullOrEmpty(form?.values?.[name])) {
+                const date = new Date(dateOfBirthValue);
+                const day = date.getDate();
+                const month = date.getMonth() + 1;
+                const year = date.getFullYear();
+
+                const dayOption = {Value: day, Text: day.toString()};
+
+                const monthOption = monthsOptions.find(option => option.Value === month);
+                const yearOption = yearOptions.find(option => option.Value === year);
+
+                setSelectedDay(dayOption?.Value);
+                setSelectedMonth(monthOption?.Value);
+                setSelectedYear(yearOption?.Value);
+                calculateAge(day, month, year);
+            }
+            setIsInitialized(true);
         }
-        if (!isNullOrEmpty(dateOfBirthValue) && isNullOrEmpty(form.values.DateOfBirth)) {
-            const date = new Date(dateOfBirthValue);
-            const day = date.getDate();
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-
-            const dayOption = {Value: day, Text: day.toString()};
-
-            const monthOption = monthsOptions.find(option => option.Value === month);
-            const yearOption = yearsOptions.find(option => option.Value === year);
-
-            setSelectedDay(dayOption);
-            setSelectedMonth(monthOption);
-            setSelectedYear(yearOption);
-            calculateAge(day, month, year);
-        }
-
-    }, [form.values?.DateOfBirth]);
+    }, [loading]);
 
     const formatDateOfBirthByUiCulture = (day, month, year) => {
         if (isNullOrEmpty(day) && isNullOrEmpty(month) && isNullOrEmpty(year)) {
@@ -153,33 +191,19 @@ const FormDateOfBirth = React.forwardRef(({
     }, [selectedMonth, selectedYear]);
 
     useEffect(() => {
-        if (onDateChange) {
-            onDateChange(selectedDay, selectedMonth, selectedYear);
-        }
-
-        if (selectedDay && selectedMonth && selectedYear) {
-            formatDateOfBirthByUiCulture(selectedDay, selectedMonth, selectedYear);
-            calculateAge(selectedDay, selectedMonth, selectedYear);
-        } else {
-            form.setFieldValue(name, null);
-            setAge('');
+        if (isInitialized){
+            if (onDateChange) {
+                onDateChange(selectedDay, selectedMonth, selectedYear);
+            }
+            if (selectedDay && selectedMonth && selectedYear) {
+                formatDateOfBirthByUiCulture(selectedDay, selectedMonth, selectedYear);
+                calculateAge(selectedDay, selectedMonth, selectedYear);
+            } else {
+                form.setFieldValue(name, null);
+                setAge('');
+            }
         }
     }, [selectedDay, selectedMonth, selectedYear]);
-
-    //set lists
-    useEffect(() => {
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        setMonthsOptions(Array.from({length: 12}, (_, i) => ({
-            Value: i + 1,
-            Text: monthNames[i]
-        })));
-
-        setYearOptions(Array.from({length: maxYear - minYear + 1}, (_, i) => ({
-            Value: maxYear - i,
-            Text: maxYear - i
-        })))
-    }, []);
-
 
     let field = '';
     let meta = null;
@@ -244,7 +268,7 @@ const FormDateOfBirth = React.forwardRef(({
                 color: token.colorText,
                 display: 'block'
             }}>
-                Date of Birth
+                {t('date.dateOfBirth')}
                 {isRequired && <span
                     style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
@@ -307,7 +331,7 @@ const FormDateOfBirth = React.forwardRef(({
                                     className={styles.select}
                                     status={hasError ? 'error' : ''}
                                 >
-                                    {yearsOptions.map((option) => (
+                                    {yearOptions.map((option) => (
                                         <Select.Option
                                             key={option.Value}
                                             value={option.Value}
@@ -322,7 +346,7 @@ const FormDateOfBirth = React.forwardRef(({
                     {(toBoolean(displayAge) && !isNullOrEmpty(age)) &&
                         <Input disabled={true}
                                style={{
-                                   width: '300px',
+                                   width: '350px',
                                    textAlign: 'center',
                                    color: token.Custom.ColorPrimaryText,
                                    fontWeight: 600,
@@ -386,7 +410,7 @@ const FormDateOfBirth = React.forwardRef(({
                 onConfirmButtonClick={() => setSelectedYear(null)}
             >
                 <FormDrawerRadio
-                    options={yearsOptions}
+                    options={yearOptions}
                     selectedCurrentValue={selectedYear}
                     onValueSelect={(option) => {
                         handleSelectOption(/*day*/ null, /*month*/ null, /*year*/ option.Value)

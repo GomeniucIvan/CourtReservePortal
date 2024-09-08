@@ -123,7 +123,8 @@ export const fixDate = (dateString) =>{
     const msDateMatch = (dateString && typeof dateString === 'string') ? dateString.match(/\/Date\((\d+)([-+]\d+)?\)\//) : null;
     if (msDateMatch) {
         const ms = parseInt(msDateMatch[1], 10); // Extract milliseconds since epoch
-        return dayjs.utc(ms).tz(dayjs.tz.guess(), true).format('YYYY-MM-DDTHH:mm:ssZ');
+        //return dayjs.utc(ms).tz(dayjs.tz.guess(), true).format('YYYY-MM-DDTHH:mm:ssZ');
+        return dayjs.utc(ms).format('YYYY-MM-DDTHH:mm:ssZ');
     }
 
     const parsedDate = new Date(dateString);
@@ -132,4 +133,15 @@ export const fixDate = (dateString) =>{
     }
 
     return null;
+}
+
+export const dateToString = (incDate) => {
+    if (isNullOrEmpty(incDate)){
+        return '';
+    }
+    console.log(incDate)
+    
+    const fixedDate = fixDate(incDate);
+    const date = dayjs(fixedDate);
+    return date.format(dateFormatByUiCulture());
 }
