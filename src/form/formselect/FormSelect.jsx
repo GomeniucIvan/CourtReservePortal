@@ -6,6 +6,7 @@ import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
+import {useTranslation} from "react-i18next";
 const { Paragraph } = Typography;
 
 const FormSelect = ({
@@ -53,7 +54,8 @@ const FormSelect = ({
     const isRequired = toBoolean(required);
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
-
+    const {t} = useTranslation('');
+    
     let field = '';
     let meta = null;
 
@@ -71,14 +73,20 @@ const FormSelect = ({
     const selectRef = useRef(null);
 
     useEffect(() => {
-        if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
-            field = form.getFieldProps(name);
+        
+        if (!fetching){
+            console.log(options)
+            
+            if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
+                field = form.getFieldProps(name);
 
-            if (field && !isNullOrEmpty(field.value)) {
-                setInitialValueInitialized(true);
-                const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
-                if (selectedOptionInList) {
-                    onValueSelect(selectedOptionInList)
+                if (field && !isNullOrEmpty(field.value)) {
+                    setInitialValueInitialized(true);
+                    
+                    const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
+                    if (selectedOptionInList) {
+                        onValueSelect(selectedOptionInList)
+                    }
                 }
             }
         }
@@ -118,7 +126,7 @@ const FormSelect = ({
 
     useEffect(() => {
         if (isNullOrEmpty(placeholder)) {
-            setInnerPlaceholder(`Select ${label}`)
+            setInnerPlaceholder(t('selectPlaceholder', {label: label}))
         } else {
             setInnerPlaceholder(placeholder);
         }
@@ -165,9 +173,9 @@ const FormSelect = ({
                     className={styles.select}
                     status={hasError ? 'error' : ''}
                 >
-                    {options.map((option) => (
+                    {options.map((option, index) => (
                         <Select.Option
-                            key={option[propValue] || `${name}_${option[propText]}`}
+                            key={index}
                             value={option[propValue]}
                         >
                             {option[propText]}

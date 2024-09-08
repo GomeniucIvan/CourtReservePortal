@@ -20,6 +20,7 @@
   "stateRequired": "State is required.",
   "province": "Province",
   "provinceRequired": "Province is required.",
+  "selectPlaceholder": "Select {{label}}",
   
   "announcement": {
     "title": "Announcements",

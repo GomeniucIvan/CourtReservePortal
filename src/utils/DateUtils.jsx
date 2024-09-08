@@ -139,7 +139,6 @@ export const dateToString = (incDate) => {
     if (isNullOrEmpty(incDate)){
         return '';
     }
-    console.log(incDate)
     
     const fixedDate = fixDate(incDate);
     const date = dayjs(fixedDate);

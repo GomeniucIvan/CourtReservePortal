@@ -31,9 +31,9 @@ const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propTex
                 }}
                 value={selectedCurrentValue}
             >
-                {options.map((option) => (
+                {options.map((option, index) => (
                     <Radio
-                        key={`${name}_${option[propValue]}`}
+                        key={`${name}_${option[propValue]}_${index}`}
                         value={option[propValue]}
                         className={styles.radioItem}
                         ref={el => {

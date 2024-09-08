@@ -42,7 +42,7 @@ function MyProfileDetails({selectedTab}) {
     }
 
     const setFormikValues = (data) => {
-        console.log(dateToString(data.DateOfBirth?.DateOfBirth))
+
         formik.setValues({
             firstName: data.FirstName || '',
             lastName: data.LastName || '',
