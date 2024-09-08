@@ -91,7 +91,7 @@ function MyProfileDetails({selectedTab}) {
         username: '',
         membershipNumber: '',
         currentPassword: '',
-        newPassword: '',
+        password: '',
         confirmPassword: '',
         phoneNumber: '',
         address: '',
@@ -112,6 +112,28 @@ function MyProfileDetails({selectedTab}) {
             email: Yup.string().email(t('profile.emailInvalid')).required(t('profile.emailRequired')),
         };
 
+        schemaFields.password = Yup.string().when('currentPassword', {
+            is: (currentPassword) => {
+                return !isNullOrEmpty(currentPassword); 
+            },
+            then: (schema) =>
+                schema
+                    .required(t('profile.newPasswordRequired'))
+                    .min(6, t('profile.newPasswordMinLength'))
+                    .max(40, t('profile.newPasswordMaxLength')),
+            otherwise: (schema) => schema.nullable(),
+        });
+        
+        schemaFields.confirmPassword = Yup.string()
+            .oneOf([Yup.ref('password'), null], t('profile.confirmPasswordNotMatch'))
+            .when('password', {
+                is: (password) => {
+                    return !isNullOrEmpty(password);
+                },
+                then: (schema) => schema.required(t('profile.confirmPasswordRequired')),
+                otherwise: (schema) => schema.nullable(),
+            });
+        
         if (profileData){
             if (!toBoolean(profileData?.IsGenderDisabled) && toBoolean(profileData?.IncludeGender) && toBoolean(profileData?.IsGenderRequired)) {
                 schemaFields.gender = Yup.string().required(t('profile.genderRequired'))
@@ -256,14 +278,16 @@ function MyProfileDetails({selectedTab}) {
             <FormInput label={t('profile.password')}
                        form={formik}
                        loading={isFetching}
+                       required={toBoolean(!isNullOrEmpty(formik?.values?.currentPassword))}
                        type={'password'}
-                       name='newPassword'
+                       name='password'
             />
             <FormInput label={t('profile.confirmPassword')}
                        form={formik}
                        loading={isFetching}
+                       required={toBoolean(!isNullOrEmpty(formik?.values?.currentPassword))}
                        type={'password'}
-                       name='comfirmPassword'
+                       name='confirmPassword'
             />
 
             <FormRatingCategories ratingCategories={profileData?.RatingCategories} form={formik} loading={isFetching}/>
