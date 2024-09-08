@@ -50,3 +50,7 @@ export const getUserDefinedFieldsList = (form, prefix) => {
 
     return userDefinedFields;
 };
+
+export const emptyArray = (count = 20) => {
+    return Array(count).fill({});
+}

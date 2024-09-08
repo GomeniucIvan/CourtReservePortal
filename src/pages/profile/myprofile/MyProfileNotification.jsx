@@ -1,16 +1,15 @@
-﻿import {useNavigate, useParams} from "react-router-dom";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+﻿import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useApp} from "../../../context/AppProvider.jsx";
-import * as Yup from "yup";
 import {useEffect, useState} from "react";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
-import {Table, Typography, Checkbox} from "antd";
+import {Table, Typography, Checkbox, Flex, Skeleton} from "antd";
 import {useStyles} from "./styles.jsx";
 import mockData from "../../../mocks/personal-data.json";
 import appService from "../../../api/app.jsx";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "../../../context/AuthProvider.jsx";
+import {emptyArray} from "../../../utils/ListUtils.jsx";
 
 const {Column} = Table;
 const {Text} = Typography;
@@ -22,6 +21,9 @@ function MyProfileNotification({selectedTab}) {
     const [indeterminatePush, setIndeterminatePush] = useState(false);
     const [indeterminateText, setIndeterminateText] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
+    const [showEmail, setShowEmail] = useState(true);
+    const [showPush, setShowPush] = useState(true);
+    const [showText, setShowText] = useState(false);
     const {t} = useTranslation('');
 
     const {
@@ -31,7 +33,8 @@ function MyProfileNotification({selectedTab}) {
         setHeaderRightIcons,
         setFooterContent,
         isLoading,
-        token
+        token,
+        globalStyles
     } = useApp();
 
     const {orgId} = useAuth();
@@ -91,7 +94,7 @@ function MyProfileNotification({selectedTab}) {
                                     const allEmailChecked = relatedNotifications.every(n => n.IsSubscribed);
                                     const allTextChecked = relatedNotifications.every(n => n.IsTextSubscribed);
                                     const allPushChecked = relatedNotifications.every(n => n.IsPushNotificationSubscribed);
-                                    
+
                                     notificationItems.push({
                                         key: `${category.Id}${index}_${category.NotificationCategory}`,
                                         notification: [category.NotificationCategoryName, '', ''],
@@ -100,7 +103,7 @@ function MyProfileNotification({selectedTab}) {
                                         text: toBoolean(allTextChecked),
                                         push: toBoolean(allPushChecked),
                                     });
-                                    
+
                                     relatedNotifications.forEach(notification => {
                                         notificationItems.push({
                                             key: `${notification.Id}`,
@@ -226,8 +229,8 @@ function MyProfileNotification({selectedTab}) {
                     }
                     return notification;
                 });
-                
-                
+
+
                 updateIndeterminateStates(updatedNotifications);
                 return updatedNotifications;
             });
@@ -254,7 +257,29 @@ function MyProfileNotification({selectedTab}) {
                             name={'UnsubscribeFromOrganizationTextAlerts'}/>
             </PaddingBlock>
 
-            {anyInList(notifications) &&
+            {toBoolean(isFetching) &&
+                <PaddingBlock>
+                    <Flex vertical={true} gap={2}>
+                        <>
+                            {emptyArray().map((item, index) => (
+                                <div key={index} className={globalStyles.skeletonTable}>
+                                    <Flex gap={1}>
+                                        <Skeleton.Button active={true} block/>
+                                        <div className={'cb-cell'}>
+                                            <Skeleton.Button active={true} block/>
+                                        </div>
+                                        <div className={'cb-cell'}>
+                                            <Skeleton.Button active={true} block/>
+                                        </div>
+                                    </Flex>
+                                </div>
+                            ))}
+                        </>
+                    </Flex>
+                </PaddingBlock>
+            }
+
+            {(anyInList(notifications) && !toBoolean(isFetching)) &&
                 <Table dataSource={notifications}
                        size="small"
                        bordered
@@ -290,45 +315,64 @@ function MyProfileNotification({selectedTab}) {
                             }}
                             key="notification"
                     />
-                    <Column className={styles.columnEmail}
-                            title={
-                                <Checkbox indeterminate={indeterminateEmail}
-                                          onClick={(e) => {handleSelectAllChange('email', e.target.checked)}}>
-                                    {t('profile.notification.email')}
-                                </Checkbox>
-                            }
-                            dataIndex="email"
-                            key="email"
-                            render={(text, record) => {
-                                return (
-                                    <Checkbox checked={record.email} onClick={(e) => {handleSelectionChange('email', record, e.target.checked)}}/>
-                                );
-                            }}/>
 
-                    <Column dataIndex="push"
-                            title={
-                                <Checkbox indeterminate={indeterminatePush} onClick={(e) => {handleSelectAllChange('push', e.target.checked)}}>
-                                    {t('profile.notification.push')}
-                                </Checkbox>
-                            }
-                            key="push"
-                            className={styles.columnPush}
-                            render={(text, record) => (
-                                <Checkbox checked={record.push} onClick={(e) => {handleSelectionChange('push', record, e.target.checked)}}/>
-                            )}/>
+                    {showEmail &&
+                        <Column className={styles.columnEmail}
+                                title={
+                                    <Checkbox indeterminate={indeterminateEmail}
+                                              onClick={(e) => {
+                                                  handleSelectAllChange('email', e.target.checked)
+                                              }}>
+                                        {t('profile.notification.email')}
+                                    </Checkbox>
+                                }
+                                dataIndex="email"
+                                key="email"
+                                render={(text, record) => {
+                                    return (
+                                        <Checkbox checked={record.email} onClick={(e) => {
+                                            handleSelectionChange('email', record, e.target.checked)
+                                        }}/>
+                                    );
+                                }}/>
+                    }
 
-                    <Column key="text"
-                            title={
-                                <Checkbox indeterminate={indeterminateText} onClick={(e) => {handleSelectAllChange('text', e.target.checked)}}>
-                                    {t('profile.notification.text')}
-                                </Checkbox>
-                            }
-                            className={styles.columnPush}
-                            render={(text, record) => (
-                                <Checkbox checked={record.text} onClick={(e) => {handleSelectionChange('text', record, e.target.checked)}}/>
-                            )}
-                    />
+                    {showPush &&
+                        <Column dataIndex="push"
+                                title={
+                                    <Checkbox indeterminate={indeterminatePush} onClick={(e) => {
+                                        handleSelectAllChange('push', e.target.checked)
+                                    }}>
+                                        {t('profile.notification.push')}
+                                    </Checkbox>
+                                }
+                                key="push"
+                                className={styles.columnPush}
+                                render={(text, record) => (
+                                    <Checkbox checked={record.push} onClick={(e) => {
+                                        handleSelectionChange('push', record, e.target.checked)
+                                    }}/>
+                                )}/>
 
+                    }
+
+                    {showText &&
+                        <Column key="text"
+                                title={
+                                    <Checkbox indeterminate={indeterminateText} onClick={(e) => {
+                                        handleSelectAllChange('text', e.target.checked)
+                                    }}>
+                                        {t('profile.notification.text')}
+                                    </Checkbox>
+                                }
+                                className={styles.columnPush}
+                                render={(text, record) => (
+                                    <Checkbox checked={record.text} onClick={(e) => {
+                                        handleSelectionChange('text', record, e.target.checked)
+                                    }}/>
+                                )}
+                        />
+                    }
                 </Table>
             }
         </>

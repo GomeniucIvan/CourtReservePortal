@@ -165,6 +165,11 @@ export const useStyles = createStyles(({ css, token }) => ({
          height: 20px !important;
       }
    `,
+   skeletonTable: css`
+      .ant-skeleton-button{
+         height: ${token.Input.controlHeight}px !important;
+      }
+   `,
    noTopPadding: css`
         margin-top: 0 !important;
     `,
