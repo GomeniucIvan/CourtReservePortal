@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import {cx} from "antd-style";
 const {Text} = Typography;
 
-const FormSwitch = ({ form, name, checked, label, disabled, rows = 1, loading }) => {
+const FormSwitch = ({ form, name, checked, label, disabled, rows = 1, loading, onChange }) => {
     const [isChecked, setIsChecked] = useState(toBoolean(checked));
     const {token, globalStyles} = useApp();
 
@@ -19,13 +19,6 @@ const FormSwitch = ({ form, name, checked, label, disabled, rows = 1, loading })
     if (toBoolean(loading)){
         return (
             <div className={cx(globalStyles.formBlock) }>
-                <Skeleton.Input block
-                                active={true}
-                                className={cx(globalStyles.skeletonLabel)}
-                                style={{
-                                    width: `${calculateSkeletonLabelWidth(label)}`,
-                                    minWidth: `${calculateSkeletonLabelWidth(label)}`
-                                }}/>
                 <Flex gap={token.padding}>
                     <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput) }/>
                     <Skeleton.Input block active={true} style={{width: '120px !important'}} className={cx(globalStyles.skeletonInput, globalStyles.skeletonSwitch) }/>
@@ -37,7 +30,14 @@ const FormSwitch = ({ form, name, checked, label, disabled, rows = 1, loading })
     const handleClick = () => {
         if (!disabled) {
             setIsChecked(!isChecked);
-            form.setFieldValue(name, !isChecked);
+
+            if (typeof onChange === 'function') {
+                onChange(!isChecked);
+            }
+            
+            if (form){
+                form.setFieldValue(name, !isChecked);  
+            }
         }
     };
     
@@ -48,6 +48,8 @@ const FormSwitch = ({ form, name, checked, label, disabled, rows = 1, loading })
         field = form.getFieldProps(name);
         meta = form.getFieldMeta(name);
     }
+    
+    
     
     return (
         <Flex justify={"space-between"} align={"center"} style={{height: 44, paddingBottom: (rows > 1 ? `${token.padding}px` : 0)}}>

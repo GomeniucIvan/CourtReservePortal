@@ -3,6 +3,12 @@
 export const useStyles = createStyles(({ css, token }) => ({
     table: css`
         border-top: 1px solid ${token.colorBorder};
+      
+      .ant-table-thead {
+        position: sticky;
+        top: -2px;
+        z-index: 5;
+      }
   `,
     columnNotification: css`
         //width: 100%;
