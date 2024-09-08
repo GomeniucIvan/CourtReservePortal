@@ -65,7 +65,10 @@
     "city": "City",
     "cityRequired": "City is required.",
     "zipCode": "Zip code",
-    "zipCodeRequired": "Zip code is required."
+    "zipCodeRequired": "Zip code is required.",
+    "email": "Email",
+    "emailInvalid": "Invalid email.",
+    "emailRequired": "Email is required."
   },
   "date": {
     "today": "Today",
@@ -84,5 +87,8 @@
     "male": "Male",
     "female": "Female",
     "preferNotToDisclose": "Prefer not to disclose"
+  },
+  "form": {
+    "labelRequired": "{{label}} is required."
   }
 }

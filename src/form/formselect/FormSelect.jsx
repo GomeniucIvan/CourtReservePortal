@@ -25,25 +25,9 @@ const FormSelect = ({
                         type,
                         loading,
                         fetching,
-                        isMulti,
+                        multi,
                         ...props
                     }) => {
-
-    if (toBoolean(isMulti)) {
-        return (
-            <HtmlMultiSelect
-                label={label}
-                name={name}
-                suffix='Rating(s)'
-                propText={propText}
-                propValue={propValue}
-                placeholder={placeholder}
-                options={options}
-                required={required}
-                form={form}
-            />
-        )
-    }
 
     const [selectedOption, setSelectedOption] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -55,6 +39,7 @@ const FormSelect = ({
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('');
+    const [multiSelectedValues, setMultiSelectedValues] = useState([]);
     
     let field = '';
     let meta = null;
@@ -76,13 +61,17 @@ const FormSelect = ({
         if (!fetching){
             if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
                 field = form.getFieldProps(name);
-
+                
                 if (field && !isNullOrEmpty(field.value)) {
                     setInitialValueInitialized(true);
                     
-                    const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
-                    if (selectedOptionInList) {
-                        onValueSelect(selectedOptionInList)
+                    if (toBoolean(multi)){
+                        setMultiSelectedValues(field.value);
+                    } else{
+                        const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
+                        if (selectedOptionInList) {
+                            onValueSelect(selectedOptionInList)
+                        }
                     }
                 }
             }
@@ -158,26 +147,37 @@ const FormSelect = ({
                     {...props}
                     ref={selectRef}
                     placeholder={innerPlaceholder}
-                    value={selectedOption?.[propValue]}
+                    value={toBoolean(multi) ? multiSelectedValues : selectedOption?.[propValue]}
                     open={false}
+                    mode={toBoolean(multi) ? 'multiple' : undefined}
                     loading={toBoolean(fetching)}
                     onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
                     onChange={(value) => {
-                        const selectedOptionInList = options.find(option => equalString(option[propValue], value));
-                        onValueSelect(selectedOptionInList);
+                        if (multi) {
+                            const selectedOptions = options.filter(option => value.includes(option[propValue]));
+                            setMultiSelectedValues(selectedOptions);
+                            form.setFieldValue(name, selectedOptions.map(option => option[propValue]));
+                        } else {
+                            const selectedOptionInList = options.find(option => equalString(option[propValue], value));
+                            onValueSelect(selectedOptionInList);
+                        }
                     }}
                     disabled={disabled}
                     className={styles.select}
                     status={hasError ? 'error' : ''}
                 >
-                    {options.map((option, index) => (
-                        <Select.Option
-                            key={index}
-                            value={option[propValue]}
-                        >
-                            {toBoolean(option?.translate) ? t(option[propText]) : option[propText]}
-                        </Select.Option>
-                    ))}
+                    {options.map((option, index) => {
+                        return (
+                            (
+                                <Select.Option
+                                    key={index}
+                                    value={option[propValue]}
+                                >
+                                    {toBoolean(option?.translate) ? t(option[propText]) : option[propText]}
+                                </Select.Option>
+                            )
+                        )
+                    })}
                 </Select>
 
                 {hasError && meta && typeof meta.error === 'string' ? (
@@ -199,8 +199,12 @@ const FormSelect = ({
                 >
                     <FormDrawerRadio
                         options={options}
+                        multi={toBoolean(multi)}
+                        
                         selectedCurrentValue={selectedOption?.[propValue]}
+                        multiSelectedValues={multiSelectedValues}
                         onValueSelect={onValueSelect}
+                        setMultiSelectedValues={setMultiSelectedValues}
                         propText={propText}
                         propValue={propValue}
                         name={name}

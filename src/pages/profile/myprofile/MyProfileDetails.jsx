@@ -11,11 +11,13 @@ import {useEffect, useState} from "react";
 import {Button} from "antd";
 import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import appService from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
-import {dateToString, fixDate} from "../../../utils/DateUtils.jsx";
+import {dateToString} from "../../../utils/DateUtils.jsx";
+import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
+import FormRatingCategories from "../../../form/formratingcategories/FormRatingCategories.jsx";
 
 function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();
@@ -28,7 +30,6 @@ function MyProfileDetails({selectedTab}) {
 
     const loadData = () => {
         setIsFetching(true);
-        setIsLoading(true);
 
         appService.get(`/app/Online/MyProfile/MyProfile?id=${orgId}`).then(r => {
             if (toBoolean(r?.IsValid)) {
@@ -42,8 +43,7 @@ function MyProfileDetails({selectedTab}) {
     }
 
     const setFormikValues = (data) => {
-
-        formik.setValues({
+        let valuesToSet = {
             firstName: data.FirstName || '',
             lastName: data.LastName || '',
             dateOfBirthString:  dateToString(data.DateOfBirth?.DateOfBirth),
@@ -59,7 +59,25 @@ function MyProfileDetails({selectedTab}) {
             hidePersonalInformation: data.HidePersonalInformation || false,
             UnsubscribeFromMarketingEmails: data.UnsubscribeFromMarketingEmails || false,
             unsubscribeFromPush: data.UnsubscribeFromMarketingPushNotifications || false,
-        });
+        };
+
+        if (data && anyInList(data.RatingCategories)) {
+            data.RatingCategories.forEach(ratingCategory => {
+                if (toBoolean(ratingCategory.AllowMultipleRatingValues)){
+                    valuesToSet[`rat_${ratingCategory.Id}`] = ratingCategory.SelectedRatingsIds || [];
+                } else{
+                    valuesToSet[`rat_${ratingCategory.Id}`] = ratingCategory.SelectedRatingId || '';
+                }
+            });
+        }
+
+        if (data && anyInList(data.CustomFields)) {
+            data.CustomFields.forEach(category => {
+                valuesToSet[`udf_${category.Id}`] = isNullOrEmpty(category.Value) ? '' : category.Value; 
+            });
+        }
+        
+        formik.setValues(valuesToSet);
     };
 
     const initialValues = {
@@ -83,18 +101,44 @@ function MyProfileDetails({selectedTab}) {
         unsubscribeFromPush: false,
     };
 
-    const validationSchema = Yup.object({
-        firstName: Yup.string().required(t('profile.firstNameRequired')),
-        lastName: Yup.string().required(t('profile.lastNameRequired')),
-        email: Yup.string().email(t('profile.emailInvalid')).required(t('profile.emailRequired')),
-        gender: !toBoolean(profileData?.IsGenderDisabled) && toBoolean(profileData?.IncludeGender) && toBoolean(profileData?.IsGenderRequired)
-            ? Yup.string().required(t('profile.genderRequired'))
-            : Yup.string(),
-    });
+    const getValidationSchema = (profileData) => {
+        let schemaFields = {
+            firstName: Yup.string().required(t('profile.firstNameRequired')),
+            lastName: Yup.string().required(t('profile.lastNameRequired')),
+            email: Yup.string().email(t('profile.emailInvalid')).required(t('profile.emailRequired')),
+        };
 
+        if (profileData){
+            if (!toBoolean(profileData?.IsGenderDisabled) && toBoolean(profileData?.IncludeGender) && toBoolean(profileData?.IsGenderRequired)) {
+                schemaFields.gender = Yup.string().required(t('profile.genderRequired'))
+            }
+
+            if (profileData.RatingCategories) {
+                profileData.RatingCategories.forEach(category => {
+                    if (category.IsRequired) {
+                        if (category.AllowMultipleRatingValues) {
+                            schemaFields[`rat_${category.Id}`] = Yup.array().min(1, t('form.labelRequired', {label: category.Name})).required(t('form.labelRequired', {label: category.Name}))
+                        } else {
+                            schemaFields[`rat_${category.Id}`] = Yup.string().required(t('form.labelRequired', {label: category.Name}));
+                        }
+                    }
+                });
+            }
+            
+            if (profileData.CustomFields) {
+                profileData.CustomFields.forEach(udf => {
+                    if (udf.IsRequired) {
+                        schemaFields[`udf_${udf.Id}`] = Yup.string().required(t('form.labelRequired', {label: udf.Label}));
+                    }
+                });
+            }
+        }
+        return Yup.object(schemaFields);
+    }
+    
     const formik = useFormik({
         initialValues: initialValues,
-        validationSchema: validationSchema,
+        validationSchema: getValidationSchema(profileData),
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
@@ -113,16 +157,22 @@ function MyProfileDetails({selectedTab}) {
         if (equalString(selectedTab, 'pers')) {
             setIsFooterVisible(true);
             setHeaderRightIcons(null);
+            
             setFooterContent(<PaddingBlock topBottom={true}>
                 <Button type="primary"
                         block
                         htmlType="submit"
+                        disabled={isFetching}
                         loading={isLoading}
                         onClick={formik.handleSubmit}>
                     Save
                 </Button>
             </PaddingBlock>);
-
+        }
+    }, [selectedTab, isFetching]);
+    
+    useEffect(() => {
+        if (equalString(selectedTab, 'pers')) {
             loadData();
         }
     }, [selectedTab]);
@@ -141,7 +191,7 @@ function MyProfileDetails({selectedTab}) {
                        required={true}
                        name='lastName'
             />
-            <FormInput label="Email"
+            <FormInput label={t('profile.email')}
                        form={formik}
                        loading={isFetching}
                        required={true}
@@ -184,6 +234,8 @@ function MyProfileDetails({selectedTab}) {
                        name='comfirmPassword'
             />
 
+            <FormRatingCategories ratingCategories={profileData?.RatingCategories} form={formik} loading={isFetching}/>
+            
             {toBoolean(profileData?.PhoneNumber?.Include) &&
                 <FormInput label={t('profile.phoneNumber')}
                            form={formik}
@@ -244,6 +296,8 @@ function MyProfileDetails({selectedTab}) {
                 </>
             }
 
+            <FormCustomFields customFields={profileData?.CustomFields} form={formik} loading={isFetching} />
+            
             <FormSwitch label={'Hide my Personal Information from my club/organization\'s public member directories'}
                         form={formik}
                         loading={isFetching}

@@ -1,5 +1,5 @@
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {Radio, Typography} from 'antd';
+import {Checkbox, Radio, Typography} from 'antd';
 import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
 import {Ellipsis} from "antd-mobile";
@@ -8,20 +8,30 @@ import {useEffect, useRef} from "react";
 import {useTranslation} from "react-i18next";
 const {Title} = Typography;
 
-const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propText = "Text", propValue = "Value", name }) => {
+const FormDrawerRadio = ({ options, multi, selectedCurrentValue, multiSelectedValues, onValueSelect, setMultiSelectedValues , propText = "Text", propValue = "Value", name }) => {
     const {styles} = useStyles();
     const {globalStyles} = useApp();
     const radioRefs = useRef({});
     const {t} = useTranslation('');
     
     useEffect(() => {
-        if (selectedCurrentValue && radioRefs.current[selectedCurrentValue] && radioRefs.current[selectedCurrentValue].scrollIntoView) {
-            radioRefs.current[selectedCurrentValue].scrollIntoView({
-                behavior: 'auto',
-                block: 'center',
-            });
+        if (!toBoolean(multi)){
+            if (selectedCurrentValue && radioRefs.current[selectedCurrentValue] && radioRefs.current[selectedCurrentValue].scrollIntoView) {
+                radioRefs.current[selectedCurrentValue].scrollIntoView({
+                    behavior: 'auto',
+                    block: 'center',
+                });
+            }
         }
     }, [selectedCurrentValue]);
+
+    const handleMultiChange = (value, checked) => {
+        if (checked) {
+            setMultiSelectedValues([...multiSelectedValues, value]);
+        } else {
+            setMultiSelectedValues(multiSelectedValues.filter(v => !equalString(v, value)));
+        }
+    };
     
     return (
         <>
@@ -33,32 +43,61 @@ const FormDrawerRadio = ({ options, selectedCurrentValue, onValueSelect, propTex
                 }}
                 value={selectedCurrentValue}
             >
-                {options.map((option, index) => (
-                    <Radio
-                        key={`${name}_${option[propValue]}_${index}`}
-                        value={option[propValue]}
-                        className={styles.radioItem}
-                        ref={el => {
-                            if (el) {
-                                radioRefs.current[option[propValue]] = el.input;
-                            }
-                        }}
-                    >
-                        <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)}>
-                            {isNullOrEmpty(option[propText]) ? (
-                                <></>
-                            ) : (
-                                <>
+                {options.map((option, index) => {
+                    if (toBoolean(multi)){
+                        const isChecked = multiSelectedValues.includes(option[propValue]);
+                        
+                       return (
+                           <div key={`${name}_${option[propValue]}_${index}`} className={styles.radioItem}>
+                               <Checkbox
+                                   checked={isChecked}
+                                   onChange={(e) => handleMultiChange(option[propValue], e.target.checked)}
+                               />
+                               
+                               <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)} style={{marginRight: 'auto'}} onClick={() => handleMultiChange(option[propValue], !isChecked)}>
+                                   {isNullOrEmpty(option[propText]) ? (
+                                       <></>
+                                   ) : (
+                                       <>
+                                           {toBoolean(option?.translate) ? (
+                                               <Ellipsis direction='end' content={t(option[propText]).toString()}/>
+                                           ) : (
+                                               <Ellipsis direction='end' content={option[propText].toString()}/>
+                                           )}
+                                       </>
+                                   )}
+                               </Title>
+                           </div>
+                       )
+                    }
+
+                    return (
+                        <Radio
+                            key={`${name}_${option[propValue]}_${index}`}
+                            value={option[propValue]}
+                            className={styles.radioItem}
+                            ref={el => {
+                                if (el) {
+                                    radioRefs.current[option[propValue]] = el.input;
+                                }
+                            }}
+                        >
+                            <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)}>
+                                {isNullOrEmpty(option[propText]) ? (
+                                    <></>
+                                ) : (
+                                    <>
                                     {toBoolean(option?.translate) ? (
-                                        <Ellipsis direction='end' content={t(option[propText]).toString()} />
-                                    ) : (
-                                        <Ellipsis direction='end' content={option[propText].toString()} />
-                                    )}
-                                </>
-                            )}
-                        </Title>
-                    </Radio>
-                ))}
+                                            <Ellipsis direction='end' content={t(option[propText]).toString()} />
+                                        ) : (
+                                            <Ellipsis direction='end' content={option[propText].toString()} />
+                                        )}
+                                    </>
+                                )}
+                            </Title>
+                        </Radio>
+                    )
+                })}
             </Radio.Group>
         </>
     )
