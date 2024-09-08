@@ -64,11 +64,22 @@
     "addressRequired": "Address is required.",
     "city": "City",
     "cityRequired": "City is required.",
+    "postalCode": "Postal code",
+    "postalCodeRequired": "Postal code is required.",
     "zipCode": "Zip code",
     "zipCodeRequired": "Zip code is required.",
     "email": "Email",
     "emailInvalid": "Invalid email.",
-    "emailRequired": "Email is required."
+    "emailRequired": "Email is required.",
+    "firstName": "First name",
+    "firstNameRequired": "First name is required.",
+    "lastName": "Last name",
+    "lastNameRequired": "Last name is required.",
+    "username": "Username",
+    "usernameRequired": "Username is required.",
+    "currentPassword": "Current password",
+    "password": "Password",
+    "confirmPassword": "Confirm password"
   },
   "date": {
     "today": "Today",

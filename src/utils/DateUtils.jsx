@@ -144,3 +144,11 @@ export const dateToString = (incDate) => {
     const date = dayjs(fixedDate);
     return date.format(dateFormatByUiCulture());
 }
+
+export const isNonUsCulture = () => {
+    if (isNullOrEmpty(clientUiCulture)) {
+        return false;
+    }
+
+    return equalString(clientUiCulture, 'en-us');
+} 

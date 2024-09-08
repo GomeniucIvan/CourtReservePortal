@@ -238,6 +238,8 @@ function Layout() {
                                 isUsingCourtWaitlisting: memberResponseData.IsUsingCourtWaitlisting,
                                 myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
                                 myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
+                                useOrganizedPlay: memberResponseData.UseOrganizedPlay,
+                                isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
 
                             if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
@@ -254,6 +256,8 @@ function Layout() {
                                 isUsingCourtWaitlisting: memberResponseData.IsUsingCourtWaitlisting,
                                 myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
                                 myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
+                                useOrganizedPlay: memberResponseData.UseOrganizedPlay,
+                                isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
                             
                             setIsFetching(false);

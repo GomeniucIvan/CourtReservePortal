@@ -10,5 +10,8 @@ export const useStyles = createStyles(({ css, token }) => ({
             border-color: ${token.colorBorder} !important;
             box-shadow: none !important;
         }
+        .ant-select-selection-item-remove{
+            display: none !important;
+        }
     `,
 }));

@@ -15,7 +15,7 @@ import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/U
 import appService from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
-import {dateToString} from "../../../utils/DateUtils.jsx";
+import {dateToString, isNonUsCulture} from "../../../utils/DateUtils.jsx";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
 import FormRatingCategories from "../../../form/formratingcategories/FormRatingCategories.jsx";
 import {getRatingCategoriesList, getUserDefinedFieldsList} from "../../../utils/ListUtils.jsx";
@@ -27,7 +27,7 @@ function MyProfileDetails({selectedTab}) {
     const [isFetching, setIsFetching] = useState(true);
 
     const {isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent, isLoading, setIsLoading} = useApp();
-    const {orgId} = useAuth();
+    const {orgId, authData} = useAuth();
 
     const loadData = () => {
         setIsFetching(true);
@@ -57,9 +57,10 @@ function MyProfileDetails({selectedTab}) {
             city: data.Address?.City || '',
             state: data.Address?.State || '',
             zipCode: data.Address?.ZipCode || '',
-            hidePersonalInformation: data.HidePersonalInformation || false,
-            UnsubscribeFromMarketingEmails: data.UnsubscribeFromMarketingEmails || false,
-            unsubscribeFromPush: data.UnsubscribeFromMarketingPushNotifications || false,
+            excludeAccountInformationFromPublicGroups: data.ExcludeAccountInformationFromPublicGroups || false,
+            unsubscribeFromMarketingEmails: data.UnsubscribeFromMarketingEmails || false,
+            doNotAllowOtherPlayersToLinkMyProfile: data.DoNotAllowOtherPlayersToLinkMyProfile || false,
+            unsubscribeFromMarketingPushNotifications: data.UnsubscribeFromMarketingPushNotifications || false,
         };
 
         if (data && anyInList(data.RatingCategories)) {
@@ -97,15 +98,17 @@ function MyProfileDetails({selectedTab}) {
         city: '',
         state: '',
         zipCode: '',
-        hidePersonalInformation: false,
-        UnsubscribeFromMarketingEmails: false,
-        unsubscribeFromPush: false,
+        excludeAccountInformationFromPublicGroups: false,
+        unsubscribeFromMarketingEmails: false,
+        doNotAllowOtherPlayersToLinkMyProfile: false,
+        unsubscribeFromMarketingPushNotifications: false,
     };
 
     const getValidationSchema = (profileData) => {
         let schemaFields = {
             firstName: Yup.string().required(t('profile.firstNameRequired')),
             lastName: Yup.string().required(t('profile.lastNameRequired')),
+            username: Yup.string().required(t('profile.usernameRequired')),
             email: Yup.string().email(t('profile.emailInvalid')).required(t('profile.emailRequired')),
         };
 
@@ -124,6 +127,33 @@ function MyProfileDetails({selectedTab}) {
                         }
                     }
                 });
+            }
+            
+            if (toBoolean(profileData.PhoneNumber?.Include) && toBoolean(profileData.PhoneNumber?.IsRequired)){
+                schemaFields.phoneNumber = Yup.string().required(t('profile.phoneNumberRequired'));
+            }
+
+            if (toBoolean(profileData.DateOfBirth?.Include) && toBoolean(profileData.DateOfBirth?.IsRequired)){
+                schemaFields.membershipNumber = Yup.string().required(t('profile.membershipNumberRequired'));
+            }
+
+            if (toBoolean(profileData.Membership?.Include) && toBoolean(profileData.Membership?.IsRequired)){
+                schemaFields.membershipNumber = Yup.string().required(t('profile.membershipNumberRequired'));
+            }
+
+            if (toBoolean(profileData.DateOfBirth?.Include) && toBoolean(profileData.DateOfBirth?.IsRequired)){
+                schemaFields.dateOfBirthString = Yup.string().required(t('date.dateOfBirthRequired'));
+            }
+
+            if (toBoolean(profileData.Address?.Include) && toBoolean(profileData.Address?.IsRequired)){
+                schemaFields.address = Yup.string().required(t('profile.addressRequired'));
+                schemaFields.city = Yup.string().required(t('profile.cityRequired'));
+                schemaFields.state = Yup.string().required(t('profile.stateRequired'));
+                schemaFields.zipCode = Yup.string().required(isNonUsCulture() ? t('profile.postalCodeRequired') : t('profile.zipCodeRequired'));
+            }
+            
+            if (toBoolean(profileData.Address?.Include) && toBoolean(profileData.Address?.IsRequired)){
+                schemaFields.dateOfBirthString = Yup.string().required(t('date.dateOfBirthRequired'));
             }
             
             if (profileData.CustomFields) {
@@ -146,9 +176,6 @@ function MyProfileDetails({selectedTab}) {
             setIsLoading(true);
             const ratings = getRatingCategoriesList(values);   
             const udfs = getUserDefinedFieldsList(values);  
-            
-            console.log(ratings)
-            console.log(udfs)
             
             if (isMockData) {
 
@@ -185,13 +212,13 @@ function MyProfileDetails({selectedTab}) {
 
     return (
         <PaddingBlock topBottom={true}>
-            <FormInput label="First Name"
+            <FormInput label={t('profile.firstName')}
                        form={formik}
                        loading={isFetching}
                        required={true}
                        name='firstName'
             />
-            <FormInput label="Last Name"
+            <FormInput label={t('profile.lastName')}
                        form={formik}
                        loading={isFetching}
                        required={true}
@@ -200,10 +227,10 @@ function MyProfileDetails({selectedTab}) {
             <FormInput label={t('profile.email')}
                        form={formik}
                        loading={isFetching}
-                       required={true}
+                       required={!toBoolean(profileData?.EmailIsNotRequired)}
                        name='email'
             />
-            <FormInput label="Username"
+            <FormInput label={t('profile.username')}
                        form={formik}
                        loading={isFetching}
                        required={true}
@@ -219,20 +246,20 @@ function MyProfileDetails({selectedTab}) {
                             required={toBoolean(profileData?.IsGenderRequired)}/>
             }
 
-            <FormInput label="Current password"
+            <FormInput label={t('profile.currentPassword')}
                        form={formik}
                        loading={isFetching}
                        type={'password'}
                        name='currentPassword'
             />
 
-            <FormInput label="New password"
+            <FormInput label={t('profile.password')}
                        form={formik}
                        loading={isFetching}
                        type={'password'}
                        name='newPassword'
             />
-            <FormInput label="Confirm password"
+            <FormInput label={t('profile.confirmPassword')}
                        form={formik}
                        loading={isFetching}
                        type={'password'}
@@ -291,8 +318,8 @@ function MyProfileDetails({selectedTab}) {
                                        name={`state`}
                                        required={toBoolean(profileData?.Address?.IsRequired)}
                     />
-
-                    <FormInput label={t('profile.zipCode')}
+                    
+                    <FormInput label={isNonUsCulture() ? t('profile.postalCode') : t('profile.zipCode')}
                                form={formik}
                                loading={isFetching}
                                required={toBoolean(profileData?.Address?.IsRequired)}
@@ -307,19 +334,29 @@ function MyProfileDetails({selectedTab}) {
                         form={formik}
                         loading={isFetching}
                         rows={2}
-                        name={'hidePersonalInformation'}/>
+                        name={'excludeAccountInformationFromPublicGroups'}/>
 
             <FormSwitch label={'Unsubscribe from my Club/Organization\'s Emails/Alerts/Newsletters'}
                         form={formik}
                         loading={isFetching}
                         rows={2}
-                        name={'UnsubscribeFromMarketingEmails'}/>
+                        name={'unsubscribeFromMarketingEmails'}/>
 
-            <FormSwitch label={'Unsubscribe From Organizations Marketing Push Notifications'}
-                        form={formik}
-                        loading={isFetching}
-                        rows={2}
-                        name={'unsubscribeFromPush'}/>
+            {toBoolean(authData?.useOrganizedPlay) &&
+                <FormSwitch label={'Prevent Player Linking to this profile (Organized Play)'}
+                            form={formik}
+                            loading={isFetching}
+                            rows={2}
+                            name={'doNotAllowOtherPlayersToLinkMyProfile'}/>
+            }
+
+            {toBoolean(authData?.isUsingPushNotifications) &&
+                <FormSwitch label={'Unsubscribe From Organizations Marketing Push Notifications'}
+                            form={formik}
+                            loading={isFetching}
+                            rows={2}
+                            name={'unsubscribeFromMarketingPushNotifications'}/>
+            }
 
         </PaddingBlock>
     )

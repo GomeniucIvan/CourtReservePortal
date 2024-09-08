@@ -23,6 +23,15 @@ export const AuthProvider = ({children}) => {
             timezone: nullToEmpty(memberData.timezone),
             uiCulture: nullToEmpty(memberData.uiCulture),
             primaryColor: nullToEmpty(memberData.primaryColor),
+            memberId: nullToEmpty(memberData.memberId),
+            hasActiveInstructors: nullToEmpty(memberData.hasActiveInstructors),
+            isUsingCourtWaitlisting: nullToEmpty(memberData.isUsingCourtWaitlisting),
+            myAccountHideMyEvents: nullToEmpty(memberData.myAccountHideMyEvents),
+            myAccountHideWaitingList: nullToEmpty(memberData.myAccountHideWaitingList),
+            
+            
+            useOrganizedPlay: nullToEmpty(memberData.useOrganizedPlay),
+            isUsingPushNotifications: nullToEmpty(memberData.isUsingPushNotifications),
         })
 
         setClientUiCulture(memberData.uiCulture);
