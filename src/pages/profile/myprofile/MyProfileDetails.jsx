@@ -222,7 +222,7 @@ function MyProfileDetails({selectedTab}) {
                         disabled={isFetching}
                         loading={isLoading}
                         onClick={formik.handleSubmit}>
-                    Save
+                    {t('profile.updateInformation')}
                 </Button>
             </PaddingBlock>);
         }
@@ -265,7 +265,7 @@ function MyProfileDetails({selectedTab}) {
                 <FormSelect form={formik}
                             name={`gender`}
                             label={t('profile.gender')}
-                            loading={isFetching}
+                            fetching={isFetching}
                             options={genderList}
                             required={toBoolean(profileData?.IsGenderRequired)}/>
             }

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useImperativeHandle, useState} from 'react';
 import {useStyles} from "./styles.jsx";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {anyInList, calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {cultureStartingWithDay} from "../../utils/DateUtils.jsx";
 import {cx} from "antd-style";
 import InlineBlock from "../../components/inlineblock/InlineBlock.jsx";
@@ -253,7 +253,10 @@ const FormDateOfBirth = React.forwardRef(({
     if (toBoolean(loading)){
         return (
             <div className={cx(globalStyles.formBlock) }>
-                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel) }/>
+                <Skeleton.Input block
+                                active={true}
+                                className={cx(globalStyles.skeletonLabel)}
+                                style={{ width: `${calculateSkeletonLabelWidth(t('date.dateOfBirth'))}` }}/>
                 <Flex gap={token.padding}>
                     <Skeleton.Input active={true} className={cx(globalStyles.skeletonInput) }/>
                     <Skeleton.Input active={true} className={cx(globalStyles.skeletonInput) }/>

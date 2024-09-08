@@ -191,3 +191,15 @@ export const textFromHTML = (html, maxCharacters) => {
     }
     return text;
 }
+
+export const calculateSkeletonLabelWidth = (label) => {
+    let charCount = label ? label.length : (10 + randomNumber(1, 4));
+    if (charCount > 30){
+        charCount = 30 + randomNumber(1, 4);
+    }
+    return `${charCount * 9}px`;
+};
+
+const randomNumber = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};

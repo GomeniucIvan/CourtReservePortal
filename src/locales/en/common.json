@@ -85,7 +85,8 @@
     "newPasswordMaxLength": "Password needs to be 30 characters at max.",
     "confirmPasswordNotMatch": "Password and Confirm password does not match.",
     "confirmPasswordRequired": "Confirm password is required.",
-    "successfullyUpdate": "Information successfully updated."
+    "successfullyUpdate": "Information successfully updated.",
+    "updateInformation" : "Update Information"
   },
   "date": {
     "today": "Today",

@@ -1,7 +1,7 @@
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Select, Skeleton, Typography} from "antd";
 import {useStyles} from "./styles.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
@@ -34,7 +34,7 @@ const FormSelect = ({
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [showClearButton, setShowClearButton] = useState(false);
     const [initValueInitialized, setInitialValueInitialized] = useState(false);
-    const [innerPlaceholder, setInnerPlaceholder] = useState(false);
+    const [innerPlaceholder, setInnerPlaceholder] = useState('');
     const isRequired = toBoolean(required);
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
@@ -76,7 +76,7 @@ const FormSelect = ({
                 }
             }
         }
-    }, [field?.value]);
+    }, [field?.value, fetching, form, initValueInitialized, multi, name, options]);
 
     const closeDrawer = () => {
         setIsDrawerOpen(false);
@@ -111,24 +111,17 @@ const FormSelect = ({
     }
 
     useEffect(() => {
-        if (isNullOrEmpty(placeholder)) {
-            setInnerPlaceholder(t('selectPlaceholder', {label: label}))
-        } else {
-            setInnerPlaceholder(placeholder);
+        if (!fetching){
+            if (isNullOrEmpty(placeholder)) {
+                setInnerPlaceholder(t('selectPlaceholder', {label: label}))
+            } else {
+                setInnerPlaceholder(placeholder);
+            }
         }
-    }, [])
-
-    if (toBoolean(loading)) {
-        return (
-            <div className={cx(globalStyles.formBlock)}>
-                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel)}/>
-                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput)}/>
-            </div>
-        )
-    }
+    }, [fetching, label, placeholder, t])
 
     useEffect(() => {
-        if (toBoolean(multi) && form){
+        if (toBoolean(multi) && form && !fetching){
             const currentValue = field?.value;
 
             if (initValueInitialized){
@@ -137,48 +130,59 @@ const FormSelect = ({
                 }
             }
         }
-    }, [multiSelectedValues]);
+    }, [multiSelectedValues, fetching, field, form, initValueInitialized, multi, name]);
     
     return (
         <>
-            <div className={cx(globalStyles.formBlock, styles.selectGlobal)}>
-                <label htmlFor={name}
-                       style={{
-                           fontSize: token.Form.labelFontSize,
-                           padding: token.Form.verticalLabelPadding,
-                           marginLeft: token.Form.labelColonMarginInlineStart,
-                           color: token.colorText,
-                           display: 'block'
-                       }}>
-                    {label}
-                    {isRequired && <span
-                        style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
-                </label>
+            {toBoolean(fetching) ? (
+                <div className={cx(globalStyles.formBlock)}>
+                    <Skeleton.Input block
+                                    active={true}
+                                    className={cx(globalStyles.skeletonLabel)}
+                                    style={{
+                                        width: `${calculateSkeletonLabelWidth(label)}`,
+                                        minWidth: `${calculateSkeletonLabelWidth(label)}`
+                                    }}/>
+                    <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput)}/>
+                </div>
+            ) : (
+                <div className={cx(globalStyles.formBlock, styles.selectGlobal)}>
+                    <label htmlFor={name}
+                           style={{
+                               fontSize: token.Form.labelFontSize,
+                               padding: token.Form.verticalLabelPadding,
+                               marginLeft: token.Form.labelColonMarginInlineStart,
+                               color: token.colorText,
+                               display: 'block'
+                           }}>
+                        {label}
+                        {isRequired && <span
+                            style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
+                    </label>
 
-                <Select
-                    {...props}
-                    ref={selectRef}
-                    placeholder={innerPlaceholder}
-                    value={toBoolean(multi) ? multiSelectedValues : selectedOption?.[propValue]}
-                    open={false}
-                    mode={toBoolean(multi) ? 'multiple' : undefined}
-                    loading={toBoolean(fetching)}
-                    onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
-                    onChange={(value) => {
-                        if (multi) {
-                            //nothing
-                        } else {
-                            const selectedOptionInList = options.find(option => equalString(option[propValue], value));
-                            onValueSelect(selectedOptionInList);
-                        }
-                    }}
-                    disabled={disabled}
-                    className={styles.select}
-                    status={hasError ? 'error' : ''}
-                >
-                    {options.map((option, index) => {
-                        return (
-                            (
+                    <Select
+                        {...props}
+                        ref={selectRef}
+                        placeholder={innerPlaceholder}
+                        value={toBoolean(multi) ? multiSelectedValues : selectedOption?.[propValue]}
+                        open={false}
+                        mode={toBoolean(multi) ? 'multiple' : undefined}
+                        loading={toBoolean(fetching)}
+                        onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
+                        onChange={(value) => {
+                            if (multi) {
+                                //nothing
+                            } else {
+                                const selectedOptionInList = options.find(option => equalString(option[propValue], value));
+                                onValueSelect(selectedOptionInList);
+                            }
+                        }}
+                        disabled={disabled}
+                        className={styles.select}
+                        status={hasError ? 'error' : ''}
+                    >
+                        {options.map((option, index) => {
+                            return (
                                 <Select.Option
                                     key={index}
                                     value={option[propValue]}
@@ -186,17 +190,17 @@ const FormSelect = ({
                                     {toBoolean(option?.translate) ? t(option[propText]) : option[propText]}
                                 </Select.Option>
                             )
-                        )
-                    })}
-                </Select>
+                        })}
+                    </Select>
 
-                {hasError && meta && typeof meta.error === 'string' ? (
-                    <Paragraph
-                        style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
-                        {meta.error}
-                    </Paragraph>
-                ) : null}
-            </div>
+                    {hasError && meta && typeof meta.error === 'string' ? (
+                        <Paragraph
+                            style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                            {meta.error}
+                        </Paragraph>
+                    ) : null}
+                </div>
+            )}
 
             {!toBoolean(disabled) &&
                 <DrawerBottom
@@ -211,7 +215,6 @@ const FormSelect = ({
                     <FormDrawerRadio
                         options={options}
                         multi={toBoolean(multi)}
-
                         selectedCurrentValue={selectedOption?.[propValue]}
                         multiSelectedValues={multiSelectedValues}
                         onValueSelect={onValueSelect}

@@ -1,7 +1,7 @@
-import {useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {Input, Skeleton, Typography} from "antd";
 const { Paragraph } = Typography;
-import {equalString, toBoolean} from "../../utils/Utils.jsx";
+import {calculateSkeletonLabelWidth, equalString, toBoolean} from "../../utils/Utils.jsx";
 import {useStyles} from "./styles.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
@@ -76,10 +76,17 @@ const FormInput = ({ label,
         form.handleBlur(e);
     }
 
+    
     if (toBoolean(loading)){
         return (
            <div className={cx(globalStyles.formBlock) }>
-               <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel) }/>
+               <Skeleton.Input block
+                               active={true}
+                               className={cx(globalStyles.skeletonLabel)}
+                               style={{
+                                   width: `${calculateSkeletonLabelWidth(label)}`,
+                                   minWidth: `${calculateSkeletonLabelWidth(label)}`
+                               }}/>
                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput) }/>
            </div>
         )

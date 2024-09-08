@@ -1,5 +1,5 @@
 import React from 'react';
-import {toBoolean} from "../../utils/Utils.jsx";
+import {calculateSkeletonLabelWidth, toBoolean} from "../../utils/Utils.jsx";
 import FormSelect from "../formselect/FormSelect.jsx";
 import {isCanadaCulture} from "../../utils/OrganizationUtils.jsx";
 import FormInput from "../input/FormInput.jsx";
@@ -24,7 +24,10 @@ const FormStateProvince = ({
     if (toBoolean(loading)) {
         return (
             <div className={cx(globalStyles.formBlock)}>
-                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel)}/>
+                <Skeleton.Input block
+                                active={true}
+                                className={cx(globalStyles.skeletonLabel)}
+                                style={{ width: `${calculateSkeletonLabelWidth(isCanada ? t('province') : t('state'))}px` }}/>
                 <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput)}/>
             </div>
         )

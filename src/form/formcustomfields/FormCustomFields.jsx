@@ -1,10 +1,11 @@
 import {Radio, Skeleton, Typography} from 'antd';
-import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {calculateSkeletonLabelWidth, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import FormInput from "../input/FormInput.jsx";
 import FormTextArea from "../formtextarea/FormTextArea.jsx";
 import FormSelect from "../formselect/FormSelect.jsx";
 import {cx} from "antd-style";
 import {useApp} from "../../context/AppProvider.jsx";
+import React from "react";
 const {Title} = Typography;
 
 const FormCustomFields = ({ customFields, form, keyPrefix, loading }) => {
@@ -17,7 +18,13 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading }) => {
     if (toBoolean(loading)){
         return (
             <div className={cx(globalStyles.formBlock)}>
-                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel) }/>
+                <Skeleton.Input block
+                                active={true}
+                                className={cx(globalStyles.skeletonLabel)}
+                                style={{
+                                    width: `${calculateSkeletonLabelWidth()}`,
+                                    minWidth: `${calculateSkeletonLabelWidth()}`
+                                }}/>
                 <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput) }/>
             </div>
         )

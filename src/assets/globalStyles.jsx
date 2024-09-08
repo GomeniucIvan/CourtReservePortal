@@ -156,11 +156,14 @@ export const useStyles = createStyles(({ css, token }) => ({
       }
    `,
    skeletonSwitch: css`
-      width:60px !important;
+      width: 60px !important;
    `,
    skeletonLabel: css`
-       height: ${26}px;
-       margin: 0 0 ${token.Custom.buttonPadding}px;
+       margin: 0 0 2px;
+      
+      .ant-skeleton-input{
+         height: 20px !important;
+      }
    `,
    noTopPadding: css`
         margin-top: 0 !important;
