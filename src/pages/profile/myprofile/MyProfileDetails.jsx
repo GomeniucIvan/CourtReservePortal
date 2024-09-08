@@ -18,6 +18,7 @@ import {useTranslation} from "react-i18next";
 import {dateToString} from "../../../utils/DateUtils.jsx";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
 import FormRatingCategories from "../../../form/formratingcategories/FormRatingCategories.jsx";
+import {getRatingCategoriesList, getUserDefinedFieldsList} from "../../../utils/ListUtils.jsx";
 
 function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();
@@ -143,7 +144,12 @@ function MyProfileDetails({selectedTab}) {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-
+            const ratings = getRatingCategoriesList(values);   
+            const udfs = getUserDefinedFieldsList(values);  
+            
+            console.log(ratings)
+            console.log(udfs)
+            
             if (isMockData) {
 
             } else {
@@ -212,7 +218,6 @@ function MyProfileDetails({selectedTab}) {
                             options={genderList}
                             required={toBoolean(profileData?.IsGenderRequired)}/>
             }
-
 
             <FormInput label="Current password"
                        form={formik}

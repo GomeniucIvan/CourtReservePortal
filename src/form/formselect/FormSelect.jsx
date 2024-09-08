@@ -7,7 +7,8 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
 import {useTranslation} from "react-i18next";
-const { Paragraph } = Typography;
+
+const {Paragraph} = Typography;
 
 const FormSelect = ({
                         label,
@@ -34,13 +35,12 @@ const FormSelect = ({
     const [showClearButton, setShowClearButton] = useState(false);
     const [initValueInitialized, setInitialValueInitialized] = useState(false);
     const [innerPlaceholder, setInnerPlaceholder] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
     const isRequired = toBoolean(required);
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('');
     const [multiSelectedValues, setMultiSelectedValues] = useState([]);
-    
+
     let field = '';
     let meta = null;
 
@@ -58,16 +58,16 @@ const FormSelect = ({
     const selectRef = useRef(null);
 
     useEffect(() => {
-        if (!fetching){
+        if (!fetching) {
             if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
                 field = form.getFieldProps(name);
-                
+
                 if (field && !isNullOrEmpty(field.value)) {
                     setInitialValueInitialized(true);
-                    
-                    if (toBoolean(multi)){
+
+                    if (toBoolean(multi)) {
                         setMultiSelectedValues(field.value);
-                    } else{
+                    } else {
                         const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
                         if (selectedOptionInList) {
                             onValueSelect(selectedOptionInList)
@@ -118,14 +118,24 @@ const FormSelect = ({
         }
     }, [])
 
-    if (toBoolean(loading)){
+    if (toBoolean(loading)) {
         return (
-            <div className={cx(globalStyles.formBlock) }>
-                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel) }/>
-                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput) }/>
+            <div className={cx(globalStyles.formBlock)}>
+                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonLabel)}/>
+                <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput)}/>
             </div>
         )
     }
+
+    useEffect(() => {
+        if (toBoolean(multi) && form){
+            const currentValue = field?.value;
+
+            if (JSON.stringify(currentValue) !== JSON.stringify(multiSelectedValues)) {
+                form.setFieldValue(name, multiSelectedValues);
+            }
+        }
+    }, [multiSelectedValues]);
     
     return (
         <>
@@ -154,9 +164,7 @@ const FormSelect = ({
                     onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
                     onChange={(value) => {
                         if (multi) {
-                            const selectedOptions = options.filter(option => value.includes(option[propValue]));
-                            setMultiSelectedValues(selectedOptions);
-                            form.setFieldValue(name, selectedOptions.map(option => option[propValue]));
+                            //nothing
                         } else {
                             const selectedOptionInList = options.find(option => equalString(option[propValue], value));
                             onValueSelect(selectedOptionInList);
@@ -181,7 +189,8 @@ const FormSelect = ({
                 </Select>
 
                 {hasError && meta && typeof meta.error === 'string' ? (
-                    <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
+                    <Paragraph
+                        style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                         {meta.error}
                     </Paragraph>
                 ) : null}
@@ -200,7 +209,7 @@ const FormSelect = ({
                     <FormDrawerRadio
                         options={options}
                         multi={toBoolean(multi)}
-                        
+
                         selectedCurrentValue={selectedOption?.[propValue]}
                         multiSelectedValues={multiSelectedValues}
                         onValueSelect={onValueSelect}

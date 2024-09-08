@@ -23,7 +23,7 @@ import {Collapse} from 'antd-mobile'
 import {useTranslation} from "react-i18next";
 import * as React from "react";
 import FormRangePicker from "../../../../form/formrangepicker/FormRangePicker.jsx";
-import {bookingTypes, filterDates} from "../../../../utils/ListUtils.jsx";
+import {bookingTypes, filterDates} from "../../../../utils/SelectUtils.jsx";
 import HeaderSearch from "../../../../components/header/HeaderSearch.jsx";
 
 const {Title, Text} = Typography;
