@@ -86,7 +86,11 @@
     "confirmPasswordNotMatch": "Password and Confirm password does not match.",
     "confirmPasswordRequired": "Confirm password is required.",
     "successfullyUpdate": "Information successfully updated.",
-    "updateInformation" : "Update Information"
+    "updateInformation" : "Update Information",
+    "excludeAccountInformationFromPublicGroups" : "Hide my Personal Information from my club/organization\\'s public member directories",
+    "unsubscribeFromMarketingEmails" : "Unsubscribe from my Club/Organization's Emails/Alerts/Newsletters",
+    "doNotAllowOtherPlayersToLinkMyProfile" : "Prevent Player Linking to this profile (Organized Play)",
+    "unsubscribeFromMarketingPushNotifications" : "Unsubscribe From Organizations Marketing Push Notifications"
   },
   "date": {
     "today": "Today",

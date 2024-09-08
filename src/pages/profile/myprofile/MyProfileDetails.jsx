@@ -356,20 +356,20 @@ function MyProfileDetails({selectedTab}) {
 
             <FormCustomFields customFields={profileData?.CustomFields} form={formik} loading={isFetching} />
             
-            <FormSwitch label={'Hide my Personal Information from my club/organization\'s public member directories'}
+            <FormSwitch label={t('profile.excludeAccountInformationFromPublicGroups')}
                         form={formik}
                         loading={isFetching}
                         rows={2}
                         name={'excludeAccountInformationFromPublicGroups'}/>
 
-            <FormSwitch label={'Unsubscribe from my Club/Organization\'s Emails/Alerts/Newsletters'}
+            <FormSwitch label={t('profile.unsubscribeFromMarketingEmails')}
                         form={formik}
                         loading={isFetching}
                         rows={2}
                         name={'unsubscribeFromMarketingEmails'}/>
 
             {toBoolean(authData?.useOrganizedPlay) &&
-                <FormSwitch label={'Prevent Player Linking to this profile (Organized Play)'}
+                <FormSwitch label={t('profile.doNotAllowOtherPlayersToLinkMyProfile')}
                             form={formik}
                             loading={isFetching}
                             rows={2}
@@ -377,13 +377,12 @@ function MyProfileDetails({selectedTab}) {
             }
 
             {toBoolean(authData?.isUsingPushNotifications) &&
-                <FormSwitch label={'Unsubscribe From Organizations Marketing Push Notifications'}
+                <FormSwitch label={t('profile.unsubscribeFromMarketingPushNotifications')}
                             form={formik}
                             loading={isFetching}
                             rows={2}
                             name={'unsubscribeFromMarketingPushNotifications'}/>
             }
-
         </PaddingBlock>
     )
 }
