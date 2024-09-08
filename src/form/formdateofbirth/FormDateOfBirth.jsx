@@ -94,7 +94,11 @@ const FormDateOfBirth = React.forwardRef(({
             months = 11;
         }
 
-        setAge(`${years}-yr ${months}-m`);
+        if (equalString(months, 0)){
+            setAge(`${years}-yr`);
+        } else{
+            setAge(`${years}-yr ${months}-m`);
+        }
     };
 
     useEffect(() => {
@@ -348,7 +352,7 @@ const FormDateOfBirth = React.forwardRef(({
                                style={{
                                    width: '350px',
                                    textAlign: 'center',
-                                   color: token.Custom.ColorPrimaryText,
+                                   color: token.colorTextLightSolid,
                                    fontWeight: 600,
                                    backgroundColor: token.colorPrimary
                                }}
