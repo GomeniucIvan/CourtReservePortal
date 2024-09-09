@@ -19,25 +19,28 @@ function ProfileCalendarFeed() {
     const { t } = useTranslation('');
     
     const [calendarUrl, setCalendarUrl] = useState()
-    
+    const [isFetching, setIsFetching] = useState(true);
     useEffect(() => {
         if (isMockData) {
-            setCalendarUrl('http://localhost:2129/Online/PublicIcal/Index/6969/462598/e562a01f-4db9-44c4-b8dc-87b702b041df')
+            setCalendarUrl('http://localhost:2129/Online/PublicIcal/Index/6969/462598/e562a01f-4db9-44c4-b8dc-87b702b041df');
+            setIsFetching(false);
         }else{
-            setIsLoading(true);
-            
             appService.get(`/app/Online/MyProfile/MyCalendar?id=${orgId}`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     setCalendarUrl(r.Data.CalendarUrl);
                 }
-                
-                setIsLoading(false);
+
+                setIsFetching(false);
             })
         }
     }, []);
 
-    if (isLoading){
-        return(<Skeleton />)
+    if (isFetching){
+        return(
+            <PaddingBlock topBottom={true}>
+                <Skeleton active/>
+            </PaddingBlock>
+        )
     }
     
     return (

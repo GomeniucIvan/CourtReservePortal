@@ -3,20 +3,21 @@ import {Flex, theme, Typography} from 'antd';
 import {CheckCircleFilled, CloseCircleFilled, InfoCircleFilled, WarningFilled} from '@ant-design/icons';
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty} from "../../utils/Utils.jsx";
-const { useToken } = theme;
+
+const {useToken} = theme;
 const {Title, Text} = Typography;
 
 const Notification = ({type, title, description, onClose, duration}) => {
     const alertRef = useRef(null);
     const [swipeDistance, setSwipeDistance] = useState({x: 0, y: 0});
     const [startX, setStartX] = useState(0);
-    const{styles} = useStyles();
+    const {styles} = useStyles();
     const [removing, setRemoving] = useState(false);
     const [transition, setTransition] = useState('');
-    
+
     //not use from useApp it is not accessible
-    const { token } = useToken();
-    
+    const {token} = useToken();
+
     const handleTouchStart = (e) => {
         setTransition(`none`);
         setStartX(e.touches[0].clientX);
@@ -26,7 +27,7 @@ const Notification = ({type, title, description, onClose, duration}) => {
         if (removing) return;
 
         setTransition(`none`);
-        
+
         const currentX = e.touches[0].clientX;
         const distanceX = currentX - startX;
 
@@ -41,12 +42,12 @@ const Notification = ({type, title, description, onClose, duration}) => {
             setTransition(`transform 0.3s ease-in-out`);
             handleRemove(direction);
         }
-        
+
         setTimeout(hideNotificationByDuration, duration * 1000)
     }, [])
-    
+
     const handleTouchEnd = () => {
-        const swipeThresholdX = 30; 
+        const swipeThresholdX = 30;
 
         if (Math.abs(swipeDistance.x) > swipeThresholdX) {
             const direction = swipeDistance.x > 0 ? 'right' : 'left';
@@ -54,7 +55,7 @@ const Notification = ({type, title, description, onClose, duration}) => {
             handleRemove(direction);
         } else {
             setTransition(`initial`);
-            setSwipeDistance({ x: 0 });
+            setSwipeDistance({x: 0});
         }
     };
 
@@ -70,20 +71,20 @@ const Notification = ({type, title, description, onClose, duration}) => {
 
     useEffect(() => {
         if (removing) {
-            setTransition(''); 
+            setTransition('');
         }
     }, [removing]);
-    
+
     let colorToFill = token.colorSuccess;
-    
-    if (equalString(type, 'danger')){
+
+    if (equalString(type, 'danger')) {
         colorToFill = token.colorError;
-    } else if(equalString(type, 'info')){
+    } else if (equalString(type, 'info')) {
         colorToFill = token.colorInfo;
-    } else if(equalString(type, 'warning')){
+    } else if (equalString(type, 'warning')) {
         colorToFill = token.colorWarning;
     }
-    
+
     const iconTypes = {
         success: <CheckCircleFilled style={{color: colorToFill, fontSize: '22px'}}/>,
         danger: <CloseCircleFilled style={{color: colorToFill, fontSize: '22px'}}/>,
@@ -91,10 +92,10 @@ const Notification = ({type, title, description, onClose, duration}) => {
         warning: <WarningFilled style={{color: colorToFill, fontSize: '22px'}}/>,
     };
 
-    if (isNullOrEmpty(title) && isNullOrEmpty(description)){
+    if (isNullOrEmpty(title) && isNullOrEmpty(description)) {
         return (<></>);
     }
-    
+
     return (
         <div
             style={{
@@ -107,9 +108,10 @@ const Notification = ({type, title, description, onClose, duration}) => {
             onTouchMove={(e) => handleTouchMove(e)}
             onTouchEnd={(e) => handleTouchEnd(e)}
         >
-            <Flex gap={token.padding /2} style={{padding: `${token.padding}px`}}>
+            <Flex gap={token.padding / 2} style={{padding: `${token.padding}px`}}>
                 <div className={styles.leftBorder} style={{backgroundColor: colorToFill}}></div>
-                <Flex justify={'start'} align={'start'} style={{paddingTop: '5px'}} className={'icon'}>{iconTypes[type]}</Flex>
+                <Flex justify={'start'} align={'start'} style={{paddingTop: (!isNullOrEmpty(title) ? '5px' : '0px')}}
+                      className={'icon'}>{iconTypes[type]}</Flex>
                 <div style={{flex: 1}}>
                     {!isNullOrEmpty(title) &&
                         <>
