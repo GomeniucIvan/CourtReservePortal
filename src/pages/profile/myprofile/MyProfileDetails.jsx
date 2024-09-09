@@ -201,7 +201,7 @@ function MyProfileDetails({selectedTab}) {
             const udfs = getUserDefinedFieldsList(values);  
             
             if (isMockData) {
-                pNotify(null, t('profile.successfullyUpdate'))
+                pNotify(t('profile.successfullyUpdate'))
                 setIsLoading(false);
             } else {
                 //todo

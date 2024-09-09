@@ -1,3 +1,5 @@
+import {pNotify} from "../components/notification/PNotify.jsx";
+
 export const isNullOrEmpty = (data) => {
     if (data === undefined || data === '' || data === null || data === 'undefined' || data === 'null') {
         return true;
@@ -200,6 +202,17 @@ export const calculateSkeletonLabelWidth = (label) => {
     return `${charCount * 9}px`;
 };
 
-const randomNumber = (min, max) => {
+export const randomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+export const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            pNotify('Successfully copied');
+        })
+        .catch((err) => {
+            // Handle errors if any occur
+            console.error('Failed to copy text: ', err);
+        });
 };

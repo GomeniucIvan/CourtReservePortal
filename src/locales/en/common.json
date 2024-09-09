@@ -96,6 +96,14 @@
       "email" : "Email",
       "push" : "Push",
       "text" : "Text"
+    },
+    "calendar": {
+      "feedTitle": "URL to Subscribe to your Events/Reservations in your Calendar",
+      "copyLink": "Copy Link",
+      "getFile": "Get File",
+      "emailLink": "Email Link",
+      "emailLinkDescription": "Are you sure you want to email calendar link?",
+      "successfullyEmailed": "Email was sent successfully."
     }
   },
   "date": {

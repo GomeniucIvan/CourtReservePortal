@@ -16,7 +16,7 @@ const createNotificationContainer = () => {
     return container;
 };
 
-export const pNotify = (title, description, type = 'success', duration) => {
+export const pNotify = (description, title = '', type = 'success', duration = '') => {
     if (equalString(type, 'error')){
         type = 'danger';
     }

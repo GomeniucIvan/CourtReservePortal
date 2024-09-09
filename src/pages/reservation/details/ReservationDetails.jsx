@@ -121,10 +121,10 @@ function ProfileBookingDetails() {
                 }
                 appService.post(`/app/Online/MyProfile/CancelReservation?id=${orgId}`, postData).then(r => {
                     if (toBoolean(t?.IsValid)){
-                        pNotify(null, t('reservation.successfullyCancelledMessage', {entity: toBoolean(booking.IsLesson) ? t('lesson') : t('reservation.title')}))
+                        pNotify(t('reservation.successfullyCancelledMessage', {entity: toBoolean(booking.IsLesson) ? t('lesson') : t('reservation.title')}))
                         loadData();
                     } else{
-                        pNotify(null, r.Message, 'error');
+                        pNotify(r.Message, '', 'error');
                     }
                     
                     setIsLoading(false);
