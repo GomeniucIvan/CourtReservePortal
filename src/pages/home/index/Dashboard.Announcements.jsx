@@ -104,7 +104,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
             <EntityCard title={t('announcement.title')} link={'/announcement/list'} isFetching={isFetching} addPadding={true}>
                 {isFetching &&
                     <SlickSlider>
-                        <CardSkeleton type={SkeletonEnum.ANNOUNCEMENT} count={1} marginBottom={true}/>
+                        <CardSkeleton type={SkeletonEnum.DASHBOARD_ANNOUNCEMENT} count={1} marginBottom={true}/>
                      </SlickSlider>
                 }
                 {(!isFetching && anyInList(announcements)) &&

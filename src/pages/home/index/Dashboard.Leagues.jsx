@@ -8,7 +8,6 @@ import {useStyles} from "./styles.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import {useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
 import FormDrawerRadio from "../../../form/formradio/FormDrawerRadio.jsx";
 import {stringToJson} from "../../../utils/ListUtils.jsx";
 import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
@@ -65,7 +64,7 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
 
             {isFetching &&
                 <SlickSlider>
-                    <CardSkeleton type={SkeletonEnum.LEAGUE_DASHBOARD} count={1}/>
+                    <CardSkeleton type={SkeletonEnum.DASHBOARD_LEAGUE} count={1}/>
                 </SlickSlider>
             }
 
