@@ -25,6 +25,7 @@ import * as React from "react";
 import FormRangePicker from "../../../../form/formrangepicker/FormRangePicker.jsx";
 import {bookingTypes, filterDates} from "../../../../utils/SelectUtils.jsx";
 import HeaderSearch from "../../../../components/header/HeaderSearch.jsx";
+import CardSkeleton, {SkeletonEnum} from "../../../../components/skeleton/CardSkeleton.jsx";
 
 const {Title, Text} = Typography;
 
@@ -87,6 +88,7 @@ function ProfileBookingList() {
     }
 
     const onTypeChange = (type) => {
+        setIsFetching(true);
         setSelectedType(type);
         loadBookings(null, type);
     }
@@ -252,7 +254,15 @@ function ProfileBookingList() {
 
             <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
                   style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
-                {anyInList(filteredBookings) &&
+                {isFetching &&
+                    <PaddingBlock topBottom={true}>
+                        <Flex vertical={true} gap={token.padding}>
+                            <CardSkeleton count={8} type={SkeletonEnum.RESERVATION}/>
+                        </Flex>
+                    </PaddingBlock>
+                }
+                
+                {(!isFetching && anyInList(filteredBookings)) &&
                     <>
                         {filteredBookings.map((booking, index) => (
                             <List.Item span={12}
