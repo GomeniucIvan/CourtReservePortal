@@ -59,7 +59,8 @@ function ProfileBookingList() {
         if (isNullOrEmpty(incFilterData)) {
             incFilterData = filterData;
         }
-
+        setIsFetching(true);
+        
         const filterModel = {
             OrganizationId: orgId,
             OrgMemberIdsString: incFilterData.OrgMemberIds.join(','),
@@ -255,11 +256,17 @@ function ProfileBookingList() {
             <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
                   style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
                 {isFetching &&
-                    <PaddingBlock topBottom={true}>
-                        <Flex vertical={true} gap={token.padding}>
-                            <CardSkeleton count={8} type={SkeletonEnum.RESERVATION}/>
-                        </Flex>
-                    </PaddingBlock>
+                    <>
+                        {isListDisplay ? (
+                            <PaddingBlock topBottom={true}>
+                                <Flex vertical={true} gap={token.padding}>
+                                    <CardSkeleton count={8} type={SkeletonEnum.RESERVATION}/>
+                                </Flex>
+                            </PaddingBlock>
+                        ) : (
+                            <CardSkeleton count={12} type={SkeletonEnum.RESERVATION}/>
+                        )}
+                    </>
                 }
                 
                 {(!isFetching && anyInList(filteredBookings)) &&

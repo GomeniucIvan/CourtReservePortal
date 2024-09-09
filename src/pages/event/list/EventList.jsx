@@ -16,6 +16,8 @@ import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.js
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import HeaderSearch from "../../../components/header/HeaderSearch.jsx";
 import * as React from "react";
+import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
 
 const {Title, Text} = Typography;
 
@@ -30,7 +32,7 @@ function EventList() {
         shouldFetch,
         resetFetch
     } = useApp();
-    
+
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loadedEvents, setLoadedEvents] = useState([]);
@@ -38,14 +40,19 @@ function EventList() {
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('event-list-format', 'list'), 'list'));
     const [isFilterOpened, setIsFilterOpened] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [isFetching, setIsFetching] = useState(true);
 
     const loadData = (refresh) => {
+        setIsFetching(true);
+
         if (isMockData) {
             const list = mockData.list.List;
             setEvents(list.slice(0, 20));
             setLoadedEvents(list);
+            setIsFetching(false);
         } else {
-            alert('todo eve list')
+            alert('todo eve list');
+            setIsFetching(true);
         }
 
         resetFetch();
@@ -105,10 +112,23 @@ function EventList() {
 
     return (
         <>
-            {anyInList(events) &&
+            <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
+                  style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
                 <>
-                    <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
-                          style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
+                    {isFetching &&
+                        <>
+                            {isListDisplay ? (
+                                <PaddingBlock topBottom={true}>
+                                    <Flex vertical={true} gap={token.padding}>
+                                        <CardSkeleton count={8} type={SkeletonEnum.RESERVATION}/>
+                                    </Flex>
+                                </PaddingBlock>
+                            ) : (
+                                <CardSkeleton count={12} type={SkeletonEnum.RESERVATION}/>
+                            )}
+                        </>
+                    }
+                    {(!isFetching && anyInList(events)) &&
                         <>
                             {events.map((item, index) => (
                                 <List.Item span={12}
@@ -186,21 +206,21 @@ function EventList() {
                                 </List.Item>
                             ))}
                         </>
-                    </List>
-                    <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
-
-                    <DrawerBottom showDrawer={isFilterOpened}
-                                  closeDrawer={() => setIsFilterOpened(false)}
-                                  showButton={true}
-                                  confirmButtonText={'Filter'}
-                                  label='Filter'
-                                  onConfirmButtonClick={() => {
-                                      setIsFilterOpened(false);
-                                  }}>
-                        <div>test</div>
-                    </DrawerBottom>
+                    }
                 </>
-            }
+            </List>
+            <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
+
+            <DrawerBottom showDrawer={isFilterOpened}
+                          closeDrawer={() => setIsFilterOpened(false)}
+                          showButton={true}
+                          confirmButtonText={'Filter'}
+                          label='Filter'
+                          onConfirmButtonClick={() => {
+                              setIsFilterOpened(false);
+                          }}>
+                <div>test</div>
+            </DrawerBottom>
         </>
     )
 }
