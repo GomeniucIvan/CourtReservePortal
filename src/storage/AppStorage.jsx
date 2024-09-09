@@ -28,12 +28,18 @@ export const authMember = () => {
 }
 
 export const selectedTabStorage = (tabKey, defaultTab) =>{
-    return  fromLocalStorage(`tab_${tabKey}`, defaultTab);
+    return fromLocalStorage(`tab_${tabKey}`, defaultTab);
+}
+
+export const removeTabStorage = (tabKey) =>{
+    return toLocalStorage(`tab_${tabKey}`, '');
 }
 
 export const setTabStorage = (tabKey, selectedTab, setFunction) => {
     toLocalStorage(`tab_${tabKey}`, selectedTab);
-    setFunction(selectedTab);
+    if (typeof setFunction == 'function'){
+        setFunction(selectedTab);   
+    }
 }
 
 export const clearAllLocalStorage = () => {

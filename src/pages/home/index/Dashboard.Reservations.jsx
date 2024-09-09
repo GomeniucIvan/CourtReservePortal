@@ -15,10 +15,11 @@ import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 import {stringToJson} from "../../../utils/ListUtils.jsx";
 import {useTranslation} from "react-i18next";
+import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
 
 const DashboardReservations = ({dashboardData, isFetching}) => {
     let bookings = stringToJson(dashboardData?.BookingsJson);
-    let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) && anyInList(bookings);
+    let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) && anyInList(bookings) || isFetching;
     const {globalStyles, token, setDynamicPages} = useApp();
     const navigate = useNavigate();
     const { t } = useTranslation('');
@@ -65,7 +66,13 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
     
     return (
         <EntityCard title={t('booking.myBookings')} link={ProfileRouteNames.RESERVATION_LIST} isFetching={isFetching} addPadding={true}>
-            {anyInList(bookings) ? (
+            {isFetching &&
+                <SlickSlider>
+                    <CardSkeleton type={SkeletonEnum.RESERVATION} count={1} marginBottom={true}/>
+                </SlickSlider>
+            }
+
+            {(!isFetching && anyInList(bookings)) ? (
                 <SlickSlider>
                     {bookings.map((booking, index) => (
                         <div key={index}>

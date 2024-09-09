@@ -19,6 +19,7 @@ import {ModalRemove} from "../../../utils/ModalUtils.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
+import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
 
 const {Text, Title} = Typography;
 
@@ -47,7 +48,6 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
 
     const handleAfterChange = (currentSlide) => {
         const indexAnnouncement = announcements[currentSlide];
-        console.log(indexAnnouncement)
         if (!isNullOrEmpty(indexAnnouncement) && toBoolean(indexAnnouncement.IsNew)) {
             appService.postRoute(apiRoutes.API2, `/app/Online/MemberDashboard/GlobalAnnouncementMarkAsSeenOrRemoved?id=${orgId}&globalAnnouncementId=${indexAnnouncement.Id}&markAsNotNew=true`).then(r => {
 
@@ -102,7 +102,12 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
     return (
         <>
             <EntityCard title={t('announcement.title')} link={'/announcement/list'} isFetching={isFetching} addPadding={true}>
-                {anyInList(announcements) &&
+                {isFetching &&
+                    <SlickSlider>
+                        <CardSkeleton type={SkeletonEnum.ANNOUNCEMENT} count={1} marginBottom={true}/>
+                     </SlickSlider>
+                }
+                {(!isFetching && anyInList(announcements)) &&
                     <SlickSlider afterChange={handleAfterChange}>
                         {announcements.map((globalAnn, index) => (
                             <div key={index}>

@@ -18,7 +18,7 @@ function ProfileCalendarFeed() {
     const {orgId} = useAuth();
     const { t } = useTranslation('');
     
-    const [calendarUrl, setCalendarUrl] = useState()
+    const [calendarUrl, setCalendarUrl] = useState('')
     const [isFetching, setIsFetching] = useState(true);
     useEffect(() => {
         if (isMockData) {
