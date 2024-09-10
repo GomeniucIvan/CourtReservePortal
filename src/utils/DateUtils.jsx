@@ -152,3 +152,11 @@ export const isNonUsCulture = () => {
 
     return equalString(clientUiCulture, 'en-us');
 } 
+
+export const toAspNetDate = (incDate) => {
+    return dateToString(incDate);
+    
+    // const milliseconds = parseInt(incDate.replace(/\/Date\((\d+)\)\//, '$1'), 10);
+    // console.log(milliseconds)
+    // return new Date(milliseconds);
+}

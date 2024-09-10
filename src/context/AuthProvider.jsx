@@ -29,7 +29,6 @@ export const AuthProvider = ({children}) => {
             myAccountHideMyEvents: nullToEmpty(memberData.myAccountHideMyEvents),
             myAccountHideWaitingList: nullToEmpty(memberData.myAccountHideWaitingList),
             
-            
             useOrganizedPlay: nullToEmpty(memberData.useOrganizedPlay),
             isUsingPushNotifications: nullToEmpty(memberData.isUsingPushNotifications),
         })
@@ -47,6 +46,13 @@ export const AuthProvider = ({children}) => {
             uiCulture: '',
             currency: '',
             primaryColor: '',
+            memberId: '',
+            hasActiveInstructors: '',
+            isUsingCourtWaitlisting: '',
+            myAccountHideMyEvents: '',
+            myAccountHideWaitingList: '',
+            useOrganizedPlay: '',
+            isUsingPushNotifications: '',
         });
         
         appService.get('/app/online/logout').then(r => {

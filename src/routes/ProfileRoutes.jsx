@@ -6,6 +6,8 @@ import ProfileCalendarFeed from "../pages/profile/calendar/ProfileCalendarFeed.j
 import ProfileMembershipDetails from "../pages/profile/membership/details/ProfileMembershipDetails.jsx";
 import ProfileBilling from "../pages/profile/billing/list/ProfileBilling.jsx";
 import MyProfile from "../pages/profile/myprofile/MyProfile.jsx";
+import ProfileStringingList from "../pages/profile/stringing/list/ProfileStringingList.jsx";
+import ProfileStringingDetails from "../pages/profile/stringing/details/ProfileStringingDetails.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
@@ -17,6 +19,8 @@ export const ProfileRouteNames = {
     PROFILE_CALENDAR_FEED: `/profile/calendar`,
     PROFILE_MEMBERSHIP: `/profile/membership`,
     PROFILE_BILLING: `/profile/billing`,
+    PROFILE_STRINGING: `/profile/stringing`,
+    PROFILE_STRINGING_DETAILS: `/profile/stringing/:id`,
 };
 
 const ProfileRoutes = [
@@ -68,7 +72,17 @@ const ProfileRoutes = [
         element: <ProfileBilling />,
         title: 'billing',
         disablePullDown: true
-    }
+    },
+    {
+        path: ProfileRouteNames.PROFILE_STRINGING_DETAILS,
+        element: <ProfileStringingDetails />,
+        title: 'stringingDetails'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_STRINGING,
+        element: <ProfileStringingList />,
+        title: 'stringing'
+    },
 ];
 
 export default ProfileRoutes;

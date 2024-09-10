@@ -107,6 +107,9 @@
     },
     "family": {
       "addNewFamilyMember" : "Add New Family Member"
+    },
+    "stringing": {
+      "notFound": "Stringing Job not found."
     }
   },
   "date": {

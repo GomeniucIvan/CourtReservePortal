@@ -5,6 +5,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 
 export const SkeletonEnum = {
     RESERVATION: 'RESERVATION',
+    STRINGING_JOB: 'STRINGING_JOB',
     EVENT: 'EVENT',
     DASHBOARD_LEAGUE: 'DASHBOARD_LEAGUE',
     MEMBER: 'MEMBER',
@@ -33,6 +34,9 @@ const CardSkeleton = ({type, count = 1, marginBottom = false}) => {
             break;
         case SkeletonEnum.EVENT:
             height = 145;
+            break;
+        case SkeletonEnum.STRINGING_JOB:
+            height = 134;
             break;
     }
 
