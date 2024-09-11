@@ -29,6 +29,7 @@ const EMPTY_CELL = <div className="k-scheduler-cell k-side-cell" />;
 
 export const MultiDayView = (props) => {
 
+    console.log(props)
     const {
         group,
         timezone,

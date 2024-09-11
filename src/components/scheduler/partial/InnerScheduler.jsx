@@ -36,7 +36,7 @@ viewDefaultPropsMap.set(WeekView, weekViewDefaultProps);
 viewDefaultPropsMap.set(WorkWeekView, workWeekDefaultProps);
 viewDefaultPropsMap.set(TimelineView, timeLineViewDefaultProps);
 
-export const InnerScheduler = React.forwardRef((props, ref) => {
+const InnerSchedulerComponent = React.forwardRef((props, ref) => {
     const {
         timezone,
         onDataChange
@@ -289,11 +289,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         (event) => {
             if (!event.value) { return; }
 
-            const elementDiv = element.current;
-            if (elementDiv) {
-                elementDiv.classList.add('--loading');
-            }
-
             setTimeout(function () {
                 setDate(event.value, {
                     ...event,
@@ -313,11 +308,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
     const handleNextClick = React.useCallback(
         (syntheticEvent) => {
             syntheticEvent.preventDefault();
-            
-            const elementDiv = element.current;
-            if (elementDiv) {
-                elementDiv.classList.add('--loading');
-            }
 
             setTimeout(function () {
                 const offset = view.props.numberOfDays || 1;
@@ -338,18 +328,14 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         (syntheticEvent) => {
             syntheticEvent.preventDefault();
 
-            const elementDiv = element.current;
-            if (elementDiv) {
-                elementDiv.classList.add('--loading');
-            }
-
             const offset = view.props.numberOfDays || 1;
             const isMonthView = offset > 27;
             const newDate = isMonthView
                 ? addMonths(date, -(Math.round(offset / 27)))
                 : addDays(date, -(offset));
             // eslint-disable-next-line no-restricted-globals
-            setDate(newDate, event);
+            props.setSelectedDate(newDate);
+            //setDate(newDate, event);
         },
         [date, setDate, view.props.numberOfDays]
     );
@@ -359,7 +345,8 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
             syntheticEvent.preventDefault();
             const newDate = getToday();
             // eslint-disable-next-line no-restricted-globals
-            setDate(newDate, event);
+            props.setSelectedDate(newDate);
+            //setDate(newDate, event);
         },
         [setDate]
     );
@@ -436,8 +423,8 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                    aria-activedescendant={(eventSelection && eventSelection.props.id) || undefined}
 
                    // Handlers
-                   onFocus={handleFocus}
-                   onBlur={handleBlur}
+                   //onFocus={handleFocus}
+                   //onBlur={handleBlur}
                >
                    <Header>
                        <Flex justify={'space-between'} style={{width: '100%'}}>
@@ -497,3 +484,5 @@ export const schedulerDefaultProps = {
     navigation: SchedulerNavigation,
     viewSelector: SchedulerViewSelector
 };
+
+export const InnerScheduler = React.memo(InnerSchedulerComponent);
