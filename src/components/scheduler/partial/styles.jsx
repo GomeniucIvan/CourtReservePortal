@@ -29,14 +29,6 @@ export const useStyles = createStyles(({ css, token }) => ({
             flex-wrap: wrap;
         }
 
-        .k-scheduler-layout-flex .k-scheduler-group {
-            display: flex;
-            flex: 1 1 100%;
-            width: 100%;
-            min-width: 0;
-            flex-wrap: wrap;
-        }
-
         .k-scheduler-layout-flex .k-scheduler-row {
             display: flex;
             flex: 1 1 100%;

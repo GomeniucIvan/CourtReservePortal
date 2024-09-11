@@ -308,10 +308,12 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         ]
     );
 
+    console.log(3)
+    
     const handleNextClick = React.useCallback(
         (syntheticEvent) => {
             syntheticEvent.preventDefault();
-
+            
             const elementDiv = element.current;
             if (elementDiv) {
                 elementDiv.classList.add('--loading');
@@ -323,8 +325,10 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                 const newDate = isMonthView
                     ? addMonths(date, Math.round(offset / 27))
                     : addDays(date, offset);
+                console.log('click')
+                
                 // eslint-disable-next-line no-restricted-globals
-                setDate(newDate, event);
+                props.setSelectedDate(newDate);
             }, 50);
         },
         [date, setDate, view.props.numberOfDays]
@@ -393,8 +397,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
 
     const todayText = localization.toLanguageString(today, messages[today]);
     const Header = view.props.header || props.header || schedulerDefaultProps.header;
-
-    const Navigation = SchedulerNavigation;
 
     const [eventSelection, setEventSelection] = React.useState(null);
 

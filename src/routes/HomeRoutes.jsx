@@ -9,7 +9,7 @@ import {useTranslation} from "react-i18next";
 
 export const HomeRouteNames = {
     INDEX: '/',
-    SCHEDULER: '/scheduler',
+    SCHEDULER: '/scheduler/',
     CALENDAR: '/calendar',
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/announcement/list`,

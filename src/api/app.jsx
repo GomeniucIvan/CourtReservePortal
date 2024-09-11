@@ -5,7 +5,8 @@ import {fixResponseData} from "../utils/apiUtils.jsx";
 
 export const apiRoutes = {
     API2: '',
-    CREATE_RESERVATION: ''
+    CREATE_RESERVATION: '',
+    HUB_URL_READ: ''
 }
 
 const axiosInstance = axios.create({

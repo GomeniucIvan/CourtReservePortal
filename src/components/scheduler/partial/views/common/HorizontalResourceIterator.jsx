@@ -34,7 +34,7 @@ const renderResourcesRecursively = (args) => {
 
   const expandedResources = expandResources(resources, groupIndex);
   const RowContent = rowContent;
-
+  
   return (
       <React.Fragment>
         {nested
