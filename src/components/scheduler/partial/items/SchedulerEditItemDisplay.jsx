@@ -749,19 +749,19 @@ export const SchedulerEditItem = React.forwardRef((
                 onClose={handleCancel}
                 onCancel={handleCancel}
             />)}
-            {(showOccurrenceDialog) && (<OccurrenceDialog
-                dataItem={formItem || dragItem || resizeItem || removeItem}
-                isRemove={removeItem !== null}
-                onClose={handleCancel}
-                onOccurrenceClick={handleOccurrenceClick}
-                onSeriesClick={handleSeriesClick}
-            />)}
-            {(showRemoveDialog && removeItem && editable.remove) && (<RemoveDialog
-                dataItem={removeItem}
-                onClose={handleCancel}
-                onCancel={handleCancel}
-                onConfirm={handleRemoveConfirm}
-            />)}
+            {/*{(showOccurrenceDialog) && (<OccurrenceDialog*/}
+            {/*    dataItem={formItem || dragItem || resizeItem || removeItem}*/}
+            {/*    isRemove={removeItem !== null}*/}
+            {/*    onClose={handleCancel}*/}
+            {/*    onOccurrenceClick={handleOccurrenceClick}*/}
+            {/*    onSeriesClick={handleSeriesClick}*/}
+            {/*/>)}*/}
+            {/*{(showRemoveDialog && removeItem && editable.remove) && (<RemoveDialog*/}
+            {/*    dataItem={removeItem}*/}
+            {/*    onClose={handleCancel}*/}
+            {/*    onCancel={handleCancel}*/}
+            {/*    onConfirm={handleRemoveConfirm}*/}
+            {/*/>)}*/}
         </SchedulerEditItemContext>
     );
 });

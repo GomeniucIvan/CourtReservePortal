@@ -62,8 +62,6 @@ const ExpandedSchedulerItem = (props) => {
         }
         return null;
     }
-
-    console.log(dataItem)
     
     return (
         <SchedulerItem

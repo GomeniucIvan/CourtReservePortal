@@ -36,7 +36,7 @@ viewDefaultPropsMap.set(WeekView, weekViewDefaultProps);
 viewDefaultPropsMap.set(WorkWeekView, workWeekDefaultProps);
 viewDefaultPropsMap.set(TimelineView, timeLineViewDefaultProps);
 
-const InnerSchedulerComponent = React.forwardRef((props, ref) => {
+export const InnerScheduler = React.forwardRef((props, ref) => {
     const {
         timezone,
         onDataChange
@@ -302,8 +302,6 @@ const InnerSchedulerComponent = React.forwardRef((props, ref) => {
             scheduler
         ]
     );
-
-    console.log(3)
     
     const handleNextClick = React.useCallback(
         (syntheticEvent) => {
@@ -315,10 +313,9 @@ const InnerSchedulerComponent = React.forwardRef((props, ref) => {
                 const newDate = isMonthView
                     ? addMonths(date, Math.round(offset / 27))
                     : addDays(date, offset);
-                console.log('click')
                 
                 // eslint-disable-next-line no-restricted-globals
-                props.setSelectedDate(newDate);
+                setDate(newDate, event);
             }, 50);
         },
         [date, setDate, view.props.numberOfDays]
@@ -333,9 +330,9 @@ const InnerSchedulerComponent = React.forwardRef((props, ref) => {
             const newDate = isMonthView
                 ? addMonths(date, -(Math.round(offset / 27)))
                 : addDays(date, -(offset));
+            
             // eslint-disable-next-line no-restricted-globals
-            props.setSelectedDate(newDate);
-            //setDate(newDate, event);
+            setDate(newDate, event);
         },
         [date, setDate, view.props.numberOfDays]
     );
@@ -345,8 +342,7 @@ const InnerSchedulerComponent = React.forwardRef((props, ref) => {
             syntheticEvent.preventDefault();
             const newDate = getToday();
             // eslint-disable-next-line no-restricted-globals
-            props.setSelectedDate(newDate);
-            //setDate(newDate, event);
+            setDate(newDate, event);
         },
         [setDate]
     );
@@ -484,5 +480,3 @@ export const schedulerDefaultProps = {
     navigation: SchedulerNavigation,
     viewSelector: SchedulerViewSelector
 };
-
-export const InnerScheduler = React.memo(InnerSchedulerComponent);

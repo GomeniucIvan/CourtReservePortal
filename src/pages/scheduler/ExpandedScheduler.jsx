@@ -9,7 +9,7 @@ import {Flex, Skeleton, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 const {Text} = Typography
-import '@progress/kendo-date-math/tz/America/Costa_Rica';
+import '@progress/kendo-date-math/tz/Europe/Chisinau';
 import {
     SchedulerProportionalViewItem
 } from "../../components/scheduler/partial/items/SchedulerProportionalViewItem.mjs";
@@ -20,6 +20,7 @@ import {useAuth} from "../../context/AuthProvider.jsx";
 import {dateToString, fixDate} from "../../utils/DateUtils.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
 import dayjs from "dayjs";
+import apiService from "../../api/api.jsx";
 
 function ExpandedScheduler() {
     const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData, token, globalStyles} = useApp();
@@ -40,7 +41,7 @@ function ExpandedScheduler() {
     
     //todo
     const startTimeString = '8:00';
-    const endTimeString = '20:00';
+    const endTimeString = '23:00';
     let interval = 15;
 
     useEffect(() => {
@@ -63,7 +64,7 @@ function ExpandedScheduler() {
                 CostTypeId: schedulerData.CostTypeId,
                 CustomSchedulerId: schedulerData.SchedulerId,
                 ReservationMinInterval: schedulerData.MajorTick,
-                SelectedCourtIds: '',
+                SelectedCourtIds: courts.map(item => item.Id).join(','),
                 SelectedInstructorIds: '',
                 MemberIds: schedulerData.MemberIds.join(','),
                 MemberFamilyId: '',
@@ -71,16 +72,29 @@ function ExpandedScheduler() {
                 HideEmbedCodeReservationDetails: ''
             }
 
-            appService.getRoute(apiRoutes.HUB_URL_READ, `/app/api/v1/hubapi/ReadCourtSchedulerLight?jsonData=${JSON.stringify(result)}`).then(reservations => {
-                console.log(reservations)
+            apiService.get(`/api/scheduler/member-expanded?id=${schedulerData.OrgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
+
+                const formattedEvents = resp.Data.map(event => ({
+                    ...event,
+                    Start: new Date(event.Start),
+                    start: new Date(event.Start),
+                    End: new Date(event.End),
+                    end: new Date(event.End),
+
+                    isAllDay: false,
+                    IsAllDay: false,
+                }));
+                console.log(formattedEvents)
+                setEvents(formattedEvents)
             });
         }
-    }, []);
+    }, [selectedDate]);
     
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(null);
         setHeaderRightIcons(null);
+        
         if (isMockData){
            setTimeout(function(){
                setCourts(mockData.courts);
@@ -111,9 +125,10 @@ function ExpandedScheduler() {
                     
                     const formattedCourts = r.Data.Model.Courts.map(court => ({
                         ...court,
-                        Text:  `<span style="color: ${token.colorPrimary};font-weight: 500;">${court.Label}</span><br/><span>${court.CourtTypeName}</span>`
+                        Text:  `<span style="color: ${token.colorPrimary};font-weight: 500;">${court.Label}</span><br/><span>${court.CourtTypeName}</span>`,
+                        Value: court.Id
                     }));
-                    
+
                     setCourts(formattedCourts);
                     setIsSchedulerInitializing(false);
 
@@ -230,7 +245,7 @@ function ExpandedScheduler() {
                date={selectedDate}
                editable={false}
                defaultDate={selectedDate}
-               setSelectedDate={setSelectedDate}
+               onDateChange={handleDateChange}
                onDataChange={handleDataChange}
                modelFields={modelFields}
                height={availableHeight}

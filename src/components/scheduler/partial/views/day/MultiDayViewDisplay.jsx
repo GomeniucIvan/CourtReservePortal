@@ -29,7 +29,6 @@ const EMPTY_CELL = <div className="k-scheduler-cell k-side-cell" />;
 
 export const MultiDayView = (props) => {
 
-    console.log(props)
     const {
         group,
         timezone,
@@ -152,7 +151,7 @@ export const MultiDayView = (props) => {
         () => occurrences.filter(o => !o.isAllDay),
         [occurrences]
     );
-
+    
     const dayItems = React.useMemo(
         () => toItems(dayOccurrences, { timezone }, { groups, ranges: dayRanges }),
         [occurrences, timezone, groups, dayRanges]
@@ -172,6 +171,8 @@ export const MultiDayView = (props) => {
         [occurrences, timezone, groups, timeRanges, viewStart.getTime(), viewEnd.getTime()]
     );
 
+    console.log(timeItems)
+    
     React.useMemo(() => mapItemsToSlots(dayItems, daySlots, false), [dayItems, daySlots]);
     React.useMemo(() => mapSlotsToItems(dayItems, daySlots, false), [dayItems, daySlots]);
 

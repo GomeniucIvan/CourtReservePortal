@@ -164,9 +164,6 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             const closeTimeInMinutes = closeTime.getHours() * 60 + closeTime.getMinutes();
 
             if (endTimeInMinutes > closeTimeInMinutes) {
-                console.log(endDate);
-                console.log(closeTime);
-                // Adjust the time of endDate to match closeTime
                 endDate.setHours(closeTime.getHours(), closeTime.getMinutes(), closeTime.getSeconds());
             }
             
