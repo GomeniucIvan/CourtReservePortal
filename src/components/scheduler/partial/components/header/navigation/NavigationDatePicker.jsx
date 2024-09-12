@@ -55,7 +55,7 @@ export const NavigationDatePicker = React.forwardRef((
             : dateRange.zonedEnd.addDays(-1)
     );
 
-    const shortText = isMonthView ? dayjs(date).format('MMMM YYYY') : isWeekOrAgenda ? (`${dayjs(dateRange.start).format('MMM D')} - ${dayjs(dateRange.end).format('MMM D')}`) : dayjs(date).format('ddd, MMM D');
+    const shortText = isMonthView ? dayjs(date).format('MMMM YYYY') : isWeekOrAgenda ? (`${dayjs(dateRange.start).format('MMM D')} - ${dayjs(dateRange.end).format('MMM D')}`) : dayjs(props.value).format('ddd, MMM D');
 
     // const shortText = intl.format(
     //     '{0: ddd, MMM D}',
@@ -140,6 +140,8 @@ export const NavigationDatePicker = React.forwardRef((
     //     [focused, show]
     // );
 
+    console.log(shortText)
+    
     // const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
     return (
         <>

@@ -51,7 +51,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
 
     const dir = useDir(element);
     const intl = useInternationalization();
-    const localization = useLocalization();
+
     const { fields }
         = React.useMemo(() => getModelFields(props.modelFields), [props.modelFields]);
 
@@ -285,68 +285,6 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         ]
     );
 
-    const handleDatePickerChange = React.useCallback(
-        (event) => {
-            if (!event.value) { return; }
-
-            setTimeout(function () {
-                setDate(event.value, {
-                    ...event,
-                    target: scheduler.current,
-                    nativeEvent: event.nativeEvent
-                });
-            }, 50)
-        },
-        [
-            setDate,
-            scheduler
-        ]
-    );
-    
-    const handleNextClick = React.useCallback(
-        (syntheticEvent) => {
-            syntheticEvent.preventDefault();
-
-            setTimeout(function () {
-                const offset = view.props.numberOfDays || 1;
-                const isMonthView = offset > 27;
-                const newDate = isMonthView
-                    ? addMonths(date, Math.round(offset / 27))
-                    : addDays(date, offset);
-                
-                // eslint-disable-next-line no-restricted-globals
-                setDate(newDate, event);
-            }, 50);
-        },
-        [date, setDate, view.props.numberOfDays]
-    );
-
-    const handlePrevClick = React.useCallback(
-        (syntheticEvent) => {
-            syntheticEvent.preventDefault();
-
-            const offset = view.props.numberOfDays || 1;
-            const isMonthView = offset > 27;
-            const newDate = isMonthView
-                ? addMonths(date, -(Math.round(offset / 27)))
-                : addDays(date, -(offset));
-            
-            // eslint-disable-next-line no-restricted-globals
-            setDate(newDate, event);
-        },
-        [date, setDate, view.props.numberOfDays]
-    );
-
-    const handleTodayClick = React.useCallback(
-        (syntheticEvent) => {
-            syntheticEvent.preventDefault();
-            const newDate = getToday();
-            // eslint-disable-next-line no-restricted-globals
-            setDate(newDate, event);
-        },
-        [setDate]
-    );
-
     const handleFocus = React.useCallback(
         () => {
             if (element.current) {
@@ -378,7 +316,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
         ),
         [props.className, props.rtl, dir]);
 
-    const todayText = localization.toLanguageString(today, messages[today]);
+
     const Header = view.props.header || props.header || schedulerDefaultProps.header;
 
     const [eventSelection, setEventSelection] = React.useState(null);
@@ -422,24 +360,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                    //onFocus={handleFocus}
                    //onBlur={handleBlur}
                >
-                   <Header>
-                       <Flex justify={'space-between'} style={{width: '100%'}}>
-                           <Button type={'default'} onClick={handleTodayClick}>{todayText}</Button>
-
-                           <Radio.Group value={0} size={'large'}>
-                               <Radio.Button onClick={handlePrevClick}>
-                                   <CaretLeftOutlined />
-                               </Radio.Button>
-                               <NavigationDatePicker
-                                   value={date}
-                                   onChange={handleDatePickerChange}
-                               />
-                               <Radio.Button onClick={handleNextClick}>
-                                   <CaretRightOutlined />
-                               </Radio.Button>
-                           </Radio.Group>
-                       </Flex>
-
+                   <Header numberOfDays={view.props.numberOfDays} scheduler={scheduler} date={date} setDate={setDate}>
                        {/*<ToolbarSpacer />*/}
                        {/*<ViewSelectorList />*/}
                    </Header>

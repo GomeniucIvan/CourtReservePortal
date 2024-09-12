@@ -84,7 +84,6 @@ function ExpandedScheduler() {
                     isAllDay: false,
                     IsAllDay: false,
                 }));
-                console.log(formattedEvents)
                 setEvents(formattedEvents)
             });
         }
