@@ -171,8 +171,6 @@ export const MultiDayView = (props) => {
         [occurrences, timezone, groups, timeRanges, viewStart.getTime(), viewEnd.getTime()]
     );
 
-    console.log(timeItems)
-    
     React.useMemo(() => mapItemsToSlots(dayItems, daySlots, false), [dayItems, daySlots]);
     React.useMemo(() => mapSlotsToItems(dayItems, daySlots, false), [dayItems, daySlots]);
 

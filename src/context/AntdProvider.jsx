@@ -30,6 +30,7 @@ export const AntdProvider = ({ children }) => {
         <AntdContext.Provider value={{setPrimaryColor,setIsDarkMode, isDarkMode}}>
             <App>
                 <ConfigProvider
+                    wave={{ disabled: true }}
                     theme={{
                         algorithm: toBoolean(isDarkMode) ? theme.darkAlgorithm : theme.defaultAlgorithm,
                         token: {

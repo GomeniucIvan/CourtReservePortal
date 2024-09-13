@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+﻿import React, { useMemo, useState, forwardRef, memo  } from 'react';
 import { getModelFields, toSchedulerGroups, findMaster, setField, getField, getToday } from "./utils/index.jsx";
 import { useRtl as useDir, clone, classNames } from "@progress/kendo-react-common";
 import { SchedulerContext } from "./context/SchedulerContext.mjs";
@@ -36,7 +36,7 @@ viewDefaultPropsMap.set(WeekView, weekViewDefaultProps);
 viewDefaultPropsMap.set(WorkWeekView, workWeekDefaultProps);
 viewDefaultPropsMap.set(TimelineView, timeLineViewDefaultProps);
 
-export const InnerScheduler = React.forwardRef((props, ref) => {
+const InnerSchedulerComponent = memo(React.forwardRef((props, ref) => {
     const {
         timezone,
         onDataChange
@@ -360,7 +360,7 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
                    //onFocus={handleFocus}
                    //onBlur={handleBlur}
                >
-                   <Header numberOfDays={view.props.numberOfDays} scheduler={scheduler} date={date} setDate={setDate}>
+                   <Header numberOfDays={view.props.numberOfDays} setLoading={props.setLoading} scheduler={scheduler} date={date} setDate={setDate}>
                        {/*<ToolbarSpacer />*/}
                        {/*<ViewSelectorList />*/}
                    </Header>
@@ -389,7 +389,17 @@ export const InnerScheduler = React.forwardRef((props, ref) => {
            </SchedulerContext>
        </div>
     );
-});
+}),
+    // Optionally, provide a custom comparison function to control re-renders
+    (prevProps, nextProps) => {
+    if (!equalString(prevProps.selectedView, nextProps.selectedView) || prevProps.data !== nextProps.data){
+        return false;
+    }
+    
+        // Return true if props are equal, false if they are different
+        return true; // No re-render even if props change
+    }
+);
 
 export const schedulerDefaultProps = {
     data: [],
@@ -400,4 +410,14 @@ export const schedulerDefaultProps = {
     header: SchedulerHeader,
     navigation: SchedulerNavigation,
     viewSelector: SchedulerViewSelector
+};
+
+export const InnerScheduler = (props) => {
+    const MemoizedInnerScheduler = useMemo(() => InnerSchedulerComponent, []);
+
+    return (
+        <div>
+            <MemoizedInnerScheduler  {...props} />
+        </div>
+    );
 };

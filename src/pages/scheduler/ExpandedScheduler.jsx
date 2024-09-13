@@ -1,23 +1,23 @@
 ﻿import mockData from "../../mocks/scheduler-data.json";
 import {useApp} from "../../context/AppProvider.jsx";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {DayView} from "../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {InnerScheduler} from "../../components/scheduler/partial/InnerScheduler.jsx";
 import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {SchedulerSlot} from "../../components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
-import {Flex, Skeleton, Typography} from "antd";
+import {Flex, Skeleton, Spin, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 const {Text} = Typography
-import '@progress/kendo-date-math/tz/Europe/Chisinau';
+import '@progress/kendo-date-math/tz/all.js';
 import {
     SchedulerProportionalViewItem
 } from "../../components/scheduler/partial/items/SchedulerProportionalViewItem.mjs";
 import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/SchedulerViewSlotDisplay.jsx";
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
-import appService, {apiRoutes} from "../../api/app.jsx";
+import appService from "../../api/app.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {dateToString, fixDate} from "../../utils/DateUtils.jsx";
+import {dateToString, dateToTimeString, fixDate} from "../../utils/DateUtils.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
 import dayjs from "dayjs";
 import apiService from "../../api/api.jsx";
@@ -38,17 +38,14 @@ function ExpandedScheduler() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [events, setEvents] = useState([]);
     const navigate = useNavigate();
-    
-    //todo
-    const startTimeString = '8:00';
-    const endTimeString = '23:00';
-    let interval = 15;
+    const [loading, setLoading] = useState(true);
+    const [interval, setInterval] = useState(15);
+    const [startTimeString, setStartTimeString] = useState('')
+    const [endTimeString, setEndTimeString] = useState('')
 
     useEffect(() => {
         if (!isNullOrEmpty(selectedDate) && schedulerData){
-            console.log('loading')
-            console.log(new Date(selectedDate))
-            console.log(dayjs(selectedDate).date())
+
             const result = {
                 startDate: selectedDate,
                 //end: scheduler.view().endDate(),
@@ -84,7 +81,8 @@ function ExpandedScheduler() {
                     isAllDay: false,
                     IsAllDay: false,
                 }));
-                setEvents(formattedEvents)
+                setEvents(formattedEvents);
+                setLoading(false);
             });
         }
     }, [selectedDate]);
@@ -117,12 +115,19 @@ function ExpandedScheduler() {
             appService.get(`/app/Online/Reservations/Bookings/${orgId}?sId=11945`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data.Model;
+                    setStartTimeString(dateToTimeString(model.StartTime));
+                    setEndTimeString(dateToTimeString(model.EndTime));
+                    
+                    console.log(dateToTimeString(model.StartTime))
+                    console.log(dateToTimeString(model.EndTime))
                     setSchedulerData(model);
                     
-                    const dateToShow = new Date(dateToString(r.Data.Model.CurrentDateTime));
+                    const dateToShow = new Date(dateToString(model.CurrentDateTime));
                     setTimeZone(model.TimeZone);
+                    setInterval(model.MinInterval);
+
                     
-                    const formattedCourts = r.Data.Model.Courts.map(court => ({
+                    const formattedCourts = model.Courts.map(court => ({
                         ...court,
                         Text:  `<span style="color: ${token.colorPrimary};font-weight: 500;">${court.Label}</span><br/><span>${court.CourtTypeName}</span>`,
                         Value: court.Id
@@ -164,10 +169,6 @@ function ExpandedScheduler() {
 
         return false;
     };
-    
-    const onDoubleClickCreate = (courtId, start, end) => {
-
-    }
     
     const handleDateChange = (event) => {
         const selectedDate = event.value;
@@ -236,13 +237,16 @@ function ExpandedScheduler() {
     }
     
     return (
-       <>
+        <Spin spinning={loading}>
+           
            <InnerScheduler
                data={events}
                hideDaySelection={true}
                timezone={timeZone}
                date={selectedDate}
                editable={false}
+               loading={loading}
+               setLoading={setLoading}
                defaultDate={selectedDate}
                onDateChange={handleDateChange}
                onDataChange={handleDataChange}
@@ -276,7 +280,7 @@ function ExpandedScheduler() {
                    hideDateRow={true}
                />
            </InnerScheduler>
-       </>
+       </Spin>
     );
 }
 

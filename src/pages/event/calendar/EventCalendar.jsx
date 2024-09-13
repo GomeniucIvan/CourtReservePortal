@@ -11,6 +11,7 @@ import {AgendaView} from "../../../components/scheduler/partial/views/agenda/Age
 import {Typography} from "antd";
 import mockData from "../../../mocks/scheduler-data.json";
 import EventCalendarItem from "./EventCalendarItem.jsx";
+import '@progress/kendo-date-math/tz/America/New_York';
 
 const {Text} = Typography
 
@@ -21,6 +22,7 @@ function EventCalendar() {
     const {availableHeight, isMockData} = useApp();
     const [events, setEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date('8-27-2024 7:00:00'));
+    const [loading, setLoading] = useState(false);
     
     const hideReserveButtonsOnAdminSchedulers = false;
     const allowSchedulerDragAndDrop = false;
@@ -133,6 +135,8 @@ function EventCalendar() {
                 timezone={timeZone}
                 date={selectedDate}
                 defaultDate={selectedDate}
+                loading={loading}
+                setLoading={setLoading}
                 onDateChange={handleDateChange}
                 onDataChange={handleDataChange}
                 modelFields={modelFields}

@@ -145,6 +145,16 @@ export const dateToString = (incDate) => {
     return date.format(dateFormatByUiCulture());
 }
 
+export const dateToTimeString = (incDate) => {
+    if (isNullOrEmpty(incDate)){
+        return '';
+    }
+
+    const fixedDate = fixDate(incDate);
+    const date = dayjs(fixedDate);
+    return date.format('H:mm'); 
+}
+
 export const isNonUsCulture = () => {
     if (isNullOrEmpty(clientUiCulture)) {
         return false;

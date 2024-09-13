@@ -140,8 +140,6 @@ export const NavigationDatePicker = React.forwardRef((
     //     [focused, show]
     // );
 
-    console.log(shortText)
-    
     // const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
     return (
         <>

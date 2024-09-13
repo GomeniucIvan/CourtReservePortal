@@ -29,10 +29,14 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
     const handleTodayClick = React.useCallback(
         (syntheticEvent) => {
             syntheticEvent.preventDefault();
+
+            props.setLoading(true);
             const newDate = getToday();
             // eslint-disable-next-line no-restricted-globals
             setHeaderDate(newDate);
 
+            props.setLoading(true);
+            
             setTimeout(function(){
                 props.setDate(newDate)
             }, 300)
@@ -44,6 +48,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
         (syntheticEvent) => {
             syntheticEvent.preventDefault();
 
+            props.setLoading(true);
+            
             const offset = props.numberOfDays || 1;
             const isMonthView = offset > 27;
             const newDate = isMonthView
@@ -53,6 +59,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
             // eslint-disable-next-line no-restricted-globals
             setHeaderDate(newDate);
 
+            props.setLoading(true);
+            
             setTimeout(function(){
                 props.setDate(newDate)
             }, 50)
@@ -74,6 +82,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
                 // eslint-disable-next-line no-restricted-globals
                 setHeaderDate(newDate);
 
+                props.setLoading(true);
+                
                 setTimeout(function(){
                     props.setDate(newDate)
                 }, 50)
@@ -86,6 +96,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
     const handleDatePickerChange = React.useCallback(
         (event) => {
             if (!event.value) { return; }
+
+            props.setLoading(true);
 
             setTimeout(function () {
                 setHeaderDate(event.value);
