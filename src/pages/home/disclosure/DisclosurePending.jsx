@@ -5,7 +5,7 @@ import React, {useEffect, useState, useRef} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 import appService from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
-import {isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
+import {focus, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
 import {Alert, Button, Card, Checkbox, Divider, Flex, Skeleton, Typography, Upload} from "antd";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {useFormik} from "formik";
@@ -13,6 +13,9 @@ import {useTranslation} from "react-i18next";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import SignatureCanvas from 'react-signature-canvas'
+import {pNotify} from "../../../components/notification/PNotify.jsx";
+import {ModalClose} from "../../../utils/ModalUtils.jsx";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 const {Title, Text} = Typography;
 
 function DisclosurePending({scope}) {
@@ -52,6 +55,15 @@ function DisclosurePending({scope}) {
         }
     }, [shouldFetch, resetFetch]);
 
+    {!isNullOrEmpty(disclosure.ReadAgreementMessage) &&
+    <Checkbox
+        checked={disclosure.AcceptAgreement}
+        onChange={() => handleCheckboxChange(memberIndex, disclosureIndex)}
+    >
+        {disclosure.ReadAgreementMessage}
+    </Checkbox>
+    }
+    
     const formik = useFormik({
         initialValues: {},
         //validationSchema: getValidationSchema(profileData),
@@ -60,7 +72,43 @@ function DisclosurePending({scope}) {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
+            let postData = { ...modelData, Members: membersData };
 
+            let allDisclosuresAccepted = true;
+            postData.Members.forEach((member) => {
+                member.Disclosures.forEach((disclosure) => {
+                    if (!isNullOrEmpty(disclosure.ReadAgreementMessage) && !disclosure.AcceptAgreement && allDisclosuresAccepted) {
+                        allDisclosuresAccepted = false;
+                       
+                        ModalClose({
+                            title: '',
+                            content: t('disclosure.shouldAgree', { name: disclosure.Name }),
+                            showIcon: false,
+                        });
+                    }
+                });
+            });
+
+
+            if (!allDisclosuresAccepted) {
+                setIsLoading(false);
+                return; 
+            }
+            
+            appService.post(`/app/Online/Disclosures/Pending?id=${orgId}`, postData).then(r => {
+                if (toBoolean(t?.IsValid)){
+                    pNotify(t('reservation.waiversSuccessfullySigned'));
+                    setIsLoading(false);
+                    navigate(HomeRouteNames.INDEX);
+                } else{
+                    setIsLoading(false);
+                    ModalClose({
+                        title: '',
+                        content: r.Message,
+                        showIcon: false
+                    });
+                }
+            })
         },
     });
 
@@ -82,7 +130,7 @@ function DisclosurePending({scope}) {
                 {t('disclosure.saveSignature')}
             </Button>
         </PaddingBlock>);
-    }, [isFetching, modelData]);
+    }, [isFetching, modelData, isLoading]);
 
     const handleCheckboxChange = (memberIndex, disclosureIndex) => {
         const updatedMembers = [...membersData];
