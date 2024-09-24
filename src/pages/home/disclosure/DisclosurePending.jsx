@@ -13,7 +13,7 @@ import {useTranslation} from "react-i18next";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import SignatureCanvas from 'react-signature-canvas'
-const {Title} = Typography;
+const {Title, Text} = Typography;
 
 function DisclosurePending({scope}) {
     const navigate = useNavigate();
@@ -203,9 +203,12 @@ function DisclosurePending({scope}) {
                                                                 </Checkbox>
                                                             }
 
-                                                            <Flex className={globalStyles.waiverUploadFlex} onClick={() => {
-                                                                setSelectedWaiverToSign(disclosure);
-                                                            }}>
+                                                            <Flex className={globalStyles.waiverUploadFlex} 
+                                                                  vertical={true}
+                                                                  gap={token.Custom.buttonPadding}
+                                                                  onClick={() => {
+                                                                    setSelectedWaiverToSign(disclosure);
+                                                                }}>
                                                                 <>
                                                                     <Upload
                                                                         name="avatar"
@@ -222,6 +225,15 @@ function DisclosurePending({scope}) {
                                                                                 <img src={disclosure.SignatureDataUrl} style={{width: '100%', objectFit: 'contain', height: '100%'}}/>
                                                                             )}
                                                                     </Upload>
+
+                                                                    {!isNullOrEmpty(disclosure.SignatureDataUrl) &&
+                                                                        <Flex gap={token.Custom.buttonPadding} vertical={true}>
+                                                                            <div>
+                                                                                <Title level={5} className={globalStyles.noMargin}>{t('disclosure.signedBy')}</Title>
+                                                                                <Text>{modelData?.AuthMemberFullName}</Text>
+                                                                            </div>
+                                                                        </Flex>
+                                                                    }
                                                                 </>
                                                             </Flex>
                                                         </Flex>

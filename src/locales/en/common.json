@@ -138,7 +138,8 @@
     "saveSignature": "Save Signature",
     "notAllowToSignMessage" : "This organization requires a waiver/agreement to be viewed & signed by a legal parent or guardian before accessing this account.",
     "viewWaiverButton": "View & Review {{name}}",
-    "clickToSign": "Click to Sign"
+    "clickToSign": "Click to Sign",
+    "signedBy": "Signed By"
     
   }
 }
