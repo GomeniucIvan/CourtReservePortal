@@ -6,6 +6,7 @@ import ExpandedScheduler from "../pages/scheduler/ExpandedScheduler.jsx";
 import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 import Navigation from "../pages/navigation/Navigation.jsx";
 import {useTranslation} from "react-i18next";
+import DisclosurePending from "../pages/home/disclosure/DisclosurePending.jsx";
 
 export const HomeRouteNames = {
     INDEX: '/',
@@ -15,6 +16,7 @@ export const HomeRouteNames = {
     ANNOUNCEMENT_LIST: `/announcement/list`,
     LEAGUES_LIST: `/leagues/list`,
     MORE_NAVIGATION: `/more`,
+    DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
 };
 
 const HomeRoutes = [
@@ -58,6 +60,11 @@ const HomeRoutes = [
         element: <Navigation key={'more'}/>,
         title: 'more',
         disablePullDown: true
+    },
+    {
+        path: HomeRouteNames.DISCLOSURE_PENDING_LOGIN,
+        element: <DisclosurePending scope={2}/>,
+        title: 'Waivers'
     }
 ];
 

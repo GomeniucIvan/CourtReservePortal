@@ -33,11 +33,10 @@ function MyProfileDetails({selectedTab}) {
     const loadData = () => {
         setIsFetching(true);
 
-        appService.get(`/app/Online/MyProfile/MyProfile?id=${orgId}`).then(r => {
+        appService.get(navigate, `/app/Online/MyProfile/MyProfile?id=${orgId}`).then(r => {
             if (toBoolean(r?.IsValid)) {
                 setProfileData(r.Data);
                 setFormikValues(r.Data)
-                console.log(r.Data)
             }
             setIsFetching(false);
             setIsLoading(false);

@@ -7,7 +7,6 @@ const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
-    
     const [footerContent, setFooterContent] = useState(null);
     const [isFooterVisible, setIsFooterVisible] = useState(true);
     const [formikData, setFormikData] = useState(null);

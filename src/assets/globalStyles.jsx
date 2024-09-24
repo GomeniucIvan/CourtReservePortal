@@ -234,5 +234,25 @@ export const useStyles = createStyles(({ css, token }) => ({
             padding: 0px ${token.padding}px;
          }
       }
+   `,
+   waiverUploadFlex: css`
+      .ant-upload-wrapper {
+         width: 100%;
+      }
+      .ant-upload-disabled {
+         color: initial;
+         cursor: initial;
+         width: 100% !important;
+      }
+      
+      .ant-typography {
+         margin: 0;
+      }
+   `,
+
+   signatureCanvasCard: css `
+      .ant-card-body {
+         padding: 0;
+      }
    `
 }));

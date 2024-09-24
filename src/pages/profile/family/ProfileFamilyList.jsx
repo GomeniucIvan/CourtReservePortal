@@ -49,7 +49,7 @@ function ProfileFamilyList() {
         } else {
             setIsFetching(true);
 
-            appService.get(`/app/Online/MyFamily/GetFamilyMembers?id=${orgId}`).then(r => {
+            appService.get(navigate, `/app/Online/MyFamily/GetFamilyMembers?id=${orgId}`).then(r => {
                 if (r.IsValid) {
                     setFamilyMembers(r.Data);
                 }

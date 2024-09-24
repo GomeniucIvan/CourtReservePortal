@@ -15,6 +15,7 @@ const {Title} = Typography;
 
 function AnnouncementDetails() {
     let {id} = useParams();
+    const navigate = useNavigate();
     const {styles} = useStyles();
     const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setHeaderTitle} = useApp();
     const [isFetching, setIsFetching] = useState(true);
@@ -32,7 +33,7 @@ function AnnouncementDetails() {
             setIsFetching(false)
         } else {
             setIsFetching(true)
-            appService.get(`/app/Online/Announcement/Details?id=${orgId}&globalAnnouncementId=${id}`).then(r => {
+            appService.get(navigate, `/app/Online/Announcement/Details?id=${orgId}&globalAnnouncementId=${id}`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     setAnnouncement(r.Data);
                     setHeaderTitle(r.Data.Title);

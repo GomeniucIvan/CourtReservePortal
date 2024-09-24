@@ -12,6 +12,7 @@ import {useAuth} from "../../../context/AuthProvider.jsx";
 import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
 
 function AnnouncementList() {
+    const navigate = useNavigate();
     const { styles } = useStyles();
     const [isFetching, setIsFetching] = useState(true);
     
@@ -28,7 +29,7 @@ function AnnouncementList() {
         } else{
             setIsFetching(true);
             
-            appService.get(`/app/Online/Announcement/Index?id=${orgId}`).then(r => {
+            appService.get(navigate, `/app/Online/Announcement/Index?id=${orgId}`).then(r => {
                 if (r.IsValid){
                     setAnnouncements(r.Data.GlobalAnnouncements);
                     setIsFetching(false);

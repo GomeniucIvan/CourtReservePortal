@@ -3,6 +3,7 @@ import {clearAllLocalStorage, fromAuthLocalStorage} from "../storage/AppStorage.
 import {nullToEmpty} from "../utils/Utils.jsx";
 import {setClientUiCulture} from "../utils/DateUtils.jsx";
 import appService from "../api/app.jsx";
+import {useNavigate} from "react-router-dom";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -12,7 +13,8 @@ export const AuthProvider = ({children}) => {
     const [shouldLoadOrgData, setShouldLoadOrgData] = useState(true);
     const [memberId, setMemberId] = useState();
     const [authData, setAuthData] = useState(null);
-
+    const navigate = useNavigate();
+    
     useEffect(() => {
         const memberData = fromAuthLocalStorage('memberData', {});
         
@@ -55,7 +57,7 @@ export const AuthProvider = ({children}) => {
             isUsingPushNotifications: '',
         });
         
-        appService.get('/app/online/logout').then(r => {
+        appService.get(navigate, '/app/online/logout').then(r => {
             console.log('Login logout');
         })
         

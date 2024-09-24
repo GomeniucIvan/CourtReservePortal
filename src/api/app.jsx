@@ -2,6 +2,7 @@
 import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
 import {getRequestData} from "./api.jsx";
 import {fixResponseData} from "../utils/apiUtils.jsx";
+import {isNullOrEmpty} from "../utils/Utils.jsx";
 
 export const apiRoutes = {
     API2: '',
@@ -41,10 +42,17 @@ axiosInstance.interceptors.response.use(
 
 
 const appService = {
-    get: async (url, params = {}, config = {}) => {
+    get: async (navigate, url, params = {}, config = {}) => {
         try {
             const response = await axiosInstance.get(url, { params, ...config });
-            return fixResponseData(response.data);
+            const fixedResponse = fixResponseData(response.data);
+
+            if (!isNullOrEmpty(fixedResponse?.baseRedirectPath)){
+                navigate(fixedResponse?.baseRedirectPath);
+                return;
+            }
+
+            return fixedResponse;
         } catch (error) {
             console.log('APP41 Error: ');
             console.log(error);

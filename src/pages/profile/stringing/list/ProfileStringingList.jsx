@@ -47,7 +47,7 @@ function ProfileStringingList() {
         
         setIsFetching(true);
 
-        appService.get(`/app/Online/StringingJob/GetJobs?id=${orgId}&startDate=${toAspNetDate(filter?.StartDate)}&endDate=${toAspNetDate(filter?.EndDate)}`).then(r => {
+        appService.get(navigate, `/app/Online/StringingJob/GetJobs?id=${orgId}&startDate=${toAspNetDate(filter?.StartDate)}&endDate=${toAspNetDate(filter?.EndDate)}`).then(r => {
             if (toBoolean(r?.IsValid)) {
                 console.log(r.Data)
                 setStringingJobs(r.Data);
@@ -71,7 +71,7 @@ function ProfileStringingList() {
         if (isMockData){
 
         } else{
-            appService.get(`/app/Online/StringingJob/Index?id=${orgId}`).then(r => {
+            appService.get(navigate, `/app/Online/StringingJob/Index?id=${orgId}`).then(r => {
                 if (toBoolean(r?.IsValid)) {
                     setFilterData(r.Data)
                     loadStringingJob(r.Data);

@@ -215,7 +215,7 @@ function Layout() {
         const memberData = fromAuthLocalStorage('memberData', {});
         const memberId = memberData?.memberId;
         
-        appService.get(`/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`).then(response => {
+        appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`).then(response => {
             if (response.IsValid) {
                 const responseData = response.Data;
                 setRequestData(responseData.RequestData);

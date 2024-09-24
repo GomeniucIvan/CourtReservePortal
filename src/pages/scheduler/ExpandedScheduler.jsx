@@ -112,7 +112,7 @@ function ExpandedScheduler() {
             }, 400);
         }
         else{
-            appService.get(`/app/Online/Reservations/Bookings/${orgId}?sId=11945`).then(r => {
+            appService.get(navigate, `/app/Online/Reservations/Bookings/${orgId}?sId=11945`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data.Model;
                     setStartTimeString(dateToTimeString(model.StartTime));

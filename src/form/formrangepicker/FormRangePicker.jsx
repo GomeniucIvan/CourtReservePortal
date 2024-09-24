@@ -120,7 +120,7 @@ const FormRangePicker = ({
                                 {t('clear')}
                             </Button>
                             <Button type='primary' block onClick={handleCloseClick}>
-                                {t('close')}
+                                {t('select')}
                             </Button>
                         </Flex>
                     </div>

@@ -10,6 +10,7 @@ import appService from "../../../api/app.jsx";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
+import {useNavigate} from "react-router-dom";
 
 const {Column} = Table;
 const {Text} = Typography;
@@ -25,7 +26,8 @@ function MyProfileNotification({selectedTab}) {
     const [showPush, setShowPush] = useState(true);
     const [showText, setShowText] = useState(false);
     const {t} = useTranslation('');
-
+    const navigate = useNavigate();
+    
     const {
         setIsLoading,
         isMockData,
@@ -80,7 +82,7 @@ function MyProfileNotification({selectedTab}) {
                     setNotifications(notificationItems);
                     setIsFetching(false);
                 } else {
-                    appService.get(`/app/Online/MyProfile/NotificationTab?id=${orgId}`).then(r => {
+                    appService.get(navigate, `/app/Online/MyProfile/NotificationTab?id=${orgId}`).then(r => {
                         if (toBoolean(r?.IsValid)) {
                             const categoryData = r.Data.DistinctNotificationCategories;
                             const notificationData = r.Data.Notifications;

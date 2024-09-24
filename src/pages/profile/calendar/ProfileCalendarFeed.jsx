@@ -10,10 +10,12 @@ import {copyToClipboard, toBoolean} from "../../../utils/Utils.jsx";
 import {ModalClose, ModalConfirm, ModalDelete} from "../../../utils/ModalUtils.jsx";
 import {useTranslation} from "react-i18next";
 import {pNotify} from "../../../components/notification/PNotify.jsx";
+import {useNavigate} from "react-router-dom";
 
 const {Title, Link} = Typography;
 
 function ProfileCalendarFeed() {
+    const navigate = useNavigate();
     const {isMockData, token, isLoading, setIsLoading} = useApp();
     const {orgId} = useAuth();
     const { t } = useTranslation('');
@@ -25,7 +27,7 @@ function ProfileCalendarFeed() {
             setCalendarUrl('http://localhost:2129/Online/PublicIcal/Index/6969/462598/e562a01f-4db9-44c4-b8dc-87b702b041df');
             setIsFetching(false);
         }else{
-            appService.get(`/app/Online/MyProfile/MyCalendar?id=${orgId}`).then(r => {
+            appService.get(navigate, `/app/Online/MyProfile/MyCalendar?id=${orgId}`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     setCalendarUrl(r.Data.CalendarUrl);
                 }

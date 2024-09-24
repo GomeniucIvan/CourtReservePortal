@@ -7,7 +7,8 @@
   "filter": "Filter",
   "clear": "Clear",
   "next": "Next",
-  "close": "Select",
+  "close": "Close",
+  "select": "Select",
   "reservations": "Reservations",
   "courtWaitlist": "Court Waitlist",
   "lessons": "Lessons",
@@ -132,5 +133,12 @@
   },
   "form": {
     "labelRequired": "{{label}} is required."
+  },
+  "disclosure": {
+    "saveSignature": "Save Signature",
+    "notAllowToSignMessage" : "This organization requires a waiver/agreement to be viewed & signed by a legal parent or guardian before accessing this account.",
+    "viewWaiverButton": "View & Review {{name}}",
+    "clickToSign": "Click to Sign"
+    
   }
 }
