@@ -141,6 +141,7 @@
     "clickToSign": "Click to Sign",
     "signedBy": "Signed By",
     "waiversSuccessfullySigned": "Waivers successfully signed.",
-    "shouldAgree": "You should accept {{name}}."
+    "shouldAgree": "You should accept {{name}}.",
+    "downloadFile": "Download"
   }
 }
