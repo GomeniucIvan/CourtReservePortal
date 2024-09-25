@@ -76,7 +76,7 @@ function DisclosurePending({scope}) {
             let allDisclosuresAccepted = true;
             postData.Members.forEach((member) => {
                 member.Disclosures.forEach((disclosure) => {
-                    if (!isNullOrEmpty(disclosure.ReadAgreementMessage) && !disclosure.AcceptAgreement && allDisclosuresAccepted) {
+                    if (disclosure.AllowToSign && !isNullOrEmpty(disclosure.ReadAgreementMessage) && !disclosure.AcceptAgreement && allDisclosuresAccepted) {
                         allDisclosuresAccepted = false;
 
                         ModalClose({
