@@ -64,7 +64,7 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.DISCLOSURE_PENDING_LOGIN,
         element: <DisclosurePending scope={2}/>,
-        title: 'Waivers'
+        title: 'waivers'
     }
 ];
 

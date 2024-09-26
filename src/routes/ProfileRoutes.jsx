@@ -8,6 +8,7 @@ import ProfileBilling from "../pages/profile/billing/list/ProfileBilling.jsx";
 import MyProfile from "../pages/profile/myprofile/MyProfile.jsx";
 import ProfileStringingList from "../pages/profile/stringing/list/ProfileStringingList.jsx";
 import ProfileStringingDetails from "../pages/profile/stringing/details/ProfileStringingDetails.jsx";
+import ProfilePaymentProfileList from "../pages/profile/paymentprofile/list/ProfilePaymentProfileList.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
@@ -21,6 +22,7 @@ export const ProfileRouteNames = {
     PROFILE_BILLING: `/profile/billing`,
     PROFILE_STRINGING: `/profile/stringing`,
     PROFILE_STRINGING_DETAILS: `/profile/stringing/:id`,
+    PROFILE_PAYMENT_PROFILE_LIST: `/profile/payment-profiles`,
 };
 
 const ProfileRoutes = [
@@ -82,6 +84,11 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_STRINGING,
         element: <ProfileStringingList />,
         title: 'stringing'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST,
+        element: <ProfilePaymentProfileList />,
+        title: 'paymentProfiles'
     },
 ];
 

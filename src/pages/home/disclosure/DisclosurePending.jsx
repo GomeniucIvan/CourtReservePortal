@@ -5,7 +5,7 @@ import React, {useEffect, useState, useRef} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 import appService from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
-import {equalString, focus, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
+import {anyInList, equalString, focus, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
 import {Alert, Button, Card, Checkbox, Divider, Flex, Skeleton, Typography, Upload} from "antd";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {useFormik} from "formik";
@@ -19,6 +19,7 @@ import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import { Document,pdfjs } from 'react-pdf';
 import {DownloadOutlined} from "@ant-design/icons";
 import {getPdfFileDataUrl, isFileType} from "../../../utils/FileUtils.jsx";
+import EmptyBlock, {emptyBlockTypes} from "../../../components/emptyblock/EmptyBlock.jsx";
 const {Title, Text} = Typography;
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 
@@ -45,7 +46,6 @@ function DisclosurePending({scope}) {
         setIsFetching(true);
 
         appService.get(navigate, `/app/Online/Disclosures/Pending?id=${orgId}&scope=${scope}`).then(r => {
-            console.log(r.Data)
             if (r.IsValid){
                 setModelData(r.Data);
                 setMembersData(r.Data.Members);
@@ -119,7 +119,8 @@ function DisclosurePending({scope}) {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
 
-        setFooterContent(<PaddingBlock topBottom={true}>
+        setFooterContent(anyInList(membersData) ? 
+            <PaddingBlock topBottom={true}>
             <Button type="primary"
                     block
                     htmlType="submit"
@@ -128,7 +129,7 @@ function DisclosurePending({scope}) {
                     onClick={formik.handleSubmit}>
                 {t('disclosure.saveSignature')}
             </Button>
-        </PaddingBlock>);
+        </PaddingBlock> : '');
     }, [isFetching, modelData, isLoading]);
 
     const handleCheckboxChange = (memberIndex, disclosureIndex) => {
@@ -247,90 +248,98 @@ function DisclosurePending({scope}) {
                             </PaddingBlock>) :
                             (
                                 <>
-                                    {membersData.map((member, memberIndex) => (
-                                        <div key={memberIndex}>
-                                            {member.Disclosures.map((disclosure, disclosureIndex) => {
-                                                if (!toBoolean(disclosure.AllowToSign)){
-                                                    return (<></>);
-                                                }
+                                    {anyInList(membersData) ? (
+                                        <>
+                                            {membersData.map((member, memberIndex) => (
+                                                <div key={memberIndex}>
+                                                    {member.Disclosures.map((disclosure, disclosureIndex) => {
+                                                        if (!toBoolean(disclosure.AllowToSign)){
+                                                            return (<></>);
+                                                        }
 
-                                                return (
-                                                    <div key={disclosureIndex}>
-                                                        <PaddingBlock leftRight={true}>
-                                                            <Flex gap={token.Custom.buttonPadding} vertical={true}>
-                                                                <Button type="primary"
-                                                                        block
-                                                                        onClick={() => {setSelectedWaiverToView(disclosure)}}
-                                                                        htmlType="button">
-                                                                    {t('disclosure.viewWaiverButton', {name: disclosure.Name})}
-                                                                </Button>
+                                                        return (
+                                                            <div key={disclosureIndex}>
+                                                                <PaddingBlock leftRight={true}>
+                                                                    <Flex gap={token.Custom.buttonPadding} vertical={true}>
+                                                                        <Button type="primary"
+                                                                                block
+                                                                                onClick={() => {setSelectedWaiverToView(disclosure)}}
+                                                                                htmlType="button">
+                                                                            {t('disclosure.viewWaiverButton', {name: disclosure.Name})}
+                                                                        </Button>
 
-                                                                {!isNullOrEmpty(disclosure.RuleInstructions) &&
-                                                                    <IframeContent content={disclosure.RuleInstructions}
-                                                                                   id={disclosure?.Id}/>
-                                                                }
-
-                                                                {!isNullOrEmpty(disclosure.ReadAgreementMessage) &&
-                                                                    <Checkbox
-                                                                        checked={disclosure.AcceptAgreement}
-                                                                        onChange={() => handleCheckboxChange(memberIndex, disclosureIndex)}
-                                                                    >
-                                                                        {disclosure.ReadAgreementMessage}
-                                                                    </Checkbox>
-                                                                }
-
-                                                                <Flex className={globalStyles.waiverUploadFlex}
-                                                                      vertical={true}
-                                                                      gap={token.Custom.buttonPadding}
-                                                                      onClick={() => {
-                                                                          setSelectedWaiverToSign(disclosure);
-                                                                      }}>
-                                                                    <>
-                                                                        <Upload
-                                                                            name="avatar"
-                                                                            listType="picture-card"
-                                                                            className="avatar-uploader"
-                                                                            showUploadList={false}
-                                                                            disabled={true}
-                                                                            //onChange={handleChange}
-                                                                        >
-                                                                            {isNullOrEmpty(disclosure.SignatureDataUrl) ? (
-                                                                                    <Title
-                                                                                        level={4}>{t('disclosure.clickToSign')}</Title>
-                                                                                ) :
-                                                                                (
-                                                                                    <img
-                                                                                        src={disclosure.SignatureDataUrl}
-                                                                                        style={{
-                                                                                            width: '100%',
-                                                                                            objectFit: 'contain',
-                                                                                            height: '100%'
-                                                                                        }}/>
-                                                                                )}
-                                                                        </Upload>
-
-                                                                        {!isNullOrEmpty(disclosure.SignatureDataUrl) &&
-                                                                            <Flex gap={token.Custom.buttonPadding}
-                                                                                  vertical={true}>
-                                                                                <div>
-                                                                                    <Title level={5}
-                                                                                           className={globalStyles.noMargin}>{t('disclosure.signedBy')}</Title>
-                                                                                    <Text>{modelData?.AuthMemberFullName}</Text>
-                                                                                </div>
-                                                                            </Flex>
+                                                                        {!isNullOrEmpty(disclosure.RuleInstructions) &&
+                                                                            <IframeContent content={disclosure.RuleInstructions}
+                                                                                           id={disclosure?.Id}/>
                                                                         }
-                                                                    </>
-                                                                </Flex>
-                                                            </Flex>
-                                                        </PaddingBlock>
 
-                                                        {disclosureIndex !== member.Disclosures.length - 1 &&
-                                                            <Divider/>}
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    ))}
+                                                                        {!isNullOrEmpty(disclosure.ReadAgreementMessage) &&
+                                                                            <Checkbox
+                                                                                checked={disclosure.AcceptAgreement}
+                                                                                onChange={() => handleCheckboxChange(memberIndex, disclosureIndex)}
+                                                                            >
+                                                                                {disclosure.ReadAgreementMessage}
+                                                                            </Checkbox>
+                                                                        }
+
+                                                                        <Flex className={globalStyles.waiverUploadFlex}
+                                                                              vertical={true}
+                                                                              gap={token.Custom.buttonPadding}
+                                                                              onClick={() => {
+                                                                                  setSelectedWaiverToSign(disclosure);
+                                                                              }}>
+                                                                            <>
+                                                                                <Upload
+                                                                                    name="avatar"
+                                                                                    listType="picture-card"
+                                                                                    className="avatar-uploader"
+                                                                                    showUploadList={false}
+                                                                                    disabled={true}
+                                                                                    //onChange={handleChange}
+                                                                                >
+                                                                                    {isNullOrEmpty(disclosure.SignatureDataUrl) ? (
+                                                                                            <Title
+                                                                                                level={4}>{t('disclosure.clickToSign')}</Title>
+                                                                                        ) :
+                                                                                        (
+                                                                                            <img
+                                                                                                src={disclosure.SignatureDataUrl}
+                                                                                                style={{
+                                                                                                    width: '100%',
+                                                                                                    objectFit: 'contain',
+                                                                                                    height: '100%'
+                                                                                                }}/>
+                                                                                        )}
+                                                                                </Upload>
+
+                                                                                {!isNullOrEmpty(disclosure.SignatureDataUrl) &&
+                                                                                    <Flex gap={token.Custom.buttonPadding}
+                                                                                          vertical={true}>
+                                                                                        <div>
+                                                                                            <Title level={5}
+                                                                                                   className={globalStyles.noMargin}>{t('disclosure.signedBy')}</Title>
+                                                                                            <Text>{modelData?.AuthMemberFullName}</Text>
+                                                                                        </div>
+                                                                                    </Flex>
+                                                                                }
+                                                                            </>
+                                                                        </Flex>
+                                                                    </Flex>
+                                                                </PaddingBlock>
+
+                                                                {disclosureIndex !== member.Disclosures.length - 1 &&
+                                                                    <Divider/>}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            ))}
+                                        </>
+                                    ) :
+                                        (
+                                            <EmptyBlock description={t('disclosure.noWaivers')} type={emptyBlockTypes.WAIVER}/>
+                                        )
+                                    }
                                 </>
                             )
                         }

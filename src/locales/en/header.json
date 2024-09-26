@@ -21,5 +21,7 @@
   "myMembership": "My Membership",
   "billing": "Billing",
   "stringing": "Stringing Jobs",
-  "stringingDetails": "Stringing Details"
+  "stringingDetails": "Stringing Details",
+  "paymentProfiles": "Payment Profiles",
+  "waivers": "Waivers"
 }

@@ -142,6 +142,11 @@
     "signedBy": "Signed By",
     "waiversSuccessfullySigned": "Waivers successfully signed.",
     "shouldAgree": "You should accept {{name}}.",
-    "downloadFile": "Download"
+    "downloadFile": "Download",
+    "noWaivers": "No waivers to sign"
+  },
+  "paymentProfile": {
+    "addPaymentProfile" : "Create Payment Profile",
+    "paymentDecline": "Payment Decline"
   }
 }
