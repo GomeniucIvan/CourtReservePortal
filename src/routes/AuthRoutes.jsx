@@ -15,7 +15,8 @@ const AuthRoutes = [
         path: AuthRouteNames.LOGIN,
         element: <Login />,
         root: true,
-        unauthorized: true
+        unauthorized: true,
+        fullHeight: true
     },
     {
         path: AuthRouteNames.LOGIN_GET_STARTED,

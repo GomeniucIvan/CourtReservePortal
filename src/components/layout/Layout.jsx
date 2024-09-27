@@ -157,6 +157,9 @@ function Layout() {
                 --adm-color-text: ${token.colorText};
                 background-color: ${token.colorBgContainer};
             }
+            body{
+                margin: 0px;
+            }
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;
             }

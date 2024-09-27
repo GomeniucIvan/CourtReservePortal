@@ -51,3 +51,7 @@
 .ant-app, #root{
   overflow: hidden;
 }
+
+body {
+  margin: 0;
+}

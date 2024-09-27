@@ -15,6 +15,13 @@ export const AntdProvider = ({ children }) => {
     const [isDarkMode, setIsDarkMode] = useState(fromLocalStorage('darkmode', 'False'));
 
     useEffect(() => {
+        const message = JSON.stringify({ type: 'updateMobileStatusBar', style: (isDarkMode ? 'light' : 'dark') });
+        if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(message);
+        }
+    }, [isDarkMode]);
+    
+    useEffect(() => {
         if (primaryColor){
             toLocalStorage('primary-color', primaryColor);
         }
@@ -22,8 +29,10 @@ export const AntdProvider = ({ children }) => {
     }, [primaryColor]);
 
     useEffect(() => {
-        toLocalStorage('darkmode', isDarkMode);
-        setIsDarkMode(isDarkMode);
+        if (isDarkMode !== null) {
+            toLocalStorage('darkmode', isDarkMode);
+            setIsDarkMode(isDarkMode);
+        }
     }, [isDarkMode]);
     
     return (
@@ -41,7 +50,7 @@ export const AntdProvider = ({ children }) => {
                                 cardIconPadding: 8,
                                 cardIconWidth: 22,
                                 buttonPadding: 8,
-                                ColorPrimaryText: 'black',
+                                colorPrimaryText: 'black',
                                 workingTheme: toBoolean(isDarkMode) ? 'dark' : 'light'
                             },
 

@@ -4,7 +4,6 @@ import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useApp} from "../../context/AppProvider.jsx";
 import {NavBar} from "antd-mobile";
-import {useAuth} from "../../context/AuthProvider.jsx";
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
 import {authMember} from "../../storage/AppStorage.jsx";
 import {useTranslation} from "react-i18next";

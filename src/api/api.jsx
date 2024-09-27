@@ -1,6 +1,8 @@
 ﻿import axios from 'axios';
+
 let bearerToken = '';
 let requestData = '';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const setBearerToken = (token) => {
     bearerToken = token;
@@ -19,6 +21,7 @@ export const getRequestData = () => {
 };
 
 const axiosInstance = axios.create({
+    baseURL: backendUrl,
     timeout: 60000,
     headers: {
         'X-Requested-By': 'ReactApp',
