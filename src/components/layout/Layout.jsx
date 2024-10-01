@@ -27,6 +27,8 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 import apiService, {getBearerToken, setBearerToken, setRequestData} from "../../api/api.jsx";
 import {stringToJson} from "../../utils/ListUtils.jsx";
+import {useSafeArea} from "../../context/SafeAreaContext.jsx";
+import {isReactApplication} from "../../utils/MobileUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -38,8 +40,25 @@ function Layout() {
     const [isFetching, setIsFetching] = useState(true);
 
     const [maxHeight, setMaxHeight] = useState(0);
-    const {footerContent, isFooterVisible, dynamicPages, token, refreshData, setAvailableHeight, isMockData, setIsLoading, setNavigationLinks} = useApp();
-    
+    const {
+        footerContent,
+        isFooterVisible,
+        dynamicPages,
+        token,
+        refreshData,
+        setAvailableHeight,
+        isMockData,
+        setIsLoading,
+        setNavigationLinks
+    } = useApp();
+
+    const [safeAreaInsets, setSafeAreaInsets] = useState({
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    });
+
     const {
         memberId,
         orgId,
@@ -47,9 +66,10 @@ function Layout() {
         shouldLoadOrgData,
         setShouldLoadOrgData,
         setOrgId,
-        setMemberId
+        setMemberId,
+        authInitialized
     } = useAuth();
-    
+
     const {setPrimaryColor} = useAntd();
 
     if (isNullOrEmpty(currentRoute)) {
@@ -68,55 +88,57 @@ function Layout() {
     }
 
     useEffect(() => {
-        const memberData = fromAuthLocalStorage('memberData', {});
-        const workingMemberId = memberData?.memberId || memberId;
-        const workingOrgId = memberData?.orgId || orgId;
+        if (authInitialized) {
+            const memberData = fromAuthLocalStorage('memberData', {});
+            const workingMemberId = memberData?.memberId || memberId;
+            const workingOrgId = memberData?.orgId || orgId;
 
-        //not authorized
-        if (isNullOrEmpty(workingMemberId)) {
-            //not allowed unauthorized
-            if (!toBoolean(currentRoute?.unauthorized)) {
-                if (!equalString(location.pathname, AuthRouteNames.LOGIN)) {
-                    navigate(AuthRouteNames.LOGIN);
+            //not authorized
+            if (isNullOrEmpty(workingMemberId)) {
+                //not allowed unauthorized
+                if (!toBoolean(currentRoute?.unauthorized)) {
+                    if (!equalString(location.pathname, AuthRouteNames.LOGIN)) {
+                        navigate(AuthRouteNames.LOGIN);
+                    }
                 }
+
+                setIsFetching(false);
             }
 
-            setIsFetching(false);
-        }
+            //authorized without active orgid
+            else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)) {
+                //todo my clubs//allowed path
+                if (!equalString(location.pathname, '/myclubs')) {
+                    navigate('/myclubs');
+                }
 
-        //authorized without active orgid
-        else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)) {
-            //todo my clubs//allowed path
-            if (!equalString(location.pathname, '/myclubs')) {
-                navigate('/myclubs');
+                setIsFetching(false);
             }
 
-            setIsFetching(false);
-        }
+            //authorized with active orgid
+            else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)) {
+                //not allow to access login pages
+                if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
+                    equalString(location.pathname, AuthRouteNames.LOGIN_GET_STARTED) ||
+                    equalString(location.pathname, AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION) ||
+                    equalString(location.pathname, AuthRouteNames.LOGIN_VERIFICATION_CODE)) {
+                    navigate(HomeRouteNames.INDEX);
+                }
 
-        //authorized with active orgid
-        else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)) {
-            //not allow to access login pages
-            if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
-                equalString(location.pathname, AuthRouteNames.LOGIN_GET_STARTED) ||
-                equalString(location.pathname, AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION) ||
-                equalString(location.pathname, AuthRouteNames.LOGIN_VERIFICATION_CODE)) {
-                navigate(HomeRouteNames.INDEX);
+                setOrgId(workingOrgId);
+
+                //set from organization load
+                //setIsFetching(false);
             }
-
-            setOrgId(workingOrgId);
-            
-            //set from organization load
-            //setIsFetching(false);
         }
-    }, [location, navigate]);
+    }, [location, navigate, authInitialized]);
 
 
     const calculateMaxHeight = () => {
         const windowHeight = window.innerHeight;
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
-        const calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+        const calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsets?.top || 0) - (safeAreaInsets?.bottom || 0);
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
     };
@@ -194,35 +216,39 @@ function Layout() {
         if (isMockData) {
             setIsFetching(false);
         } else {
-            if (!isNullOrEmpty(orgId) && shouldLoadOrgData) {
-                setIsFetching(true);
-                setShouldLoadOrgData(false);
-                
-                //logged but without bearer token
-                //should refresh every day?!
-                if (isNullOrEmpty(getBearerToken())) {
-                    appService.post('/app/MobileSso/ValidateAndCreateToken').then(r => {
-                        if (toBoolean(r?.IsValid)) {
-                            setBearerToken(r.Token);
-                            loadOrganizationData(orgId);
-                        }
-                    })
-                } else {
-                    loadOrganizationData(orgId);
+            if (authInitialized) {
+                if (!isNullOrEmpty(orgId) && shouldLoadOrgData) {
+                    
+                    setIsFetching(true);
+                    setShouldLoadOrgData(false);
+
+                    //logged but without bearer token
+                    //should refresh every day?!
+                    if (isNullOrEmpty(getBearerToken())) {
+                        appService.post('/app/MobileSso/ValidateAndCreateToken').then(r => {
+                            if (toBoolean(r?.IsValid)) {
+                                setBearerToken(r.Token);
+                                loadOrganizationData(orgId);
+                            }
+                        })
+                    } else {
+                        loadOrganizationData(orgId);
+                    }
                 }
             }
         }
-    }, [orgId, shouldLoadOrgData]);
+    }, [orgId, shouldLoadOrgData, authInitialized]);
 
     const loadOrganizationData = (orgId) => {
         const memberData = fromAuthLocalStorage('memberData', {});
         const memberId = memberData?.memberId;
-        
+
         appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`).then(response => {
             if (response.IsValid) {
                 const responseData = response.Data;
                 setRequestData(responseData.RequestData);
 
+                
                 apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}`).then(
                     innerResponse => {
                         if (toBoolean(innerResponse?.IsValid)) {
@@ -230,7 +256,7 @@ function Layout() {
 
                             setMemberId(memberResponseData.MemberId);
                             setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
-                            
+
                             setAuthData({
                                 orgId: memberResponseData.OrganizationId,
                                 timezone: memberResponseData.TimeZone,
@@ -262,7 +288,7 @@ function Layout() {
                                 useOrganizedPlay: memberResponseData.UseOrganizedPlay,
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
-                            
+
                             setIsFetching(false);
                         }
                     });

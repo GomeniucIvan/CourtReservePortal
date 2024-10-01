@@ -10,6 +10,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({children}) => {
     const [orgId, setOrgId] = useState(null);
+    const [authInitialized, setAuthInitialized] = useState(false);
     const [shouldLoadOrgData, setShouldLoadOrgData] = useState(true);
     const [memberId, setMemberId] = useState();
     const [authData, setAuthData] = useState(null);
@@ -36,6 +37,7 @@ export const AuthProvider = ({children}) => {
         })
 
         setClientUiCulture(memberData.uiCulture);
+        setAuthInitialized(true);
     }, []);
 
     const logout = async () => {
@@ -74,6 +76,7 @@ export const AuthProvider = ({children}) => {
             setMemberId,
             shouldLoadOrgData,
             setShouldLoadOrgData,
+            authInitialized,
             logout
         }}>
             {children}

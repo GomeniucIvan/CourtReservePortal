@@ -24,3 +24,7 @@ export const saveMobileTokenKey = (tokenKey, tokenIdKey) => {
         }
     }
 }
+
+export const isReactApplication = () =>{
+    return !!window.ReactNativeWebView;
+}

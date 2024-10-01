@@ -2,7 +2,8 @@
 
 let bearerToken = '';
 let requestData = '';
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const isProduction = process.env.NODE_ENV === 'production';
+let backendUrl = isProduction ? import.meta.env.VITE_BACKEND_URL : '';
 
 export const setBearerToken = (token) => {
     bearerToken = token;

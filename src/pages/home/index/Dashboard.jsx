@@ -20,11 +20,13 @@ import {fromLocalStorage, toAuthLocalStorage, toLocalStorage} from "../../../sto
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {stringToJson} from "../../../utils/ListUtils.jsx";
 import {string} from "yup";
+import {useSafeArea} from "../../../context/SafeAreaContext.jsx";
 
 function Dashboard() {
     const { styles } = useStyles();
     const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,  } = useApp();
     const {orgId} = useAuth();
+    const {safeAreaInsets} = useSafeArea();
     
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
@@ -81,6 +83,9 @@ function Dashboard() {
     return (
         <>
             <div className={styles.orgArea}>
+                {/*SafeArea*/}
+                <div style={{backgroundColor: "transparent", height: `${(safeAreaInsets?.top || 0)}px` }}></div>
+                
                 <Button onClick={() => navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
                 <Button onClick={() => navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
             </div>
