@@ -52,12 +52,7 @@ function Layout() {
         setNavigationLinks
     } = useApp();
 
-    const [safeAreaInsets, setSafeAreaInsets] = useState({
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-    });
+    const {safeAreaInsets} = useSafeArea();
 
     const {
         memberId,
@@ -108,24 +103,25 @@ function Layout() {
             //authorized without active orgid
             else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)) {
                 //todo my clubs//allowed path
-                if (!equalString(location.pathname, '/myclubs')) {
-                    navigate('/myclubs');
+                if (!equalString(location.pathname, HomeRouteNames.PROFILE_MY_CLUBS)) {
+                    navigate(HomeRouteNames.PROFILE_MY_CLUBS);
                 }
 
                 setIsFetching(false);
             }
-
+            
             //authorized with active orgid
             else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)) {
+                setOrgId(workingOrgId);
+                
                 //not allow to access login pages
                 if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
                     equalString(location.pathname, AuthRouteNames.LOGIN_GET_STARTED) ||
                     equalString(location.pathname, AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION) ||
+                    equalString(location.pathname, HomeRouteNames.CR_STARTUP_URL) ||
                     equalString(location.pathname, AuthRouteNames.LOGIN_VERIFICATION_CODE)) {
                     navigate(HomeRouteNames.INDEX);
                 }
-
-                setOrgId(workingOrgId);
 
                 //set from organization load
                 //setIsFetching(false);
@@ -138,7 +134,12 @@ function Layout() {
         const windowHeight = window.innerHeight;
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
-        const calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsets?.top || 0) - (safeAreaInsets?.bottom || 0);
+        let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsets?.top || 0) - (safeAreaInsets?.bottom || 0);
+
+        if (toBoolean(currentRoute?.fullHeight)) {
+            calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+        }
+        
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
     };
@@ -182,6 +183,7 @@ function Layout() {
             body{
                 margin: 0px;
             }
+           
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;
             }

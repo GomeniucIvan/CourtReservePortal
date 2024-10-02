@@ -9,6 +9,7 @@ import {useTranslation} from "react-i18next";
 import DisclosurePending from "../pages/home/disclosure/DisclosurePending.jsx";
 
 export const HomeRouteNames = {
+    CR_STARTUP_URL: `/mobilesso/newmobile`,
     INDEX: '/',
     SCHEDULER: '/scheduler/',
     CALENDAR: '/calendar',
@@ -17,6 +18,7 @@ export const HomeRouteNames = {
     LEAGUES_LIST: `/leagues/list`,
     MORE_NAVIGATION: `/more`,
     DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
+    PROFILE_MY_CLUBS: `/myclubs`
 };
 
 const HomeRoutes = [

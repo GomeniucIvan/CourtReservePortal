@@ -82,10 +82,7 @@ function Dashboard() {
     
     return (
         <>
-            <div className={styles.orgArea}>
-                {/*SafeArea*/}
-                <div style={{backgroundColor: "transparent", height: `${(safeAreaInsets?.top || 0)}px` }}></div>
-                
+            <div className={cx(styles.orgArea, 'safe-area-top')}>
                 <Button onClick={() => navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
                 <Button onClick={() => navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
             </div>

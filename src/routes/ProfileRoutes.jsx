@@ -22,7 +22,7 @@ export const ProfileRouteNames = {
     PROFILE_BILLING: `/profile/billing`,
     PROFILE_STRINGING: `/profile/stringing`,
     PROFILE_STRINGING_DETAILS: `/profile/stringing/:id`,
-    PROFILE_PAYMENT_PROFILE_LIST: `/profile/payment-profiles`,
+    PROFILE_PAYMENT_PROFILE_LIST: `/profile/payment-profiles`
 };
 
 const ProfileRoutes = [
