@@ -245,8 +245,8 @@ function Layout() {
         appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`).then(response => {
             if (response.IsValid) {
                 const responseData = response.Data;
+                console.log(responseData.RequestData)
                 setRequestData(responseData.RequestData);
-
                 
                 apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}`).then(
                     innerResponse => {

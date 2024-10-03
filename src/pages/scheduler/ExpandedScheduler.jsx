@@ -4,7 +4,6 @@ import React, {useCallback, useEffect, useState} from "react";
 import {DayView} from "../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {InnerScheduler} from "../../components/scheduler/partial/InnerScheduler.jsx";
 import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {SchedulerSlot} from "../../components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
 import {Flex, Skeleton, Spin, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
@@ -15,7 +14,7 @@ import {
 } from "../../components/scheduler/partial/items/SchedulerProportionalViewItem.mjs";
 import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/SchedulerViewSlotDisplay.jsx";
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
-import appService from "../../api/app.jsx";
+import appService, {apiRoutes} from "../../api/app.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
 import {dateToString, dateToTimeString, fixDate} from "../../utils/DateUtils.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
@@ -112,7 +111,7 @@ function ExpandedScheduler() {
             }, 400);
         }
         else{
-            appService.get(navigate, `/app/Online/Reservations/Bookings/${orgId}?sId=11945`).then(r => {
+            appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=11945`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data.Model;
                     setStartTimeString(dateToTimeString(model.StartTime));
@@ -125,7 +124,6 @@ function ExpandedScheduler() {
                     const dateToShow = new Date(dateToString(model.CurrentDateTime));
                     setTimeZone(model.TimeZone);
                     setInterval(model.MinInterval);
-
                     
                     const formattedCourts = model.Courts.map(court => ({
                         ...court,
