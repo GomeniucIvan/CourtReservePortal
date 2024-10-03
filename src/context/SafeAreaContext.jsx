@@ -44,6 +44,10 @@ const SafeArea = ({children}) => {
             .safe-area-top {
                 padding-top: ${top}px;
             }
+            
+            .safe-area-glass {
+                height: ${top}px;
+            }
         `;
 
         document.head.appendChild(style);

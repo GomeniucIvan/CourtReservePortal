@@ -24,7 +24,7 @@ import {useSafeArea} from "../../../context/SafeAreaContext.jsx";
 
 function Dashboard() {
     const { styles } = useStyles();
-    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,  } = useApp();
+    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,globalStyles  } = useApp();
     const {orgId} = useAuth();
     const {safeAreaInsets} = useSafeArea();
     
@@ -82,6 +82,8 @@ function Dashboard() {
     
     return (
         <>
+            <div className={globalStyles.safeAreaGlass}></div>
+            
             <div className={cx(styles.orgArea, 'safe-area-top')}>
                 <Button onClick={() => navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
                 <Button onClick={() => navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
