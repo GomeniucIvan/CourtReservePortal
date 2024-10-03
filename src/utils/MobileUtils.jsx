@@ -28,3 +28,12 @@ export const saveMobileTokenKey = (tokenKey, tokenIdKey) => {
 export const isReactApplication = () =>{
     return !!window.ReactNativeWebView;
 }
+
+export const reactActivateStatus = () => {
+    if (window.ReactNativeWebView) {
+        const message = JSON.stringify({ type: 'activeStateConfirmed' });
+        window.ReactNativeWebView.postMessage(message);
+    }
+};
+
+window.reactActivateStatus = reactActivateStatus;

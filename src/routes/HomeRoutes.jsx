@@ -7,6 +7,7 @@ import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 import Navigation from "../pages/navigation/Navigation.jsx";
 import {useTranslation} from "react-i18next";
 import DisclosurePending from "../pages/home/disclosure/DisclosurePending.jsx";
+import MemberGroupDetails from "../pages/membergroup/details/MemberGroupDetails.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -18,7 +19,8 @@ export const HomeRouteNames = {
     LEAGUES_LIST: `/leagues/list`,
     MORE_NAVIGATION: `/more`,
     DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
-    PROFILE_MY_CLUBS: `/myclubs`
+    MY_CLUBS: `/myclubs`,
+    MEMBER_GROUP: `/membergroup/:id`
 };
 
 const HomeRoutes = [
@@ -68,6 +70,12 @@ const HomeRoutes = [
         path: HomeRouteNames.DISCLOSURE_PENDING_LOGIN,
         element: <DisclosurePending scope={2}/>,
         title: 'waivers'
+    },
+    {
+        path: HomeRouteNames.MEMBER_GROUP,
+        element: <MemberGroupDetails scope={2}/>,
+        title: 'memberGroup',
+        header: true
     }
 ];
 

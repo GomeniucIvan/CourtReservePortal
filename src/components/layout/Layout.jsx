@@ -21,14 +21,12 @@ import {Flex} from "antd";
 import {Skeleton} from 'antd-mobile'
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import appService from "../../api/app.jsx";
-import {setClientUiCulture} from "../../utils/DateUtils.jsx";
 import {useAntd} from "../../context/AntdProvider.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 import apiService, {getBearerToken, setBearerToken, setRequestData} from "../../api/api.jsx";
 import {stringToJson} from "../../utils/ListUtils.jsx";
 import {useSafeArea} from "../../context/SafeAreaContext.jsx";
-import {isReactApplication} from "../../utils/MobileUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -103,8 +101,8 @@ function Layout() {
             //authorized without active orgid
             else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)) {
                 //todo my clubs//allowed path
-                if (!equalString(location.pathname, HomeRouteNames.PROFILE_MY_CLUBS)) {
-                    navigate(HomeRouteNames.PROFILE_MY_CLUBS);
+                if (!equalString(location.pathname, HomeRouteNames.MY_CLUBS)) {
+                    navigate(HomeRouteNames.MY_CLUBS);
                 }
 
                 setIsFetching(false);
@@ -128,7 +126,6 @@ function Layout() {
             }
         }
     }, [location, navigate, authInitialized]);
-
 
     const calculateMaxHeight = () => {
         const windowHeight = window.innerHeight;

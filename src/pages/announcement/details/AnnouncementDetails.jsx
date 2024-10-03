@@ -17,7 +17,7 @@ function AnnouncementDetails() {
     let {id} = useParams();
     const navigate = useNavigate();
     const {styles} = useStyles();
-    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setHeaderTitle} = useApp();
+    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setHeaderTitle, setFooterContent} = useApp();
     const [isFetching, setIsFetching] = useState(true);
     
     const {orgId} = useAuth();
@@ -54,6 +54,7 @@ function AnnouncementDetails() {
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
+        setFooterContent('');
 
         if (id){
             loadData();
