@@ -21,7 +21,7 @@ export const useStyles = createStyles(({css, token}) => ({
         right: 2px;
         top: 50%;
         transform: translate(0%, -50%);
-        z-index: 4;
+        z-index: 999;
         background-color: ${token.colorText};
         display: flex;
         flex-direction: column;

@@ -257,5 +257,25 @@ export const useStyles = createStyles(({ css, token }) => ({
       .ant-card-body {
          padding: 0;
       }
+   `,
+   indexBar: css`
+      .adm-index-bar-sidebar-item {
+         width: 22px;
+         height: 22px;
+         font-size: 16px;
+         --font-size: 14px;
+      }
+      
+      .adm-index-bar-anchor-title {
+         font-weight: bold;
+      }
+
+      .adm-list-item{
+         padding-left: 0;
+         
+         .adm-list-item-content-main {
+            padding-left: var(--padding-left);
+         }
+      }
    `
 }));

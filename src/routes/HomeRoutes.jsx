@@ -75,7 +75,7 @@ const HomeRoutes = [
         path: HomeRouteNames.MEMBER_GROUP,
         element: <MemberGroupDetails scope={2}/>,
         title: 'memberGroup',
-        header: true
+        entityTitle: true,
     }
 ];
 

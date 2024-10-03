@@ -11,9 +11,12 @@ import {useNavigate} from "react-router-dom";
 import {ModalDelete, ModalLogout} from "../../utils/ModalUtils.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
+import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
+import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 
 function CardLinks({links}) {
-    const {token} = useApp();
+    const {token, setDynamicPages, globalStyles} = useApp();
     const {logout} = useAuth();
     const { styles } = useStyles();
     const navigate = useNavigate();
@@ -35,7 +38,13 @@ function CardLinks({links}) {
                                               }
                                           })
                                       } else {
-                                          navigate(link.Url);
+                                          if (equalString(link.Type, 'membergroup')) {
+                                              let route = toRoute(HomeRouteNames.MEMBER_GROUP, 'id', link.Id);
+                                              setPage(setDynamicPages, link.Name, route);
+                                              navigate(link.Url);
+                                          } else {
+                                              navigate(link.Url);
+                                          }
                                       }
                                   }}>
                                 <Text className={styles.cardName}>

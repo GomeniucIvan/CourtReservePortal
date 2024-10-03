@@ -37,8 +37,9 @@ function AnnouncementDetails() {
                 if (toBoolean(r?.IsValid)){
                     setAnnouncement(r.Data);
                     setHeaderTitle(r.Data.Title);
-                    setIsFetching(false)
                 }
+                setIsFetching(false)
+                
             })
         }
 
