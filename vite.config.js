@@ -18,10 +18,10 @@ export default defineConfig({
         minify: 'terser',
         terserOptions: {
             compress: {
-                drop_console: true,
+                drop_console: false, // true, //prod true
             },
             output: {
-                comments: false,
+                comments: true, //false, //prod false
             },
         },
     },

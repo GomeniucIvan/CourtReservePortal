@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { classNames } from "@progress/kendo-react-common";
 import { useSchedulerSlot } from "../hooks/useSchedulerSlotDisplay.js";
-import {toBoolean} from "../../../../utils/Utils.jsx";
+import {equalString, toBoolean} from "../../../../utils/Utils.jsx";
 import {Typography} from "antd";
 const {Text} = Typography;
 
@@ -210,6 +210,10 @@ export const SchedulerSlot = React.forwardRef((
         },
         [onKeyUp, slot]
     );
+    
+    if (toBoolean(props?.group?.resources[0]?.IsWailitsingData)){
+        return (<div className={'k-scheduler-cell k-slot-cell'}></div>)
+    }
     
     return (
         <div

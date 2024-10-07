@@ -3,7 +3,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import React, {useCallback, useEffect, useState} from "react";
 import {DayView} from "../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {InnerScheduler} from "../../components/scheduler/partial/InnerScheduler.jsx";
-import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Flex, Skeleton, Spin, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
@@ -24,6 +24,7 @@ import apiService from "../../api/api.jsx";
 function ExpandedScheduler() {
     const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData, token, globalStyles} = useApp();
     const {orgId} = useAuth();
+    const customSchedulerId = 11945;
     
     const hideReserveButtonsOnAdminSchedulers = false;
     const allowSchedulerDragAndDrop = false;
@@ -86,6 +87,20 @@ function ExpandedScheduler() {
         }
     }, [selectedDate]);
     
+    const courtHeader = (court) => {
+        if (equalString(`WAITLIST${customSchedulerId}`, court.Label)){
+            return `<span style="color: ${token.colorPrimary};font-weight: 500;">WAITLIST</span>`
+        }
+        
+        if (isNullOrEmpty(court?.CourtTypeName)){
+            return `<span style="color: ${token.colorPrimary};font-weight: 500;">${court.Label}</span>`
+        }
+        
+        return (
+            `<span style="color: ${token.colorPrimary};font-weight: 500;">${court.Label}</span><br/><span>${court.CourtTypeName}</span>`
+        )
+    }
+    
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(null);
@@ -111,14 +126,12 @@ function ExpandedScheduler() {
             }, 400);
         }
         else{
-            appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=11945`).then(r => {
+            appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data.Model;
-                    setStartTimeString(dateToTimeString(model.StartTime));
-                    setEndTimeString(dateToTimeString(model.EndTime));
+                    setStartTimeString(dateToTimeString(model.StartTime, true));
+                    setEndTimeString(dateToTimeString(model.EndTime, true));
                     
-                    console.log(dateToTimeString(model.StartTime))
-                    console.log(dateToTimeString(model.EndTime))
                     setSchedulerData(model);
                     
                     const dateToShow = new Date(dateToString(model.CurrentDateTime));
@@ -127,7 +140,7 @@ function ExpandedScheduler() {
                     
                     const formattedCourts = model.Courts.map(court => ({
                         ...court,
-                        Text:  `<span style="color: ${token.colorPrimary};font-weight: 500;">${court.Label}</span><br/><span>${court.CourtTypeName}</span>`,
+                        Text:  courtHeader(court),
                         Value: court.Id
                     }));
 

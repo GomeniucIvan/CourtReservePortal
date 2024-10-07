@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {SchedulerItem} from "../../components/scheduler/partial/items/SchedulerItemDisplay.jsx";
-import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
@@ -17,6 +17,7 @@ const ExpandedSchedulerItem = (props) => {
     const useCore = true;
     const donTrackMember = true;
     const hideCheckInFromReservations = true;
+    const customSchedulerId = 11945;
 
     const displayInstructorsRow = () => {
         return (<></>);
@@ -24,6 +25,10 @@ const ExpandedSchedulerItem = (props) => {
 
     const canUserEditItem = () => {
         return false;
+    }
+
+    const isWaitlistCourt = (courtId) => {
+        return equalString(`WAITLIST${customSchedulerId}`, `WAITLIST${courtId}`);
     }
 
     const isLightVersionEventSlot = typeof dataItem.IsLightVersion !== 'undefined' ? dataItem.IsLightVersion : false;
@@ -62,17 +67,32 @@ const ExpandedSchedulerItem = (props) => {
         }
         return null;
     }
-    
+
     return (
-        <SchedulerItem
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            {...props}
-            style={{
-                ...props.style,
-                zIndex: isHovered ? '2' : '1'
-            }}
-        >
+        <>
+            {isWaitlistCourt(dataItem.CourtId) &&
+                <SchedulerItem
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    {...props}
+                    style={{
+                        ...props.style,
+                        zIndex: isHovered ? '2' : '1'
+                    }}
+                >
+                    <></>
+                </SchedulerItem>
+            }
+            {!isWaitlistCourt(dataItem.CourtId) &&
+                <SchedulerItem
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    {...props}
+                    style={{
+                        ...props.style,
+                        zIndex: isHovered ? '2' : '1'
+                    }}
+                >
             <span onClick={() => {
                 if (isNullOrEmpty(dataItem.EventId)) {
                     let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', dataItem.ReservationId);
@@ -439,7 +459,9 @@ const ExpandedSchedulerItem = (props) => {
                     </div>
                 }
             </span>
-        </SchedulerItem>
+                </SchedulerItem>
+            }
+        </>
     );
 };
 

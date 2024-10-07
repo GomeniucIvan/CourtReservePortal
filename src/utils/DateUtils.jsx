@@ -145,13 +145,17 @@ export const dateToString = (incDate) => {
     return date.format(dateFormatByUiCulture());
 }
 
-export const dateToTimeString = (incDate) => {
+export const dateToTimeString = (incDate, twentyFourHourFormat) => {
     if (isNullOrEmpty(incDate)){
         return '';
     }
 
     const fixedDate = fixDate(incDate);
-    const date = dayjs(fixedDate);
+    const date = dayjs(fixedDate).utc();
+    if (twentyFourHourFormat){
+        return date.format('HH:mm');
+    }
+    
     return date.format('H:mm'); 
 }
 
