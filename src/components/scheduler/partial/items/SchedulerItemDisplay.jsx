@@ -72,7 +72,7 @@ export const SchedulerItem = forwardRef((props, ref) => {
     const className = useMemo(
         () => classNames(
             {
-                'k-event': !props.resizeHint,
+                'k-event k-event-no-hint': !props.resizeHint,
                 'k-selected': props.selected && editable.select,
                 'k-event-drag-hint': props.dragHint,
                 'k-scheduler-marquee': props.resizeHint,

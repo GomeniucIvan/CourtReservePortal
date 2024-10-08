@@ -11,7 +11,7 @@ const {Text} = Typography
 import '@progress/kendo-date-math/tz/all.js';
 import {
     SchedulerProportionalViewItem
-} from "../../components/scheduler/partial/items/SchedulerProportionalViewItem.mjs";
+} from "../../components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
 import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/SchedulerViewSlotDisplay.jsx";
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "../../api/app.jsx";
@@ -129,8 +129,9 @@ function ExpandedScheduler() {
             appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data.Model;
-                    setStartTimeString(dateToTimeString(model.StartTime, true));
-                    setEndTimeString(dateToTimeString(model.EndTime, true));
+                    setStartTimeString(r.Data.OpenTime);
+                    console.log(r.Data.OpenTime);
+                    setEndTimeString(r.Data.CloseTime);
                     
                     setSchedulerData(model);
                     

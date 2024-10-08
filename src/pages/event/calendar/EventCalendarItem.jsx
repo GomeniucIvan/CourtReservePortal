@@ -8,7 +8,7 @@ import {cx} from "antd-style";
 import {toBoolean} from "../../../utils/Utils.jsx";
 import {
     SchedulerProportionalViewItem
-} from "../../../components/scheduler/partial/items/SchedulerProportionalViewItem.mjs";
+} from "../../../components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
 
 const EventCalendarItem = (props) => {
 console.log(props)
