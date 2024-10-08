@@ -167,7 +167,7 @@ const FormSelect = ({
                         value={toBoolean(multi) ? multiSelectedValues : selectedOption?.[propValue]}
                         open={false}
                         mode={toBoolean(multi) ? 'multiple' : undefined}
-                        loading={toBoolean(fetching)}
+                        loading={toBoolean(loading)}
                         onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
                         onChange={(value) => {
                             if (multi) {

@@ -216,3 +216,13 @@ export const copyToClipboard = (text) => {
             console.error('Failed to copy text: ', err);
         });
 };
+
+export const encodeParam = (input) => {
+    return encodeURIComponent(input);
+}
+
+export const encodeParamsObject = (params) => {
+    return Object.keys(params)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .join('&');
+};

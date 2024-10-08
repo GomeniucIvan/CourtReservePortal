@@ -190,14 +190,17 @@ function ExpandedScheduler() {
     const handleDataChange = (e) => {
     }
 
-    const openReservationCreateModal = (e) => {
-        let courtId = e.currentTarget.getAttribute('entytyid');
-        let start = e.currentTarget.getAttribute('start');
-        let end = e.currentTarget.getAttribute('end');
+    const openReservationCreateModal = (props, dataItem) => {
+        let start = props.start;
+        let end = props.end;
         
-        console.log('CourtId: ' + courtId)
-
-        navigate(ProfileRouteNames.RESERVATION_CREATE);
+        navigate(ProfileRouteNames.RESERVATION_CREATE, {
+            state: {
+                dataItem,
+                start,
+                end
+            }
+        });
     }
     
     const modelFields = {

@@ -1,5 +1,5 @@
 ﻿import {useStyles} from "./../styles.jsx";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Alert, Button, Card, Checkbox, Divider, Flex, Typography} from "antd";
 import mockData from "../../../mocks/reservation-data.json";
@@ -10,7 +10,7 @@ import {Ellipsis} from "antd-mobile";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {useLoadingState} from "../../../utils/LoadingUtils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {anyInList, encodeParam, encodeParamsObject, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
 import FormSelect from "../../../form/formselect/FormSelect.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
@@ -19,13 +19,19 @@ import SVG from "../../../components/svg/SVG.jsx";
 import {ModalRemove} from "../../../utils/ModalUtils.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
+import appService, {apiRoutes} from "../../../api/app.jsx";
+import {useAuth} from "../../../context/AuthProvider.jsx";
 
 const {Title, Text, Link} = Typography;
 
 function ReservationRegistration() {
     const navigate = useNavigate();
-    let {id} = useParams();
+    const location = useLocation();
+    const {orgId} = useAuth();
+
     const {styles} = useStyles();
+    const {dataItem, start, end} = location.state || {};
+
     const {
         isMockData,
         setIsFooterVisible,
@@ -54,9 +60,9 @@ function ReservationRegistration() {
     const [searchPlayersText, setSearchPlayersText] = useState('');
     const [showMiscItems, setShowMiscItems] = useState(false);
     const [miscItems, setMiscItems] = useState([]);
-    
+
     const initialValues = {
-        reservationTypeId: '',
+        ReservationTypeId: '',
         duration: '',
         endTime: '12:30 pm',
         courtId: '',
@@ -71,11 +77,15 @@ function ReservationRegistration() {
         Description: null,
         MatchMakerIsPrivateMatch: false,
         MatchMakerJoinCode: '',
+        InstructorName: '',
+        RegisteringMemberId: null
     };
 
     const fields = Object.keys(initialValues);
     const {loadingState, setLoading} = useLoadingState(fields);
 
+    console.log(loadingState)
+    
     const loadData = (refresh) => {
         if (isMockData) {
             const resv = mockData.create;
@@ -84,7 +94,34 @@ function ReservationRegistration() {
             setMatchTypes(resv.MatchTypes);
             setMiscItems(resv.MiscFeesSelectListItems);
         } else {
-            alert('todo res registation')
+
+            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}`).then(r => {
+                if (toBoolean(r?.IsValid)) {
+                    setReservation(r.Data);
+                    
+                    if (!toBoolean(r.Data.IsResourceReservation)){
+                        setLoading('ReservationTypeId', true);
+                        
+                        let reservationTypeData = {
+                            customSchedulerId: r.Data.CustomSchedulerId,
+                            userId: r.Data.RegisteringMemberId,
+                            startTime: start,
+                            date: start,
+                            courtId: dataItem.Id,
+                            courtType: r.Data.CourtTypeEnum,
+                            endTime: end,
+                            isDynamicSlot: r.Data.IsFromDynamicSlots,
+                            instructorId: r.Data.InstructorId
+                        }
+                        
+                        appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxReservation/GetAvailableReservationTypes?id=${orgId}&${encodeParamsObject(reservationTypeData)}`).then(rTypes => {
+                            setReservationTypes(rTypes);
+                            setLoading('ReservationTypeId', false);
+                        })
+                    }
+                }
+            })
+            //alert('todo res registation')
         }
 
         resetFetch();
@@ -112,7 +149,7 @@ function ReservationRegistration() {
     }, []);
 
     const validationSchema = Yup.object({
-        reservationTypeId: Yup.string().required('Reservation Type is require.'),
+        ReservationTypeId: Yup.string().required('Reservation Type is require.'),
         MatchMakerTypeId: Yup.string().when('isOpenReservation', {
             is: true,
             then: (schema) => schema.required('Match Type is required.'),
@@ -233,14 +270,46 @@ function ReservationRegistration() {
             <PaddingBlock topBottom={true}>
                 <Title level={5} className={globalStyles.noTopPadding}>Reservation Details</Title>
 
-                <FormSelect form={formik}
-                            name={`reservationTypeId`}
-                            label='Reservation Type'
-                            options={reservationTypes}
-                            required={true}
-                            onValueChange={onReservationTypeChange}
-                            propText='Name'
-                            propValue='Id'/>
+                {!isNullOrEmpty(reservation?.InstructorId) &&
+                    <FormInput form={formik}
+                               required={true}
+                               label={'Instructor'}
+                               name={`InstructorName`}/>
+                }
+
+                {anyInList(reservation?.FamilyMembers) &&
+                    <FormSelect form={formik}
+                                name={`RegisteringMemberId`}
+                                label='Reserve For'
+                                options={reservation?.FamilyMembers}
+                                required={true}
+                                //onValueChange={onReservationTypeChange}
+                                propText='FullName'
+                                propValue='Id'/>
+                }
+
+                {toBoolean(reservation?.IsResourceReservation) ? (
+                    <FormSelect form={formik}
+                                name={`ReservationTypeId`}
+                                label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
+                                options={reservation?.ReservationTypesSelectListItem}
+                                required={true}
+                                onValueChange={onReservationTypeChange}
+                                propText='Text'
+                                propValue='Value'/>
+                ) : (
+                    <FormSelect form={formik}
+                                name={`ReservationTypeId`}
+                                label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
+                                options={reservationTypes}
+                                required={true}
+                                onValueChange={onReservationTypeChange}
+                                loading={toBoolean(loadingState.ReservationTypeId)}
+                                propText='Name'
+                                propValue='Id'/>
+                )}
+                
+
 
                 <InlineBlock>
                     <FormSelect label="Duration"
@@ -483,7 +552,9 @@ function ReservationRegistration() {
                             <Text type="secondary">(0)</Text>
                         </Flex>
 
-                        <Link onClick={() => {setShowMiscItems(true)}}>
+                        <Link onClick={() => {
+                            setShowMiscItems(true)
+                        }}>
                             <Flex gap={token.Custom.cardIconPadding} align={'center'}>
                                 <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
                                 <strong>Add Items</strong>
@@ -646,7 +717,8 @@ function ReservationRegistration() {
                                                           borderRadius: 50,
                                                           backgroundColor: 'red'
                                                       }}>
-                                                    <Title level={5} className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
+                                                    <Title level={5}
+                                                           className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
                                                 </Flex>
 
                                                 <Text>
@@ -659,11 +731,12 @@ function ReservationRegistration() {
                                                     alert('todo')
                                                 }}>
                                                     {toBoolean(player.IsFavoriteMember) ?
-                                                        (<SVG icon={'hearth-filled'} size={24} color={token.colorPrimary}/>) : 
+                                                        (<SVG icon={'hearth-filled'} size={24}
+                                                              color={token.colorPrimary}/>) :
                                                         (<SVG icon={'hearth'} size={24} color={token.colorPrimary}/>)}
-                                                    
+
                                                 </div>
-                                                
+
                                                 <div onClick={() => {
                                                     alert('todo')
                                                 }}>
@@ -742,40 +815,45 @@ function ReservationRegistration() {
             <DrawerBottom
                 maxHeightVh={60}
                 showDrawer={showMiscItems}
-                closeDrawer={() => {setShowMiscItems(false)}}
+                closeDrawer={() => {
+                    setShowMiscItems(false)
+                }}
                 label={'Miscellaneous Items'}
                 showButton={true}
                 confirmButtonText={'Save'}
-                onConfirmButtonClick={() => {setShowMiscItems(false)}}
+                onConfirmButtonClick={() => {
+                    setShowMiscItems(false)
+                }}
             >
                 <PaddingBlock>
                     {anyInList(miscItems) &&
                         <Flex vertical>
                             {miscItems.map((miscItem, index) => {
                                 const isLastIndex = index === miscItems.length - 1;
-                                
+
                                 return (
-                                   <div key={index} >
-                                       <Flex justify={'space-between'} align={'center'}>
-                                           <Title level={5} className={cx(globalStyles.noSpace)}>{miscItem.Text}</Title>
+                                    <div key={index}>
+                                        <Flex justify={'space-between'} align={'center'}>
+                                            <Title level={5}
+                                                   className={cx(globalStyles.noSpace)}>{miscItem.Text}</Title>
 
-                                           <Flex gap={token.padding} align={'center'}>
-                                               <SVG icon={'circle-minus'} size={30} color={token.colorError}/>
-                                               <Title level={5} className={cx(globalStyles.noSpace)}>0</Title>
-                                               <SVG icon={'circle-plus'} size={30} color={token.colorPrimary}/>
-                                           </Flex>
-                                       </Flex>
+                                            <Flex gap={token.padding} align={'center'}>
+                                                <SVG icon={'circle-minus'} size={30} color={token.colorError}/>
+                                                <Title level={5} className={cx(globalStyles.noSpace)}>0</Title>
+                                                <SVG icon={'circle-plus'} size={30} color={token.colorPrimary}/>
+                                            </Flex>
+                                        </Flex>
 
-                                       {!isLastIndex &&
-                                           <Divider className={styles.playersDivider}/> 
-                                       }
-                                   </div>
+                                        {!isLastIndex &&
+                                            <Divider className={styles.playersDivider}/>
+                                        }
+                                    </div>
                                 )
                             })}
                         </Flex>
                     }
                 </PaddingBlock>
-            </DrawerBottom>  
+            </DrawerBottom>
         </>
     )
 }

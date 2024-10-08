@@ -259,7 +259,7 @@ export const SchedulerSlot = React.forwardRef((
                         start={props.start.getTime()}
                         end={props.end.getTime()}
                         entytyid={props.group.resources[0].Value}
-                        onClick={openReservationCreateModal}
+                        onClick={() => {openReservationCreateModal(props, props?.group?.resources[0])}}
                         style={{
                             height: '40px',
                             width: '100%',
