@@ -24,6 +24,7 @@ export const AuthProvider = ({children}) => {
         
         setAuthData({
             timezone: nullToEmpty(memberData.timezone),
+            timeZone: nullToEmpty(memberData.timezone),
             uiCulture: nullToEmpty(memberData.uiCulture),
             primaryColor: nullToEmpty(memberData.primaryColor),
             memberId: nullToEmpty(memberData.memberId),
@@ -47,6 +48,7 @@ export const AuthProvider = ({children}) => {
         setMemberId(null);
         setAuthData({
             timezone: '',
+            timeZone: '',
             uiCulture: '',
             currency: '',
             primaryColor: '',

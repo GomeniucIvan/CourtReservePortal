@@ -174,3 +174,13 @@ export const toAspNetDate = (incDate) => {
     // console.log(milliseconds)
     // return new Date(milliseconds);
 }
+
+export const dateTimeToFormat = (incDate, format) => {
+    if (isNullOrEmpty(incDate)){
+        return '';
+    }
+
+    const fixedDate = fixDate(incDate);
+    const date = dayjs(fixedDate);
+    return date.format(format);
+}

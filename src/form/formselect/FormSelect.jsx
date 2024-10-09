@@ -70,40 +70,42 @@ const FormSelect = ({
                     } else {
                         const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
                         if (selectedOptionInList) {
-                            onValueSelect(selectedOptionInList)
+                            onValueSelect(selectedOptionInList, true)
                         }
                     }
                 }
             }
         }
-    }, [field?.value, fetching, form, initValueInitialized, multi, name, options]);
+    }, [fetching, initValueInitialized, multi, name, options]);
 
     const closeDrawer = () => {
         setIsDrawerOpen(false);
     }
 
-    const onValueSelect = (selectedOption) => {
+    const onValueSelect = (selectedOption, forceReload) => {
         let selectedDropdownValue = null;
 
-        if (isNullOrEmpty(selectedOption)) {
-            selectedDropdownValue = null;
-            form.setFieldValue(name, null);
-        } else {
-            let selectedOptionInList = options.find(option => equalString(option[propValue], selectedOption[propValue]));
-            if (selectedOptionInList) {
-                selectedDropdownValue = selectedOptionInList;
-                form.setFieldValue(name, selectedOption[propValue]);
-            } else {
+        if (!equalString(selectedOption[propValue], field?.value) || forceReload ){
+            if (isNullOrEmpty(selectedOption)) {
                 selectedDropdownValue = null;
                 form.setFieldValue(name, null);
+            } else {
+                let selectedOptionInList = options.find(option => equalString(option[propValue], selectedOption[propValue]));
+                if (selectedOptionInList) {
+                    selectedDropdownValue = selectedOptionInList;
+                    form.setFieldValue(name, selectedOption[propValue]);
+                } else {
+                    selectedDropdownValue = null;
+                    form.setFieldValue(name, null);
+                }
+            }
+
+            setSelectedOption(selectedDropdownValue);
+            if (onValueChange && typeof onValueChange === 'function') {
+                onValueChange(selectedDropdownValue);
             }
         }
-
-        setSelectedOption(selectedDropdownValue);
-        if (onValueChange && typeof onValueChange === 'function') {
-            onValueChange(selectedDropdownValue);
-        }
-
+        
         setIsDrawerOpen(false);
         setTimeout(function () {
             setShowClearButton(!isNullOrEmpty(selectedOption) && toBoolean(!isRequired));

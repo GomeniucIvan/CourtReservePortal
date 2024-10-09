@@ -11,7 +11,8 @@ export const apiRoutes = {
     API2: appUrl,
     CREATE_RESERVATION: appUrl,
     HUB_URL_READ: appUrl,
-    MemberSchedulersApiUrl: appUrl
+    MemberSchedulersApiUrl: appUrl,
+    ServiceMemberPortal: appUrl
 }
 
 const axiosInstance = axios.create({
