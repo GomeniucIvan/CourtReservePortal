@@ -21,9 +21,6 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
     const [headerDate, setHeaderDate] = useState(props.date);
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
     const [isNextDisabled, setIsNextDisabled] = useState(true);
-    const {minDate, maxDate} = useSchedulerPropsContext();
-    
-    console.log()
     
     useEffect(() => {
         if (isNullOrEmpty(props.scheduler.current.props?.minDate)){
@@ -37,7 +34,7 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
         } else{
             setIsNextDisabled(headerDate >= props.scheduler.current.props.maxDate);
         }
-    }, [headerDate, minDate, maxDate])
+    }, [headerDate])
     
     React.useImperativeHandle(header, () => ({element: element.current, props}));
     React.useImperativeHandle(ref, () => header.current);

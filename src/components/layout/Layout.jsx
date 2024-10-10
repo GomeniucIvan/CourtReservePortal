@@ -288,7 +288,7 @@ function Layout() {
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
 
-                            setIsFetching(false);
+                            //setIsFetching(false);
                         }
                     });
             }
@@ -311,14 +311,17 @@ function Layout() {
                 <LayoutExtra/>
 
                 {toBoolean(isFetching) ? (
-                    <PaddingBlock topBottom={true}>
-                        <Flex vertical={true} gap={token.padding}>
-                            {skeletonArray.map((_, index) => (
-                                <Skeleton key={index} animated className={styles.skeleton}/>
-                            ))}
-                        </Flex>
-                    </PaddingBlock>
+                    <>
+                        <div className={globalStyles.safeAreaGlass}></div>
 
+                        <PaddingBlock topBottom={true}>
+                            <Flex vertical={true} gap={token.padding}>
+                                {skeletonArray.map((_, index) => (
+                                    <Skeleton key={index} animated className={styles.skeleton}/>
+                                ))}
+                            </Flex>
+                        </PaddingBlock>
+                    </>
                 ) : (
                     <PullToRefresh onRefresh={refreshData}
                                    disabled={toBoolean(disablePullDownToRefresh)}
