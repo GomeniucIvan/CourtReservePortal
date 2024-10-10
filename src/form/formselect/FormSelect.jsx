@@ -82,6 +82,18 @@ const FormSelect = ({
         setIsDrawerOpen(false);
     }
 
+    useEffect(() => {
+        if (!multi){
+            if (!equalString(selectedOption, field?.value)){
+                let selectedOptionInList = options.find(option => equalString(option[propValue], field?.value));
+
+                if (selectedOptionInList) {
+                    setSelectedOption(selectedOptionInList);
+                }
+            }  
+        }
+    }, [field?.value]);
+    
     const onValueSelect = (selectedOption, forceReload) => {
         let selectedDropdownValue = null;
 

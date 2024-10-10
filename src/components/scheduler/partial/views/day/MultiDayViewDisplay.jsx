@@ -242,6 +242,7 @@ export const MultiDayView = (props) => {
                                     onDataAction={props.onDataAction}
                                     item={props.item}
                                     interval={props.slotDuration}
+                                    eventOffset={props.eventOffset}
                                     closeTime={endTime}
                                     viewItem={props.viewItem}
                                     editable={props.editable}
@@ -263,6 +264,7 @@ export const MultiDayView = (props) => {
                             {timeSlots
                                 .filter((slot) => slot.group.index === FIRST_INDEX && slot.range.index === FIRST_INDEX)
                                 .map((root, rootIndex) => {
+                                    
                                     return (
                                         <React.Fragment key={root.index}>
                                             <HorizontalResourceIterator
@@ -292,25 +294,30 @@ export const MultiDayView = (props) => {
                                                                     .filter(s => s.index === root.index
                                                                         && s.range.index === rangeIndex
                                                                         && s.group.index === groupIndex)
-                                                                    .map((slot) => (
-                                                                        <EditSlot
-                                                                            key={`${slot.start.getTime()}:${slot.group.index}`}
-                                                                            {...slot}
-                                                                            onDataAction={props.onDataAction}
-                                                                            slot={props.slot}
-                                                                            viewSlot={props.viewSlot}
-                                                                            form={props.form}
-                                                                            useTextSchedulerSlot={props.useTextSchedulerSlot}
-                                                                            openReservationCreateModal={props.openReservationCreateModal}
-                                                                            row={rootIndex + GRID_OFFSET}
-                                                                            col={(timeRanges.length * (groupIndex || 0)) + rangeIndex}
-                                                                            isWorkHour={
-                                                                                isInTimeRange(slot.zonedStart, workDayStart, workDayEnd)
-                                                                            }
-                                                                            isWorkDay={isInDaysRange(slot.zonedEnd.getDay(), workWeekStart, workWeekEnd)}
-                                                                            editable={props.editable}
-                                                                        />
-                                                                    ))
+                                                                    .map((slot) => {
+                                                                        let isPastStart = slot.start < props.currentDateTime;
+                                                                        
+                                                                        return (
+                                                                            <EditSlot
+                                                                                key={`${slot.start.getTime()}:${slot.group.index}`}
+                                                                                {...slot}
+                                                                                onDataAction={props.onDataAction}
+                                                                                slot={props.slot}
+                                                                                viewSlot={props.viewSlot}
+                                                                                form={props.form}
+                                                                                useTextSchedulerSlot={props.useTextSchedulerSlot}
+                                                                                openReservationCreateModal={props.openReservationCreateModal}
+                                                                                row={rootIndex + GRID_OFFSET}
+                                                                                col={(timeRanges.length * (groupIndex || 0)) + rangeIndex}
+                                                                                isPastStart={isPastStart}
+                                                                                isWorkHour={
+                                                                                    isInTimeRange(slot.zonedStart, workDayStart, workDayEnd)
+                                                                                }
+                                                                                isWorkDay={isInDaysRange(slot.zonedEnd.getDay(), workWeekStart, workWeekEnd)}
+                                                                                editable={props.editable}
+                                                                            />
+                                                                        )
+                                                                    })
                                                             ))}
                                                         </div>
                                                     )}
@@ -393,6 +400,7 @@ export const MultiDayView = (props) => {
                                     onDataAction={props.onDataAction}
                                     viewItem={props.viewItem}
                                     interval={props.slotDuration}
+                                    eventOffset={props.eventOffset}
                                     closeTime={endTime}
                                     item={props.item}
                                     form={props.form}
@@ -412,6 +420,7 @@ export const MultiDayView = (props) => {
                             onDataAction={props.onDataAction}
                             viewItem={props.viewItem}
                             interval={props.slotDuration}
+                            eventOffset={props.eventOffset}
                             closeTime={endTime}
                             item={props.item}
                             form={props.form}

@@ -370,6 +370,7 @@ const InnerSchedulerComponent = memo(React.forwardRef((props, ref) => {
                        item={props.item}
                        useTextSchedulerSlot={props.useTextSchedulerSlot}
                        openReservationCreateModal={props.openReservationCreateModal}
+                       currentDateTime={props.currentDateTime}
                        height={props.height}
                        viewItem={props.viewItem}
                        editItem={props.editItem}

@@ -29,7 +29,7 @@ import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {dateTimeToFormat} from "../../../utils/DateUtils.jsx";
+import {dateTimeToFormat, dateToTimeString} from "../../../utils/DateUtils.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -39,7 +39,7 @@ function ReservationRegistration() {
     const {styles} = useStyles();
     const location = useLocation();
     const {dataItem, start, end} = location.state || {};
-
+    
     const {
         isMockData,
         setIsFooterVisible,
@@ -139,7 +139,6 @@ function ReservationRegistration() {
             appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}`).then(r => {
                 if (toBoolean(r?.IsValid)) {
                     let incResData = r.Data;
-                    console.log(incResData)
                     setReservation(incResData);
 
                     formik.setValues({
@@ -149,13 +148,18 @@ function ReservationRegistration() {
                         RegisteringMemberId: incResData.RegisteringMemberId,
                         SelectedResourceName: incResData.SelectedResourceName,
                         StartTime: incResData.StartTime,
-                        EndTime: incResData.EndTime,
+                        EndTime: dateToTimeString(end, true),
                     });
                     setIsFetching(false);
 
                     if (!toBoolean(r.Data.IsResourceReservation)) {
                         setLoading('ReservationTypeId', true);
-
+                        
+                        if (!isNullOrEmpty(dataItem?.Value)){
+                            setCourts([{DisplayName: `${dataItem.CourtTypeName} - ${dataItem.DisplayMobilSchedulerHeaderName}`, Id: dataItem.Value}]);
+                            formik.setFieldValue('CourtId', dataItem.Value);
+                        }
+                        
                         let reservationTypeData = {
                             customSchedulerId: r.Data.CustomSchedulerId,
                             userId: r.Data.RegisteringMemberId,
@@ -238,6 +242,8 @@ function ReservationRegistration() {
 
     }, [formik?.values?.Duration])
 
+    //members guest table
+    
     const reloadCourts = async (endTime) => {
         setLoading('CourtId', true);
 
@@ -274,6 +280,7 @@ function ReservationRegistration() {
             ReservationQueueSlotId: rq
         };
         appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/ReservationsApi/GetAvailableCourtsMemberPortal?id=${orgId}&${encodeParamsObject(courtsData)}`).then(rCourts => {
+            console.log(rCourts)
             setCourts(rCourts)
             setLoading('CourtId', false);
         })
@@ -491,7 +498,7 @@ function ReservationRegistration() {
                                     options={courts}
                                     required={true}
                                     loading={toBoolean(loadingState.CourtId)}
-                                    propText='Name'
+                                    propText='DisplayName'
                                     propValue='Id'/>
 
                         <FormSwitch label={'Allow Players to join this Reservation'}

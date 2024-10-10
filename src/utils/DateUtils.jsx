@@ -2,6 +2,7 @@ import {equalString, isNullOrEmpty} from "./Utils.jsx";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import moment from "moment";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -135,13 +136,22 @@ export const fixDate = (dateString) =>{
     return null;
 }
 
+export const toReactDate = (incDate) => {
+    if (isNullOrEmpty(incDate)){
+        return '';
+    }
+
+    const formattedDate = moment(incDate).format('YYYY-MM-DD HH:mm:ss');
+    return new Date(formattedDate);
+}
+
 export const dateToString = (incDate) => {
     if (isNullOrEmpty(incDate)){
         return '';
     }
     
     const fixedDate = fixDate(incDate);
-    const date = dayjs(fixedDate);
+    const date = dayjs(fixedDate).utc();
     return date.format(dateFormatByUiCulture());
 }
 

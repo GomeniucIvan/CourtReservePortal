@@ -44,18 +44,24 @@ export const SchedulerSlot = React.forwardRef((
         () => {
             const isWorkHour = props.isWorkHour ?? schedulerSlotDefaultProps.isWorkHour;
             const isWorkDay = props.isWorkDay ?? schedulerSlotDefaultProps.isWorkDay;
+
+            const isPastStart = props.isPastStart;
+
             return classNames(
                 props.className,
                 'k-scheduler-cell k-slot-cell',
                 {
                     'k-nonwork-hour': (!isWorkHour || !isWorkDay),
-                    'k-selected': props.selected
+                    'k-selected': props.selected,
+                    'k-past-start': isPastStart,
                 }
             );
         },
-        [props.className, props.selected, props.isWorkHour, props.isWorkDay]
+        [props.className, props.selected, props.isWorkHour, props.isWorkDay, props.isPastStart]
     );
 
+
+    
     const style = React.useMemo(
         () => ({
             userSelect: ('none'),
@@ -213,6 +219,10 @@ export const SchedulerSlot = React.forwardRef((
     
     if (toBoolean(props?.group?.resources[0]?.IsWailitsingData)){
         return (<div className={'k-scheduler-cell k-slot-cell'}></div>)
+    }
+    
+    if (toBoolean(props.isPastStart)){
+        return (<div ref={element} className={className} id={props.id} tabIndex={tabIndex}></div>)
     }
     
     return (

@@ -57,6 +57,8 @@ export const NavigationDatePicker = React.forwardRef((
 
     const shortText = isMonthView ? dayjs(date).format('MMMM YYYY') : isWeekOrAgenda ? (`${dayjs(dateRange.start).format('MMM D')} - ${dayjs(dateRange.end).format('MMM D')}`) : dayjs(props.value).format('ddd, MMM D');
 
+    console.log(shortText)
+    
     // const shortText = intl.format(
     //     '{0: ddd, MMM D}',
     //         isMonthView
@@ -141,15 +143,17 @@ export const NavigationDatePicker = React.forwardRef((
     // );
 
     // const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
+    //            //media === 'desktop' ? text :
     return (
         <>
+
             <Radio.Button
                 onClick={handleClick}
                 style={{
                     minWidth: '130px',
                     textAlign: 'center'
                 }}>
-                {media === 'desktop' ? text : shortText}
+                {shortText}
             </Radio.Button>
 
             <DrawerDatePicker show={show}

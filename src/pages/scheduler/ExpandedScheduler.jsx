@@ -16,7 +16,7 @@ import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/Schedu
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "../../api/app.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {dateToString, dateToTimeString, fixDate} from "../../utils/DateUtils.jsx";
+import {dateToString, dateToTimeString, fixDate, toReactDate} from "../../utils/DateUtils.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
 import dayjs from "dayjs";
 import apiService from "../../api/api.jsx";
@@ -36,6 +36,7 @@ function ExpandedScheduler() {
     const [schedulerData, setSchedulerData] = useState(null);
     
     const [selectedDate, setSelectedDate] = useState(null);
+    const [currentDateTime, setCurrentDateTime] = useState(null);
     const [events, setEvents] = useState([]);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -130,12 +131,11 @@ function ExpandedScheduler() {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data.Model;
                     setStartTimeString(r.Data.OpenTime);
-                    console.log(r.Data.OpenTime);
                     setEndTimeString(r.Data.CloseTime);
                     
                     setSchedulerData(model);
-                    
-                    const dateToShow = new Date(dateToString(model.CurrentDateTime));
+
+                    const dateToShow = toReactDate(model.CurrentDateTime);
                     setTimeZone(model.TimeZone);
                     setInterval(model.MinInterval);
                     
@@ -147,6 +147,7 @@ function ExpandedScheduler() {
 
                     setCourts(formattedCourts);
                     setIsSchedulerInitializing(false);
+                    setCurrentDateTime(dateToShow);
 
                     //always last
                     setSelectedDate(dateToShow);
@@ -263,6 +264,7 @@ function ExpandedScheduler() {
                loading={loading}
                setLoading={setLoading}
                defaultDate={selectedDate}
+               currentDateTime={currentDateTime}
                onDateChange={handleDateChange}
                onDataChange={handleDataChange}
                modelFields={modelFields}
@@ -291,6 +293,7 @@ function ExpandedScheduler() {
                    workDayStart={startTimeString}
                    workDayEnd={endTimeString}
                    slotDuration={interval}
+                   eventOffset={false}
                    slotDivisions={1}
                    hideDateRow={true}
                />
