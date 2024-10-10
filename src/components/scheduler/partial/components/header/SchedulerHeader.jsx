@@ -8,6 +8,8 @@ import {useLocalization} from "../../intl/index.mjs";
 import {getToday} from "../../utils/index.jsx";
 import {useEffect, useState} from "react";
 import {addDays, addMonths} from "@progress/kendo-date-math";
+import {useSchedulerPropsContext} from "../../context/SchedulerContext.mjs";
+import {isNullOrEmpty} from "../../../../../utils/Utils.jsx";
 
 export const SchedulerHeader = React.forwardRef((props, ref) => {
     const {
@@ -17,7 +19,25 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
     const element = React.useRef(null);
     const header = React.useRef(null);
     const [headerDate, setHeaderDate] = useState(props.date);
-    console.log(headerDate)
+    const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+    const [isNextDisabled, setIsNextDisabled] = useState(true);
+    const {minDate, maxDate} = useSchedulerPropsContext();
+    
+    console.log()
+    
+    useEffect(() => {
+        if (isNullOrEmpty(props.scheduler.current.props?.minDate)){
+            setIsPrevDisabled(false)
+        } else{
+            setIsPrevDisabled(headerDate <= props.scheduler.current.props.minDate);
+        }
+        
+        if (isNullOrEmpty(props.scheduler.current.props?.maxDate)){
+            setIsNextDisabled(false);
+        } else{
+            setIsNextDisabled(headerDate >= props.scheduler.current.props.maxDate);
+        }
+    }, [headerDate, minDate, maxDate])
     
     React.useImperativeHandle(header, () => ({element: element.current, props}));
     React.useImperativeHandle(ref, () => header.current);
@@ -119,14 +139,14 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
                 <Button type={'default'} onClick={handleTodayClick}>{todayText}</Button>
 
                 <Radio.Group value={0} size={'large'}>
-                    <Radio.Button onClick={handlePrevClick}>
+                    <Radio.Button onClick={handlePrevClick} disabled={isPrevDisabled}>
                         <CaretLeftOutlined />
                     </Radio.Button>
                     <NavigationDatePicker
                         value={headerDate}
                         onChange={handleDatePickerChange}
                     />
-                    <Radio.Button onClick={handleNextClick}>
+                    <Radio.Button onClick={handleNextClick} disabled={isNextDisabled}>
                         <CaretRightOutlined />
                     </Radio.Button>
                 </Radio.Group>
