@@ -37,6 +37,8 @@ function ExpandedScheduler() {
     
     const [selectedDate, setSelectedDate] = useState(null);
     const [currentDateTime, setCurrentDateTime] = useState(null);
+    const [minDate, setMinDate] = useState(null);
+    const [maxDate, setMaxDate] = useState(null);
     const [events, setEvents] = useState([]);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -130,12 +132,15 @@ function ExpandedScheduler() {
             appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data.Model;
+                    console.log(model)
+                    
                     setStartTimeString(r.Data.OpenTime);
                     setEndTimeString(r.Data.CloseTime);
                     
                     setSchedulerData(model);
 
                     const dateToShow = toReactDate(model.CurrentDateTime);
+                    setMinDate(dateToShow);
                     setTimeZone(model.TimeZone);
                     setInterval(model.MinInterval);
                     
@@ -269,6 +274,8 @@ function ExpandedScheduler() {
                onDataChange={handleDataChange}
                modelFields={modelFields}
                height={availableHeight}
+               minDate={minDate}
+               maxDate={maxDate}
                viewSlot={CustomViewSlot}
                group={{
                    resources: ["Courts"],

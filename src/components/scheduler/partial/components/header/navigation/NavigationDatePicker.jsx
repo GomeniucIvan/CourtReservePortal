@@ -27,7 +27,9 @@ export const NavigationDatePicker = React.forwardRef((
         () => button.current
     );
 
-    const {timezone} = useSchedulerPropsContext();
+    const {timezone, minDate, maxDate} = useSchedulerPropsContext();
+
+    
     const normalized = ZonedDate.fromLocalDate(props.value, timezone);
     const value = getDate(normalized);
     const element = useSchedulerElementContext();
@@ -56,8 +58,6 @@ export const NavigationDatePicker = React.forwardRef((
     );
 
     const shortText = isMonthView ? dayjs(date).format('MMMM YYYY') : isWeekOrAgenda ? (`${dayjs(dateRange.start).format('MMM D')} - ${dayjs(dateRange.end).format('MMM D')}`) : dayjs(props.value).format('ddd, MMM D');
-
-    console.log(shortText)
     
     // const shortText = intl.format(
     //     '{0: ddd, MMM D}',
@@ -158,6 +158,8 @@ export const NavigationDatePicker = React.forwardRef((
 
             <DrawerDatePicker show={show}
                               value={value}
+                              minDate={minDate}
+                              maxDate={maxDate}
                               onChange={(e) => {
                                   handleChange({
                                       value: e

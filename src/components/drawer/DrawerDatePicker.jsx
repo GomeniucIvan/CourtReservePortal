@@ -64,8 +64,8 @@ const DrawerDatePicker = ({
                 <div className={styles.datePickerDrawer} ref={drawerContainerRef}>
                     <DatePicker
                         value={fixedDate ? dayjs(fixedDate) : null}
-                        minDate={minDate ? dayjs(fixDate(minDate)) : null}
-                        maxDate={maxDate ? dayjs(fixDate(maxDate)) : null}
+                        minDate={minDate ? dayjs(minDate) : null}
+                        maxDate={maxDate ? dayjs(maxDate) : null}
                         format={dateFormat}
                         status={hasError ? 'error' : ''}
                         open={true}
