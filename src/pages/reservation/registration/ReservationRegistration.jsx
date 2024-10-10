@@ -14,7 +14,7 @@ import {
     anyInList,
     encodeParam,
     encodeParamsObject,
-    equalString,
+    equalString, fullNameInitials,
     isNullOrEmpty, randomNumber,
     toBoolean
 } from "../../../utils/Utils.jsx";
@@ -29,7 +29,9 @@ import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {dateTimeToFormat, dateToTimeString} from "../../../utils/DateUtils.jsx";
+import {dateTimeToFormat, dateToTimeString, toReactDate} from "../../../utils/DateUtils.jsx";
+import {costDisplay} from "../../../utils/CostUtils.jsx";
+import {any} from "prop-types";
 
 const {Title, Text, Link} = Typography;
 
@@ -39,7 +41,7 @@ function ReservationRegistration() {
     const {styles} = useStyles();
     const location = useLocation();
     const {dataItem, start, end} = location.state || {};
-    
+
     const {
         isMockData,
         setIsFooterVisible,
@@ -68,6 +70,8 @@ function ReservationRegistration() {
     const [searchPlayersText, setSearchPlayersText] = useState('');
     const [showMiscItems, setShowMiscItems] = useState(false);
     const [miscItems, setMiscItems] = useState([]);
+    const [reservationMembers, setReservationMembers] = useState([]);
+    const [reservationGuests, setReservationGuests] = useState([]);
 
     const initialValues = {
         ReservationTypeId: '',
@@ -89,6 +93,7 @@ function ReservationRegistration() {
         MatchMakerIsPrivateMatch: false,
         MatchMakerJoinCode: '',
         InstructorName: '',
+        SelectedReservationMembers: []
 
     };
 
@@ -108,7 +113,7 @@ function ReservationRegistration() {
         //     otherwise: (schema) => schema.nullable(),
         // }),
     });
-    
+
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
@@ -125,7 +130,7 @@ function ReservationRegistration() {
             }
         },
     });
-    
+
     const loadData = (refresh) => {
         if (isMockData) {
             const resv = mockData.create;
@@ -154,12 +159,15 @@ function ReservationRegistration() {
 
                     if (!toBoolean(r.Data.IsResourceReservation)) {
                         setLoading('ReservationTypeId', true);
-                        
-                        if (!isNullOrEmpty(dataItem?.Value)){
-                            setCourts([{DisplayName: `${dataItem.CourtTypeName} - ${dataItem.DisplayMobilSchedulerHeaderName}`, Id: dataItem.Value}]);
+
+                        if (!isNullOrEmpty(dataItem?.Value)) {
+                            setCourts([{
+                                DisplayName: `${dataItem.CourtTypeName} - ${dataItem.DisplayMobilSchedulerHeaderName}`,
+                                Id: dataItem.Value
+                            }]);
                             formik.setFieldValue('CourtId', dataItem.Value);
                         }
-                        
+
                         let reservationTypeData = {
                             customSchedulerId: r.Data.CustomSchedulerId,
                             userId: r.Data.RegisteringMemberId,
@@ -223,7 +231,7 @@ function ReservationRegistration() {
     }
 
     useEffect(() => {
-        if (!isNullOrEmpty(formik?.values?.Duration)){
+        if (!isNullOrEmpty(formik?.values?.Duration)) {
             let entTimeData = {
                 reservationTypeId: formik?.values?.ReservationTypeId,
                 startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
@@ -233,7 +241,7 @@ function ReservationRegistration() {
             }
 
             appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/CalculateReservationEndTime?id=${orgId}&${encodeParamsObject(entTimeData)}`).then(rEndTime => {
-                if (rEndTime?.IsValid){
+                if (rEndTime?.IsValid) {
                     formik.setFieldValue('EndTime', rEndTime.data);
                     reloadCourts(rEndTime.data);
                 }
@@ -243,7 +251,63 @@ function ReservationRegistration() {
     }, [formik?.values?.Duration])
 
     //members guest table
-    
+    useEffect(() => {
+        if (!isNullOrEmpty(formik?.values?.RegisteringMemberId) || !isNullOrEmpty(formik?.values?.Duration)) {
+            setLoading('SelectedReservationMembers', true);
+
+            let currentSelectedNumberOfGuests = 0;
+            let numberOfGuests = 0;
+            let registeringOrganizationMemberId = null;
+            let organizationMembers = [];
+            let membersWithDisclosures = [];
+            let removeGuestAtIndex = null;
+            let refillDisclosureMemberIds = [];
+
+            const guestsArray = (removeGuestAtIndex) => {
+                return [];
+            }
+
+            const getFeeResponsibility = () => {
+
+            }
+
+            let postData = {
+                Start: formik?.values?.StartTime,
+                End: toBoolean(reservation.IsAllowedToPickStartAndEndTime) ? formik?.values?.EndTime : formik?.values?.EndTime,
+                CourtType: reservation.CourtTypeEnum,
+                ResourceIds: formik?.values?.ResourceIds,
+                MiscFees: null,  //costs,
+                ReservationTypeId: formik?.values?.ReservationTypeId,
+                RegisteringOrganizationMemberId: registeringOrganizationMemberId,
+                RegisteringMemberId: formik?.values?.RegisteringMemberId,
+                Date: toReactDate(reservation.Date),
+                NumberOfGuests: numberOfGuests,
+                MembersString: JSON.stringify(organizationMembers),
+                InstructorId: reservation.InstructorId,
+                MembersWithDisclosures: membersWithDisclosures,
+                RefillMemberDisclosures: refillDisclosureMemberIds,
+                GuestsString: JSON.stringify(guestsArray(removeGuestAtIndex)),
+                IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation),
+                CourtId: formik?.values?.CourtId,
+                SelectedNumberOfGuests: currentSelectedNumberOfGuests,
+                FeeResponsibility: getFeeResponsibility(),
+                AuthUserId: reservation.MemberId,
+                IsMobileLayout: true,
+                IsFamilyMember: anyInList(reservation.FamilyMembers),
+                IsModernTemplate: true
+            };
+
+            appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData).then(r => {
+                if (r.IsValid) {
+                    setReservationMembers(r.Data.MemberData.SelectedMembers);
+                    setReservationGuests(r.Data.MemberData.ReservationGuests);
+                }
+
+                setLoading('SelectedReservationMembers', false);
+            });
+        }
+    }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration]);
+
     const reloadCourts = async (endTime) => {
         setLoading('CourtId', true);
 
@@ -258,8 +322,7 @@ function ReservationRegistration() {
         //     }
         //
 
-        if (!isNullOrEmpty(reservation.InstructorId) || !isNullOrEmpty(reservation.CustomSchedulerId))
-        {
+        if (!isNullOrEmpty(reservation.InstructorId) || !isNullOrEmpty(reservation.CustomSchedulerId)) {
             customSchedulerId = reservation.CustomSchedulerId;
         }
 
@@ -285,7 +348,7 @@ function ReservationRegistration() {
             setLoading('CourtId', false);
         })
     }
-    
+
     useEffect(() => {
         if (shouldFetch) {
             loadData(true);
@@ -306,7 +369,7 @@ function ReservationRegistration() {
         </PaddingBlock>)
         loadData();
     }, []);
-    
+
     const isValidMatchMakerData = async () => {
         await formik.validateField('MatchMakerTypeId');
         //await formik.validateField('MatchMakerGender');
@@ -588,62 +651,87 @@ function ReservationRegistration() {
                                     }}>Player(s)</Text>
                                 <Card className={cx(globalStyles.card, styles.playersCard)}>
                                     <Flex vertical>
+                                        {toBoolean(loadingState.SelectedReservationMembers) &&
+                                            <>
+                                                {emptyArray(anyInList(reservationMembers) ? reservationMembers.length : 4).map((item, index) => (
+                                                    <div key={index}>
+                                                        <Skeleton.Button block key={index} active={true} style={{height: `48px`}}/>
+                                                        <Divider className={styles.playersDivider}/>
+                                                    </div>
+                                                ))}
+                                            </>
+                                        }
 
-                                        <Flex justify={'space-between'} align={'center'}>
-                                            <Flex gap={token.Custom.cardIconPadding}>
-                                                <Flex justify={'center'} align={'center'}
-                                                      style={{
-                                                          width: 48,
-                                                          height: 48,
-                                                          borderRadius: 50,
-                                                          backgroundColor: 'red'
-                                                      }}>
-                                                    <Title level={5} className={cx(globalStyles.noSpace)}>NM</Title>
-                                                </Flex>
+                                        {!toBoolean(loadingState.SelectedReservationMembers) &&
+                                            <>
+                                                {reservationMembers.map((reservationMember, index) => {
+                                                    return (
+                                                        <div key={index}>
+                                                            <Flex justify={'space-between'} align={'center'}>
+                                                                <Flex gap={token.Custom.cardIconPadding}>
+                                                                    <Flex justify={'center'} align={'center'}
+                                                                          style={{
+                                                                              width: 48,
+                                                                              height: 48,
+                                                                              borderRadius: 50,
+                                                                              backgroundColor: 'red'
+                                                                          }}>
+                                                                        <Title level={5}
+                                                                               className={cx(globalStyles.noSpace)}>{fullNameInitials(reservationMember.FullName)}</Title>
+                                                                    </Flex>
 
-                                                <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                                    <Text>
-                                                        <Ellipsis direction='end' content={'Nicholas McDonaghue'}/>
-                                                    </Text>
-                                                    <Text type="secondary">$2.50</Text>
-                                                </Flex>
-                                            </Flex>
+                                                                    <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                                                        <Text>
+                                                                            <Ellipsis direction='end'
+                                                                                      content={reservationMember.FullName}/>
+                                                                        </Text>
+                                                                        <Text
+                                                                            type="secondary">{costDisplay(reservationMember.PriceToPay)}</Text>
+                                                                    </Flex>
+                                                                </Flex>
 
-                                            <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
-                                        </Flex>
+                                                                {(reservationMember.IsOwner && anyInList(reservation.FamilyMembers)) &&
+                                                                    <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
+                                                                }
+                                                            </Flex>
 
-                                        <Divider className={styles.playersDivider}/>
-                                        <Flex justify={'space-between'} align={'center'}>
-                                            <Flex gap={token.Custom.cardIconPadding}>
-                                                <Flex justify={'center'} align={'center'}
-                                                      style={{
-                                                          width: 48,
-                                                          height: 48,
-                                                          borderRadius: 50,
-                                                          backgroundColor: 'red'
-                                                      }}>
-                                                    <Title level={5} className={cx(globalStyles.noSpace)}>SM</Title>
-                                                </Flex>
+                                                            <Divider className={styles.playersDivider}/>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </>
+                                        }
+                                        {/*<Flex justify={'space-between'} align={'center'}>*/}
+                                        {/*    <Flex gap={token.Custom.cardIconPadding}>*/}
+                                        {/*        <Flex justify={'center'} align={'center'}*/}
+                                        {/*              style={{*/}
+                                        {/*                  width: 48,*/}
+                                        {/*                  height: 48,*/}
+                                        {/*                  borderRadius: 50,*/}
+                                        {/*                  backgroundColor: 'red'*/}
+                                        {/*              }}>*/}
+                                        {/*            <Title level={5} className={cx(globalStyles.noSpace)}>SM</Title>*/}
+                                        {/*        </Flex>*/}
 
-                                                <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                                    <Text>
-                                                        <Ellipsis direction='end' content={'Smith Valmont'}/>
-                                                    </Text>
-                                                    <Text type="secondary">$2.50</Text>
-                                                </Flex>
-                                            </Flex>
+                                        {/*        <Flex vertical gap={token.Custom.cardIconPadding / 2}>*/}
+                                        {/*            <Text>*/}
+                                        {/*                <Ellipsis direction='end' content={'Smith Valmont'}/>*/}
+                                        {/*            </Text>*/}
+                                        {/*            <Text type="secondary">$2.50</Text>*/}
+                                        {/*        </Flex>*/}
+                                        {/*    </Flex>*/}
 
-                                            <div onClick={() => ModalRemove({
-                                                content: 'Are you sure you want to remove Smith Valmont?',
-                                                showIcon: false,
-                                                onRemove: (e) => {
-                                                    console.log(e)
+                                        {/*    <div onClick={() => ModalRemove({*/}
+                                        {/*        content: 'Are you sure you want to remove Smith Valmont?',*/}
+                                        {/*        showIcon: false,*/}
+                                        {/*        onRemove: (e) => {*/}
+                                        {/*            console.log(e)*/}
 
-                                                }
-                                            })}>
-                                                <SVG icon={'circle-minus'} size={23} color={token.colorError}/>
-                                            </div>
-                                        </Flex>
+                                        {/*        }*/}
+                                        {/*    })}>*/}
+                                        {/*        <SVG icon={'circle-minus'} size={23} color={token.colorError}/>*/}
+                                        {/*    </div>*/}
+                                        {/*</Flex>*/}
 
                                         <Button type="primary"
                                                 block

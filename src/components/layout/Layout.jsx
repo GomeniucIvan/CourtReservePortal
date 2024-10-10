@@ -122,7 +122,7 @@ function Layout() {
                 }
 
                 //set from organization load
-                //setIsFetching(false);
+                setIsFetching(false);
             }
         }
     }, [location, navigate, authInitialized]);
@@ -288,7 +288,7 @@ function Layout() {
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
 
-                            //setIsFetching(false);
+                            setIsFetching(false);
                         }
                     });
             }
@@ -312,7 +312,7 @@ function Layout() {
 
                 {toBoolean(isFetching) ? (
                     <>
-                        <div className={globalStyles.safeAreaGlass}></div>
+                        <div className={'safe-area-top'}></div>
 
                         <PaddingBlock topBottom={true}>
                             <Flex vertical={true} gap={token.padding}>

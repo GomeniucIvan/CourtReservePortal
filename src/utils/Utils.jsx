@@ -226,3 +226,14 @@ export const encodeParamsObject = (params) => {
         .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
         .join('&');
 };
+
+export const fullNameInitials = (fullName) => {
+    if (isNullOrEmpty(fullName)) return '';
+
+    const namesArray = fullName.trim().split(' ');
+    if (namesArray.length === 1) {
+        return namesArray[0].charAt(0).toUpperCase();
+    }
+
+   return  namesArray[0].charAt(0).toUpperCase() + namesArray[namesArray.length - 1].charAt(0).toUpperCase();
+}
