@@ -1,6 +1,6 @@
 ﻿import {useStyles} from "./../styles.jsx";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Alert, Button, Card, Checkbox, Divider, Flex, Skeleton, Typography} from "antd";
 import mockData from "../../../mocks/reservation-data.json";
 import * as Yup from "yup";
@@ -68,10 +68,14 @@ function ReservationRegistration() {
     const [isPlayersSearch, setIsPlayersSearch] = useState(false);
     const [searchingPlayers, setSearchingPlayers] = useState([]);
     const [searchPlayersText, setSearchPlayersText] = useState('');
+    const [shouldRebindPlayers, setShouldRebindPlayers] = useState(false);
     const [showMiscItems, setShowMiscItems] = useState(false);
     const [miscItems, setMiscItems] = useState([]);
     const [reservationMembers, setReservationMembers] = useState([]);
     const [reservationGuests, setReservationGuests] = useState([]);
+    const [playersModelData, setPlayersModelData] = useState(false);
+    
+    let selectRegisteringMemberIdRef = useRef();
 
     const initialValues = {
         ReservationTypeId: '',
@@ -251,60 +255,86 @@ function ReservationRegistration() {
     }, [formik?.values?.Duration])
 
     //members guest table
+    const reloadPlayers = (orgMemberIdToRemove, reservationGuestIdIndexToRemove) => {
+        setLoading('SelectedReservationMembers', true);
+
+        let currentSelectedNumberOfGuests = 0;
+        let numberOfGuests = 0;
+        let registeringOrganizationMemberId = null;
+        let membersWithDisclosures = [];
+        let removeGuestAtIndex = null;
+        let refillDisclosureMemberIds = [];
+
+        const guestsArray = (removeGuestAtIndex) => {
+            return [];
+        }
+
+        const getFeeResponsibility = () => {
+
+        }
+
+        const firstOwnerMemberId = reservationMembers.find(member => toBoolean(member.IsOwner));
+        let filteredReservationMembers = reservationMembers.filter(
+            member => member.OrgMemberId !== orgMemberIdToRemove
+        );
+        
+        if (!equalString(firstOwnerMemberId, formik?.values?.RegisteringMemberId)){
+            filteredReservationMembers = reservationMembers.filter(
+                member => member.OrgMemberId !== orgMemberIdToRemove && !toBoolean(member.IsOwner)
+            );
+        }
+        
+        let postData = {
+            Start: formik?.values?.StartTime,
+            End: toBoolean(reservation.IsAllowedToPickStartAndEndTime) ? formik?.values?.EndTime : formik?.values?.EndTime,
+            CourtType: reservation.CourtTypeEnum,
+            ResourceIds: formik?.values?.ResourceIds,
+            MiscFees: null,  //costs,
+            ReservationTypeId: formik?.values?.ReservationTypeId,
+            RegisteringOrganizationMemberId: registeringOrganizationMemberId,
+            RegisteringMemberId: formik?.values?.RegisteringMemberId,
+            Date: toReactDate(reservation.Date),
+            NumberOfGuests: numberOfGuests,
+            MembersString: JSON.stringify(filteredReservationMembers.map(member => ({
+                OrgMemberId: member.OrgMemberId,
+                PriceToPay: member.PriceToPay,
+                MemberId: member.MemberId,
+                FirstName: member.FirstName,
+                LastName: member.LastName,
+                MemberFamilyId: member.MemberFamilyId,
+                OrgMemberFamilyId: member.OrgMemberFamilyId,
+                Email: member.Email,
+                MembershipNumber: member.MembershipNumber,
+            }))),
+            InstructorId: reservation.InstructorId,
+            MembersWithDisclosures: membersWithDisclosures,
+            RefillMemberDisclosures: refillDisclosureMemberIds,
+            GuestsString: JSON.stringify(guestsArray(removeGuestAtIndex)),
+            IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation),
+            CourtId: formik?.values?.CourtId,
+            SelectedNumberOfGuests: currentSelectedNumberOfGuests,
+            FeeResponsibility: getFeeResponsibility(),
+            AuthUserId: reservation.MemberId,
+            IsMobileLayout: true,
+            IsFamilyMember: anyInList(reservation.FamilyMembers),
+            IsModernTemplate: true
+        };
+
+        appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData).then(r => {
+            if (r.IsValid) {
+                console.log(r.Data.MemberData.SelectedMembers)
+                setReservationMembers(r.Data.MemberData.SelectedMembers);
+                setReservationGuests(r.Data.MemberData.ReservationGuests);
+                setPlayersModelData(r.Data.MemberData);
+            }
+
+            setLoading('SelectedReservationMembers', false);
+        });
+    }
+
     useEffect(() => {
         if (!isNullOrEmpty(formik?.values?.RegisteringMemberId) || !isNullOrEmpty(formik?.values?.Duration)) {
-            setLoading('SelectedReservationMembers', true);
-
-            let currentSelectedNumberOfGuests = 0;
-            let numberOfGuests = 0;
-            let registeringOrganizationMemberId = null;
-            let organizationMembers = [];
-            let membersWithDisclosures = [];
-            let removeGuestAtIndex = null;
-            let refillDisclosureMemberIds = [];
-
-            const guestsArray = (removeGuestAtIndex) => {
-                return [];
-            }
-
-            const getFeeResponsibility = () => {
-
-            }
-
-            let postData = {
-                Start: formik?.values?.StartTime,
-                End: toBoolean(reservation.IsAllowedToPickStartAndEndTime) ? formik?.values?.EndTime : formik?.values?.EndTime,
-                CourtType: reservation.CourtTypeEnum,
-                ResourceIds: formik?.values?.ResourceIds,
-                MiscFees: null,  //costs,
-                ReservationTypeId: formik?.values?.ReservationTypeId,
-                RegisteringOrganizationMemberId: registeringOrganizationMemberId,
-                RegisteringMemberId: formik?.values?.RegisteringMemberId,
-                Date: toReactDate(reservation.Date),
-                NumberOfGuests: numberOfGuests,
-                MembersString: JSON.stringify(organizationMembers),
-                InstructorId: reservation.InstructorId,
-                MembersWithDisclosures: membersWithDisclosures,
-                RefillMemberDisclosures: refillDisclosureMemberIds,
-                GuestsString: JSON.stringify(guestsArray(removeGuestAtIndex)),
-                IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation),
-                CourtId: formik?.values?.CourtId,
-                SelectedNumberOfGuests: currentSelectedNumberOfGuests,
-                FeeResponsibility: getFeeResponsibility(),
-                AuthUserId: reservation.MemberId,
-                IsMobileLayout: true,
-                IsFamilyMember: anyInList(reservation.FamilyMembers),
-                IsModernTemplate: true
-            };
-
-            appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData).then(r => {
-                if (r.IsValid) {
-                    setReservationMembers(r.Data.MemberData.SelectedMembers);
-                    setReservationGuests(r.Data.MemberData.ReservationGuests);
-                }
-
-                setLoading('SelectedReservationMembers', false);
-            });
+            reloadPlayers()
         }
     }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration]);
 
@@ -356,19 +386,23 @@ function ReservationRegistration() {
     }, [shouldFetch, resetFetch]);
 
     useEffect(() => {
-        setIsFooterVisible(true);
-        setHeaderRightIcons(null);
         setFooterContent(<PaddingBlock topBottom={true}>
             <Button type="primary"
                     block
                     htmlType="submit"
+                    disabled={isFetching}
                     loading={isLoading}
                     onClick={formik.handleSubmit}>
                 Continue
             </Button>
         </PaddingBlock>)
+    }, [isFetching, isLoading]);
+
+    useEffect(() => {
+        setIsFooterVisible(true);
+        setHeaderRightIcons(null);
         loadData();
-    }, []);
+    }, [isFetching, isLoading]);
 
     const isValidMatchMakerData = async () => {
         await formik.validateField('MatchMakerTypeId');
@@ -397,7 +431,6 @@ function ReservationRegistration() {
         setIsOpenMatchFilled(true);
         let isInvalidMatchMakerInfo = await isValidMatchMakerData();
         await formik.setFieldValue('IsValidOpenMatch', !isInvalidMatchMakerInfo);
-
     }
 
     const addPlayers = () => {
@@ -426,24 +459,55 @@ function ReservationRegistration() {
                 setIsPlayersSearch(false);
                 setSearchPlayersText(searchVal);
             }, 2000);
+        } else {
+            setSearchPlayersText(searchVal);
         }
     }
 
     useEffect(() => {
-        if (isMockData) {
-            let data = mockData;
-            if (showSearchPlayers) {
+        if (showSearchPlayers) {
+            if (isMockData) {
+                let data = mockData;
                 if (isNullOrEmpty(searchPlayersText)) {
                     setSearchingPlayers(data.favplayers);
                 } else {
                     setSearchingPlayers(data.players);
                 }
             } else {
-                //setSearchingPlayers([]);
+                setIsPlayersSearch(true);
+
+                if (!isNullOrEmpty(searchPlayersText) && searchingPlayers.length < 3) {
+                    setIsPlayersSearch(false);
+                    return;
+                }
+
+                let searchPlayersData = {
+                    costTypeId: reservation.MembershipId,
+                    IsMobileLayout: true,
+                    userId: reservation.MemberId,
+                    customSchedulerId: reservation.CustomSchedulerId,
+                    isOpenReservation: toBoolean(formik?.values?.IsOpenReservation),
+                    filterValue: searchPlayersText,
+                    organizationMemberIdsString: reservationMembers.map(member => member.OrgMemberId).join(',')
+                }
+
+                appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/Api_Reservation_GetMembersToPlayWith?id=${orgId}&${encodeParamsObject(searchPlayersData)}`).then(rSearchPlayers => {
+                    setSearchingPlayers(rSearchPlayers);
+                    setIsPlayersSearch(false);
+                })
             }
+        } else {
+
         }
     }, [showSearchPlayers, searchPlayersText]);
 
+    useEffect(() => {
+        if (shouldRebindPlayers && !showSearchPlayers) {
+            setShouldRebindPlayers(false);
+            reloadPlayers();
+        }
+    }, [showSearchPlayers, shouldRebindPlayers, reservationMembers]);
+    
     const allowToSelectedStartTime = (reserv) => {
         let isFromWaitlisting = !isNullOrEmpty(reserv.ReservationQueueSlotId) || !isNullOrEmpty(reserv.ReservationQueueId);
         return toBoolean(reserv.IsAllowedToPickStartAndEndTime) && !isFromWaitlisting || isFromWaitlisting && equalString(reserv.DurationType, 1);
@@ -481,6 +545,7 @@ function ReservationRegistration() {
 
                         {anyInList(reservation?.FamilyMembers) &&
                             <FormSelect form={formik}
+                                        ref={selectRegisteringMemberIdRef}
                                         name={`RegisteringMemberId`}
                                         label='Reserve For'
                                         options={reservation?.FamilyMembers}
@@ -655,7 +720,8 @@ function ReservationRegistration() {
                                             <>
                                                 {emptyArray(anyInList(reservationMembers) ? reservationMembers.length : 4).map((item, index) => (
                                                     <div key={index}>
-                                                        <Skeleton.Button block key={index} active={true} style={{height: `48px`}}/>
+                                                        <Skeleton.Button block key={index} active={true}
+                                                                         style={{height: `48px`}}/>
                                                         <Divider className={styles.playersDivider}/>
                                                     </div>
                                                 ))}
@@ -680,7 +746,8 @@ function ReservationRegistration() {
                                                                                className={cx(globalStyles.noSpace)}>{fullNameInitials(reservationMember.FullName)}</Title>
                                                                     </Flex>
 
-                                                                    <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                                                    <Flex vertical
+                                                                          gap={token.Custom.cardIconPadding / 2}>
                                                                         <Text>
                                                                             <Ellipsis direction='end'
                                                                                       content={reservationMember.FullName}/>
@@ -690,8 +757,24 @@ function ReservationRegistration() {
                                                                     </Flex>
                                                                 </Flex>
 
-                                                                {(reservationMember.IsOwner && anyInList(reservation.FamilyMembers)) &&
-                                                                    <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
+                                                                {(toBoolean(reservationMember.IsOwner) && anyInList(reservation.FamilyMembers)) &&
+                                                                    <div onClick={() => {
+                                                                        selectRegisteringMemberIdRef.current.open();
+                                                                    }}>
+                                                                        <SVG icon={'edit-user'} size={23}
+                                                                             color={token.colorLink}/>
+                                                                    </div>
+                                                                }
+                                                                {(!toBoolean(reservationMember.IsOwner) && toBoolean(playersModelData?.IsAllowedToEditPlayers)) &&
+                                                                    <div onClick={() => {
+                                                                        setReservationMembers(reservationMembers.filter(
+                                                                            member => member.OrgMemberId !== reservationMember.OrgMemberId
+                                                                        ));
+                                                                        setShouldRebindPlayers(true);
+                                                                    }}>
+                                                                        <SVG icon={'circle-minus'} size={23}
+                                                                             color={token.colorError}/>
+                                                                    </div>
                                                                 }
                                                             </Flex>
 
@@ -968,6 +1051,7 @@ function ReservationRegistration() {
                         label={'Search Player(s)'}
                         onSearch={onPlayersSearch}
                         showButton={true}
+                        fullHeight={true}
                         searchType={2}
                         addSearch={true}
                         isSearchLoading={isPlayersSearch}
@@ -982,22 +1066,29 @@ function ReservationRegistration() {
                                         {searchingPlayers.map((player, index) => (
                                             <div key={index}>
                                                 <Flex justify={'space-between'} align={'center'}>
-                                                    <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                                        <Flex justify={'center'} align={'center'}
-                                                              style={{
-                                                                  width: 48,
-                                                                  height: 48,
-                                                                  borderRadius: 50,
-                                                                  backgroundColor: 'red'
-                                                              }}>
-                                                            <Title level={5}
-                                                                   className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
-                                                        </Flex>
+                                                    <div onClick={() => {
 
-                                                        <Text>
-                                                            <Ellipsis direction='end' content={player.DisplayName}/>
-                                                        </Text>
-                                                    </Flex>
+                                                        setReservationMembers((prevMembers) => [...prevMembers, {OrgMemberId: player.MemberOrgId}]);
+                                                        setSearchPlayersText('');
+                                                        setShouldRebindPlayers(true);
+                                                    }}>
+                                                        <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                                            <Flex justify={'center'} align={'center'}
+                                                                  style={{
+                                                                      width: 48,
+                                                                      height: 48,
+                                                                      borderRadius: 50,
+                                                                      backgroundColor: 'red'
+                                                                  }}>
+                                                                <Title level={5}
+                                                                       className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
+                                                            </Flex>
+
+                                                            <Text>
+                                                                <Ellipsis direction='end' content={player.DisplayName}/>
+                                                            </Text>
+                                                        </Flex>
+                                                    </div>
 
                                                     <Flex gap={token.padding}>
                                                         <div onClick={() => {

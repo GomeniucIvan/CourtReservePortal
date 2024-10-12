@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {Select, Skeleton, Typography} from "antd";
 import {useStyles} from "./styles.jsx";
 import {calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
@@ -10,7 +10,7 @@ import {useTranslation} from "react-i18next";
 
 const {Paragraph} = Typography;
 
-const FormSelect = ({
+const FormSelect = forwardRef(({
                         label,
                         form,
                         propText = "Text",
@@ -28,7 +28,7 @@ const FormSelect = ({
                         fetching,
                         multi,
                         ...props
-                    }) => {
+                    }, ref) => {
 
     const [selectedOption, setSelectedOption] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -82,6 +82,12 @@ const FormSelect = ({
         setIsDrawerOpen(false);
     }
 
+    useImperativeHandle(ref, () => ({
+        open: () => {
+            setIsDrawerOpen(true);
+        },
+    }));
+    
     useEffect(() => {
         if (!multi){
             if (!equalString(selectedOption, field?.value)){
@@ -241,6 +247,6 @@ const FormSelect = ({
             }
         </>
     );
-};
+});
 
 export default FormSelect;

@@ -67,7 +67,8 @@ export const AntdProvider = ({ children }) => {
                             Input: {
                                 borderRadius: 8,
                                 controlHeight: 40,
-                                activeShadow: 'none'
+                                activeShadow: 'none',
+                                activeBorderColor: '#d9d9d9'
                             },
                             Select: {
                                 borderRadius: 8,
