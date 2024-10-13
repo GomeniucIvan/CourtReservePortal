@@ -270,6 +270,7 @@ function Layout() {
                                 allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
                                 allowAbilityToSplitFeeAcrossReservationPlayers: memberResponseData.AllowAbilityToSplitFeeAcrossReservationPlayers,
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
+                                allowMembersToBookResources: memberResponseData.AllowMembersToBookResources,
                             });
 
                             if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
@@ -290,6 +291,7 @@ function Layout() {
                                 allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
                                 allowAbilityToSplitFeeAcrossReservationPlayers: memberResponseData.AllowAbilityToSplitFeeAcrossReservationPlayers,
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
+                                allowMembersToBookResources: memberResponseData.AllowMembersToBookResources,
                             });
 
                             setIsFetching(false);

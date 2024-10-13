@@ -42,6 +42,7 @@ import {any} from "prop-types";
 import {matchmakerGenderList, numberList} from "../../../utils/SelectUtils.jsx";
 import {toLocalStorage} from "../../../storage/AppStorage.jsx";
 import {AppstoreOutlined, BarsOutlined} from "@ant-design/icons";
+import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -86,6 +87,10 @@ function ReservationRegistration() {
     const [matchMakerShowSportTypes, setMatchMakerShowSportTypes] = useState(false);
     const [matchMakerMemberGroups, setMatchMakerMemberGroups] = useState(false);
     const [matchMakerRatingCategories, setMatchMakerRatingCategories] = useState(false);
+    const [miscFeesQuantities, setMiscFeesQuantities] = useState([]);
+    const [showResources, setShowResources] = useState(false);
+    const [customFields, setCustomFields] = useState([]);
+    const [resources, setResources] = useState([]);
 
     let selectRegisteringMemberIdRef = useRef();
     let searchPlayerDrawerBottomRef = useRef();
@@ -105,6 +110,7 @@ function ReservationRegistration() {
         SelectedReservationMembers: [],
         ReservationGuests: [],
         FeeResponsibility: '',
+        ResourceIds: [],
 
 
         //match maker   
@@ -162,7 +168,7 @@ function ReservationRegistration() {
             setReservation(resv);
             setReservationTypes(resv.ReservationTypes);
             //setMatchTypes(resv.MatchTypes);
-            setMiscItems(resv.MiscFeesSelectListItems);
+            setMiscFeesQuantities(reservation?.MiscFeesSelectListItems.map(() => 0));
             setIsFetching(false);
         } else {
 
@@ -173,10 +179,17 @@ function ReservationRegistration() {
                     let matchMakerShowSportTypes = toBoolean(r.Data.MatchMakerShowSportTypes);
 
                     setReservation(incResData);
+                    setMiscFeesQuantities(anyInList(reservation?.MiscFeesSelectListItems) ? reservation?.MiscFeesSelectListItems.map((item) => ({
+                        Text: item.Text,
+                        Value: item.Value,
+                        Quantity: 0,
+                    })) : []);
                     setMatchMaker(matchMakerData);
                     setMatchMakerShowSportTypes(matchMakerShowSportTypes);
                     setMatchMakerMemberGroups(r.Data.MatchMakerMemberGroups);
                     setMatchMakerRatingCategories(r.Data.MatchMakerRatingCategories);
+                    setShowResources(r.Data.ShowResources && toBoolean(authData?.allowMembersToBookResources));
+                    setCustomFields(incResData.Udf || []);
 
                     if (matchMakerShowSportTypes) {
                         if (!isNullOrEmpty(matchMakerData) && oneListItem(matchMakerData.ActiveSportTypes)) {
@@ -260,12 +273,25 @@ function ReservationRegistration() {
 
             appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/GetDurationDropdown?id=${orgId}&${encodeParamsObject(reservationTypeData)}`).then(rDurations => {
                 setDurations(rDurations);
-
                 const selectedDuration = rDurations.find(duration => duration.Selected);
-                if (selectedDuration) {
+
+                if (equalString(formik?.values?.Duration, selectedDuration?.Value)) {
+                    reloadPlayers();
+                } else if (selectedDuration) {
                     formik.setFieldValue('Duration', selectedDuration.Value);
                 }
                 setLoading('Duration', false);
+            })
+
+            let udfData = {
+                reservationTypeId: formik?.values?.ReservationTypeId,
+                uiCulture: authData?.uiCulture,
+            }
+            
+            appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`).then(rUdf => {
+                console.log(rUdf)
+                
+                setCustomFields(rUdf);
             })
         }
     }
@@ -289,6 +315,38 @@ function ReservationRegistration() {
         }
 
     }, [formik?.values?.Duration])
+
+    useEffect(() => {
+        if (showResources) {
+            setLoading('ResourceIds', true);
+
+            let resourcesData = {
+                Date: dateTimeToFormat(start, 'MM/DD/YYYY'),
+                startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
+                endTime: formik?.values?.EndTime,
+                courtTypes: reservation?.CourtTypeEnum,
+                selectedCourts: courts,
+                MembershipId: reservation?.MembershipId,
+                ReservationTypeId: formik?.values?.ReservationTypeId,
+                customSchedulerId: reservation?.CustomSchedulerId,
+                uiCulture: authData?.uiCulture,
+                duration: formik?.values?.Duration
+            }
+
+            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/api/v1/portalreservationsapi/Api_Reservation_GetAvailableResourcesOnReservationCreate?id=${orgId}&${encodeParamsObject(resourcesData)}`).then(rResources => {
+                console.log(rResources);
+                let responseResources = rResources || [];
+                setResources(responseResources);
+
+                const selectedResourceIds = responseResources
+                    .filter(resource => resource.AutoSelect)
+                    .map(resource => resource.Id);
+                formik.setFieldValue('ResourceIds', selectedResourceIds)
+                setLoading('ResourceIds', false);
+            })
+        }
+
+    }, [formik?.values?.EndTime]);
 
     //members guest table
     const reloadPlayers = (orgMemberIdToRemove) => {
@@ -432,7 +490,6 @@ function ReservationRegistration() {
             ReservationQueueSlotId: rq
         };
         appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/ReservationsApi/GetAvailableCourtsMemberPortal?id=${orgId}&${encodeParamsObject(courtsData)}`).then(rCourts => {
-            console.log(rCourts)
             setCourts(rCourts)
             setLoading('CourtId', false);
         })
@@ -558,6 +615,24 @@ function ReservationRegistration() {
         let isFromWaitlisting = !isNullOrEmpty(reserv.ReservationQueueSlotId) || !isNullOrEmpty(reserv.ReservationQueueId);
         return toBoolean(reserv.IsAllowedToPickStartAndEndTime) && !isFromWaitlisting || isFromWaitlisting && equalString(reserv.DurationType, 1);
     }
+
+    const handleMiscItemChange = (increment, index) => {
+        if (increment) {
+            setMiscFeesQuantities((prevItemsState) => {
+                const newItemsState = [...prevItemsState];
+                newItemsState[index].Quantity += 1;
+                return newItemsState;
+            });
+        } else {
+            setMiscFeesQuantities((prevItemsState) => {
+                const newItemsState = [...prevItemsState];
+                if (newItemsState[index].Quantity > 0) {
+                    newItemsState[index].Quantity -= 1;
+                }
+                return newItemsState;
+            });
+        }
+    };
 
     return (
         <>
@@ -861,37 +936,7 @@ function ReservationRegistration() {
                                                 })}
                                             </>
                                         }
-                                        {/*<Flex justify={'space-between'} align={'center'}>*/}
-                                        {/*    <Flex gap={token.Custom.cardIconPadding}>*/}
-                                        {/*        <Flex justify={'center'} align={'center'}*/}
-                                        {/*              style={{*/}
-                                        {/*                  width: 48,*/}
-                                        {/*                  height: 48,*/}
-                                        {/*                  borderRadius: 50,*/}
-                                        {/*                  backgroundColor: 'red'*/}
-                                        {/*              }}>*/}
-                                        {/*            <Title level={5} className={cx(globalStyles.noSpace)}>SM</Title>*/}
-                                        {/*        </Flex>*/}
 
-                                        {/*        <Flex vertical gap={token.Custom.cardIconPadding / 2}>*/}
-                                        {/*            <Text>*/}
-                                        {/*                <Ellipsis direction='end' content={'Smith Valmont'}/>*/}
-                                        {/*            </Text>*/}
-                                        {/*            <Text type="secondary">$2.50</Text>*/}
-                                        {/*        </Flex>*/}
-                                        {/*    </Flex>*/}
-
-                                        {/*    <div onClick={() => ModalRemove({*/}
-                                        {/*        content: 'Are you sure you want to remove Smith Valmont?',*/}
-                                        {/*        showIcon: false,*/}
-                                        {/*        onRemove: (e) => {*/}
-                                        {/*            console.log(e)*/}
-
-                                        {/*        }*/}
-                                        {/*    })}>*/}
-                                        {/*        <SVG icon={'circle-minus'} size={23} color={token.colorError}/>*/}
-                                        {/*    </div>*/}
-                                        {/*</Flex>*/}
 
                                         <Button type="primary"
                                                 block
@@ -1036,41 +1081,95 @@ function ReservationRegistration() {
 
                         <Divider className={globalStyles.formDivider}/>
 
-                        <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                            <Flex justify={'space-between'} align={'center'}>
-                                <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                    <Title level={5} className={cx(globalStyles.noSpace)}>Miscellaneous Items</Title>
-                                    <Text type="secondary">(0)</Text>
+                        {anyInList(miscFeesQuantities) &&
+                            <>
+                                <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                    <Flex justify={'space-between'} align={'center'}>
+                                        <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                            <Title level={5} className={cx(globalStyles.noSpace)}>Miscellaneous
+                                                Items</Title>
+                                            <Text
+                                                type="secondary">({miscFeesQuantities.length})</Text>
+                                        </Flex>
+
+                                        <Link onClick={() => {
+                                            setShowMiscItems(true)
+                                        }}>
+                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                                                {anyInList(miscFeesQuantities.filter(item => item.Quantity > 0)) &&
+                                                    <>
+                                                        <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
+                                                        <strong>chnageicon Edit Items</strong>
+                                                    </>
+                                                }
+
+                                                {!anyInList(miscFeesQuantities.filter(item => item.Quantity > 0)) &&
+                                                    <>
+                                                        <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
+                                                        <strong>Add Items</strong>
+                                                    </>
+                                                }
+                                            </Flex>
+                                        </Link>
+                                    </Flex>
                                 </Flex>
 
-                                <Link onClick={() => {
-                                    setShowMiscItems(true)
-                                }}>
-                                    <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                        <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
-                                        <strong>Add Items</strong>
-                                    </Flex>
-                                </Link>
-                            </Flex>
+                                {anyInList(miscFeesQuantities.filter(item => item.Quantity > 0)) &&
+                                    <div style={{marginTop: `${token.padding / 2}px`}}>
+                                        <Card
+                                            className={cx(globalStyles.card, styles.playersCard)}>
+                                            {miscFeesQuantities.filter(item => item.Quantity > 0).map((item, index) => {
+                                                const isLastIndex = index === miscFeesQuantities.filter(item => item.Quantity > 0).length - 1;
 
-                        </Flex>
+                                                return (
+                                                    <div key={index}>
+                                                        <Flex justify={'space-between'} align={'center'}>
+                                                            <Text
+                                                                className={cx(globalStyles.noSpace)}>{item.Text}</Text>
 
-                        <Divider className={globalStyles.formDivider}/>
+                                                            <Flex gap={token.padding} align={'center'}>
+                                                                <Title level={5} className={cx(globalStyles.noSpace)}>
+                                                                    <Text style={{opacity: '0.6'}}>x </Text>
+                                                                    {item.Quantity}
+                                                                </Title>
+                                                            </Flex>
+                                                        </Flex>
 
-                        <Title level={5} className={globalStyles.noTopPadding}>Additional Information</Title>
-                        <FormInput label="Hand"
-                                   form={formik}
-                                   required={true}
-                                   name='hand'
-                        />
-                        <FormInput label="Play Serve Lift"
-                                   form={formik}
-                                   required={true}
-                                   name='play'
-                        />
+                                                        {!isLastIndex &&
+                                                            <Divider className={globalStyles.formDivider}
+                                                                     style={{margin: '10px 0px'}}/>}
+                                                    </div>
+                                                )
+                                            })}
+                                        </Card>
+                                    </div>
+                                }
 
-                        <Divider className={globalStyles.formDivider}/>
 
+                                <Divider className={globalStyles.formDivider}/>
+                            </>
+                        }
+
+                        {(showResources && anyInList(resources)) &&
+                            <FormSelect form={formik}
+                                        name={`ResourceIds`}
+                                        multi={true}
+                                        loading={toBoolean(loadingState.ResourceIds)}
+                                        label={'Resource(s)'}
+                                        options={resources}
+                                        propText='Name'
+                                        propValue='Id'/>
+                        }
+
+                        {anyInList(customFields) &&
+                            <>
+                                <Title level={5} className={globalStyles.noTopPadding}>Additional Information</Title>
+
+                                <FormCustomFields customFields={customFields} form={formik} loading={isFetching}/>
+                                <Divider className={globalStyles.formDivider}/>
+                            </>
+                        }
+                        
                         <Flex align={'center'}>
                             <Checkbox className={globalStyles.checkboxWithLink}>I agree to the </Checkbox>
                             <u style={{color: token.colorLink}} onClick={() => setShowTermAndCondition(true)}> Terms and
@@ -1142,7 +1241,6 @@ function ReservationRegistration() {
                                                 propValue='Id'/>
 
                                     {(anyInList(matchMakerRatingCategories) ? matchMakerRatingCategories : []).map((matchMakerRatingCateg, index) => {
-                                        console.log(matchMakerRatingCategories)
                                         if (!equalString(matchMakerRatingCateg.Id, formik?.values?.MatchMakerRatingCategoryId)) {
                                             return (<div key={index}></div>);
                                         }
@@ -1528,10 +1626,10 @@ function ReservationRegistration() {
                         }}
                     >
                         <PaddingBlock>
-                            {anyInList(miscItems) &&
+                            {anyInList(miscFeesQuantities) &&
                                 <Flex vertical>
-                                    {miscItems.map((miscItem, index) => {
-                                        const isLastIndex = index === miscItems.length - 1;
+                                    {miscFeesQuantities.map((miscItem, index) => {
+                                        const isLastIndex = index === miscFeesQuantities.length - 1;
 
                                         return (
                                             <div key={index}>
@@ -1540,9 +1638,26 @@ function ReservationRegistration() {
                                                            className={cx(globalStyles.noSpace)}>{miscItem.Text}</Title>
 
                                                     <Flex gap={token.padding} align={'center'}>
-                                                        <SVG icon={'circle-minus'} size={30} color={token.colorError}/>
-                                                        <Title level={5} className={cx(globalStyles.noSpace)}>0</Title>
-                                                        <SVG icon={'circle-plus'} size={30} color={token.colorPrimary}/>
+                                                        <div onClick={() => {
+                                                            handleMiscItemChange(false, index)
+                                                        }}
+                                                             style={{
+                                                                 opacity: miscItem.Quantity === 0 ? '0.4' : '1'
+                                                             }}
+                                                        >
+                                                            <SVG icon={'circle-minus'} size={30}
+                                                                 color={token.colorError}/>
+                                                        </div>
+
+                                                        <Title level={5} style={{minWidth: '26px', textAlign: 'center'}}
+                                                               className={cx(globalStyles.noSpace)}>{miscItem.Quantity}</Title>
+
+                                                        <div onClick={() => {
+                                                            handleMiscItemChange(true, index)
+                                                        }}>
+                                                            <SVG icon={'circle-plus'} size={30}
+                                                                 color={token.colorPrimary}/>
+                                                        </div>
                                                     </Flex>
                                                 </Flex>
 

@@ -68,7 +68,7 @@ const appService = {
 
             return fixedResponse;
         } catch (error) {
-            console.log('APP41 Error: ');
+            console.log('APP41 Error: ' + url);
             console.log(error);
 
             return {
@@ -128,7 +128,7 @@ const appService = {
 
             return fixResponseData(response.data);
         } catch (error) {
-            console.log('APP41 Error: ');
+            console.log('APP41 Error: ' + url);
             console.log(error);
 
             return {

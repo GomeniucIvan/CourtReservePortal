@@ -37,6 +37,7 @@ export const AuthProvider = ({children}) => {
             isUsingPushNotifications: nullToEmpty(memberData.isUsingPushNotifications),
             allowMembersToChangeGuestOwnerOnMemberPortal: nullToEmpty(memberData.allowMembersToChangeGuestOwnerOnMemberPortal),
             allowAbilityToSplitFeeAcrossReservationPlayers: nullToEmpty(memberData.allowAbilityToSplitFeeAcrossReservationPlayers),
+            allowMembersToBookResources: nullToEmpty(memberData.AllowMembersToBookResources),
         })
 
         setClientUiCulture(memberData.uiCulture);
@@ -62,7 +63,8 @@ export const AuthProvider = ({children}) => {
             useOrganizedPlay: '',
             isUsingPushNotifications: '',
             allowMembersToChangeGuestOwnerOnMemberPortal: '',
-            allowAbilityToSplitFeeAcrossReservationPlayers: ''
+            allowAbilityToSplitFeeAcrossReservationPlayers: '',
+            allowMembersToBookResources: ''
         });
         
         appService.get(navigate, '/app/online/logout').then(r => {
