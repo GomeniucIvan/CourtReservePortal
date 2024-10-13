@@ -41,17 +41,23 @@ import {costDisplay} from "../../../utils/CostUtils.jsx";
 import {any} from "prop-types";
 import {matchmakerGenderList, numberList} from "../../../utils/SelectUtils.jsx";
 import {toLocalStorage} from "../../../storage/AppStorage.jsx";
-import {AppstoreOutlined, BarsOutlined} from "@ant-design/icons";
+import {AppstoreOutlined, BarsOutlined, DownloadOutlined} from "@ant-design/icons";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
+import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
+import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
+import {useTranslation} from "react-i18next";
+import {Document} from "react-pdf";
 
 const {Title, Text, Link} = Typography;
 
 function ReservationRegistration() {
+    const navigate = useNavigate();
     const {orgId, authData} = useAuth();
     const [isFetching, setIsFetching] = useState(true);
     const {styles} = useStyles();
     const location = useLocation();
     const {dataItem, start, end} = location.state || {};
+    const {t} = useTranslation('');
 
     const {
         isMockData,
@@ -85,12 +91,15 @@ function ReservationRegistration() {
     const [playersModelData, setPlayersModelData] = useState(false);
     const [selectedReservationType, setSelectedReservationType] = useState(false);
     const [matchMakerShowSportTypes, setMatchMakerShowSportTypes] = useState(false);
+    const [disclosure, setDisclosure] = useState(false);
     const [matchMakerMemberGroups, setMatchMakerMemberGroups] = useState(false);
     const [matchMakerRatingCategories, setMatchMakerRatingCategories] = useState(false);
     const [miscFeesQuantities, setMiscFeesQuantities] = useState([]);
     const [showResources, setShowResources] = useState(false);
     const [customFields, setCustomFields] = useState([]);
     const [resources, setResources] = useState([]);
+    const [pdfDataUrl, setPdfDataUrl] = useState(null);
+    const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
 
     let selectRegisteringMemberIdRef = useRef();
     let searchPlayerDrawerBottomRef = useRef();
@@ -191,6 +200,10 @@ function ReservationRegistration() {
                     setShowResources(r.Data.ShowResources && toBoolean(authData?.allowMembersToBookResources));
                     setCustomFields(incResData.Udf || []);
 
+                    if (toBoolean(r.Data.Disclosure?.Show)) {
+                        setDisclosure(r.Data.Disclosure);
+                    }
+
                     if (matchMakerShowSportTypes) {
                         if (!isNullOrEmpty(matchMakerData) && oneListItem(matchMakerData.ActiveSportTypes)) {
                             let firstActiveSportTypeId = matchMakerData.ActiveSportTypes.first()?.Id;
@@ -240,7 +253,6 @@ function ReservationRegistration() {
                     }
                 }
             })
-            //alert('todo res registation')
         }
 
         resetFetch();
@@ -287,11 +299,12 @@ function ReservationRegistration() {
                 reservationTypeId: formik?.values?.ReservationTypeId,
                 uiCulture: authData?.uiCulture,
             }
-            
+
             appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`).then(rUdf => {
                 console.log(rUdf)
-                
-                setCustomFields(rUdf);
+                if (toBoolean(rUdf?.IsValid)) {
+                    setCustomFields(rUdf.Data);
+                }
             })
         }
     }
@@ -438,11 +451,12 @@ function ReservationRegistration() {
     }
 
     useEffect(() => {
+        console.log(formik?.values?.FeeResponsibility)
         if (!isNullOrEmpty(formik?.values?.RegisteringMemberId) || !isNullOrEmpty(formik?.values?.Duration)) {
             reloadPlayers()
         }
-    }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration]);
-
+    }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration, formik?.values?.FeeResponsibility]);
+    
     useEffect(() => {
         if (!isNullOrEmpty(formik?.values?.ReservationTypeId)) {
             setSelectedReservationType(null);
@@ -479,7 +493,7 @@ function ReservationRegistration() {
             StartTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
             EndTime: endTime || formik?.values?.EndTime,
             CourtTypesString: courtType,
-            //UiCulture: uiCulture, double param
+            UiCulture: authData?.uiCulture,
             timeZone: authData?.timezone,
             customSchedulerId: customSchedulerId,
             instructorId: reservation.InstructorId,
@@ -633,6 +647,31 @@ function ReservationRegistration() {
             });
         }
     };
+
+    useEffect(() => {
+        if (isNullOrEmpty(selectedWaiverToView)) {
+            appService.get(navigate, `/app/Online/Disclosures/GetDisclosureDetailsById?id=${orgId}&disclosureId=${disclosure.Id}`).then(response => {
+                if (toBoolean(response?.IsValid)) {
+                    const incWaiver = response.Data;
+
+                    if (incWaiver && incWaiver.FullPath) {
+                        const fetchPdf = async () => {
+                            const base64String = await getPdfFileDataUrl(incWaiver.FullPath);
+                            if (base64String) {
+                                setPdfDataUrl(`data:application/pdf;base64,${base64String}`);
+                            }
+                        };
+
+                        fetchPdf();
+                    } else {
+                        setPdfDataUrl('');
+                    }
+
+                    setSelectedWaiverToView(incWaiver);
+                }
+            })
+        }
+    }, [showTermAndCondition]);
 
     return (
         <>
@@ -815,8 +854,6 @@ function ReservationRegistration() {
                                 }
                             </>
                         }
-
-
                         <Divider className={globalStyles.formDivider}/>
 
                         <Flex vertical gap={token.padding}>
@@ -850,7 +887,7 @@ function ReservationRegistration() {
                                         value={formik?.values?.FeeResponsibility}
                                         block={true}
                                         onChange={(e) => {
-                                            formik.setFieldValue('FeeResponsibility', e.value)
+                                            formik.setFieldValue('FeeResponsibility', e)
                                         }}
                                         options={[
                                             {value: '1', label: 'Reservation Owner'},
@@ -1078,7 +1115,6 @@ function ReservationRegistration() {
                                 </div>
                             }
                         </Flex>
-
                         <Divider className={globalStyles.formDivider}/>
 
                         {anyInList(miscFeesQuantities) &&
@@ -1145,7 +1181,6 @@ function ReservationRegistration() {
                                     </div>
                                 }
 
-
                                 <Divider className={globalStyles.formDivider}/>
                             </>
                         }
@@ -1169,23 +1204,98 @@ function ReservationRegistration() {
                                 <Divider className={globalStyles.formDivider}/>
                             </>
                         }
-                        
-                        <Flex align={'center'}>
-                            <Checkbox className={globalStyles.checkboxWithLink}>I agree to the </Checkbox>
-                            <u style={{color: token.colorLink}} onClick={() => setShowTermAndCondition(true)}> Terms and
-                                Conditions</u>
-                        </Flex>
+
+                        {!isNullOrEmpty(disclosure) &&
+                            <Flex vertical={true}>
+                                <label style={{
+                                    fontSize: token.Form.labelFontSize,
+                                    padding: token.Form.verticalLabelPadding,
+                                    marginLeft: token.Form.labelColonMarginInlineStart,
+                                    display: 'block'
+                                }}>
+                                    {disclosure?.Name}
+                                </label>
+
+                                <Flex align={'center'}>
+                                    <Checkbox className={globalStyles.checkboxWithLink}>I agree to the </Checkbox>
+                                    <u style={{color: token.colorLink}}
+                                       onClick={() => setShowTermAndCondition(true)}> Terms and
+                                        Conditions</u>
+                                </Flex>
+                            </Flex>
+                        }
                     </PaddingBlock>
 
                     {/*//term drawer*/}
                     <DrawerBottom
                         showDrawer={showTermAndCondition}
+                        showButton={true}
+                        customFooter={<Flex gap={token.padding}>
+                            {!isNullOrEmpty(selectedWaiverToView) &&
+                                <>
+                                    {equalString(selectedWaiverToView?.ContentType, 2) &&
+                                        <Button type="primary" block icon={<DownloadOutlined/>} onClick={() => {
+                                            openPdfInNewTab(selectedWaiverToView?.FullPath)
+                                        }}>
+                                            {t('disclosure.downloadFile')}
+                                        </Button>
+                                    }
+                                </>
+                            }
+
+                            <Button type={'primary'} block onClick={() => {
+                                setShowTermAndCondition(false)
+                            }}>
+                                {t('close')}
+                            </Button>
+                        </Flex>}
                         closeDrawer={() => setShowTermAndCondition(false)}
                         label={'Terms and Conditions'}
-                        showButton={false}
                         onConfirmButtonClick={() => setShowTermAndCondition(false)}
                     >
-                        <Text>Test content dispaly</Text>
+                        <PaddingBlock>
+                            {isNullOrEmpty(selectedWaiverToView) &&
+                                <Skeleton.Button active={true} block style={{height: `200px`}}/>
+                            }
+
+                            {!isNullOrEmpty(selectedWaiverToView) &&
+                                <>
+                                    {equalString(selectedWaiverToView?.ContentType, 2) &&
+                                        <>
+                                            {isFileType(selectedWaiverToView?.FullPath, 'pdf') &&
+                                                <>
+                                                    {(!isNullOrEmpty(selectedWaiverToView?.FullPath)) &&
+                                                        <>
+                                                            {isNullOrEmpty(pdfDataUrl) &&
+                                                                <Skeleton.Button active={true} block
+                                                                                 style={{height: `160px`}}/>
+                                                            }
+
+                                                            {!isNullOrEmpty(pdfDataUrl) &&
+                                                                <Document file={pdfDataUrl}/>
+                                                            }
+                                                        </>
+                                                    }
+                                                </>
+                                            }
+                                            {!isFileType(selectedWaiverToView?.FullPath, 'pdf') &&
+                                                <>
+                                                    <Text>{selectedWaiverToView?.FileName}</Text>
+                                                </>
+                                            }
+                                        </>
+                                    }
+                                    {!equalString(selectedWaiverToView?.ContentType, 2) &&
+                                        <>
+                                            {!isNullOrEmpty(selectedWaiverToView?.DisclosureText) &&
+                                                <IframeContent content={selectedWaiverToView?.DisclosureText}
+                                                               id={'modal-disclosure'}/>
+                                            }
+                                        </>
+                                    }
+                                </>
+                            }
+                        </PaddingBlock>
                     </DrawerBottom>
 
                     {/*Match maker drawer*/}

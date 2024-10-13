@@ -55,6 +55,7 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading }) => {
                         label={Label}
                         name={name}
                         loading={loading}
+                        max={250}
                         //placeholder={Label}
                         required={IsRequired}
                         form={form}

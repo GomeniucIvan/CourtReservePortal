@@ -27,3 +27,7 @@ export const getPdfFileDataUrl = async (url) => {
 
     }
 };
+
+export const openPdfInNewTab = (fileUrl) => {
+    window.open(fileUrl, '_blank');
+};

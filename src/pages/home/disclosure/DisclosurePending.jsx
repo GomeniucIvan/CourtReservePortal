@@ -18,7 +18,7 @@ import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import { Document,pdfjs } from 'react-pdf';
 import {DownloadOutlined} from "@ant-design/icons";
-import {getPdfFileDataUrl, isFileType} from "../../../utils/FileUtils.jsx";
+import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
 import EmptyBlock, {emptyBlockTypes} from "../../../components/emptyblock/EmptyBlock.jsx";
 const {Title, Text} = Typography;
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
@@ -211,10 +211,6 @@ function DisclosurePending({scope}) {
             setPdfDataUrl('');
         }
     }, [selectedWaiverToView]);
-
-    const openPdfInNewTab = (fileUrl) => {
-        window.open(fileUrl, '_blank');
-    };
     
     return (
         <>

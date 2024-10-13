@@ -77,6 +77,40 @@ export const getCurrencyTypeByCultureInfo = (culture) => {
     }
 };
 
+export const getCurrencySymbolByCulture = () => {
+    const currency = getCurrencyTypeByCultureInfo();
+
+    switch (currency) {
+        case 'Usd':
+        case 'Cad':
+        case 'Aud':
+        case 'SGD':
+        case 'KYD':
+        case 'MXN':
+            return '$';
+        case 'Gbp':
+            return '£';
+        case 'Eur':
+            return '€';
+        case 'AED':
+            return 'د.إ';
+        case 'Id':
+            return 'Rp';
+        case 'Quetzal':
+            return 'Q';
+        case 'Florin':
+            return 'Afl';
+        case 'Nzd':
+            return '$';
+        case 'KES':
+            return 'Ksh';
+        case 'TRY':
+            return '₺';
+        default:
+            return '$';
+    }
+}
+
 export const dateFormatByUiCulture = () => {
     let culture = getCurrencyTypeByCultureInfo();
 
