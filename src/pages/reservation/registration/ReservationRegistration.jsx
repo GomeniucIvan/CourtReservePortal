@@ -176,7 +176,7 @@ function ReservationRegistration() {
                     setMatchMaker(matchMakerData);
                     setMatchMakerShowSportTypes(matchMakerShowSportTypes);
                     setMatchMakerMemberGroups(r.Data.MatchMakerMemberGroups);
-                    setMatchMakerRatingCategories(r.Data.MatchMakerMemberGroups);
+                    setMatchMakerRatingCategories(r.Data.MatchMakerRatingCategories);
 
                     if (matchMakerShowSportTypes) {
                         if (!isNullOrEmpty(matchMakerData) && oneListItem(matchMakerData.ActiveSportTypes)) {
@@ -1136,12 +1136,13 @@ function ReservationRegistration() {
                                     <FormSelect form={formik}
                                                 name={`MatchMakerRatingCategoryId`}
                                                 label='Rating Restriction'
-                                                options={[]}
+                                                options={matchMakerRatingCategories}
                                                 required={true}
                                                 propText='Name'
                                                 propValue='Id'/>
 
                                     {(anyInList(matchMakerRatingCategories) ? matchMakerRatingCategories : []).map((matchMakerRatingCateg, index) => {
+                                        console.log(matchMakerRatingCategories)
                                         if (!equalString(matchMakerRatingCateg.Id, formik?.values?.MatchMakerRatingCategoryId)) {
                                             return (<div key={index}></div>);
                                         }
@@ -1151,6 +1152,7 @@ function ReservationRegistration() {
                                         return (
                                             <div key={index}>
                                                 <FormSelect form={formik}
+                                                            multi={true}
                                                             name={`MatchMakerRatingCategoryRatingIds`}
                                                             label={`${selectedRatingCategory?.Name} Eligible Rating(s)`}
                                                             options={matchMakerRatingCateg.Ratings}
@@ -1169,7 +1171,7 @@ function ReservationRegistration() {
                                             label='Member Groups'
                                             options={matchMakerMemberGroups}
                                             required={true}
-                                            propText='Name'
+                                            propText='NavigationName'
                                             propValue='Id'/>
                             }
 
