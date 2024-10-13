@@ -70,7 +70,9 @@ const FormSelect = forwardRef(({
                     } else {
                         const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
                         if (selectedOptionInList) {
-                            onValueSelect(selectedOptionInList, true)
+                            if (isNullOrEmpty(selectedOption) || !equalString(selectedOptionInList[propValue], selectedOption[propValue])){
+                                onValueSelect(selectedOptionInList, true)
+                            }
                         }
                     }
                 }

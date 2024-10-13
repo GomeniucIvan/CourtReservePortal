@@ -15,7 +15,7 @@ import {
     encodeParam,
     encodeParamsObject,
     equalString, fullNameInitials,
-    isNullOrEmpty, randomNumber,
+    isNullOrEmpty, oneListItem, randomNumber,
     toBoolean
 } from "../../../utils/Utils.jsx";
 import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
@@ -39,7 +39,7 @@ import {
 } from "../../../utils/DateUtils.jsx";
 import {costDisplay} from "../../../utils/CostUtils.jsx";
 import {any} from "prop-types";
-import {matchmakerGenderList} from "../../../utils/SelectUtils.jsx";
+import {matchmakerGenderList, numberList} from "../../../utils/SelectUtils.jsx";
 import {toLocalStorage} from "../../../storage/AppStorage.jsx";
 import {AppstoreOutlined, BarsOutlined} from "@ant-design/icons";
 
@@ -83,9 +83,13 @@ function ReservationRegistration() {
     const [reservationMembers, setReservationMembers] = useState([]);
     const [playersModelData, setPlayersModelData] = useState(false);
     const [selectedReservationType, setSelectedReservationType] = useState(false);
+    const [matchMakerShowSportTypes, setMatchMakerShowSportTypes] = useState(false);
+    const [matchMakerMemberGroups, setMatchMakerMemberGroups] = useState(false);
+    const [matchMakerRatingCategories, setMatchMakerRatingCategories] = useState(false);
 
     let selectRegisteringMemberIdRef = useRef();
     let searchPlayerDrawerBottomRef = useRef();
+
 
     const initialValues = {
         ReservationTypeId: '',
@@ -97,19 +101,25 @@ function ReservationRegistration() {
         EndTime: '12:30 pm',
         IsOpenReservation: false,
         IsValidOpenMatch: false,
+        InstructorName: '',
+        SelectedReservationMembers: [],
+        ReservationGuests: [],
+        FeeResponsibility: '',
+
+
+        //match maker   
+        SportTypeId: '',
         MatchMakerTypeId: '',
         MatchMakerGender: '',
         MatchMakerRatingCategoryId: null,
+        MatchMakerRatingCategoryRatingIds: [],
         MatchMakerMemberGroupIds: [],
         MatchMakerMinNumberOfPlayers: null,
         MatchMakerMaxNumberOfPlayers: null,
         Description: null,
         MatchMakerIsPrivateMatch: false,
         MatchMakerJoinCode: '',
-        InstructorName: '',
-        SelectedReservationMembers: [],
-        ReservationGuests: [],
-        FeeResponsibility: '',
+
     };
 
     const fields = Object.keys(initialValues);
@@ -160,10 +170,20 @@ function ReservationRegistration() {
                 if (toBoolean(r?.IsValid)) {
                     let incResData = r.Data.ReservationModel;
                     let matchMakerData = r.Data.MatchMakerData;
-                    console.log(incResData)
-                    
+                    let matchMakerShowSportTypes = toBoolean(r.Data.MatchMakerShowSportTypes);
+
                     setReservation(incResData);
                     setMatchMaker(matchMakerData);
+                    setMatchMakerShowSportTypes(matchMakerShowSportTypes);
+                    setMatchMakerMemberGroups(r.Data.MatchMakerMemberGroups);
+                    setMatchMakerRatingCategories(r.Data.MatchMakerMemberGroups);
+
+                    if (matchMakerShowSportTypes) {
+                        if (!isNullOrEmpty(matchMakerData) && oneListItem(matchMakerData.ActiveSportTypes)) {
+                            let firstActiveSportTypeId = matchMakerData.ActiveSportTypes.first()?.Id;
+                            formik.setFieldValue('SportTypeId', firstActiveSportTypeId);
+                        }
+                    }
 
                     formik.setValues({
                         ReservationId: incResData.ReservationId,
@@ -350,7 +370,7 @@ function ReservationRegistration() {
 
                 if (anyInList(responseReservationGuests)) {
                     formik.setValues('ReservationGuests', responseReservationGuests)
-                } 
+                }
 
                 setPlayersModelData(r.Data.MemberData);
             }
@@ -372,11 +392,11 @@ function ReservationRegistration() {
             let currentReservationType = reservation?.ReservationTypes?.find(v => v.Id === formik?.values?.ReservationTypeId);
             setSelectedReservationType(currentReservationType);
             formik.setFieldValue('FeeResponsibility', selectedReservationType?.DefaultFeeResponsibility);
-        } else{
+        } else {
             setSelectedReservationType(null);
         }
     }, [formik?.values?.ReservationTypeId]);
-    
+
     const reloadCourts = async (endTime) => {
         setLoading('CourtId', true);
 
@@ -711,7 +731,8 @@ function ReservationRegistration() {
                                                 onClick={() => {
                                                     setShowMatchMakerDrawer(true)
                                                 }}>
-                                            {toBoolean(formik?.values?.IsValidOpenMatch) ? (<>Edit Join Criteria</>) : (<>Setup
+                                            {toBoolean(formik?.values?.IsValidOpenMatch) ? (<>Edit Join
+                                                Criteria</>) : (<>Setup
                                                 Join
                                                 Criteria</>)}
                                         </Button>
@@ -719,7 +740,6 @@ function ReservationRegistration() {
                                 }
                             </>
                         }
-                        
 
 
                         <Divider className={globalStyles.formDivider}/>
@@ -1080,6 +1100,17 @@ function ReservationRegistration() {
                         onConfirmButtonClick={closeAndCheckMatchMakerData}
                     >
                         <PaddingBlock>
+                            {toBoolean(matchMakerShowSportTypes) &&
+                                <FormSelect form={formik}
+                                            name={`SportTypeId`}
+                                            label='Sport Type'
+                                            options={matchMaker?.ActiveSportTypes}
+                                            disabled={oneListItem(matchMaker?.ActiveSportTypes)}
+                                            required={true}
+                                            propText='Name'
+                                            propValue='Id'/>
+                            }
+
                             {(anyInList(matchMaker?.MatchMakerTypes) && toBoolean(matchMaker?.IsMatchTypeEnabled)) &&
                                 <FormSelect form={formik}
                                             name={`MatchMakerTypeId`}
@@ -1100,42 +1131,84 @@ function ReservationRegistration() {
                                             propValue='Value'/>
                             }
 
-                            {anyInList(matchMaker?.RatingCategoryIds) &&
-                                <FormSelect form={formik}
-                                            name={`MatchMakerRatingCategoryId`}
-                                            label='Rating Restriction'
-                                            options={[]}
-                                            required={true}
-                                            propText='Name'
-                                            propValue='Id'/>
+                            {(anyInList(matchMaker?.RatingCategoryIds) && anyInList(matchMakerRatingCategories)) &&
+                                <>
+                                    <FormSelect form={formik}
+                                                name={`MatchMakerRatingCategoryId`}
+                                                label='Rating Restriction'
+                                                options={[]}
+                                                required={true}
+                                                propText='Name'
+                                                propValue='Id'/>
+
+                                    {(anyInList(matchMakerRatingCategories) ? matchMakerRatingCategories : []).map((matchMakerRatingCateg, index) => {
+                                        if (!equalString(matchMakerRatingCateg.Id, formik?.values?.MatchMakerRatingCategoryId)) {
+                                            return (<div key={index}></div>);
+                                        }
+
+                                        let selectedRatingCategory = matchMakerRatingCategories.find(v => equalString(v.Id, formik?.values?.MatchMakerRatingCategoryId));
+
+                                        return (
+                                            <div key={index}>
+                                                <FormSelect form={formik}
+                                                            name={`MatchMakerRatingCategoryRatingIds`}
+                                                            label={`${selectedRatingCategory?.Name} Eligible Rating(s)`}
+                                                            options={matchMakerRatingCateg.Ratings}
+                                                            required={!oneListItem(matchMakerRatingCategories)}
+                                                            propText='Name'
+                                                            propValue='Id'/>
+                                            </div>
+                                        )
+                                    })}
+                                </>
                             }
 
                             {anyInList(matchMaker?.MemberGroupIds) &&
                                 <FormSelect form={formik}
                                             name={`MatchMakerMemberGroupIds`}
                                             label='Member Groups'
-                                            options={[]}
+                                            options={matchMakerMemberGroups}
                                             required={true}
-                                            propText='Text'
-                                            propValue='Value'/>
+                                            propText='Name'
+                                            propValue='Id'/>
                             }
 
                             <InlineBlock>
                                 <FormSelect form={formik}
                                             name={`MatchMakerMinNumberOfPlayers`}
                                             label='Min. Players'
-                                            options={[]}
+                                            options={numberList((selectedReservationType?.MinimumNumberOfPlayers ?? 2), selectedReservationType?.MaximumNumberOfPlayers ?? 25)}
                                             required={true}
-                                            propText='Name'
-                                            propValue='Id'/>
+                                            onValueChange={(e) => {
+                                                let selectedMinValueInt = parseInt(e.Value);
+                                                let selectedMaxValue = formik?.values?.MatchMakerMaxNumberOfPlayers;
+                                                if (!isNullOrEmpty(selectedMaxValue)) {
+                                                    let selectedMaxValueInt = parseInt(selectedMaxValue);
+                                                    if (selectedMaxValueInt < selectedMinValueInt) {
+                                                        formik?.setFieldValue('MatchMakerMaxNumberOfPlayers', selectedMinValueInt);
+                                                    }
+                                                }
+                                            }}
+                                            propText='Text'
+                                            propValue='Value'/>
 
                                 <FormSelect form={formik}
                                             name={`MatchMakerMaxNumberOfPlayers`}
                                             label='Max. Players'
-                                            options={[]}
+                                            options={numberList((selectedReservationType?.MinimumNumberOfPlayers ?? 2), selectedReservationType?.MaximumNumberOfPlayers ?? 25)}
                                             required={true}
-                                            propText='Name'
-                                            propValue='Id'/>
+                                            onValueChange={(e) => {
+                                                let selectedMaxValueInt = parseInt(e.Value);
+                                                let selectedMinValue = formik?.values?.MatchMakerMinNumberOfPlayers;
+                                                if (!isNullOrEmpty(selectedMinValue)) {
+                                                    let selectedMinValueInt = parseInt(selectedMinValue);
+                                                    if (selectedMinValueInt > selectedMaxValueInt) {
+                                                        formik?.setFieldValue('MatchMakerMinNumberOfPlayers', selectedMaxValueInt);
+                                                    }
+                                                }
+                                            }}
+                                            propText='Text'
+                                            propValue='Value'/>
                             </InlineBlock>
 
                             {toBoolean(matchMaker?.IsAgeCriteriaMatch) &&
@@ -1143,18 +1216,38 @@ function ReservationRegistration() {
                                     <FormSelect form={formik}
                                                 name={`MatchMakerMinAge`}
                                                 label='Min Age'
-                                                options={[]}
+                                                options={numberList(1, 99)}
+                                                onValueChange={(e) => {
+                                                    let selectedMinValueInt = parseInt(e.Value);
+                                                    let selectedMaxValue = formik?.values?.MatchMakerMaxAge;
+                                                    if (!isNullOrEmpty(selectedMaxValue)) {
+                                                        let selectedMaxValueInt = parseInt(selectedMaxValue);
+                                                        if (selectedMaxValueInt < selectedMinValueInt) {
+                                                            formik?.setFieldValue('MatchMakerMaxAge', selectedMinValueInt);
+                                                        }
+                                                    }
+                                                }}
                                                 required={true}
-                                                propText='Name'
-                                                propValue='Id'/>
+                                                propText='Text'
+                                                propValue='Value'/>
 
                                     <FormSelect form={formik}
                                                 name={`MatchMakerMaxAge`}
                                                 label='Max Age'
-                                                options={[]}
+                                                options={numberList(1, 99)}
+                                                onValueChange={(e) => {
+                                                    let selectedMaxValueInt = parseInt(e.Value);
+                                                    let selectedMinValue = formik?.values?.MatchMakerMinAge;
+                                                    if (!isNullOrEmpty(selectedMinValue)) {
+                                                        let selectedMinValueInt = parseInt(selectedMinValue);
+                                                        if (selectedMinValueInt > selectedMaxValueInt) {
+                                                            formik?.setFieldValue('MatchMakerMinAge', selectedMaxValueInt);
+                                                        }
+                                                    }
+                                                }}
                                                 required={true}
-                                                propText='Name'
-                                                propValue='Id'/>
+                                                propText='Text'
+                                                propValue='Value'/>
                                 </InlineBlock>
                             }
 
@@ -1297,7 +1390,7 @@ function ReservationRegistration() {
                             {(anyInList(formik.values?.ReservationGuests) ? formik.values.ReservationGuests : []).map((guest, index) => {
                                 const showGuest = guest.Index === selectedGuest?.Index;
                                 const isOverriden = guest.IsOverriden;
-                                
+
                                 if (!showGuest) {
                                     return (<div key={index}></div>)
                                 }
@@ -1305,7 +1398,7 @@ function ReservationRegistration() {
                                 const hasGuestsWithPayment = formik?.values?.ReservationGuests?.some(v =>
                                     (v.PaidAmt ?? 0) > 0 || v.PriceToPay > 0
                                 )
-                                
+
                                 return (
                                     <div key={index}>
                                         <FormInput label="First Name"
@@ -1333,7 +1426,7 @@ function ReservationRegistration() {
                                                         options={reservationMembers}
                                                         required={true}
                                                         onValueChange={() => {
-                                                            
+
                                                             //reloadPlayers();
                                                         }}
                                                         propText='FullName'
@@ -1346,7 +1439,7 @@ function ReservationRegistration() {
                                                            form={formik}
                                                            name={isOverriden ? `ReservationGuests[${index}].OverriddenPrice` : `ReservationGuests[${index}].PriceToPay`}
                                                 />
-                                                
+
                                                 {(!isNullOrEmpty(playersModelData?.ReservationId) && playersModelData?.ReservationId > 0) &&
                                                     <>
                                                         <FormInput label="Subtotal"

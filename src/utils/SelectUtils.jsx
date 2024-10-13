@@ -89,6 +89,16 @@ const filterDatesFunc = () => {
     return types;
 }
 
+export const numberList = (minValue, maxValue) => {
+    const list = [];
+    let difference = maxValue - minValue;
+
+    for (let i = 0; i <= difference; i++) {
+        list.push({Text: minValue + i, Value: minValue + i})
+    }
+    return list;
+}
+
 export const bookingTypes = bookingTypesFunc();
 export const filterDates = filterDatesFunc();
 export const usaStateList = usaStates();
