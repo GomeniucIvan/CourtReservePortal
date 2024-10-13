@@ -29,7 +29,14 @@ import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {dateTimeToFormat, dateToTimeString, toReactDate} from "../../../utils/DateUtils.jsx";
+import {
+    dateTimeToFormat,
+    dateToTimeString,
+    fixDate,
+    toAspNetDate,
+    toAspNetDateTime,
+    toReactDate
+} from "../../../utils/DateUtils.jsx";
 import {costDisplay} from "../../../utils/CostUtils.jsx";
 import {any} from "prop-types";
 
@@ -63,7 +70,7 @@ function ReservationRegistration() {
     const [matchTypes, setMatchTypes] = useState([]);
     const [isOpenMatchFilled, setIsOpenMatchFilled] = useState(false);
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
-    const [guests, setGuests] = useState([]);
+    //const [guests, setGuests] = useState([]);
     const [selectedGuest, setSelectedGuest] = useState(null);
     const [isPlayersSearch, setIsPlayersSearch] = useState(false);
     const [searchingPlayers, setSearchingPlayers] = useState([]);
@@ -72,10 +79,10 @@ function ReservationRegistration() {
     const [showMiscItems, setShowMiscItems] = useState(false);
     const [miscItems, setMiscItems] = useState([]);
     const [reservationMembers, setReservationMembers] = useState([]);
-    const [reservationGuests, setReservationGuests] = useState([]);
     const [playersModelData, setPlayersModelData] = useState(false);
-    
+
     let selectRegisteringMemberIdRef = useRef();
+    let searchPlayerDrawerBottomRef = useRef();
 
     const initialValues = {
         ReservationTypeId: '',
@@ -97,7 +104,8 @@ function ReservationRegistration() {
         MatchMakerIsPrivateMatch: false,
         MatchMakerJoinCode: '',
         InstructorName: '',
-        SelectedReservationMembers: []
+        SelectedReservationMembers: [],
+        ReservationGuests: []
 
     };
 
@@ -156,9 +164,10 @@ function ReservationRegistration() {
                         CourtId: incResData.CourtId,
                         RegisteringMemberId: incResData.RegisteringMemberId,
                         SelectedResourceName: incResData.SelectedResourceName,
-                        StartTime: incResData.StartTime,
-                        EndTime: dateToTimeString(end, true),
+                        StartTime: dateToTimeString(start, true),
+                        EndTime: dateToTimeString(end, true)
                     });
+                    
                     setIsFetching(false);
 
                     if (!toBoolean(r.Data.IsResourceReservation)) {
@@ -255,18 +264,28 @@ function ReservationRegistration() {
     }, [formik?.values?.Duration])
 
     //members guest table
-    const reloadPlayers = (orgMemberIdToRemove, reservationGuestIdIndexToRemove) => {
+    const reloadPlayers = (orgMemberIdToRemove) => {
         setLoading('SelectedReservationMembers', true);
 
-        let currentSelectedNumberOfGuests = 0;
-        let numberOfGuests = 0;
+        let currentSelectedNumberOfGuests = formik?.values?.ReservationGuests?.length || 0;
+        let numberOfGuests = formik?.values?.ReservationGuests?.length || 0;
         let registeringOrganizationMemberId = null;
         let membersWithDisclosures = [];
-        let removeGuestAtIndex = null;
         let refillDisclosureMemberIds = [];
 
-        const guestsArray = (removeGuestAtIndex) => {
-            return [];
+        const guestsArray = () => {
+            let reservationGuests = [];
+
+            if (anyInList(formik?.values?.ReservationGuests)) {
+                reservationGuests = formik.values.ReservationGuests.map(guest => ({
+                    FirstName: guest.FirstName,
+                    LastName: guest.LastName,
+                    PhoneNumber: guest.PhoneNumber,
+                    GuestOwnerId: guest.GuestOwnerId
+                }))
+            }
+
+            return reservationGuests;
         }
 
         const getFeeResponsibility = () => {
@@ -277,12 +296,14 @@ function ReservationRegistration() {
         let filteredReservationMembers = reservationMembers.filter(
             member => member.OrgMemberId !== orgMemberIdToRemove
         );
-        
-        if (!equalString(firstOwnerMemberId, formik?.values?.RegisteringMemberId)){
+
+        if (!equalString(firstOwnerMemberId, formik?.values?.RegisteringMemberId)) {
             filteredReservationMembers = reservationMembers.filter(
                 member => member.OrgMemberId !== orgMemberIdToRemove && !toBoolean(member.IsOwner)
             );
         }
+
+        console.log(toAspNetDateTime(reservation.Date))
         
         let postData = {
             Start: formik?.values?.StartTime,
@@ -293,7 +314,7 @@ function ReservationRegistration() {
             ReservationTypeId: formik?.values?.ReservationTypeId,
             RegisteringOrganizationMemberId: registeringOrganizationMemberId,
             RegisteringMemberId: formik?.values?.RegisteringMemberId,
-            Date: toReactDate(reservation.Date),
+            Date: toAspNetDateTime(reservation.Date),
             NumberOfGuests: numberOfGuests,
             MembersString: JSON.stringify(filteredReservationMembers.map(member => ({
                 OrgMemberId: member.OrgMemberId,
@@ -309,7 +330,7 @@ function ReservationRegistration() {
             InstructorId: reservation.InstructorId,
             MembersWithDisclosures: membersWithDisclosures,
             RefillMemberDisclosures: refillDisclosureMemberIds,
-            GuestsString: JSON.stringify(guestsArray(removeGuestAtIndex)),
+            GuestsString: JSON.stringify(guestsArray()),
             IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation),
             CourtId: formik?.values?.CourtId,
             SelectedNumberOfGuests: currentSelectedNumberOfGuests,
@@ -320,11 +341,18 @@ function ReservationRegistration() {
             IsModernTemplate: true
         };
 
+        console.log(postData)
+        
         appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData).then(r => {
             if (r.IsValid) {
-                console.log(r.Data.MemberData.SelectedMembers)
                 setReservationMembers(r.Data.MemberData.SelectedMembers);
-                setReservationGuests(r.Data.MemberData.ReservationGuests);
+                let responseReservationGuests = r.Data.MemberData.ReservationGuests;
+                if (anyInList(responseReservationGuests)) {
+                    formik.setValues('ReservationGuests', responseReservationGuests)
+                } else {
+
+                }
+
                 setPlayersModelData(r.Data.MemberData);
             }
 
@@ -437,20 +465,6 @@ function ReservationRegistration() {
         setShowSearchPlayers(false);
     }
 
-    const updateSelectedGuest = () => {
-        setGuests(prevGuests => prevGuests.map(guest =>
-            guest === selectedGuest
-                ? {
-                    ...guest,
-                    FirstName: formik.values.guestFirstName,
-                    LastName: formik.values.guestLastName,
-                    Email: formik.values.guestEmail
-                }
-                : guest
-        ));
-        setSelectedGuest(null);
-    }
-
     const onPlayersSearch = (searchVal) => {
         if (isMockData) {
             setIsPlayersSearch(true);
@@ -466,6 +480,7 @@ function ReservationRegistration() {
 
     useEffect(() => {
         if (showSearchPlayers) {
+
             if (isMockData) {
                 let data = mockData;
                 if (isNullOrEmpty(searchPlayersText)) {
@@ -499,7 +514,7 @@ function ReservationRegistration() {
         } else {
 
         }
-    }, [showSearchPlayers, searchPlayersText]);
+    }, [showSearchPlayers, searchPlayersText, reservationMembers]);
 
     useEffect(() => {
         if (shouldRebindPlayers && !showSearchPlayers) {
@@ -507,7 +522,7 @@ function ReservationRegistration() {
             reloadPlayers();
         }
     }, [showSearchPlayers, shouldRebindPlayers, reservationMembers]);
-    
+
     const allowToSelectedStartTime = (reserv) => {
         let isFromWaitlisting = !isNullOrEmpty(reserv.ReservationQueueSlotId) || !isNullOrEmpty(reserv.ReservationQueueId);
         return toBoolean(reserv.IsAllowedToPickStartAndEndTime) && !isFromWaitlisting || isFromWaitlisting && equalString(reserv.DurationType, 1);
@@ -820,6 +835,7 @@ function ReservationRegistration() {
                                                 block
                                                 ghost
                                                 htmlType={'button'}
+                                                disabled={toBoolean(loadingState.SelectedReservationMembers)}
                                                 style={{marginTop: `${token.padding}px`}}
                                                 onClick={() => {
                                                     setShowSearchPlayers(true)
@@ -837,60 +853,88 @@ function ReservationRegistration() {
                                         display: 'block'
                                     }}>Guest(s)</Text>
                                 <Card
-                                    className={cx(globalStyles.card, anyInList(guests) ? styles.playersCard : styles.noPlayersCard)}>
+                                    className={cx(globalStyles.card, anyInList(formik?.values?.ReservationGuests) ? styles.playersCard : styles.noPlayersCard)}>
                                     <Flex vertical>
-                                        {guests.map((guest, index) => {
-                                            const isLastIndex = index === guests.length - 1;
-                                            const firstName = guest?.FirstName;
-                                            const lastName = guest?.LastName;
-                                            const displayFullName = isNullOrEmpty(firstName) && isNullOrEmpty(lastName) ?
-                                                `Guest #${index + 1}` :
-                                                `${firstName} ${lastName}`;
+                                        {anyInList(formik?.values?.ReservationGuests) &&
+                                            <>
+                                                {formik?.values?.ReservationGuests.map((guest, index) => {
+                                                    const isLastIndex = index === (formik?.values?.ReservationGuests).length - 1;
+                                                    const firstName = guest?.FirstName;
+                                                    const lastName = guest?.LastName;
 
-                                            return (
-                                                <div key={index}
-                                                     style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
-                                                    <Flex justify={'space-between'}
-                                                          align={'center'}
-                                                          onClick={() => {
-                                                              setSelectedGuest(guest);
-                                                          }}>
-                                                        <Flex gap={token.Custom.cardIconPadding}>
-                                                            <Flex justify={'center'} align={'center'}
-                                                                  style={{
-                                                                      width: 48,
-                                                                      height: 48,
-                                                                      borderRadius: 50,
-                                                                      backgroundColor: 'red'
-                                                                  }}>
-                                                                <Title level={5}
-                                                                       className={cx(globalStyles.noSpace)}>NM</Title>
-                                                            </Flex>
-
-                                                            <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                                                <Text>
-                                                                    <Ellipsis direction='end'
-                                                                              content={displayFullName}/>
-                                                                </Text>
-                                                                <Text type="secondary">$2.50</Text>
-                                                            </Flex>
-                                                        </Flex>
-
-                                                        <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
-
-                                                    </Flex>
-                                                    {(!isLastIndex) &&
-                                                        <Divider className={styles.playersDivider}/>
+                                                    let fullName = '';
+                                                    if (!isNullOrEmpty(firstName) && !isNullOrEmpty(lastName)) {
+                                                        fullName = `${firstName} ${lastName}`;
+                                                    } else if (!isNullOrEmpty(firstName)) {
+                                                        fullName = `${firstName}`;
+                                                    } else if (!isNullOrEmpty(lastName)) {
+                                                        fullName = `${lastName}`;
+                                                    } else {
+                                                        //initials
+                                                        fullName = `G ${index + 1}`;
                                                     }
-                                                </div>
-                                            )
-                                        })}
+
+                                                    const displayFullName = isNullOrEmpty(firstName) && isNullOrEmpty(lastName) ?
+                                                        `Guest #${index + 1}` :
+                                                        `${fullName}`;
+
+                                                    return (
+                                                        <div key={index}
+                                                             style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
+                                                            <Flex justify={'space-between'}
+                                                                  align={'center'}
+                                                                  onClick={() => {
+                                                                      setSelectedGuest(guest);
+                                                                  }}>
+                                                                <Flex gap={token.Custom.cardIconPadding}>
+                                                                    <Flex justify={'center'} align={'center'}
+                                                                          style={{
+                                                                              width: 48,
+                                                                              height: 48,
+                                                                              borderRadius: 50,
+                                                                              backgroundColor: 'red'
+                                                                          }}>
+                                                                        <Title level={5}
+                                                                               className={cx(globalStyles.noSpace)}>{fullNameInitials(fullName)}</Title>
+                                                                    </Flex>
+
+                                                                    <Flex vertical
+                                                                          gap={token.Custom.cardIconPadding / 2}>
+                                                                        <Text>
+                                                                            <Ellipsis direction='end'
+                                                                                      content={displayFullName}/>
+                                                                        </Text>
+                                                                        <Text type="secondary">$2.50</Text>
+                                                                    </Flex>
+                                                                </Flex>
+
+                                                                <SVG icon={'edit-user'} size={23}
+                                                                     color={token.colorLink}/>
+
+                                                            </Flex>
+                                                            {(!isLastIndex) &&
+                                                                <Divider className={styles.playersDivider}/>
+                                                            }
+                                                        </div>
+                                                    )
+                                                })}
+                                            </>
+
+                                        }
                                         <Button type="primary"
                                                 block
                                                 ghost
+                                                disabled={toBoolean(loadingState.SelectedReservationMembers)}
                                                 htmlType={'button'}
                                                 onClick={() => {
-                                                    setGuests((prevGuests) => [...prevGuests, {}]);
+                                                    let guestObject = {
+                                                        Index: isNullOrEmpty(formik?.values?.ReservationGuests?.length) ? 0 : formik.values.ReservationGuests.length
+                                                    };
+
+                                                    let currentReservationGuests = formik.values.ReservationGuests || [];
+                                                    formik.setFieldValue('ReservationGuests', [...currentReservationGuests, guestObject]);
+
+                                                    setSelectedGuest(guestObject);
                                                 }}>
                                             Add Guest
                                         </Button>
@@ -1055,65 +1099,89 @@ function ReservationRegistration() {
                         searchType={2}
                         addSearch={true}
                         isSearchLoading={isPlayersSearch}
+                        ref={searchPlayerDrawerBottomRef}
                         confirmButtonText={'Close'}
                         onConfirmButtonClick={addPlayers}
                     >
                         <PaddingBlock>
                             {/*//todo iv change to dynamic calculation*/}
                             <Flex vertical style={{minHeight: `calc(80vh - 98px - 72px)`}}>
-                                {anyInList(searchingPlayers) &&
-                                    <Flex vertical gap={token.padding}>
-                                        {searchingPlayers.map((player, index) => (
+                                {isPlayersSearch &&
+                                    <Flex vertical={true} gap={token.padding}>
+                                        {emptyArray(anyInList(searchingPlayers) ? searchingPlayers.length : 8).map((item, index) => (
                                             <div key={index}>
-                                                <Flex justify={'space-between'} align={'center'}>
-                                                    <div onClick={() => {
-
-                                                        setReservationMembers((prevMembers) => [...prevMembers, {OrgMemberId: player.MemberOrgId}]);
-                                                        setSearchPlayersText('');
-                                                        setShouldRebindPlayers(true);
-                                                    }}>
-                                                        <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                                            <Flex justify={'center'} align={'center'}
-                                                                  style={{
-                                                                      width: 48,
-                                                                      height: 48,
-                                                                      borderRadius: 50,
-                                                                      backgroundColor: 'red'
-                                                                  }}>
-                                                                <Title level={5}
-                                                                       className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
-                                                            </Flex>
-
-                                                            <Text>
-                                                                <Ellipsis direction='end' content={player.DisplayName}/>
-                                                            </Text>
-                                                        </Flex>
-                                                    </div>
-
-                                                    <Flex gap={token.padding}>
-                                                        <div onClick={() => {
-                                                            alert('todo')
-                                                        }}>
-                                                            {toBoolean(player.IsFavoriteMember) ?
-                                                                (<SVG icon={'hearth-filled'} size={24}
-                                                                      color={token.colorPrimary}/>) :
-                                                                (<SVG icon={'hearth'} size={24}
-                                                                      color={token.colorPrimary}/>)}
-
-                                                        </div>
-
-                                                        <div onClick={() => {
-                                                            alert('todo')
-                                                        }}>
-                                                            <SVG icon={'circle-plus'} size={24}
-                                                                 color={token.colorPrimary}/>
-                                                        </div>
-                                                    </Flex>
-                                                </Flex>
+                                                <Skeleton.Button block key={index} active={true}
+                                                                 style={{height: `48px`}}/>
                                             </div>
                                         ))}
                                     </Flex>
                                 }
+
+                                {!isPlayersSearch &&
+                                    <>
+                                        {!anyInList(searchingPlayers) &&
+                                            <Text>No players meessage</Text>
+                                        }
+
+                                        {anyInList(searchingPlayers) &&
+                                            <Flex vertical gap={token.padding}>
+                                                {searchingPlayers.map((player, index) => (
+                                                    <div key={index}>
+                                                        <Flex justify={'space-between'} align={'center'}>
+                                                            <div onClick={() => {
+                                                                setReservationMembers((prevMembers) => [...prevMembers, {OrgMemberId: player.MemberOrgId}]);
+                                                                setSearchPlayersText('');
+                                                                searchPlayerDrawerBottomRef.current.setValue('');
+                                                                setShouldRebindPlayers(true);
+                                                            }} style={{width: '100%'}}>
+                                                                <Flex gap={token.Custom.cardIconPadding}
+                                                                      align={'center'}>
+                                                                    <Flex justify={'center'} align={'center'}
+                                                                          style={{
+                                                                              width: 48,
+                                                                              height: 48,
+                                                                              borderRadius: 50,
+                                                                              backgroundColor: 'red'
+                                                                          }}>
+                                                                        <Title level={5}
+                                                                               className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
+                                                                    </Flex>
+
+                                                                    <Text>
+                                                                        <Ellipsis direction='end'
+                                                                                  content={player.DisplayName}/>
+                                                                    </Text>
+                                                                </Flex>
+                                                            </div>
+
+                                                            <Flex gap={token.padding}>
+                                                                <div onClick={() => {
+                                                                    alert('todo')
+                                                                }}>
+                                                                    {toBoolean(player.IsFavoriteMember) ?
+                                                                        (<SVG icon={'hearth-filled'} size={24}
+                                                                              color={token.colorPrimary}/>) :
+                                                                        (<SVG icon={'hearth'} size={24}
+                                                                              color={token.colorPrimary}/>)}
+
+                                                                </div>
+
+                                                                <div onClick={() => {
+                                                                    alert('todo')
+                                                                }}>
+                                                                    <SVG icon={'circle-plus'} size={24}
+                                                                         color={token.colorPrimary}/>
+                                                                </div>
+                                                            </Flex>
+                                                        </Flex>
+                                                    </div>
+                                                ))}
+                                            </Flex>
+                                        }
+                                    </>
+                                }
+
+
                             </Flex>
                         </PaddingBlock>
                     </DrawerBottom>
@@ -1122,28 +1190,78 @@ function ReservationRegistration() {
                     <DrawerBottom
                         maxHeightVh={80}
                         showDrawer={!isNullOrEmpty(selectedGuest)}
-                        closeDrawer={updateSelectedGuest}
-                        label={'Edit Guest'}
+                        closeDrawer={() => {
+                            setSelectedGuest(null)
+                        }}
+                        label={`Edit Guest #${((selectedGuest?.Index) ?? 0)}`}
                         showButton={false}
                         confirmButtonText={''}
-                        onConfirmButtonClick={updateSelectedGuest}
+                        onConfirmButtonClick={() => {
+                            setSelectedGuest(null)
+                        }}
                     >
                         <PaddingBlock>
-                            <FormInput label="First Name"
-                                       form={formik}
-                                       required={true}
-                                       name='guestFirstName'
-                            />
-                            <FormInput label="Last Name"
-                                       form={formik}
-                                       required={true}
-                                       name='guestLastName'
-                            />
-                            <FormInput label="Email"
-                                       form={formik}
-                                       required={true}
-                                       name='guestEmail'
-                            />
+                            {(anyInList(formik.values?.ReservationGuests) ? formik.values.ReservationGuests : []).map((guest, index) => {
+                                const showGuest = guest.Index === selectedGuest?.Index;
+                                if (!showGuest) {
+                                    return (<div key={index}></div>)
+                                }
+
+                                return (
+                                    <div key={index}>
+                                        <FormInput label="First Name"
+                                                   form={formik}
+                                                   required={true}
+                                                   name={`ReservationGuests[${index}].FirstName`}
+                                        />
+
+                                        <FormInput label="Last Name"
+                                                   form={formik}
+                                                   required={true}
+                                                   name={`ReservationGuests[${index}].LastName`}
+                                        />
+
+                                        <FormInput label="Phone Number"
+                                                   form={formik}
+                                                   required={true}
+                                                   name={`ReservationGuests[${index}].PhoneNumber`}
+                                        />
+                                        
+                                        {toBoolean(authData?.allowMembersToChangeGuestOwnerOnMemberPortal) &&
+                                            <FormSelect form={formik}
+                                                        name={`ReservationGuests[${index}].GuestOwnerId`}
+                                                        label='Owner'
+                                                        options={reservationMembers}
+                                                        required={true}
+                                                        onValueChange={() => {reloadPlayers()}}
+                                                        propText='FullName'
+                                                        propValue='OrgMemberId'/>
+                                        }
+                                        
+                                        {(!isNullOrEmpty(playersModelData?.ReservationId) && playersModelData?.ReservationId > 0) &&
+                                            <>
+                                                <FormInput label="Subtotal"
+                                                           form={formik}
+                                                           required={true}
+                                                           name={`ReservationGuests[${index}].Subtotal`}
+                                                />
+
+                                                <FormInput label="Paid"
+                                                           form={formik}
+                                                           required={true}
+                                                           name={`ReservationGuests[${index}].PaidAmt`}
+                                                />
+
+                                                <FormInput label="Due"
+                                                           form={formik}
+                                                           required={true}
+                                                           name={`ReservationGuests[${index}].TotalDue`}
+                                                />
+                                            </>
+                                        }
+                                    </div>
+                                )
+                            })}
 
                             <div style={{paddingBottom: `${token.padding}px`}}>
                                 <InlineBlock>
@@ -1157,8 +1275,16 @@ function ReservationRegistration() {
                                                     content: 'Are you sure you want to remove Guest?',
                                                     showIcon: false,
                                                     onRemove: (e) => {
-                                                        console.log(e)
-                                                        setGuests(prevGuests => prevGuests.filter(g => g !== selectedGuest));
+                                                        let currentReservationGuests = formik.values.ReservationGuests || [];
+                                                        const updatedGuests = currentReservationGuests
+                                                            .filter(g => g !== selectedGuest)
+                                                            .map((guest, index) => ({
+                                                                ...guest,
+                                                                Index: index + 1
+                                                            }));
+
+                                                        console.log(updatedGuests)
+                                                        formik.setFieldValue('ReservationGuests', updatedGuests);
                                                         setSelectedGuest(null);
                                                     }
                                                 });
@@ -1169,7 +1295,9 @@ function ReservationRegistration() {
                                     <Button type="primary"
                                             block
                                             htmlType={'button'}
-                                            onClick={updateSelectedGuest}>
+                                            onClick={() => {
+                                                setSelectedGuest(null)
+                                            }}>
                                         Save
                                     </Button>
                                 </InlineBlock>

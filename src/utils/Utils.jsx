@@ -235,5 +235,5 @@ export const fullNameInitials = (fullName) => {
         return namesArray[0].charAt(0).toUpperCase();
     }
 
-   return  namesArray[0].charAt(0).toUpperCase() + namesArray[namesArray.length - 1].charAt(0).toUpperCase();
+   return namesArray[0].charAt(0).toUpperCase() + namesArray[namesArray.length - 1].charAt(0).toUpperCase();
 }

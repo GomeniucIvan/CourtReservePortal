@@ -175,7 +175,14 @@ export const isNonUsCulture = () => {
     }
 
     return equalString(clientUiCulture, 'en-us');
-} 
+}
+
+export const toAspNetDateTime = (incDate) => {
+    if (isNullOrEmpty(incDate)) {
+        return '';
+    }
+    return moment(incDate).toDate().toISOString();
+}
 
 export const toAspNetDate = (incDate) => {
     return dateToString(incDate);

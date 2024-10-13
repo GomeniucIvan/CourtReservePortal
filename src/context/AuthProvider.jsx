@@ -35,6 +35,7 @@ export const AuthProvider = ({children}) => {
             
             useOrganizedPlay: nullToEmpty(memberData.useOrganizedPlay),
             isUsingPushNotifications: nullToEmpty(memberData.isUsingPushNotifications),
+            allowMembersToChangeGuestOwnerOnMemberPortal: nullToEmpty(memberData.allowMembersToChangeGuestOwnerOnMemberPortal),
         })
 
         setClientUiCulture(memberData.uiCulture);
@@ -59,6 +60,7 @@ export const AuthProvider = ({children}) => {
             myAccountHideWaitingList: '',
             useOrganizedPlay: '',
             isUsingPushNotifications: '',
+            allowMembersToChangeGuestOwnerOnMemberPortal: '',
         });
         
         appService.get(navigate, '/app/online/logout').then(r => {

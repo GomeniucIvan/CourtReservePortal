@@ -263,7 +263,7 @@ export const SchedulerSlot = React.forwardRef((
             data-start-date={props.start}
         >
             {toBoolean(useTextSchedulerSlot) ?
-                ( <div className={'k-scheduler-cell k-slot-cell'}>
+                ( <div className={'k-scheduler-cell k-slot-cell'} style={{border: 'none'}}>
 
                     <Text
                         start={props.start.getTime()}
@@ -271,7 +271,7 @@ export const SchedulerSlot = React.forwardRef((
                         entytyid={props.group.resources[0].Value}
                         onClick={() => {openReservationCreateModal(props, props?.group?.resources[0])}}
                         style={{
-                            height: '40px',
+                            //height: '40px',
                             width: '100%',
                             alignItems: 'center',
                             justifyContent: 'center',

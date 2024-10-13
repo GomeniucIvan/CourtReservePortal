@@ -267,6 +267,7 @@ function Layout() {
                                 myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
                                 myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
                                 useOrganizedPlay: memberResponseData.UseOrganizedPlay,
+                                allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
 
@@ -285,6 +286,7 @@ function Layout() {
                                 myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
                                 myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
                                 useOrganizedPlay: memberResponseData.UseOrganizedPlay,
+                                allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
 

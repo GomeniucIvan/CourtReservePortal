@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useRef, useState} from 'react';
+﻿import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Popup} from "antd-mobile";
 import {Flex, Typography, Button, Input} from "antd";
@@ -10,7 +10,7 @@ import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 const {Title, Text} = Typography;
 const {Search} = Input;
 
-const DrawerBottom = ({
+const DrawerBottom = forwardRef(({
                           showDrawer,
                           closeDrawer,
                           children,
@@ -27,14 +27,25 @@ const DrawerBottom = ({
                           isSearchLoading,
                           customFooter,
                           confirmButtonLoading
-                      }) => {
+                      }, ref) => {
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
     
     const headerRef = useRef(null);
     const footerRef = useRef(null);
+    const searchRef = useRef(null);
     const [topBottomHeight, setTopBottomHeight] = useState('');
+    const [searchValue, setSearchValue] = useState('');
 
+    // Use useRef to persist the debounceTimeout value between renders
+    const debounceTimeoutRef = useRef(null);
+
+    useImperativeHandle(ref, () => ({
+        setValue: (incValue) => {
+            setSearchValue(incValue);
+        },
+    }));
+    
     useEffect(() => {
         if (fullHeight && showDrawer) {
             const headerHeight = headerRef.current ? headerRef.current.offsetHeight : 0;
@@ -44,12 +55,21 @@ const DrawerBottom = ({
             setTopBottomHeight('');
         }
     }, [fullHeight, showDrawer]);
-    
+
     const oInputSearch = (e) => {
-        if (onSearch && typeof onSearch === 'function') {
-            onSearch(e.target.value);
+        const newValue = e.target.value;
+        setSearchValue(newValue);
+
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
         }
-    }
+
+        debounceTimeoutRef.current = setTimeout(() => {
+            if (onSearch && typeof onSearch === 'function') {
+                onSearch(newValue);
+            }
+        }, 1000);
+    };
 
     return (
         <>
@@ -93,6 +113,7 @@ const DrawerBottom = ({
                                 </Text>
                                 <Search placeholder={`Type to ${label}`}
                                         allowClear
+                                        value={searchValue}
                                         rootClassName={globalStyles.search}
                                         loading={toBoolean(isSearchLoading)}
                                         onChange={oInputSearch}/>
@@ -125,6 +146,6 @@ const DrawerBottom = ({
             </Popup>
         </>
     )
-}
+})
 
 export default DrawerBottom
