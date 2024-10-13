@@ -9,6 +9,16 @@ const genders = () => {
     list.push({Text: "gender.preferNotToDisclose", Value: 'PND', translate: true});
     return list;
 }
+
+const matchMakerGenders = () => {
+    let list = [];
+    list.push({Text: "No Gender Restrictions", Value: '1', translate: false});
+    list.push({Text: "Mixed", Value: '2', translate: false});
+    list.push({Text: "M", Value: '3', translate: false});
+    list.push({Text: "F", Value: '4', translate: false});
+    return list;
+}
+
 const usaStates = () => {
     const states = [
         "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
@@ -83,4 +93,5 @@ export const bookingTypes = bookingTypesFunc();
 export const filterDates = filterDatesFunc();
 export const usaStateList = usaStates();
 export const genderList = genders();
+export const matchmakerGenderList = matchMakerGenders();
 export const canadianProvincesList = canadianProvinces();

@@ -268,6 +268,7 @@ function Layout() {
                                 myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
                                 useOrganizedPlay: memberResponseData.UseOrganizedPlay,
                                 allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
+                                allowAbilityToSplitFeeAcrossReservationPlayers: memberResponseData.AllowAbilityToSplitFeeAcrossReservationPlayers,
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
 
@@ -287,6 +288,7 @@ function Layout() {
                                 myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
                                 useOrganizedPlay: memberResponseData.UseOrganizedPlay,
                                 allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
+                                allowAbilityToSplitFeeAcrossReservationPlayers: memberResponseData.AllowAbilityToSplitFeeAcrossReservationPlayers,
                                 isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
                             });
 

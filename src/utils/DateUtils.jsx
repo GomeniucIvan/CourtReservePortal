@@ -181,7 +181,7 @@ export const toAspNetDateTime = (incDate) => {
     if (isNullOrEmpty(incDate)) {
         return '';
     }
-    return moment(incDate).toDate().toISOString();
+    return moment(incDate).format('MM/DD/YYYY hh:mm:ss A');
 }
 
 export const toAspNetDate = (incDate) => {

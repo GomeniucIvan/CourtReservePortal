@@ -1,7 +1,7 @@
 ﻿import {useStyles} from "./../styles.jsx";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
-import {Alert, Button, Card, Checkbox, Divider, Flex, Skeleton, Typography} from "antd";
+import {Alert, Button, Card, Checkbox, Divider, Flex, Segmented, Skeleton, Typography} from "antd";
 import mockData from "../../../mocks/reservation-data.json";
 import * as Yup from "yup";
 import {useFormik} from "formik";
@@ -39,6 +39,9 @@ import {
 } from "../../../utils/DateUtils.jsx";
 import {costDisplay} from "../../../utils/CostUtils.jsx";
 import {any} from "prop-types";
+import {matchmakerGenderList} from "../../../utils/SelectUtils.jsx";
+import {toLocalStorage} from "../../../storage/AppStorage.jsx";
+import {AppstoreOutlined, BarsOutlined} from "@ant-design/icons";
 
 const {Title, Text, Link} = Typography;
 
@@ -61,16 +64,15 @@ function ReservationRegistration() {
         setFooterContent,
         isLoading
     } = useApp();
-    const [reservation, setReservation] = useState([]);
+    const [reservation, setReservation] = useState(null);
+    const [matchMaker, setMatchMaker] = useState(null);
     const [reservationTypes, setReservationTypes] = useState([]);
     const [durations, setDurations] = useState([]);
     const [courts, setCourts] = useState([]);
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
     const [showMatchMakerDrawer, setShowMatchMakerDrawer] = useState([]);
-    const [matchTypes, setMatchTypes] = useState([]);
     const [isOpenMatchFilled, setIsOpenMatchFilled] = useState(false);
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
-    //const [guests, setGuests] = useState([]);
     const [selectedGuest, setSelectedGuest] = useState(null);
     const [isPlayersSearch, setIsPlayersSearch] = useState(false);
     const [searchingPlayers, setSearchingPlayers] = useState([]);
@@ -80,6 +82,7 @@ function ReservationRegistration() {
     const [miscItems, setMiscItems] = useState([]);
     const [reservationMembers, setReservationMembers] = useState([]);
     const [playersModelData, setPlayersModelData] = useState(false);
+    const [selectedReservationType, setSelectedReservationType] = useState(false);
 
     let selectRegisteringMemberIdRef = useRef();
     let searchPlayerDrawerBottomRef = useRef();
@@ -105,8 +108,8 @@ function ReservationRegistration() {
         MatchMakerJoinCode: '',
         InstructorName: '',
         SelectedReservationMembers: [],
-        ReservationGuests: []
-
+        ReservationGuests: [],
+        FeeResponsibility: '',
     };
 
     const fields = Object.keys(initialValues);
@@ -148,15 +151,19 @@ function ReservationRegistration() {
             const resv = mockData.create;
             setReservation(resv);
             setReservationTypes(resv.ReservationTypes);
-            setMatchTypes(resv.MatchTypes);
+            //setMatchTypes(resv.MatchTypes);
             setMiscItems(resv.MiscFeesSelectListItems);
             setIsFetching(false);
         } else {
 
             appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}`).then(r => {
                 if (toBoolean(r?.IsValid)) {
-                    let incResData = r.Data;
+                    let incResData = r.Data.ReservationModel;
+                    let matchMakerData = r.Data.MatchMakerData;
+                    console.log(incResData)
+                    
                     setReservation(incResData);
+                    setMatchMaker(matchMakerData);
 
                     formik.setValues({
                         ReservationId: incResData.ReservationId,
@@ -167,7 +174,7 @@ function ReservationRegistration() {
                         StartTime: dateToTimeString(start, true),
                         EndTime: dateToTimeString(end, true)
                     });
-                    
+
                     setIsFetching(false);
 
                     if (!toBoolean(r.Data.IsResourceReservation)) {
@@ -288,10 +295,6 @@ function ReservationRegistration() {
             return reservationGuests;
         }
 
-        const getFeeResponsibility = () => {
-
-        }
-
         const firstOwnerMemberId = reservationMembers.find(member => toBoolean(member.IsOwner));
         let filteredReservationMembers = reservationMembers.filter(
             member => member.OrgMemberId !== orgMemberIdToRemove
@@ -303,8 +306,6 @@ function ReservationRegistration() {
             );
         }
 
-        console.log(toAspNetDateTime(reservation.Date))
-        
         let postData = {
             Start: formik?.values?.StartTime,
             End: toBoolean(reservation.IsAllowedToPickStartAndEndTime) ? formik?.values?.EndTime : formik?.values?.EndTime,
@@ -331,27 +332,25 @@ function ReservationRegistration() {
             MembersWithDisclosures: membersWithDisclosures,
             RefillMemberDisclosures: refillDisclosureMemberIds,
             GuestsString: JSON.stringify(guestsArray()),
-            IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation),
+            IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation) && toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker),
             CourtId: formik?.values?.CourtId,
             SelectedNumberOfGuests: currentSelectedNumberOfGuests,
-            FeeResponsibility: getFeeResponsibility(),
+            FeeResponsibility: formik?.values.FeeResponsibility,
             AuthUserId: reservation.MemberId,
             IsMobileLayout: true,
             IsFamilyMember: anyInList(reservation.FamilyMembers),
             IsModernTemplate: true
         };
 
-        console.log(postData)
-        
+
         appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData).then(r => {
             if (r.IsValid) {
                 setReservationMembers(r.Data.MemberData.SelectedMembers);
                 let responseReservationGuests = r.Data.MemberData.ReservationGuests;
+
                 if (anyInList(responseReservationGuests)) {
                     formik.setValues('ReservationGuests', responseReservationGuests)
-                } else {
-
-                }
+                } 
 
                 setPlayersModelData(r.Data.MemberData);
             }
@@ -366,6 +365,18 @@ function ReservationRegistration() {
         }
     }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration]);
 
+    useEffect(() => {
+        if (!isNullOrEmpty(formik?.values?.ReservationTypeId)) {
+            setSelectedReservationType(null);
+
+            let currentReservationType = reservation?.ReservationTypes?.find(v => v.Id === formik?.values?.ReservationTypeId);
+            setSelectedReservationType(currentReservationType);
+            formik.setFieldValue('FeeResponsibility', selectedReservationType?.DefaultFeeResponsibility);
+        } else{
+            setSelectedReservationType(null);
+        }
+    }, [formik?.values?.ReservationTypeId]);
+    
     const reloadCourts = async (endTime) => {
         setLoading('CourtId', true);
 
@@ -501,7 +512,7 @@ function ReservationRegistration() {
                     IsMobileLayout: true,
                     userId: reservation.MemberId,
                     customSchedulerId: reservation.CustomSchedulerId,
-                    isOpenReservation: toBoolean(formik?.values?.IsOpenReservation),
+                    IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation) && toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker),
                     filterValue: searchPlayersText,
                     organizationMemberIdsString: reservationMembers.map(member => member.OrgMemberId).join(',')
                 }
@@ -644,66 +655,72 @@ function ReservationRegistration() {
                                     propText='DisplayName'
                                     propValue='Id'/>
 
-                        <FormSwitch label={'Allow Players to join this Reservation'}
-                                    form={formik}
-                                    name={'IsOpenReservation'}/>
-
-                        {toBoolean(formik?.values?.IsOpenReservation) &&
+                        {toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker) &&
                             <>
-                                {isOpenMatchFilled &&
-                                    <>
-                                        <div style={{marginBottom: token.Custom.buttonPadding}}>
-                                            {toBoolean(formik?.values?.IsValidOpenMatch) ? (
-                                                    <>
-                                                        <Alert
-                                                            message={<div>
-                                                                <Flex align={'center'} justify={'space-between'}>
-                                                                    <Text>
-                                                                        <strong>Match Type</strong>
-                                                                    </Text>
-                                                                    <Text>
-                                                                        {formik?.values?.MatchMakerTypeId}
-                                                                    </Text>
-                                                                </Flex>
-                                                                <Divider variant="dashed" dashed
-                                                                         className={globalStyles.alertDivider}/>
+                                <FormSwitch label={'Allow Players to join this Reservation'}
+                                            form={formik}
+                                            name={'IsOpenReservation'}/>
 
-                                                                <Flex align={'center'} justify={'space-between'}>
-                                                                    <Text>
-                                                                        <strong>Gender Restriction</strong>
-                                                                    </Text>
-                                                                    <Text>
-                                                                        Male
-                                                                    </Text>
-                                                                </Flex>
-                                                            </div>}
-                                                            type="info"/>
-                                                    </>
-                                                ) :
-                                                (
-                                                    <>
-                                                        <Alert
-                                                            message="Ensure all required fields for the open match are filled before proceeding"
-                                                            type="warning"/>
-                                                    </>
-                                                )}
-                                        </div>
+                                {toBoolean(formik?.values?.IsOpenReservation) &&
+                                    <>
+                                        {isOpenMatchFilled &&
+                                            <>
+                                                <div style={{marginBottom: token.Custom.buttonPadding}}>
+                                                    {toBoolean(formik?.values?.IsValidOpenMatch) ? (
+                                                            <>
+                                                                <Alert
+                                                                    message={<div>
+                                                                        <Flex align={'center'} justify={'space-between'}>
+                                                                            <Text>
+                                                                                <strong>Match Type</strong>
+                                                                            </Text>
+                                                                            <Text>
+                                                                                {formik?.values?.MatchMakerTypeId}
+                                                                            </Text>
+                                                                        </Flex>
+                                                                        <Divider variant="dashed" dashed
+                                                                                 className={globalStyles.alertDivider}/>
+
+                                                                        <Flex align={'center'} justify={'space-between'}>
+                                                                            <Text>
+                                                                                <strong>Gender Restriction</strong>
+                                                                            </Text>
+                                                                            <Text>
+                                                                                Male
+                                                                            </Text>
+                                                                        </Flex>
+                                                                    </div>}
+                                                                    type="info"/>
+                                                            </>
+                                                        ) :
+                                                        (
+                                                            <>
+                                                                <Alert
+                                                                    message="Ensure all required fields for the open match are filled before proceeding"
+                                                                    type="warning"/>
+                                                            </>
+                                                        )}
+                                                </div>
+                                            </>
+                                        }
+
+                                        <Button type="primary"
+                                                block
+                                                ghost
+                                                htmlType={'button'}
+                                                onClick={() => {
+                                                    setShowMatchMakerDrawer(true)
+                                                }}>
+                                            {toBoolean(formik?.values?.IsValidOpenMatch) ? (<>Edit Join Criteria</>) : (<>Setup
+                                                Join
+                                                Criteria</>)}
+                                        </Button>
                                     </>
                                 }
-
-                                <Button type="primary"
-                                        block
-                                        ghost
-                                        htmlType={'button'}
-                                        onClick={() => {
-                                            setShowMatchMakerDrawer(true)
-                                        }}>
-                                    {toBoolean(formik?.values?.IsValidOpenMatch) ? (<>Edit Join Criteria</>) : (<>Setup
-                                        Join
-                                        Criteria</>)}
-                                </Button>
                             </>
                         }
+                        
+
 
                         <Divider className={globalStyles.formDivider}/>
 
@@ -723,6 +740,31 @@ function ReservationRegistration() {
                                 message={<div><strong>Reservation TypeName</strong> min number... 5 minutes note</div>}
                                 type="info"/>
 
+                            {toBoolean(authData?.allowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
+                                <div>
+                                    <label style={{
+                                        fontSize: token.Form.labelFontSize,
+                                        padding: token.Form.verticalLabelPadding,
+                                        marginLeft: token.Form.labelColonMarginInlineStart,
+                                        display: 'block'
+                                    }}>
+                                        Fee Responsibility
+                                    </label>
+
+                                    <Segmented
+                                        value={formik?.values?.FeeResponsibility}
+                                        block={true}
+                                        onChange={(e) => {
+                                            formik.setFieldValue('FeeResponsibility', e.value)
+                                        }}
+                                        options={[
+                                            {value: '1', label: 'Reservation Owner'},
+                                            {value: '2', label: 'Each Player Equally'},
+                                        ]}
+                                    />
+                                </div>
+                            }
+
                             <div>
                                 <Text
                                     style={{
@@ -733,7 +775,7 @@ function ReservationRegistration() {
                                     <Flex vertical>
                                         {toBoolean(loadingState.SelectedReservationMembers) &&
                                             <>
-                                                {emptyArray(anyInList(reservationMembers) ? reservationMembers.length : 4).map((item, index) => (
+                                                {emptyArray(anyInList(reservationMembers) ? reservationMembers.length : 1).map((item, index) => (
                                                     <div key={index}>
                                                         <Skeleton.Button block key={index} active={true}
                                                                          style={{height: `48px`}}/>
@@ -846,101 +888,130 @@ function ReservationRegistration() {
                                 </Card>
                             </div>
 
-                            <div>
-                                <Text
-                                    style={{
-                                        marginBottom: `${token.Custom.buttonPadding}px`,
-                                        display: 'block'
-                                    }}>Guest(s)</Text>
-                                <Card
-                                    className={cx(globalStyles.card, anyInList(formik?.values?.ReservationGuests) ? styles.playersCard : styles.noPlayersCard)}>
-                                    <Flex vertical>
-                                        {anyInList(formik?.values?.ReservationGuests) &&
-                                            <>
-                                                {formik?.values?.ReservationGuests.map((guest, index) => {
-                                                    const isLastIndex = index === (formik?.values?.ReservationGuests).length - 1;
-                                                    const firstName = guest?.FirstName;
-                                                    const lastName = guest?.LastName;
+                            {(toBoolean(selectedReservationType?.AllowGuestsOnMemberPortal) && isNullOrEmpty(reservation.InstructorId)) &&
+                                <div>
+                                    <Text
+                                        style={{
+                                            marginBottom: `${token.Custom.buttonPadding}px`,
+                                            display: 'block'
+                                        }}>Guest(s)</Text>
+                                    <Card
+                                        className={cx(globalStyles.card, anyInList(formik?.values?.ReservationGuests) ? styles.playersCard : styles.noPlayersCard)}>
+                                        <Flex vertical>
+                                            {anyInList(formik?.values?.ReservationGuests) &&
+                                                <>
+                                                    {formik?.values?.ReservationGuests.map((guest, index) => {
+                                                        const isLastIndex = index === (formik?.values?.ReservationGuests).length - 1;
+                                                        const firstName = guest?.FirstName;
+                                                        const lastName = guest?.LastName;
 
-                                                    let fullName = '';
-                                                    if (!isNullOrEmpty(firstName) && !isNullOrEmpty(lastName)) {
-                                                        fullName = `${firstName} ${lastName}`;
-                                                    } else if (!isNullOrEmpty(firstName)) {
-                                                        fullName = `${firstName}`;
-                                                    } else if (!isNullOrEmpty(lastName)) {
-                                                        fullName = `${lastName}`;
-                                                    } else {
-                                                        //initials
-                                                        fullName = `G ${index + 1}`;
-                                                    }
+                                                        let secondRowText = '';
+                                                        let ownerText = '';
 
-                                                    const displayFullName = isNullOrEmpty(firstName) && isNullOrEmpty(lastName) ?
-                                                        `Guest #${index + 1}` :
-                                                        `${fullName}`;
-
-                                                    return (
-                                                        <div key={index}
-                                                             style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
-                                                            <Flex justify={'space-between'}
-                                                                  align={'center'}
-                                                                  onClick={() => {
-                                                                      setSelectedGuest(guest);
-                                                                  }}>
-                                                                <Flex gap={token.Custom.cardIconPadding}>
-                                                                    <Flex justify={'center'} align={'center'}
-                                                                          style={{
-                                                                              width: 48,
-                                                                              height: 48,
-                                                                              borderRadius: 50,
-                                                                              backgroundColor: 'red'
-                                                                          }}>
-                                                                        <Title level={5}
-                                                                               className={cx(globalStyles.noSpace)}>{fullNameInitials(fullName)}</Title>
-                                                                    </Flex>
-
-                                                                    <Flex vertical
-                                                                          gap={token.Custom.cardIconPadding / 2}>
-                                                                        <Text>
-                                                                            <Ellipsis direction='end'
-                                                                                      content={displayFullName}/>
-                                                                        </Text>
-                                                                        <Text type="secondary">$2.50</Text>
-                                                                    </Flex>
-                                                                </Flex>
-
-                                                                <SVG icon={'edit-user'} size={23}
-                                                                     color={token.colorLink}/>
-
-                                                            </Flex>
-                                                            {(!isLastIndex) &&
-                                                                <Divider className={styles.playersDivider}/>
+                                                        if (!isNullOrEmpty(guest.GuestOwnerId)) {
+                                                            let reservationOwner = reservationMembers?.find(v => v.OrgMemberId === guest.GuestOwnerId);
+                                                            if (!isNullOrEmpty(reservationOwner)) {
+                                                                ownerText = reservationOwner.FullName;
                                                             }
-                                                        </div>
-                                                    )
-                                                })}
-                                            </>
+                                                        }
 
-                                        }
-                                        <Button type="primary"
-                                                block
-                                                ghost
-                                                disabled={toBoolean(loadingState.SelectedReservationMembers)}
-                                                htmlType={'button'}
-                                                onClick={() => {
-                                                    let guestObject = {
-                                                        Index: isNullOrEmpty(formik?.values?.ReservationGuests?.length) ? 0 : formik.values.ReservationGuests.length
-                                                    };
+                                                        const hasGuestsWithPayment = formik?.values?.ReservationGuests?.some(v =>
+                                                            (v.PaidAmt ?? 0) > 0 || v.PriceToPay > 0
+                                                        )
 
-                                                    let currentReservationGuests = formik.values.ReservationGuests || [];
-                                                    formik.setFieldValue('ReservationGuests', [...currentReservationGuests, guestObject]);
+                                                        if (hasGuestsWithPayment && !isNullOrEmpty(ownerText)) {
+                                                            secondRowText = `${costDisplay(v.PriceToPay)} (${ownerText})`;
+                                                        } else if (hasGuestsWithPayment) {
+                                                            secondRowText = `${costDisplay(v.PriceToPay)}`;
+                                                        } else if (!isNullOrEmpty(ownerText)) {
+                                                            secondRowText = ownerText;
+                                                        }
 
-                                                    setSelectedGuest(guestObject);
-                                                }}>
-                                            Add Guest
-                                        </Button>
-                                    </Flex>
-                                </Card>
-                            </div>
+                                                        let fullName = '';
+                                                        if (!isNullOrEmpty(firstName) && !isNullOrEmpty(lastName)) {
+                                                            fullName = `${firstName} ${lastName}`;
+                                                        } else if (!isNullOrEmpty(firstName)) {
+                                                            fullName = `${firstName}`;
+                                                        } else if (!isNullOrEmpty(lastName)) {
+                                                            fullName = `${lastName}`;
+                                                        } else {
+                                                            //initials
+                                                            fullName = `G ${index + 1}`;
+                                                        }
+
+                                                        const displayFullName = isNullOrEmpty(firstName) && isNullOrEmpty(lastName) ?
+                                                            `Guest #${index + 1}` :
+                                                            `${fullName}`;
+
+                                                        return (
+                                                            <div key={index}
+                                                                 style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
+                                                                <Flex justify={'space-between'}
+                                                                      align={'center'}
+                                                                      onClick={() => {
+                                                                          setSelectedGuest(guest);
+                                                                      }}>
+                                                                    <Flex gap={token.Custom.cardIconPadding}>
+                                                                        <Flex justify={'center'} align={'center'}
+                                                                              style={{
+                                                                                  width: 48,
+                                                                                  height: 48,
+                                                                                  borderRadius: 50,
+                                                                                  backgroundColor: 'red'
+                                                                              }}>
+                                                                            <Title level={5}
+                                                                                   className={cx(globalStyles.noSpace)}>{fullNameInitials(fullName)}</Title>
+                                                                        </Flex>
+
+                                                                        <Flex vertical
+                                                                              gap={token.Custom.cardIconPadding / 2}>
+                                                                            <Text>
+                                                                                <Ellipsis direction='end'
+                                                                                          content={displayFullName}/>
+                                                                            </Text>
+                                                                            <Text
+                                                                                type="secondary">${secondRowText}</Text>
+                                                                        </Flex>
+                                                                    </Flex>
+
+                                                                    <SVG icon={'edit-user'} size={23}
+                                                                         color={token.colorLink}/>
+
+                                                                </Flex>
+                                                                {(!isLastIndex) &&
+                                                                    <Divider className={styles.playersDivider}/>
+                                                                }
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </>
+
+                                            }
+                                            <Button type="primary"
+                                                    block
+                                                    ghost
+                                                    disabled={toBoolean(loadingState.SelectedReservationMembers)}
+                                                    htmlType={'button'}
+                                                    onClick={() => {
+                                                        let guestObject = {
+                                                            Index: isNullOrEmpty(formik?.values?.ReservationGuests?.length) ? 0 : formik.values.ReservationGuests.length,
+                                                            FirstName: '',
+                                                            LastName: '',
+                                                            PhoneNumber: '',
+                                                            GuestOwnerId: ''
+                                                        };
+
+                                                        let currentReservationGuests = formik.values.ReservationGuests || [];
+                                                        formik.setFieldValue('ReservationGuests', [...currentReservationGuests, guestObject]);
+
+                                                        setSelectedGuest(guestObject);
+                                                    }}>
+                                                Add Guest
+                                            </Button>
+                                        </Flex>
+                                    </Card>
+                                </div>
+                            }
                         </Flex>
 
                         <Divider className={globalStyles.formDivider}/>
@@ -1009,29 +1080,45 @@ function ReservationRegistration() {
                         onConfirmButtonClick={closeAndCheckMatchMakerData}
                     >
                         <PaddingBlock>
-                            <FormSelect form={formik}
-                                        name={`MatchMakerTypeId`}
-                                        label='Match Type'
-                                        options={matchTypes}
-                                        required={true}
-                                        propText='Name'
-                                        propValue='Id'/>
+                            {(anyInList(matchMaker?.MatchMakerTypes) && toBoolean(matchMaker?.IsMatchTypeEnabled)) &&
+                                <FormSelect form={formik}
+                                            name={`MatchMakerTypeId`}
+                                            label='Match Type'
+                                            options={matchMaker?.MatchMakerTypes}
+                                            required={true}
+                                            propText='Name'
+                                            propValue='Id'/>
+                            }
 
-                            <FormSelect form={formik}
-                                        name={`MatchMakerGender`}
-                                        label='Gender Restrictions'
-                                        options={[]}
-                                        required={true}
-                                        propText='Name'
-                                        propValue='Id'/>
+                            {toBoolean(matchMaker?.IsGenderCriteriaMatch) &&
+                                <FormSelect form={formik}
+                                            name={`MatchMakerGender`}
+                                            label='Gender Restrictions'
+                                            options={matchmakerGenderList}
+                                            required={true}
+                                            propText='Text'
+                                            propValue='Value'/>
+                            }
 
-                            <FormSelect form={formik}
-                                        name={`MatchMakerRatingCategoryId`}
-                                        label='Rating Restriction'
-                                        options={[]}
-                                        required={true}
-                                        propText='Name'
-                                        propValue='Id'/>
+                            {anyInList(matchMaker?.RatingCategoryIds) &&
+                                <FormSelect form={formik}
+                                            name={`MatchMakerRatingCategoryId`}
+                                            label='Rating Restriction'
+                                            options={[]}
+                                            required={true}
+                                            propText='Name'
+                                            propValue='Id'/>
+                            }
+
+                            {anyInList(matchMaker?.MemberGroupIds) &&
+                                <FormSelect form={formik}
+                                            name={`MatchMakerMemberGroupIds`}
+                                            label='Member Groups'
+                                            options={[]}
+                                            required={true}
+                                            propText='Text'
+                                            propValue='Value'/>
+                            }
 
                             <InlineBlock>
                                 <FormSelect form={formik}
@@ -1051,38 +1138,44 @@ function ReservationRegistration() {
                                             propValue='Id'/>
                             </InlineBlock>
 
-                            <InlineBlock>
-                                <FormSelect form={formik}
-                                            name={`MatchMakerMinNumberOfPlayers`}
-                                            label='Min. Players'
-                                            options={[]}
-                                            required={true}
-                                            propText='Name'
-                                            propValue='Id'/>
+                            {toBoolean(matchMaker?.IsAgeCriteriaMatch) &&
+                                <InlineBlock>
+                                    <FormSelect form={formik}
+                                                name={`MatchMakerMinAge`}
+                                                label='Min Age'
+                                                options={[]}
+                                                required={true}
+                                                propText='Name'
+                                                propValue='Id'/>
 
-                                <FormSelect form={formik}
-                                            name={`MatchMakerMaxNumberOfPlayers`}
-                                            label='Max. Players'
-                                            options={[]}
-                                            required={true}
-                                            propText='Name'
-                                            propValue='Id'/>
-                            </InlineBlock>
+                                    <FormSelect form={formik}
+                                                name={`MatchMakerMaxAge`}
+                                                label='Max Age'
+                                                options={[]}
+                                                required={true}
+                                                propText='Name'
+                                                propValue='Id'/>
+                                </InlineBlock>
+                            }
 
                             <FormTextarea form={formik}
                                           max={200}
                                           label={'What to expect in this match'}
                                           name={`Description`}/>
 
-                            <FormSwitch label={'Is this a private match'}
-                                        form={formik}
-                                        name={'MatchMakerIsPrivateMatch'}/>
+                            {toBoolean(matchMaker?.AllowPrivateMatches) &&
+                                <>
+                                    <FormSwitch label={'Is this a private match'}
+                                                form={formik}
+                                                name={'MatchMakerIsPrivateMatch'}/>
 
-                            {toBoolean(formik?.values?.MatchMakerIsPrivateMatch) &&
-                                <FormInput form={formik}
-                                           required={true}
-                                           label={'Join Code'}
-                                           name={`MatchMakerJoinCode`}/>
+                                    {toBoolean(formik?.values?.MatchMakerIsPrivateMatch) &&
+                                        <FormInput form={formik}
+                                                   required={true}
+                                                   label={'Join Code'}
+                                                   name={`MatchMakerJoinCode`}/>
+                                    }
+                                </>
                             }
                         </PaddingBlock>
                     </DrawerBottom>
@@ -1203,10 +1296,16 @@ function ReservationRegistration() {
                         <PaddingBlock>
                             {(anyInList(formik.values?.ReservationGuests) ? formik.values.ReservationGuests : []).map((guest, index) => {
                                 const showGuest = guest.Index === selectedGuest?.Index;
+                                const isOverriden = guest.IsOverriden;
+                                
                                 if (!showGuest) {
                                     return (<div key={index}></div>)
                                 }
 
+                                const hasGuestsWithPayment = formik?.values?.ReservationGuests?.some(v =>
+                                    (v.PaidAmt ?? 0) > 0 || v.PriceToPay > 0
+                                )
+                                
                                 return (
                                     <div key={index}>
                                         <FormInput label="First Name"
@@ -1226,39 +1325,53 @@ function ReservationRegistration() {
                                                    required={true}
                                                    name={`ReservationGuests[${index}].PhoneNumber`}
                                         />
-                                        
+
                                         {toBoolean(authData?.allowMembersToChangeGuestOwnerOnMemberPortal) &&
                                             <FormSelect form={formik}
                                                         name={`ReservationGuests[${index}].GuestOwnerId`}
                                                         label='Owner'
                                                         options={reservationMembers}
                                                         required={true}
-                                                        onValueChange={() => {reloadPlayers()}}
+                                                        onValueChange={() => {
+                                                            
+                                                            //reloadPlayers();
+                                                        }}
                                                         propText='FullName'
                                                         propValue='OrgMemberId'/>
                                         }
-                                        
-                                        {(!isNullOrEmpty(playersModelData?.ReservationId) && playersModelData?.ReservationId > 0) &&
+
+                                        {hasGuestsWithPayment &&
                                             <>
-                                                <FormInput label="Subtotal"
+                                                <FormInput label={isOverriden ? "Daily Cost" : "Cost"}
                                                            form={formik}
-                                                           required={true}
-                                                           name={`ReservationGuests[${index}].Subtotal`}
+                                                           name={isOverriden ? `ReservationGuests[${index}].OverriddenPrice` : `ReservationGuests[${index}].PriceToPay`}
                                                 />
+                                                
+                                                {(!isNullOrEmpty(playersModelData?.ReservationId) && playersModelData?.ReservationId > 0) &&
+                                                    <>
+                                                        <FormInput label="Subtotal"
+                                                                   form={formik}
+                                                                   required={true}
+                                                                   name={`ReservationGuests[${index}].Subtotal`}
+                                                        />
 
-                                                <FormInput label="Paid"
-                                                           form={formik}
-                                                           required={true}
-                                                           name={`ReservationGuests[${index}].PaidAmt`}
-                                                />
+                                                        <FormInput label="Paid"
+                                                                   form={formik}
+                                                                   required={true}
+                                                                   name={`ReservationGuests[${index}].PaidAmt`}
+                                                        />
 
-                                                <FormInput label="Due"
-                                                           form={formik}
-                                                           required={true}
-                                                           name={`ReservationGuests[${index}].TotalDue`}
-                                                />
+                                                        <FormInput label="Due"
+                                                                   form={formik}
+                                                                   required={true}
+                                                                   name={`ReservationGuests[${index}].TotalDue`}
+                                                        />
+                                                    </>
+                                                }
                                             </>
                                         }
+
+
                                     </div>
                                 )
                             })}
