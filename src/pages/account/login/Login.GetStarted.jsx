@@ -108,7 +108,7 @@ function LoginGetStarted() {
     return (
         <>
             <PaddingBlock>
-                <Title level={4}>Let’s get started!</Title>
+                <Title level={4}>Let’s Get Started!</Title>
 
                 <Paragraph>
                     Enter your email to get started. If you don't have

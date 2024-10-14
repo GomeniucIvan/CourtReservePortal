@@ -148,5 +148,15 @@
   "paymentProfile": {
     "addPaymentProfile" : "Create Payment Profile",
     "paymentDecline": "Payment Decline"
+  },
+  "login": {
+    "slide1Text": "Quick Reservations",
+    "slide1Description": "Easy court reservations for players and club admins",
+    "slide2Text": "Profile & Memberships",
+    "slide2Description": "Manage profiles, memberships and club communications",
+    "slide3Text": "Events & Schedules",
+    "slide3Description": "Join club events, view and manage schedules in one place",
+    "slide4Text": "Improve Stats",
+    "slide4Description": "Track performance stats and make data-driven improvements"
   }
 }

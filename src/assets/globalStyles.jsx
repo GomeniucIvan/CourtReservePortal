@@ -288,5 +288,23 @@ export const useStyles = createStyles(({ css, token }) => ({
       top: 0;
       z-index: 2;
       width: 100%;
+   `,
+   textCenter: css`
+    text-align: center;
+   `,
+   swiper: css`
+      .adm-page-indicator {
+         --dot-spacing: 6px;
+      }
+      
+      .adm-page-indicator-dot{
+         width: 12px;
+         height: 4px;
+         border-radius: 10px;
+      }
+      
+    .adm-page-indicator-dot-active{
+       width: 24px;
+    }
    `
 }));
