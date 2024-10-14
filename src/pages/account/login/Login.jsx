@@ -65,7 +65,7 @@ function Login() {
 
                     <Paragraph className={globalStyles.textCenter}>
                         Already have an account?
-                        <Link  style={{ fontWeight: 600 }}>
+                        <Link style={{ fontWeight: 600 }} onClick={() => navigate(AuthRouteNames.LOGIN_AUTHORIZE)}>
                             {' '}Log In
                         </Link>
                     </Paragraph>
