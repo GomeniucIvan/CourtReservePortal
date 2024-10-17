@@ -46,8 +46,7 @@ function Layout() {
         refreshData,
         setAvailableHeight,
         isMockData,
-        setIsLoading,
-        setNavigationLinks
+        setIsLoading
     } = useApp();
 
     const {safeAreaInsets} = useSafeArea();
@@ -55,15 +54,12 @@ function Layout() {
     const {
         memberId,
         orgId,
-        setAuthData,
         shouldLoadOrgData,
         setShouldLoadOrgData,
         setOrgId,
-        setMemberId,
-        authInitialized
+        setAuthorizationData,
+        memberData
     } = useAuth();
-
-    const {setPrimaryColor} = useAntd();
 
     if (isNullOrEmpty(currentRoute)) {
         currentRoute = dynamicPages.find(route => equalString(route.path, location.pathname));
@@ -81,11 +77,13 @@ function Layout() {
     }
 
     useEffect(() => {
-        if (authInitialized) {
-            const memberData = fromAuthLocalStorage('memberData', {});
-            const workingMemberId = memberData?.memberId || memberId;
-            const workingOrgId = memberData?.orgId || orgId;
+        const loadPrimaryData = async () => {
+            let authData = await memberData();
+            const workingMemberId = authData?.MemberId || memberId;
+            const workingOrgId = authData?.OrgId || orgId;
 
+            debugger;
+            
             //not authorized
             if (isNullOrEmpty(workingMemberId)) {
                 //not allowed unauthorized
@@ -107,11 +105,11 @@ function Layout() {
 
                 setIsFetching(false);
             }
-            
+
             //authorized with active orgid
             else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)) {
                 setOrgId(workingOrgId);
-                
+
                 //not allow to access login pages
                 if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
                     equalString(location.pathname, AuthRouteNames.LOGIN_GET_STARTED) ||
@@ -125,7 +123,9 @@ function Layout() {
                 setIsFetching(false);
             }
         }
-    }, [location, navigate, authInitialized]);
+
+        loadPrimaryData()
+    }, [location, navigate]);
 
     const calculateMaxHeight = () => {
         const windowHeight = window.innerHeight;
@@ -136,7 +136,7 @@ function Layout() {
         if (toBoolean(currentRoute?.fullHeight)) {
             calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
         }
-        
+
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
     };
@@ -215,92 +215,41 @@ function Layout() {
         if (isMockData) {
             setIsFetching(false);
         } else {
-            if (authInitialized) {
-                if (!isNullOrEmpty(orgId) && shouldLoadOrgData) {
-                    
-                    setIsFetching(true);
-                    setShouldLoadOrgData(false);
+            if (shouldLoadOrgData) {
 
-                    //logged but without bearer token
-                    //should refresh every day?!
-                    if (isNullOrEmpty(getBearerToken())) {
-                        appService.post('/app/MobileSso/ValidateAndCreateToken').then(r => {
-                            if (toBoolean(r?.IsValid)) {
-                                setBearerToken(r.Token);
-                                loadOrganizationData(orgId);
-                            }
-                        })
-                    } else {
-                        loadOrganizationData(orgId);
-                    }
-                }
+                setIsFetching(true);
+                setShouldLoadOrgData(false);
+
+                //logged but without bearer token
+                //should refresh every day?!
+                loadOrganizationData();
             }
         }
-    }, [orgId, shouldLoadOrgData, authInitialized]);
+    }, [shouldLoadOrgData]);
 
-    const loadOrganizationData = (orgId) => {
+    const loadOrganizationData = async (orgId) => {
         const memberData = fromAuthLocalStorage('memberData', {});
-        const memberId = memberData?.memberId;
+        const memberId = memberData?.MemberId;
 
-        appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`).then(response => {
-            if (response.IsValid) {
-                const responseData = response.Data;
-                console.log(responseData.RequestData)
-                setRequestData(responseData.RequestData);
-                
-                apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}`).then(
-                    innerResponse => {
-                        if (toBoolean(innerResponse?.IsValid)) {
-                            const memberResponseData = innerResponse.Data;
+        if (isNullOrEmpty(orgId)){
+            orgId = memberData?.OrgId;
+        }
+        
+        let requestData = await appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`);
 
-                            setMemberId(memberResponseData.MemberId);
-                            setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
+        if (requestData.IsValid) {
+            const responseData = requestData.Data;
+            setRequestData(responseData.RequestData);
 
-                            setAuthData({
-                                orgId: memberResponseData.OrganizationId,
-                                timezone: memberResponseData.TimeZone,
-                                uiCulture: memberResponseData.UiCulture,
-                                primaryColor: memberResponseData.DashboardButtonBgColor,
-                                memberId: memberResponseData.MemberId,
-                                hasActiveInstructors: memberResponseData.HasActiveInstructors,
-                                isUsingCourtWaitlisting: memberResponseData.IsUsingCourtWaitlisting,
-                                myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
-                                myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
-                                useOrganizedPlay: memberResponseData.UseOrganizedPlay,
-                                allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
-                                allowAbilityToSplitFeeAcrossReservationPlayers: memberResponseData.AllowAbilityToSplitFeeAcrossReservationPlayers,
-                                isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
-                                allowMembersToBookResources: memberResponseData.AllowMembersToBookResources,
-                            });
+            let authResponse = await apiService.authData(orgId);
 
-                            if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
-                                setPrimaryColor(memberResponseData.DashboardButtonBgColor);
-                            }
-                            //todo change to use effect
-                            toAuthLocalStorage('memberData', {
-                                orgId: memberResponseData.OrganizationId,
-                                timezone: memberResponseData.TimeZone,
-                                uiCulture: memberResponseData.UiCulture,
-                                primaryColor: memberResponseData.DashboardButtonBgColor,
-                                memberId: memberResponseData.MemberId,
-                                hasActiveInstructors: memberResponseData.HasActiveInstructors,
-                                isUsingCourtWaitlisting: memberResponseData.IsUsingCourtWaitlisting,
-                                myAccountHideMyEvents: memberResponseData.MyAccountHideMyEvents,
-                                myAccountHideWaitingList: memberResponseData.MyAccountHideWaitingList,
-                                useOrganizedPlay: memberResponseData.UseOrganizedPlay,
-                                allowMembersToChangeGuestOwnerOnMemberPortal: memberResponseData.AllowMembersToChangeGuestOwnerOnMemberPortal,
-                                allowAbilityToSplitFeeAcrossReservationPlayers: memberResponseData.AllowAbilityToSplitFeeAcrossReservationPlayers,
-                                isUsingPushNotifications: memberResponseData.IsUsingPushNotifications,
-                                allowMembersToBookResources: memberResponseData.AllowMembersToBookResources,
-                            });
-
-                            setIsFetching(false);
-                        }
-                    });
+            if (toBoolean(authResponse?.IsValid)) {
+                await setAuthorizationData(authResponse.Data);
+                setIsFetching(false);
             }
+        }
 
-            setIsLoading(false);
-        });
+        setIsLoading(false);
     }
 
     const skeletonArray = Array.from({length: 5});

@@ -25,7 +25,7 @@ import {useSafeArea} from "../../../context/SafeAreaContext.jsx";
 function Dashboard() {
     const { styles } = useStyles();
     const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,globalStyles  } = useApp();
-    const {orgId} = useAuth();
+    const {orgId, setAuthorizationData} = useAuth();
     const {safeAreaInsets} = useSafeArea();
     
     const [selectedOrganization, setSelectedOrganization] = useState(null);
@@ -50,15 +50,14 @@ function Dashboard() {
                 }
             }
 
-            apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}&loadWeatherData=true&includeDashboardData=true`).then(
-                innerResponse => {
-                    if (toBoolean(innerResponse?.IsValid)) {
-                        const memberResponseData = innerResponse.Data;
-                        setDashboardData(memberResponseData);
-                        toLocalStorage('dashboardData', memberResponseData);
-                        setIsFetching(false);
-                    }
-                });
+            apiService.authData(orgId,{loadWeatherData:true,includeDashboardData:true}).then(authResponse => {
+                if (toBoolean(authResponse?.IsValid)) {
+                    setAuthorizationData(authResponse.Data);
+                    setDashboardData(authResponse.Data);
+                    toLocalStorage('dashboardData', authResponse.Data);
+                    setIsFetching(false);
+                }
+            })
         }
         
         setIsLoading(false);

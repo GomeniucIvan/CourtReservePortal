@@ -5,17 +5,19 @@ import {useApp} from "../../../context/AppProvider.jsx";
 import {Button, Carousel, Flex, Typography} from "antd";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
-import {equalString} from "../../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import { Swiper } from 'antd-mobile'
 import SVG from "../../../components/svg/SVG.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {useTranslation} from "react-i18next";
+import {getBearerToken, setBearerToken} from "../../../api/api.jsx";
+import appService from "../../../api/app.jsx";
 const {Title, Text, Paragraph, Link} = Typography;
 
 function Login() {
     const navigate = useNavigate();
-    const {setIsFooterVisible, token, setHeaderRightIcons, globalStyles} = useApp();
+    const {setIsFooterVisible, token, setHeaderRightIcons, globalStyles, setFormikData} = useApp();
     const {memberId, logout} = useAuth();
     const location = useLocation();
     const {t} = useTranslation('');
@@ -23,6 +25,7 @@ function Login() {
     useEffect(() => {
         setIsFooterVisible(false);
         setHeaderRightIcons('');
+        setFormikData(null);
     }, []);
 
     useEffect(() => {

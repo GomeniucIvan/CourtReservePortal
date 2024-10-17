@@ -24,18 +24,12 @@ function LoginGetStarted() {
     useEffect(() => {
         setIsFooterVisible(false);
         setFooterContent('');
-        
-        if (isNullOrEmpty(getBearerToken())){
-            appService.post('/app/MobileSso/ValidateAndCreateToken').then(r => {
-                if (toBoolean(r?.IsValid)){
-                    setBearerToken(r.Token);
-                }
-            })
-        }
+        setFormikData(null);
     }, []);
 
     const startInitialValues = {
-        email: ''
+        email: '',
+        isFromGetStarted: true
     };
 
     const startValidationSchema = Yup.object({
@@ -86,7 +80,7 @@ function LoginGetStarted() {
                             });
                         } else if (equalString(response.Data, 1)) {
                             setFormikData(values);
-                            navigate(AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION);
+                            navigate(AuthRouteNames.LOGIN_AUTHORIZE);
                         }
                     } else {
                         ModalClose({

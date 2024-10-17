@@ -30,11 +30,9 @@ function LoginVerificationCode() {
         setFormikData,
         isMockData,
         setIsFooterVisible,
-        globalStyles,
-        setFooterContent
+        globalStyles
     } = useApp();
-    const {setMemberId, setOrgId, setShouldLoadOrgData, setAuthData} = useAuth();
-    const {setPrimaryColor} = useAntd();
+    const {setShouldLoadOrgData, setAuthorizationData} = useAuth();
 
     const email = formikData?.email;
     const password = formikData?.password;
@@ -116,37 +114,15 @@ function LoginVerificationCode() {
                             const responseData = response.Data;
                             setRequestData(responseData.RequestData);
 
-                            apiService.post(`/api/dashboard/member-navigation-data?orgId=${responseData.OrgId}&loadWeatherData=true&includeDashboardData=true`).then(
-                                innerResponse => {
-                                    if (toBoolean(innerResponse?.IsValid)){
-                                        const memberResponseData = innerResponse.Data;
-                                        
-                                        setOrgId(memberResponseData.OrganizationId);
-                                        setMemberId(memberResponseData.MemberId);
-                                        setAuthData({
-                                            timezone: memberResponseData.TimeZone,
-                                            uiCulture: memberResponseData.UiCulture
-                                        });
+                            apiService.authData(responseData.OrgId, {loadWeatherData:true,includeDashboardData:true}).then(authResponse => {
+                                if (toBoolean(authResponse?.IsValid)) {
+                                    setAuthorizationData(authResponse.Data);
+                                    setShouldLoadOrgData(false);
 
-                                        if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
-                                            setPrimaryColor(memberResponseData.DashboardButtonBgColor);
-                                        }
-
-                                        toAuthLocalStorage('memberData', {
-                                            orgId: memberResponseData.OrganizationId,
-                                            timezone: memberResponseData.TimeZone,
-                                            uiCulture: memberResponseData.UiCulture,
-                                            primaryColor: memberResponseData.DashboardButtonBgColor,
-                                            memberId: memberResponseData.MemberId,
-                                        });
-
-                                        toLocalStorage('dashboardData', memberResponseData);
-                                        setShouldLoadOrgData(false);
-
-                                        //always last
-                                        navigate(response.Path);
-                                    }
-                                });
+                                    //always last
+                                    //navigate(response.Path);
+                                }
+                            })
                         }
 
                         setIsLoading(false);

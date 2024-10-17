@@ -61,19 +61,19 @@ const bookingTypesFunc = () => {
 
     types.push({Text: 'reservations', Value: 1})
 
-    if (toBoolean(memberData?.isUsingCourtWaitlisting)){
+    if (toBoolean(memberData?.IsUsingCourtWaitlisting)){
         types.push({Text: 'courtWaitlist', Value: 2})
     }
 
-    if (toBoolean(memberData?.hasActiveInstructors)){
+    if (toBoolean(memberData?.HasActiveInstructors)){
         types.push({Text: 'lessons', Value: 3});
     }
 
-    if (!toBoolean(memberData?.myAccountHideMyEvents)){
+    if (!toBoolean(memberData?.MyAccountHideMyEvents)){
         types.push({Text: 'eventRegistered', Value: 4});
     }
 
-    if (!toBoolean(memberData?.myAccountHideWaitingList)){
+    if (!toBoolean(memberData?.MyAccountHideWaitingList)){
         types.push({Text: 'eventWaitlist', Value: 5});
     }
 

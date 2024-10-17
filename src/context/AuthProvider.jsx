@@ -1,75 +1,69 @@
 ﻿import {createContext, useContext, useEffect, useState} from 'react';
-import {clearAllLocalStorage, fromAuthLocalStorage} from "../storage/AppStorage.jsx";
-import {nullToEmpty} from "../utils/Utils.jsx";
+import {clearAllLocalStorage, fromAuthLocalStorage, toAuthLocalStorage} from "../storage/AppStorage.jsx";
+import {isNullOrEmpty, nullToEmpty} from "../utils/Utils.jsx";
 import {setClientUiCulture} from "../utils/DateUtils.jsx";
 import appService from "../api/app.jsx";
 import {useNavigate} from "react-router-dom";
+import {stringToJson} from "../utils/ListUtils.jsx";
+import {useAntd} from "./AntdProvider.jsx";
+import {useApp} from "./AppProvider.jsx";
+import {setRequestData} from "../api/api.jsx";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({children}) => {
     const [orgId, setOrgId] = useState(null);
-    const [authInitialized, setAuthInitialized] = useState(false);
+    const [spGuideId, setSpGuideId] = useState(null);
     const [shouldLoadOrgData, setShouldLoadOrgData] = useState(true);
-    const [memberId, setMemberId] = useState();
     const [authData, setAuthData] = useState(null);
     const navigate = useNavigate();
+    const {setPrimaryColor} = useAntd();
+    const {setNavigationLinks} = useApp();
     
-    useEffect(() => {
+    const memberData = async () => {
         const memberData = fromAuthLocalStorage('memberData', {});
-        
-        setOrgId(nullToEmpty(memberData.orgId))
-        setMemberId(nullToEmpty(memberData.memberId));
-        
-        setAuthData({
-            timezone: nullToEmpty(memberData.timezone),
-            timeZone: nullToEmpty(memberData.timezone),
-            uiCulture: nullToEmpty(memberData.uiCulture),
-            primaryColor: nullToEmpty(memberData.primaryColor),
-            memberId: nullToEmpty(memberData.memberId),
-            hasActiveInstructors: nullToEmpty(memberData.hasActiveInstructors),
-            isUsingCourtWaitlisting: nullToEmpty(memberData.isUsingCourtWaitlisting),
-            myAccountHideMyEvents: nullToEmpty(memberData.myAccountHideMyEvents),
-            myAccountHideWaitingList: nullToEmpty(memberData.myAccountHideWaitingList),
-            
-            useOrganizedPlay: nullToEmpty(memberData.useOrganizedPlay),
-            isUsingPushNotifications: nullToEmpty(memberData.isUsingPushNotifications),
-            allowMembersToChangeGuestOwnerOnMemberPortal: nullToEmpty(memberData.allowMembersToChangeGuestOwnerOnMemberPortal),
-            allowAbilityToSplitFeeAcrossReservationPlayers: nullToEmpty(memberData.allowAbilityToSplitFeeAcrossReservationPlayers),
-            allowMembersToBookResources: nullToEmpty(memberData.AllowMembersToBookResources),
-        })
 
-        setClientUiCulture(memberData.uiCulture);
-        setAuthInitialized(true);
-    }, []);
+        if (!isNullOrEmpty(memberData) && !isNullOrEmpty(memberData.MemberId)){
+            setAuthData(memberData)
+            setClientUiCulture(memberData.uiCulture);
+            setNavigationLinks(stringToJson(memberData.NavigationLinksJson));
+            setOrgId(memberData.OrgId);
+            if (!isNullOrEmpty(memberData.DashboardButtonBgColor)) {
+                setPrimaryColor(memberData.DashboardButtonBgColor);
+            }
+        }
+        return memberData;
+    }
 
     const logout = async () => {
         clearAllLocalStorage();
         
         setOrgId(null);
-        setMemberId(null);
-        setAuthData({
-            timezone: '',
-            timeZone: '',
-            uiCulture: '',
-            currency: '',
-            primaryColor: '',
-            memberId: '',
-            hasActiveInstructors: '',
-            isUsingCourtWaitlisting: '',
-            myAccountHideMyEvents: '',
-            myAccountHideWaitingList: '',
-            useOrganizedPlay: '',
-            isUsingPushNotifications: '',
-            allowMembersToChangeGuestOwnerOnMemberPortal: '',
-            allowAbilityToSplitFeeAcrossReservationPlayers: '',
-            allowMembersToBookResources: ''
-        });
+        setAuthData(null);
         
         appService.get(navigate, '/app/online/logout').then(r => {
             console.log('Login logout');
         })
+        
+        return true;
+    }
+    
+    const setAuthorizationData = async (memberResponseData) => {
+        setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
+        
+        console.log(memberResponseData)
+        if (!isNullOrEmpty(memberResponseData.RequestData)){
+            setRequestData(memberResponseData.RequestData)
+        }
+        
+        if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
+            setPrimaryColor(memberResponseData.DashboardButtonBgColor);
+        }
+
+        setAuthData(memberResponseData);
+        toAuthLocalStorage('memberData', memberResponseData);
+        setOrgId(memberResponseData.OrgId);
         
         return true;
     }
@@ -80,12 +74,12 @@ export const AuthProvider = ({children}) => {
             setAuthData,
             setOrgId,
             orgId,
-            memberId,
-            setMemberId,
             shouldLoadOrgData,
             setShouldLoadOrgData,
-            authInitialized,
-            logout
+            spGuideId,
+            setAuthorizationData,
+            logout,
+            memberData
         }}>
             {children}
         </AuthContext.Provider>

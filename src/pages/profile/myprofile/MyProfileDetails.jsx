@@ -367,7 +367,7 @@ function MyProfileDetails({selectedTab}) {
                         rows={2}
                         name={'unsubscribeFromMarketingEmails'}/>
 
-            {toBoolean(authData?.useOrganizedPlay) &&
+            {toBoolean(authData?.UseOrganizedPlay) &&
                 <FormSwitch label={t('profile.doNotAllowOtherPlayersToLinkMyProfile')}
                             form={formik}
                             loading={isFetching}
@@ -375,7 +375,7 @@ function MyProfileDetails({selectedTab}) {
                             name={'doNotAllowOtherPlayersToLinkMyProfile'}/>
             }
 
-            {toBoolean(authData?.isUsingPushNotifications) &&
+            {toBoolean(authData?.IsUsingPushNotifications) &&
                 <FormSwitch label={t('profile.unsubscribeFromMarketingPushNotifications')}
                             form={formik}
                             loading={isFetching}

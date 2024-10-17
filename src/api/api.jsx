@@ -1,4 +1,6 @@
 ﻿import axios from 'axios';
+import {isNullOrEmpty, toBoolean} from "../utils/Utils.jsx";
+import appService from "./app.jsx";
 
 let bearerToken = '';
 let requestData = '';
@@ -20,6 +22,18 @@ export const setRequestData = (reqData) => {
 export const getRequestData = () => {
     return requestData;
 };
+
+const loadBearerToken = async () => {
+    if (isNullOrEmpty(getBearerToken())) {
+        const tokenResponse = await appService.post('/app/MobileSso/ValidateAndCreateToken');
+        if (toBoolean(tokenResponse?.IsValid)) {
+            setBearerToken(tokenResponse.Token);
+            return true;
+        }
+    } else{
+        return true;
+    }
+}
 
 const axiosInstance = axios.create({
     baseURL: backendUrl,
@@ -59,6 +73,8 @@ axiosInstance.interceptors.response.use(
 const apiService = {
     get: async (url, params = {}, config = {}) => {
         try {
+            await loadBearerToken();
+            
             const response = await axiosInstance.get(url, {params, ...config});
             let responseData = response.data;
 
@@ -91,6 +107,8 @@ const apiService = {
     },
 
     post: async (url, data = {}, config = {}) => {
+        await loadBearerToken();
+        
         try {
             const response = await axiosInstance.post(url, data, {...config});
             let responseData = response.data;
@@ -120,6 +138,12 @@ const apiService = {
                 message: 'Something wrong, API49-Error'
             }
         }
+    },
+
+    authData: async (orgId, data) => {
+        await loadBearerToken();
+
+        return await apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}&loadWeatherData=${toBoolean(data?.loadWeatherData)}&includeDashboardData=${toBoolean(data?.includeDashboardData)}`);
     }
 };
 

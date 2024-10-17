@@ -197,7 +197,7 @@ function ReservationRegistration() {
                     setMatchMakerShowSportTypes(matchMakerShowSportTypes);
                     setMatchMakerMemberGroups(r.Data.MatchMakerMemberGroups);
                     setMatchMakerRatingCategories(r.Data.MatchMakerRatingCategories);
-                    setShowResources(r.Data.ShowResources && toBoolean(authData?.allowMembersToBookResources));
+                    setShowResources(r.Data.ShowResources && toBoolean(authData?.AllowMembersToBookResources));
                     setCustomFields(incResData.Udf || []);
 
                     if (toBoolean(r.Data.Disclosure?.Show)) {
@@ -272,7 +272,7 @@ function ReservationRegistration() {
                 reservationTypeId: formik?.values?.ReservationTypeId,
                 startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
                 selectedDate: dateTimeToFormat(start, 'MM/DD/YYYY'),
-                uiCulture: authData?.uiCulture,
+                uiCulture: authData?.UiCulture,
                 useMinTimeAsDefault: reservation?.UseMinTimeByDefault,
                 courtId: formik?.values?.CourtId,
                 courtType: reservation?.CourtTypeEnum,
@@ -297,7 +297,7 @@ function ReservationRegistration() {
 
             let udfData = {
                 reservationTypeId: formik?.values?.ReservationTypeId,
-                uiCulture: authData?.uiCulture,
+                uiCulture: authData?.UiCulture,
             }
 
             appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`).then(rUdf => {
@@ -315,7 +315,7 @@ function ReservationRegistration() {
                 reservationTypeId: formik?.values?.ReservationTypeId,
                 startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
                 selectedDate: dateTimeToFormat(start, 'MM/DD/YYYY'),
-                uiCulture: authData?.uiCulture,
+                uiCulture: authData?.UiCulture,
                 duration: formik?.values?.Duration
             }
 
@@ -342,7 +342,7 @@ function ReservationRegistration() {
                 MembershipId: reservation?.MembershipId,
                 ReservationTypeId: formik?.values?.ReservationTypeId,
                 customSchedulerId: reservation?.CustomSchedulerId,
-                uiCulture: authData?.uiCulture,
+                uiCulture: authData?.UiCulture,
                 duration: formik?.values?.Duration
             }
 
@@ -493,8 +493,8 @@ function ReservationRegistration() {
             StartTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
             EndTime: endTime || formik?.values?.EndTime,
             CourtTypesString: courtType,
-            UiCulture: authData?.uiCulture,
-            timeZone: authData?.timezone,
+            UiCulture: authData?.UiCulture,
+            timeZone: authData?.TimeZone,
             customSchedulerId: customSchedulerId,
             instructorId: reservation.InstructorId,
             Duration: formik?.values?.Duration,
@@ -872,7 +872,7 @@ function ReservationRegistration() {
                                 message={<div><strong>Reservation TypeName</strong> min number... 5 minutes note</div>}
                                 type="info"/>
 
-                            {toBoolean(authData?.allowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
+                            {toBoolean(authData?.AllowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
                                 <div>
                                     <label style={{
                                         fontSize: token.Form.labelFontSize,
