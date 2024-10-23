@@ -16,7 +16,7 @@ import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/Schedu
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "../../api/app.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {dateToString, dateToTimeString, fixDate, toReactDate} from "../../utils/DateUtils.jsx";
+import {toReactDate} from "../../utils/DateUtils.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
 import dayjs from "dayjs";
 import apiService from "../../api/api.jsx";

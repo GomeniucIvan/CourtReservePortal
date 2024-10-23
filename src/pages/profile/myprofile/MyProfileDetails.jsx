@@ -15,7 +15,7 @@ import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/U
 import appService from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
-import {dateToString, isNonUsCulture} from "../../../utils/DateUtils.jsx";
+import {isNonUsCulture, toReactDate} from "../../../utils/DateUtils.jsx";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
 import FormRatingCategories from "../../../form/formratingcategories/FormRatingCategories.jsx";
 import {getRatingCategoriesList, getUserDefinedFieldsList} from "../../../utils/ListUtils.jsx";
@@ -47,7 +47,7 @@ function MyProfileDetails({selectedTab}) {
         let valuesToSet = {
             firstName: data.FirstName || '',
             lastName: data.LastName || '',
-            dateOfBirthString:  dateToString(data.DateOfBirth?.DateOfBirth),
+            dateOfBirthString:  toReactDate(data.DateOfBirth?.DateOfBirth),
             gender: data.Gender || '',
             email: data.Email || '',
             username: data.Username || '',

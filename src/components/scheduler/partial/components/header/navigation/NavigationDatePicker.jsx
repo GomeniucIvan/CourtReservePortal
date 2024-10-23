@@ -98,7 +98,11 @@ export const NavigationDatePicker = React.forwardRef((
 
                 props.onChange.call(undefined, {
                     ...event,
-                    value: normalizedValue
+                    value: normalizedValue,
+                    isMonthView: isMonthView,
+                    isWeekOrAgenda: isWeekOrAgenda,
+                    dateRangeStart: isWeekOrAgenda ? ZonedDate.fromUTCDate(toUTCDateTime(dateRange.start), timezone) : null,
+                    dateRangeEnd: isWeekOrAgenda ? ZonedDate.fromUTCDate(toUTCDateTime(dateRange.end), timezone) : null,
                 });
             }
 

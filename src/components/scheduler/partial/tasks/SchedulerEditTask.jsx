@@ -45,13 +45,13 @@ export const SchedulerEditTask = React.forwardRef((
 
     const [data, dispatchData] = useSchedulerDataContext();
 
-    const [series, setSeries] = React.useState<boolean | null>(null);
+    const [series, setSeries] = React.useState(null);
     const [removeItem, setRemoveItem]
-        = useControlledState<DataItem | null>(null, propRemoveItem, onRemoveItemChange);
+        = useControlledState(null, propRemoveItem, onRemoveItemChange);
     const [showRemoveDialog, setShowRemoveDialog]
-        = useControlledState<boolean>(false, propShowRemoveDialog, onShowRemoveDialogChange);
+        = useControlledState(false, propShowRemoveDialog, onShowRemoveDialogChange);
     const [showOccurrenceDialog, setShowOccurrenceDialog]
-        = useControlledState<boolean>(false, propShowOccurrenceDialog, onShowOccurrenceDialogChange);
+        = useControlledState(false, propShowOccurrenceDialog, onShowOccurrenceDialogChange);
 
     const handleRemoveClick = React.useCallback(
         (event) => {
@@ -176,31 +176,95 @@ export const SchedulerEditTask = React.forwardRef((
         ]
     );
 
+    let dataItem = taskProps.dataItem;
+    let showSignUpLink = true;
+    let displayOrganziersOnCalendar = true;
+    let showEventAvailableSlotsOnMemberPortal = true;
+    let isMemberLoggedIn = true;
+    
     return (
-        <SchedulerEditTaskContext
-            remove={[removeItem, handleRemoveItemChange]}
-            showRemoveDialog={[showRemoveDialog, handleRemoveDialogChange]}
-            showOccurrenceDialog={[showOccurrenceDialog, handleOccurrenceDialogChange]}
-        >
-            <VieTask
-                _ref={viewTask}
-                {...taskProps}
+        <SchedulerEditTaskContext>
+            <div
+                style={{ background: dataItem.EventTypeBgColor, color: dataItem.EventTypeTextColor }}
+                data-href={`/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`}
+            >
+                <div className="reservation-container">
+                    <a
+                        href={
+                            showSignUpLink
+                                ? `/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`
+                                : "#"
+                        }
+                        className="link-reservation-update"
+                        style={{ color: dataItem.EventTypeTextColor }}
+                    >
+                        <span className="template-d-mobile-block">{dataItem.EventName}</span>
+                        {displayOrganziersOnCalendar && dataItem.OranizersDisplay && (
+                            <span>({dataItem.OranizersDisplay})</span>
+                        )}
+                    </a>
 
-                onRemoveClick={handleRemoveClick}
-            />
-            {(showOccurrenceDialog) && (<OccurrenceDialog
-                dataItem={removeItem}
-                isRemove={removeItem !== null}
-                onClose={handleCancel}
-                onOccurrenceClick={handleOccurrenceClick}
-                onSeriesClick={handleSeriesClick}
-            />)}
-            {(showRemoveDialog) && (<RemoveDialog
-                dataItem={removeItem}
-                onClose={handleCancel}
-                onCancel={handleCancel}
-                onConfirm={handleRemoveConfirm}
-            />)}
+                    {/* Event note, if available */}
+                    {dataItem.EventNote && (
+                        <span className="template-d-mobile-block"> {dataItem.EventNote}</span>
+                    )}
+
+                    {/* Handle in-past or slot information */}
+                    {!dataItem.InPast && (
+                        <>
+                            {dataItem.ShowSlotInfo && showEventAvailableSlotsOnMemberPortal && (
+                                <span style={{ fontStyle: "italic" }}>{dataItem.SlotsInfo}</span>
+                            )}
+                            {dataItem.IsFull && showEventAvailableSlotsOnMemberPortal && (
+                                <span className="label label-danger full-event">&nbsp;FULL&nbsp;</span>
+                            )}
+
+                            {/* Conditional rendering for registration or waitlist */}
+                            {isMemberLoggedIn && (
+                                <>
+                                    {dataItem.AllowWaitList &&
+                                    !dataItem.IsMemberInWaitList &&
+                                    !dataItem.IsMemberRegistered &&
+                                    dataItem.IsMemberRegistered ? (
+                                        <a
+                                            className="label"
+                                            style={{
+                                                fontSize: "75%",
+                                                fontWeight: "normal",
+                                                backgroundColor: "#9a9a9a",
+                                            }}
+                                            href={`/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`}
+                                        >
+                                            Registered
+                                        </a>
+                                    ) : null}
+                                </>
+                            )}
+                        </>
+                    )}
+
+                    {/* Sign-up or registration link for mobile layout */}
+                    {showSignUpLink && (
+                        <a
+                            className="template-d-mobile-block d-block"
+                            href={`/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`}
+                            style={{
+                                textDecoration: "underline",
+                                fontWeight: "bold",
+                                color: dataItem.EventTypeTextColor
+                            }}
+                        >
+                            {(dataItem.IsFull && dataItem. AllowWaitList)
+                                ? dataItem.IsMemberInWaitList
+                                    ? "EDIT WAITLIST"
+                                    : "JOIN WAITLIST"
+                                : dataItem.IsMemberRegistered
+                                    ? "EDIT REGISTRATION"
+                                    : "REGISTER"}
+                        </a>
+                    )}
+                </div>
+            </div>
         </SchedulerEditTaskContext>
     );
 });

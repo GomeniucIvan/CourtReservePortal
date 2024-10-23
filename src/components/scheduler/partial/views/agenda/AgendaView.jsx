@@ -87,7 +87,7 @@ export const AgendaView = (props) => {
 
     React.useMemo(() => mapItemsToSlots(items, slots, true), [items, slots]);
     React.useMemo(() => mapSlotsToItems(items, slots, true), [items, slots]);
-
+    
     return (
         <BaseView
             ref={element}
@@ -152,9 +152,11 @@ export const AgendaView = (props) => {
                                                     ? slot.items.map((item, itemIndex) => (
                                                         <div className="k-scheduler-row" key={itemIndex}>
                                                             <div className="k-scheduler-cell k-scheduler-timecolumn">
-                                                               
+                                                                {item.isAllDay
+                                                                    ? localization.toLanguageString(allDay, messages[allDay])
+                                                                    : getTimeFormat(intl, item)}
                                                             </div>
-                                                            <div className="k-scheduler-cell">
+                                                            <div className="k-scheduler-cell k-cell-agenda">
                                                                 <EditTask
                                                                     key={`${slotIndex}:${itemIndex}`}
                                                                     {...item}

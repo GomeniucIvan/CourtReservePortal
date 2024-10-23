@@ -500,7 +500,7 @@ export const useStyles = createStyles(({ css, token }) => ({
 
         .k-scheduler-layout {
             width: 100%;
-            -webkit-flex: 1 1 auto;
+            -webkit-flex: 0 1 auto;
             -ms-flex: 1 1 auto;
             border-top: 1px solid;
             border-color: ${token.colorBorder} !important;

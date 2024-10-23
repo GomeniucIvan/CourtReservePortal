@@ -82,8 +82,6 @@ function Layout() {
             const workingMemberId = authData?.MemberId || memberId;
             const workingOrgId = authData?.OrgId || orgId;
 
-            debugger;
-            
             //not authorized
             if (isNullOrEmpty(workingMemberId)) {
                 //not allowed unauthorized

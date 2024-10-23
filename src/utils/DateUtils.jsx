@@ -183,7 +183,7 @@ export const dateToString = (incDate) => {
     if (isNullOrEmpty(incDate)){
         return '';
     }
-    
+
     const fixedDate = fixDate(incDate);
     const date = dayjs(fixedDate).utc();
     return date.format(dateFormatByUiCulture());
@@ -194,13 +194,11 @@ export const dateToTimeString = (incDate, twentyFourHourFormat) => {
         return '';
     }
 
-    const fixedDate = fixDate(incDate);
-    const date = dayjs(fixedDate).utc();
     if (twentyFourHourFormat){
-        return date.format('HH:mm');
+        return moment(incDate).format('HH:mm');
     }
     
-    return date.format('H:mm'); 
+    return moment(incDate).format('H:mm'); 
 }
 
 export const isNonUsCulture = () => {

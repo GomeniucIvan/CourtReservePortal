@@ -1,6 +1,6 @@
 ﻿import Scheduler from "../../../components/scheduler/Scheduler.jsx";
 import React, {useEffect, useState} from "react";
-import {Button, Segmented, Space} from "antd";
+import {Button, Flex, Segmented, Skeleton, Space} from "antd";
 import {FilterOutlined} from "@ant-design/icons";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {InnerScheduler} from "../../../components/scheduler/partial/InnerScheduler.jsx";
@@ -12,6 +12,14 @@ import {Typography} from "antd";
 import mockData from "../../../mocks/scheduler-data.json";
 import EventCalendarItem from "./EventCalendarItem.jsx";
 import '@progress/kendo-date-math/tz/America/New_York';
+import {useNavigate} from "react-router-dom";
+import appService, {apiRoutes} from "../../../api/app.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {dateToTimeString, toAspNetDateTime, toReactDate} from "../../../utils/DateUtils.jsx";
+import {useAuth} from "../../../context/AuthProvider.jsx";
+import dayjs from "dayjs";
+import apiService from "../../../api/api.jsx";
+import {emptyArray} from "../../../utils/ListUtils.jsx";
 
 const {Text} = Typography
 
@@ -21,22 +29,20 @@ function EventCalendar() {
     const [selectedView, setSelectedView] = useState('Day');
     const {availableHeight, isMockData} = useApp();
     const [events, setEvents] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(new Date('8-27-2024 7:00:00'));
+    const [selectedDate, setSelectedDate] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isSchedulerInitializing, setIsSchedulerInitializing] = useState(true);
+    const [timeZone, setTimeZone] = useState('');
+    const [minDate, setMinDate] = useState(null);
+    const [maxDate, setMaxDate] = useState(null);
+    const navigate = useNavigate();
+    const [interval, setInterval] = useState(15);
+    const [startTimeString, setStartTimeString] = useState('')
+    const [endTimeString, setEndTimeString] = useState('')
+    const [schedulerData, setSchedulerData] = useState(null);
+
+    const {orgId} = useAuth();
     
-    const hideReserveButtonsOnAdminSchedulers = false;
-    const allowSchedulerDragAndDrop = false;
-    const doNotShowMultipleReservations = true;
-    const shouldHideReserveButton = false;
-
-    //todo
-    const startTimeString = '8:00';
-    const endTimeString = '20:00';
-
-    let timeZone = 'America/New_York';
-    let interval = 15;
-    let customSchedulerId = null;
-
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(null);
@@ -69,64 +75,143 @@ function EventCalendar() {
                 setEvents(formattedEvents)
             }, 400);
         }
+        else{
+            appService.get(navigate, `/app/Online/Calendar/Events/${orgId}`).then(r => {
+                if (toBoolean(r?.IsValid)){
+                    const model = r.Data;
+                    
+                    setStartTimeString(dateToTimeString(model.MinOpenTime, true));
+                    setEndTimeString(dateToTimeString(model.MaxCloseTime, true));
+
+                    setSchedulerData(model);
+
+                    const dateToShow = toReactDate(model.SchedulerDate);
+                    setMinDate(dateToShow);
+                    setTimeZone(model.TimeZone);
+                    setInterval(model.MinInterval);
+
+                    setIsSchedulerInitializing(false);
+
+                    //always last
+                    setSelectedDate(dateToShow);
+                } else{
+                    navigate(r.Path);
+                }
+            })
+        }
     }, []);
 
 
-    const shouldHideButton = (courtId, slotStartInc, slotEndInc) => {
-        if (!shouldHideReserveButton) {
-            return false;
-        }
+    useEffect(() => {
+        if (!isNullOrEmpty(selectedDate) && schedulerData){
 
-        const slotStart = new Date(slotStartInc);
-        const slotEnd = new Date(slotEndInc);
-
-        const eventsOfCurrentCourt = events.filter(event => event.CourtId === courtId);
-        if (eventsOfCurrentCourt.length <= 0) {
-            return false;
-        }
-
-        for (let event of eventsOfCurrentCourt) {
-            const eventStart = new Date(event.Start);
-            const eventEnd = new Date(event.End);
-
-            if ((eventStart <= slotStart && eventEnd > slotStart) || (eventStart < slotEnd && eventEnd > slotStart) || (eventStart <= slotStart && eventEnd >= slotEnd) || (eventStart >= slotStart && eventEnd <= slotEnd)) {
-                return true;
+            let startDayToPass = null;
+            let endDayToPass = null;
+            const selectedDateObj = dayjs(selectedDate);
+            
+            if (equalString(selectedView, 'day')) {
+                startDayToPass = selectedDateObj.startOf('day');
+                endDayToPass = selectedDateObj.endOf('day');
             }
+            else if (equalString(selectedView, 'week')) {
+                startDayToPass = selectedDateObj.startOf('isoWeek');
+                endDayToPass = selectedDateObj.endOf('isoWeek');
+            }
+            else if (equalString(selectedView, 'month')) {
+                startDayToPass = selectedDateObj.startOf('month');
+                endDayToPass = selectedDateObj.endOf('month');
+            }
+            else if (equalString(selectedView, 'agenda')) {
+                // Example: Next 30 days from the selected date
+                startDayToPass = selectedDateObj.startOf('day');
+                endDayToPass = selectedDateObj.add(30, 'days').endOf('day');
+            }
+            
+            const result = {
+                startDate: toAspNetDateTime(selectedDate),
+                //end: scheduler.view().endDate(),
+                orgId: orgId,
+                TimeZone: schedulerData.TimeZone,
+                Date: new Date(selectedDate).toUTCString(),
+                KendoStart: {
+                    Year: dayjs(startDayToPass).year(),
+                    Month: dayjs(startDayToPass).month() + 1,
+                    Day: dayjs(startDayToPass).date()
+                },
+                KendoEnd: {
+                    Year: dayjs(endDayToPass).year(),
+                    Month: dayjs(endDayToPass).month() + 1,
+                    Day: dayjs(endDayToPass).date()
+                },
+                UiCulture: schedulerData.UiCulture,
+                CostTypeId: schedulerData.CostTypeId,
+                MemberId: schedulerData.MemberId,
+                FamilyId: schedulerData.FamilyId,
+            }
+            
+            appService.get(navigate, `/app/Online/Calendar/ReadCalendarEvents?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
+                console.log(resp.Data);
+
+                const formattedEvents = resp.Data.map(event => ({
+                    ...event,
+                    Start: toReactDate(event.Start),
+                    start: toReactDate(event.Start),
+                    End: toReactDate(event.End),
+                    end: toReactDate(event.End),
+
+                    isAllDay: false,
+                    IsAllDay: false,
+                }));
+                
+                console.log(formattedEvents)
+                setEvents(formattedEvents);
+                setLoading(false);
+            });
         }
-
-        return false;
-    };
-
-    const onDoubleClickCreate = (courtId, start, end) => {
-
-    }
+    }, [selectedDate, selectedView]);
 
     const handleDateChange = (event) => {
-
+        const selectedDate = event.value;
+        setSelectedDate(selectedDate);
     }
 
-    const handleDataChange = () => {
-
-    }
-
-    const openReservationCreateModal = () => {
-
+    const handleDataChange = (event) => {
+        console.log(event);
     }
 
     const modelFields = {
-        id: "UqId",
-        title: "Title",
-        description: "Description",
+        id: "Number",
         start: "Start",
         end: "End",
+        title: "Title",
+        description: "Description",
         recurrenceRule: "RecurrenceRule",
-        recurrenceId: "RecurrenceId",
         recurrenceExceptions: "RecurrenceException",
-        startTimezone: "StartTimezone",
-        endTimezone: "EndTimezone",
         isAllDay: "isAllDay",
     };
 
+    if (isSchedulerInitializing){
+        return (
+            <Flex vertical={true} gap={2} style={{overflow: 'auto'}}>
+                <>
+                    {emptyArray().map((item, index) => (
+                        <div key={index} className={globalStyles.skeletonTable}>
+                            <Flex gap={1}>
+                                <Skeleton.Input active={true} block style={{width: '120px', height: (index === 0 ? '45px' : '60px')}}/>
+
+                                <>
+                                    {emptyArray(4).map((innerItem, innerIndex) => (
+                                        <Skeleton.Input key={innerIndex}  active={true} block style={{width: '160px', height: (index === 0 ? '45px' : '60px')}}/>
+                                    ))}
+                                </>
+                            </Flex>
+                        </div>
+                    ))}
+                </>
+            </Flex>
+        )
+    }
+    
     return (
         <div>
             <InnerScheduler
@@ -142,14 +227,9 @@ function EventCalendar() {
                 modelFields={modelFields}
                 selectedView={selectedView}
                 height={availableHeight}
-                editable={{
-                    add: doNotShowMultipleReservations,
-                    remove: false,
-                    drag: allowSchedulerDragAndDrop,
-                    resize: allowSchedulerDragAndDrop,
-                    select: allowSchedulerDragAndDrop,
-                    edit: false,
-                }}
+                editable={false}
+                minDate={minDate}
+                maxDate={maxDate}
                 interval={interval}
             >
 

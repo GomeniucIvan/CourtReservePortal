@@ -11,7 +11,6 @@ import {
 } from "../../../components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
 
 const EventCalendarItem = (props) => {
-console.log(props)
     const dataItem = props.dataItem;
     const navigate = useNavigate()
     const {setDynamicPages} = useApp();

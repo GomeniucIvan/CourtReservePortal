@@ -15,7 +15,7 @@ const ITEMS_SPACING = 1;
 
 export const SchedulerViewItem = React.forwardRef((props, ref) => {
     // tslint:enable:max-line-length
-    const { item: itemProp, _ref, itemRef, ...itemProps } = props;
+    const { item: itemProp,  _ref, itemRef, ...itemProps } = props;
 
     const timeout = React.useRef();
     const item = React.useRef(null);
@@ -65,6 +65,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
         const siblings = slots.map((slot) => {
             return items.filter((i) => inSlot(slot.current.props, i.props));
         });
+
         return siblings;
     };
 
@@ -77,7 +78,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const align = () => {
-        const slots = (viewSlots || []).filter((slot) => slot.current && inSlot(slot.current.props, props));
+        const slots = (viewSlots || []).filter((slot) =>  slot.current && inSlot(slot.current.props, props));
 
         if (slots.length === 0) {
             setDisplay(false);
@@ -88,12 +89,15 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
         if (!firstSlot.current || !item.current) { return; }
 
         const rect = getRect(firstSlot.current.element);
-        setRect(item.current.element, rect);
+        setRect(item.current.element, rect );
+
     };
-    
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const position = () => {
         const element = item.current && item.current.element;
         if (!element) { return; }
+
 
         const slots = (viewSlots || []).filter((slot) => slot.current && inSlot(slot.current.props, props));
         const items = [];
@@ -101,20 +105,20 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
         const resizeItems = [];
 
         (viewItems || []).forEach((i) => {
-            if (!i.current) { return; }
+            if(!i.current) { return; }
 
-            if (i.current.props.dragHint) {
+            if(i.current.props.dragHint) {
                 dragItems.push(i.current);
-            } else if (i.current.props.resizeHint) {
+            } else if(i.current.props.resizeHint) {
                 resizeItems.push(i.current);
             } else {
                 items.push(i.current);
             }
         });
 
-        let order = (props.dragHint || props.resizeHint)
-            ? calculateOrder(item.current, props.dragHint ? dragItems : resizeItems, slots, props.ignoreIsAllDay)
-            : (props.order || 0);
+        const order = (props.dragHint || props.resizeHint)
+            ? calculateOrder(item.current, props.dragHint ? dragItems : resizeItems , slots, props.ignoreIsAllDay)
+    : (props.order || 0);
 
         let mostSiblingsInSlot = props.dragHint || props.resizeHint
             ? calculateMostSiblings(slots, props.dragHint ? dragItems : resizeItems)
@@ -128,7 +132,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
         siblingsPerSlot.forEach((slot) => {
             let currentOffset = 0;
             slot.forEach((current) => {
-                if (intersects(current.props.start, current.props.end, props.start, props.end)
+                if(intersects(current.props.start ,current.props.end, props.start, props.end)
                     && !(props.dragHint || props.resizeHint)
                     && current.props._maxSiblingsPerSlot
                     && current.props._maxSiblingsPerSlot > mostSiblingsInSlot
@@ -136,12 +140,12 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
                     mostSiblingsInSlot = current.props._maxSiblingsPerSlot;
                 }
                 const currentRect = getRect(current.element);
-                if (current.props.order !== null && current.props.order < order) {
+                if(current.props.order !== null && current.props.order < order) {
                     currentOffset = ((currentRect.top + currentRect.height) - rect.top) - (BORDER_WIDTH * order) + ITEMS_SPACING;
                 }
             });
 
-            if (currentOffset > topOffset) {
+            if(currentOffset > topOffset) {
                 topOffset = currentOffset;
             }
         });
@@ -149,129 +153,15 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
         if (slots.length === 0) {
             setDisplay(false);
             return;
-        }     
-
-        const schedulerInterval = props.interval;
-        const closeTime = props.closeTime;
-        
-        const calculateHeight = () => {
-            const totalHeightForOneSlot = rect.height;
-            const heightForOneMinute = totalHeightForOneSlot / schedulerInterval;
-            const startDate = new Date(props.start);
-            let endDate = new Date(props.end);
-
-            const endTimeInMinutes = endDate.getHours() * 60 + endDate.getMinutes();
-            const closeTimeInMinutes = closeTime.getHours() * 60 + closeTime.getMinutes();
-
-            if (endTimeInMinutes > closeTimeInMinutes) {
-                endDate.setHours(closeTime.getHours(), closeTime.getMinutes(), closeTime.getSeconds());
-            }
-            
-            const totalEventMinutes = (endDate - startDate) / (1000 * 60);
-            const totalHeightToSet = heightForOneMinute * totalEventMinutes - 2;
-            return totalHeightToSet;
         }
-
-        const calculateTopHeight = () => {
-            const totalHeightForOneSlot = rect.height;
-            const heightForOneMinute = totalHeightForOneSlot / schedulerInterval;
-            const eventStartTime = item.current.props.start;
-            const firstSlot = slots[0].current.props.start;
-            const eventStartDate = new Date(eventStartTime);
-            const firstSlotDate = new Date(firstSlot);
-
-            if (eventStartDate > firstSlotDate) {
-                const totalEventMinutes = (eventStartDate - firstSlotDate) / (1000 * 60);
-                const totalHeightToSet = heightForOneMinute * totalEventMinutes;
-                return totalHeightToSet;
-            }
-
-            return 0;
-        }
-
-        const calculateIntersectedEvents = () => {
-            const itemSlot = item.current.props;
-
-            const eventIncommingItems = items.filter((i) => inSlot(itemSlot, i.props));
-            return eventIncommingItems.length;
-        }
-
-        const getDraggableIndexInList = (current,
-            items,
-            slots,
-            ignoreIsAllDay = false) => {
-
-            let result;
-            slots.forEach((slot) => {
-                const orderNumbers = [];
-                const itemSlot = slot.current.props;
-
-                const eventIncommingItems = items.filter((i) => inSlot(itemSlot, i.props));
-                const sorted = eventIncommingItems.sort((a, b) => a.props.start.getTime() - b.props.start.getTime());
-                sorted.forEach((item) => {
-                    const fit = (ignoreIsAllDay || (item.props.isAllDay === slot.current.props.isAllDay))
-                        && item.props.range.index === slot.current.props.range.index
-                        && item.props.group.index === slot.current.props.group.index
-                        && intersects(item.props.start, item.props.end, slot.current.props.start, slot.current.props.end);
-
-                    if (fit) {
-                        const order = findMissing(orderNumbers);
-
-                        if (item === current && result === undefined) {
-                            result = order;
-                        }
-
-                        orderNumbers.splice(order, 0, order);
-                    }
-                });
-            });
-
-            return result;
-        }
-
-        const getOrderInList = () => {
-            const slot = item;
-            const itemSlot = item.current.props;
-            const eventIncommingItems = items.filter((i) => inSlot(itemSlot, i.props));
-
-            const orderNumbers = [];
-            const sorted = eventIncommingItems.sort((a, b) => a.props.start.getTime() - b.props.start.getTime());
-            let result;
-            sorted.forEach((soredItem) => {
-                const fit = (itemSlot.ignoreIsAllDay || (soredItem.props.isAllDay === slot.current.props.isAllDay))
-                    && soredItem.props.range.index === slot.current.props.range.index
-                    && soredItem.props.group.index === slot.current.props.group.index
-                    && intersects(soredItem.props.start, soredItem.props.end, slot.current.props.start, slot.current.props.end);
-
-                if (fit) {
-                    const order = findMissing(orderNumbers);
-                    if (soredItem === slot.current && result === undefined) {
-                        result = order;
-                    }
-
-                    orderNumbers.splice(order, 0, order);
-                }
-            });
-
-            return result;
-        }
-
-        const eventHeightToSet = calculateHeight();
-        const eventAdditionalTopToSet = calculateTopHeight();
 
         const OFFSET = editable.add ? 20 : 0;
-
-        const intersectedEvents = calculateIntersectedEvents();
-        order = (props.dragHint || props.resizeHint)
-            ? getDraggableIndexInList(item.current, props.dragHint ? dragItems : resizeItems, slots, props.ignoreIsAllDay)
-            : (getOrderInList() || 0);
-
         rect.width = (props.vertical
-            ? ((rect.width / intersectedEvents) - BORDER_WIDTH - (OFFSET / mostSiblingsInSlot))
+            ? ((rect.width / mostSiblingsInSlot) - BORDER_WIDTH - (OFFSET / mostSiblingsInSlot))
             : ((rect.width * slots.length) - (BORDER_WIDTH)));
 
         rect.height = props.vertical
-            ? ((eventHeightToSet) - (BORDER_WIDTH))
+            ? ((rect.height * slots.length) - (BORDER_WIDTH))
             : ((props.resizeHint || props.dragHint) && mostSiblingsInSlot <= 1)
                 ? rect.height
                 : (props.style && props.style.height ? props.style.height : 25);
@@ -281,7 +171,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             : rect.left;
 
         rect.top = props.vertical
-            ? (rect.top + eventAdditionalTopToSet)
+            ? rect.top
             : (rect.top + topOffset + (BORDER_WIDTH * order));
 
         setMaxSiblingsPerSlot(mostSiblingsInSlot);
@@ -295,11 +185,11 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             const entry = entries && entries[0];
             const rect = schedulerRect.current;
 
-            if (timeout.current !== undefined) {
+            if(timeout.current !== undefined) {
                 window.cancelAnimationFrame(timeout.current);
             }
 
-            if (rect && entry &&
+            if(rect && entry &&
                 (rect.width !== entry.contentRect.width ||
                     rect.height !== entry.contentRect.height)) {
                 timeout.current = window.requestAnimationFrame(() => {
@@ -308,7 +198,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
                 });
             }
 
-            schedulerRect.current = { width: entry.contentRect.width, height: entry.contentRect.height };
+            schedulerRect.current = {width: entry.contentRect.width, height: entry.contentRect.height};
         },
         [align, position]
     );
@@ -329,15 +219,15 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
 
     React.useEffect(
         () => {
-            if (!scheduler.current) { return; }
+            if(!scheduler.current) {return;}
             const resizeObserver = (window).ResizeObserver;
             const observer = resizeObserver && new resizeObserver(handleResize);
-            if (observer) {
+            if(observer) {
                 observer.observe(scheduler.current);
             }
 
             return () => {
-                if (observer) {
+                if(observer) {
                     observer.disconnect();
                 }
             };
@@ -357,11 +247,18 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             }}
         >
             {(!props.resizeHint) && <span className="k-event-actions">
-
-            </span>}
+            {props.tail &&
+                <IconWrap
+                    name={dir === 'rtl' ? 'caret-alt-right' : 'caret-alt-left'}
+                    icon={dir === 'rtl' ? caretAltRightIcon : caretAltLeftIcon}
+                />
+            }
+                {(props.isRecurring && !props.isException) && <IconWrap name="arrow-rotate-cw" icon={arrowRotateCwIcon} />}
+                {(!props.isRecurring && props.isException) && <IconWrap name="arrows-no-repeat" icon={arrowsNoRepeatIcon} />}
+        </span>}
             {(!props.resizeHint) && (<div title={itemTitle}>
                 {!props.isAllDay && (<SchedulerItemContent className="k-event-template k-event-time ">{itemTitle}</SchedulerItemContent>)}
-                <SchedulerItemContent className="k-event-template k-event-template-group-1">{props.title}</SchedulerItemContent>
+                <SchedulerItemContent className="k-event-template">{props.title}</SchedulerItemContent>
             </div>)}
         </Item>
     );
