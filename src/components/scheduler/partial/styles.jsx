@@ -389,19 +389,43 @@ export const useStyles = createStyles(({ css, token }) => ({
             width: 100%;
         }
 
-        .k-scheduler-layout-flex .k-scheduler-cell {
-            display: flex;
-            flex: 1 1 100%;
-            padding: 0;
-            min-height: 1.5em;
-            overflow: hidden;
-            white-space: nowrap;
-            border-style: solid;
-            border-width: 0 1px 1px 0;
-            vertical-align: top;
-            box-sizing: content-box;
-            border-color: ${token.colorBorder};
-            color: ${token.colorText};
+        .k-scheduler-layout-flex {
+            .k-scheduler-cell {
+                display: flex;
+                flex: 1 1 100%;
+                padding: 0;
+                min-height: 1.5em;
+                overflow: hidden;
+                white-space: nowrap;
+                border-style: solid;
+                border-width: 0 1px 1px 0;
+                vertical-align: top;
+                box-sizing: content-box;
+                border-color: ${token.colorBorder};
+                color: ${token.colorText};
+            }
+            
+            .k-scheduler-eventcolumn,
+            .k-scheduler-timecolumn,
+            .k-scheduler-datecolumn {
+                background-color: ${token.colorBgBase};
+                color: ${token.colorText};
+            }
+
+            .k-scheduler-timecolumn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            }
+            
+            .k-agenda-date-display {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
         }
 
         .k-scheduler-layout-flex .k-scheduler-cell.k-side-cell {
@@ -981,8 +1005,8 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
 
         .k-scheduler-agendaday {
-            margin: 0 .2em 0 0;
-            font-size: 3em;
+            margin: 0;
+            font-size: 2.2em;
             line-height: 1;
             font-weight: 400;
             float: left;

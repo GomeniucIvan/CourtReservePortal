@@ -247,18 +247,18 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
             }}
         >
             {(!props.resizeHint) && <span className="k-event-actions">
-            {props.tail &&
-                <IconWrap
-                    name={dir === 'rtl' ? 'caret-alt-right' : 'caret-alt-left'}
-                    icon={dir === 'rtl' ? caretAltRightIcon : caretAltLeftIcon}
-                />
-            }
+            {/*{props.tail &&*/}
+            {/*    <IconWrap*/}
+            {/*        name={dir === 'rtl' ? 'caret-alt-right' : 'caret-alt-left'}*/}
+            {/*        icon={dir === 'rtl' ? caretAltRightIcon : caretAltLeftIcon}*/}
+            {/*    />*/}
+            {/*}*/}
                 {(props.isRecurring && !props.isException) && <IconWrap name="arrow-rotate-cw" icon={arrowRotateCwIcon} />}
                 {(!props.isRecurring && props.isException) && <IconWrap name="arrows-no-repeat" icon={arrowsNoRepeatIcon} />}
         </span>}
             {(!props.resizeHint) && (<div title={itemTitle}>
                 {!props.isAllDay && (<SchedulerItemContent className="k-event-template k-event-time ">{itemTitle}</SchedulerItemContent>)}
-                <SchedulerItemContent className="k-event-template">{props.title}</SchedulerItemContent>
+                <SchedulerItemContent className="k-event-template k-event-month-week">{props.title}</SchedulerItemContent>
             </div>)}
         </Item>
     );

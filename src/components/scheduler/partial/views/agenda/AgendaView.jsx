@@ -135,7 +135,7 @@ export const AgendaView = (props) => {
                                                 viewSlot={props.viewSlot}
                                                 className="k-scheduler-datecolumn k-group-cell"
                                             >
-                                                <div>
+                                                <div className={'k-agenda-date-display'}>
                                                     <strong className="k-scheduler-agendaday">
                                                         {intl.formatDate(slot.zonedStart, 'dd')}
                                                     </strong>
@@ -143,19 +143,23 @@ export const AgendaView = (props) => {
                                                         {intl.formatDate(slot.zonedStart, 'EEEE')}
                                                     </em>
                                                     <span className="k-scheduler-agendadate">
-                                              {intl.formatDate(slot.zonedStart, 'y')}
-                                            </span>
+                                                        {intl.formatDate(slot.zonedStart, 'y')}
+                                                    </span>
                                                 </div>
                                             </EditSlot>
                                             <div className="k-scheduler-cell k-group-content">
                                                 {slot.items.length
                                                     ? slot.items.map((item, itemIndex) => (
                                                         <div className="k-scheduler-row" key={itemIndex}>
-                                                            <div className="k-scheduler-cell k-scheduler-timecolumn">
-                                                                {item.isAllDay
-                                                                    ? localization.toLanguageString(allDay, messages[allDay])
-                                                                    : getTimeFormat(intl, item)}
-                                                            </div>
+                                                            <div className="k-scheduler-cell k-scheduler-timecolumn"
+                                                                 dangerouslySetInnerHTML={{__html: getTimeFormat(intl, item)}}/>
+                                                            
+                                                            {/*<div className="k-scheduler-cell k-scheduler-timecolumn">*/}
+                                                            {/*    {getTimeFormat(intl, item)}*/}
+                                                            {/*    /!*{item.isAllDay*!/*/}
+                                                            {/*    /!*    ? localization.toLanguageString(allDay, messages[allDay])*!/*/}
+                                                            {/*    /!*    : getTimeFormat(intl, item)}*!/*/}
+                                                            {/*</div>*/}
                                                             <div className="k-scheduler-cell k-cell-agenda">
                                                                 <EditTask
                                                                     key={`${slotIndex}:${itemIndex}`}
@@ -185,7 +189,7 @@ export const AgendaView = (props) => {
 };
 
 const getTimeFormat = (intl, props) => {
-    let format = '{0:t}-{1:t}';
+    let format = '<div>{0:t}</div> <div>{1:t}</div>';
 
     if (props.head) {
         format = '{0:t}';

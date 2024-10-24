@@ -1,13 +1,6 @@
 ﻿import {useStyles} from "./styles.jsx";
 import {useNavigate} from 'react-router-dom';
 import {Skeleton} from "antd-mobile";
-import {
-    AppOutline,
-    MessageOutline,
-    MessageFill,
-    UnorderedListOutline,
-    UserOutline,
-} from 'antd-mobile-icons'
 import {TabBar} from "antd-mobile";
 import {useEffect, useRef, useState} from "react";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
@@ -15,6 +8,7 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {Flex} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
+import SGV from "../svg/SVG.jsx";
 
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {styles} = useStyles();
@@ -49,24 +43,28 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         {
             key: 'home',
             title: 'Home',
-            icon: <AppOutline/>
+            icon: <SGV icon={'home'} color={'var(--adm-color-text-secondary)'}/>
+        },
+        {
+            key: 'reserve',
+            title: 'Reserve',
+            icon: <SGV icon={'reserve'} color={'var(--adm-color-text-secondary)'}/>
+        },
+        {
+            key: 'register',
+            title: 'Register',
+            icon: <SGV icon={'register'} color={'var(--adm-color-text-secondary)'}/>
         },
         {
             key: 'notifications',
             title: 'Notifications',
-            icon: (active) =>
-                active ? <MessageFill/> : <MessageOutline/>,
+            icon: <SGV icon={'push-notification'} color={'var(--adm-color-text-secondary)'}/>,
             badge: '99+',
-        },
-        {
-            key: 'account',
-            title: 'Account',
-            icon: <UserOutline/>,
         },
         {
             key: 'navigation',
             title: 'More',
-            icon: <UnorderedListOutline/>
+            icon: <SGV icon={'more'} color={'var(--adm-color-text-secondary)'}/>
         },
     ]
 

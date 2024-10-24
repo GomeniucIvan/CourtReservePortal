@@ -5,6 +5,9 @@ import { DATA_ACTION } from "../constants/index.mjs";
 import { useSchedulerFieldsContext, useSchedulerDataContext } from "../context/SchedulerContext.mjs";
 import { SchedulerEditTaskContext } from "../context/SchedulerEditTaskContext.mjs";
 import { useEditable } from "../hooks/useEditable.mjs";
+import {setPage, toRoute} from "../../../../utils/RouteUtils.jsx";
+import {EventRouteNames} from "../../../../routes/EventRoutes.jsx";
+import {Flex} from "antd";
 
 export const SchedulerEditTask = React.forwardRef((
     props,
@@ -184,36 +187,30 @@ export const SchedulerEditTask = React.forwardRef((
     
     return (
         <SchedulerEditTaskContext>
-            <div
-                style={{ background: dataItem.EventTypeBgColor, color: dataItem.EventTypeTextColor }}
-                data-href={`/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`}
+            <Flex align={'center'} justify={'center'}
+                style={{ background: dataItem.EventTypeBgColor, color: dataItem.EventTypeTextColor, width: '100%' }}
             >
-                <div className="reservation-container">
-                    <a
-                        href={
-                            showSignUpLink
-                                ? `/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`
-                                : "#"
-                        }
-                        className="link-reservation-update"
-                        style={{ color: dataItem.EventTypeTextColor }}
-                    >
-                        <span className="template-d-mobile-block">{dataItem.EventName}</span>
+                <div style={{minHeight: '72px', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center'}} 
+                     onClick={() => {
+                    let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', dataItem.EventId);
+                    setPage(setDynamicPages, dataItem.EventName, route);
+                    navigate(route);
+                }}>
+                    <div style={{ color: dataItem.EventTypeTextColor }}>
+                        <div>{dataItem.EventName}</div>
                         {displayOrganziersOnCalendar && dataItem.OranizersDisplay && (
-                            <span>({dataItem.OranizersDisplay})</span>
+                            <div>({dataItem.OranizersDisplay})</div>
                         )}
-                    </a>
+                    </div>
 
-                    {/* Event note, if available */}
                     {dataItem.EventNote && (
-                        <span className="template-d-mobile-block"> {dataItem.EventNote}</span>
+                        <div> {dataItem.EventNote}</div>
                     )}
 
-                    {/* Handle in-past or slot information */}
                     {!dataItem.InPast && (
                         <>
                             {dataItem.ShowSlotInfo && showEventAvailableSlotsOnMemberPortal && (
-                                <span style={{ fontStyle: "italic" }}>{dataItem.SlotsInfo}</span>
+                                <div style={{ fontStyle: "italic" }}>{dataItem.SlotsInfo}</div>
                             )}
                             {dataItem.IsFull && showEventAvailableSlotsOnMemberPortal && (
                                 <span className="label label-danger full-event">&nbsp;FULL&nbsp;</span>
@@ -226,28 +223,24 @@ export const SchedulerEditTask = React.forwardRef((
                                     !dataItem.IsMemberInWaitList &&
                                     !dataItem.IsMemberRegistered &&
                                     dataItem.IsMemberRegistered ? (
-                                        <a
+                                        <div
                                             className="label"
                                             style={{
                                                 fontSize: "75%",
                                                 fontWeight: "normal",
                                                 backgroundColor: "#9a9a9a",
                                             }}
-                                            href={`/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`}
                                         >
                                             Registered
-                                        </a>
+                                        </div>
                                     ) : null}
                                 </>
                             )}
                         </>
                     )}
 
-                    {/* Sign-up or registration link for mobile layout */}
                     {showSignUpLink && (
-                        <a
-                            className="template-d-mobile-block d-block"
-                            href={`/Online/Events/Details/${dataItem.OrgId}/${dataItem.EventNumber}`}
+                        <div
                             style={{
                                 textDecoration: "underline",
                                 fontWeight: "bold",
@@ -261,10 +254,10 @@ export const SchedulerEditTask = React.forwardRef((
                                 : dataItem.IsMemberRegistered
                                     ? "EDIT REGISTRATION"
                                     : "REGISTER"}
-                        </a>
+                        </div>
                     )}
                 </div>
-            </div>
+            </Flex>
         </SchedulerEditTaskContext>
     );
 });
