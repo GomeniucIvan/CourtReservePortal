@@ -10,6 +10,9 @@ import {Flex} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
 import SGV from "../svg/SVG.jsx";
 
+import {HomeOutlined, PlusSquareOutlined, CalendarOutlined, MenuOutlined} from "@ant-design/icons";
+import {MessageOutline} from "antd-mobile-icons";
+
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {styles} = useStyles();
     const navigate = useNavigate();
@@ -43,28 +46,28 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         {
             key: 'home',
             title: 'Home',
-            icon: <SGV icon={'home'} color={'var(--adm-color-text-secondary)'}/>
+            icon: <HomeOutlined />
         },
         {
             key: 'reserve',
             title: 'Reserve',
-            icon: <SGV icon={'reserve'} color={'var(--adm-color-text-secondary)'}/>
+            icon: <PlusSquareOutlined />
         },
         {
             key: 'register',
             title: 'Register',
-            icon: <SGV icon={'register'} color={'var(--adm-color-text-secondary)'}/>
+            icon: <CalendarOutlined />
         },
         {
             key: 'notifications',
             title: 'Notifications',
-            icon: <SGV icon={'push-notification'} color={'var(--adm-color-text-secondary)'}/>,
+            icon: <MessageOutline />,
             badge: '99+',
         },
         {
             key: 'navigation',
             title: 'More',
-            icon: <SGV icon={'more'} color={'var(--adm-color-text-secondary)'}/>
+            icon: <MenuOutlined />
         },
     ]
 
