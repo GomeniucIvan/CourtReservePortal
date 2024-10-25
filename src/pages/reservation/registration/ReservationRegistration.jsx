@@ -874,12 +874,7 @@ function ReservationRegistration() {
 
                             {toBoolean(authData?.AllowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
                                 <div>
-                                    <label style={{
-                                        fontSize: token.Form.labelFontSize,
-                                        padding: token.Form.verticalLabelPadding,
-                                        marginLeft: token.Form.labelColonMarginInlineStart,
-                                        display: 'block'
-                                    }}>
+                                    <label className={globalStyles.globalLabel}>
                                         Fee Responsibility
                                     </label>
 

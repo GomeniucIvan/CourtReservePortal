@@ -306,5 +306,17 @@ export const useStyles = createStyles(({ css, token }) => ({
     .adm-page-indicator-dot-active{
        width: 24px;
     }
+   `,
+   globalLabel: css`
+      font-size: ${token.Form.labelFontSize}px;
+      padding: ${token.Form.verticalLabelPadding};
+      margin-left: ${token.Form.labelColonMarginInlineStart}px;
+      display: block;
+   `,
+   filterSelector: css`
+    --border-radius: ${token.borderRadius}px;
+    --border: solid transparent 1px;
+    --checked-border: solid var(--adm-color-primary) 1px;
+    --padding: 6px 10px;
    `
 }));

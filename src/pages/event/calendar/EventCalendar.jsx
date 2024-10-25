@@ -14,7 +14,7 @@ import EventCalendarItem from "./EventCalendarItem.jsx";
 import '@progress/kendo-date-math/tz/America/New_York';
 import {useNavigate} from "react-router-dom";
 import appService, {apiRoutes} from "../../../api/app.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {
     dateFormatByUiCulture,
     dateTimeToFormat,
@@ -27,12 +27,15 @@ import dayjs from "dayjs";
 import apiService from "../../../api/api.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {saveCookie} from "../../../utils/CookieUtils.jsx";
+import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
+import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import {Selector} from "antd-mobile";
 
 const {Text} = Typography
 
 function EventCalendar() {
-    const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent} = useApp();
-    const [isFilterOpened, setIsFilterOpened] = useState(false);
+    const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent, token} = useApp();
+    const [showFilter, setShowFilter] = useState(false);
     const [selectedView, setSelectedView] = useState('');
     const {availableHeight, isMockData} = useApp();
     const [events, setEvents] = useState([]);
@@ -47,13 +50,85 @@ function EventCalendar() {
     const [startTimeString, setStartTimeString] = useState('')
     const [endTimeString, setEndTimeString] = useState('')
     const [schedulerData, setSchedulerData] = useState(null);
+    const [eventCategories, setEventCategories] = useState([]);
+    const [eventSessions, setEventSessions] = useState([]);
+    const [filterChanged, setFilterChanged] = useState(false);
 
     const {orgId} = useAuth();
-    
+
     const persistSelectedView = async (value) => {
         let response = await appService.post(`/app/Online/AjaxController/PersistEventsCalendar?viewType=${value}&isLeague=false`);
     }
 
+    const loadEvents = () => {
+        setLoading(true);
+        let startDayToPass = null;
+        let endDayToPass = null;
+        const selectedDateObj = dayjs(selectedDate);
+
+        if (equalString(selectedView, 'day')) {
+            startDayToPass = selectedDateObj.startOf('day');
+            endDayToPass = selectedDateObj.endOf('day');
+        }
+        else if (equalString(selectedView, 'week')) {
+            startDayToPass = selectedDateObj.startOf('isoWeek');
+            endDayToPass = selectedDateObj.endOf('isoWeek');
+        }
+        else if (equalString(selectedView, 'month')) {
+            startDayToPass = selectedDateObj.startOf('month');
+            endDayToPass = selectedDateObj.endOf('month');
+        }
+        else if (equalString(selectedView, 'agenda')) {
+            // Example: Next 30 days from the selected date
+            startDayToPass = selectedDateObj.startOf('day');
+            endDayToPass = selectedDateObj.add(30, 'days').endOf('day');
+        }
+
+        const result = {
+            startDate: toAspNetDateTime(selectedDate),
+            //end: scheduler.view().endDate(),
+            Date: new Date(selectedDate).toUTCString(),
+            orgId: orgId,
+            TimeZone: schedulerData.TimeZone,
+            KendoStart: {
+                Year: dayjs(startDayToPass).year(),
+                Month: dayjs(startDayToPass).month() + 1,
+                Day: dayjs(startDayToPass).date()
+            },
+            KendoEnd: {
+                Year: dayjs(endDayToPass).year(),
+                Month: dayjs(endDayToPass).month() + 1,
+                Day: dayjs(endDayToPass).date()
+            },
+            Categories: eventCategories
+                .filter(eventCategory => eventCategory.Selected)
+                .map(eventCategory => eventCategory.Id),
+            UiCulture: schedulerData.UiCulture,
+            CostTypeId: schedulerData.CostTypeId,
+            MemberId: schedulerData.MemberId,
+            FamilyId: schedulerData.FamilyId,
+            EventSessionIds: eventSessions
+                .filter(eventSession => eventSession.Selected)
+                .map(eventSession => eventSession.Id)
+        }
+
+        appService.get(navigate, `/app/Online/Calendar/ReadCalendarEvents?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
+            const formattedEvents = resp.Data.map(event => ({
+                ...event,
+                Start: toReactDate(event.Start),
+                start: toReactDate(event.Start),
+                End: toReactDate(event.End),
+                end: toReactDate(event.End),
+
+                isAllDay: false,
+                IsAllDay: false,
+            }));
+
+            setEvents(formattedEvents);
+            setLoading(false);
+        });
+    }
+    
     useEffect(() => {
         if (isNullOrEmpty(selectedView)){
             //loading?
@@ -72,12 +147,12 @@ function EventCalendar() {
                     />
 
                     <Button type="default" icon={<FilterOutlined/>} size={'medium'}
-                            onClick={() => setIsFilterOpened(true)}/>
+                            onClick={() => setShowFilter(true)}/>
                 </Space>
             )
         }
     }, [selectedView]);
-    
+
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(null);
@@ -100,14 +175,24 @@ function EventCalendar() {
             appService.get(navigate, `/app/Online/Calendar/Events/${orgId}`).then(r => {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data;
-                    
+
                     setStartTimeString(dateToTimeString(model.MinOpenTime, true));
                     setEndTimeString(dateToTimeString(model.MaxCloseTime, true));
 
                     setSchedulerData(model);
-                    console.log(model.ViewType)
                     setSelectedView(model.ViewType);
-                    
+
+                    setEventCategories(model.EventCategories.map(eventCategory => ({
+                        Id: eventCategory.Id,
+                        Name: eventCategory.Name,
+                        Selected: model.SelectedCategories.includes(eventCategory.Id)
+                    })))
+                    setEventSessions(model.EventSessions.map(eventSession => ({
+                        Id: eventSession.Id,
+                        Name: eventSession.Name,
+                        Selected: model.SelectedEventSessionIds.includes(eventSession.Id)
+                    })))
+
                     const dateToShow = toReactDate(model.SchedulerDate);
                     setMinDate(dateToShow);
                     setTimeZone(model.TimeZone);
@@ -124,74 +209,19 @@ function EventCalendar() {
         }
     }, []);
 
-
     useEffect(() => {
         if (!isNullOrEmpty(selectedDate) && schedulerData){
-
-            let startDayToPass = null;
-            let endDayToPass = null;
-            const selectedDateObj = dayjs(selectedDate);
-            
-            if (equalString(selectedView, 'day')) {
-                startDayToPass = selectedDateObj.startOf('day');
-                endDayToPass = selectedDateObj.endOf('day');
-            }
-            else if (equalString(selectedView, 'week')) {
-                startDayToPass = selectedDateObj.startOf('isoWeek');
-                endDayToPass = selectedDateObj.endOf('isoWeek');
-            }
-            else if (equalString(selectedView, 'month')) {
-                startDayToPass = selectedDateObj.startOf('month');
-                endDayToPass = selectedDateObj.endOf('month');
-            }
-            else if (equalString(selectedView, 'agenda')) {
-                // Example: Next 30 days from the selected date
-                startDayToPass = selectedDateObj.startOf('day');
-                endDayToPass = selectedDateObj.add(30, 'days').endOf('day');
-            }
-            
-            const result = {
-                startDate: toAspNetDateTime(selectedDate),
-                //end: scheduler.view().endDate(),
-                orgId: orgId,
-                TimeZone: schedulerData.TimeZone,
-                Date: new Date(selectedDate).toUTCString(),
-                KendoStart: {
-                    Year: dayjs(startDayToPass).year(),
-                    Month: dayjs(startDayToPass).month() + 1,
-                    Day: dayjs(startDayToPass).date()
-                },
-                KendoEnd: {
-                    Year: dayjs(endDayToPass).year(),
-                    Month: dayjs(endDayToPass).month() + 1,
-                    Day: dayjs(endDayToPass).date()
-                },
-                UiCulture: schedulerData.UiCulture,
-                CostTypeId: schedulerData.CostTypeId,
-                MemberId: schedulerData.MemberId,
-                FamilyId: schedulerData.FamilyId,
-            }
-            
-            appService.get(navigate, `/app/Online/Calendar/ReadCalendarEvents?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
-                console.log(resp.Data);
-
-                const formattedEvents = resp.Data.map(event => ({
-                    ...event,
-                    Start: toReactDate(event.Start),
-                    start: toReactDate(event.Start),
-                    End: toReactDate(event.End),
-                    end: toReactDate(event.End),
-
-                    isAllDay: false,
-                    IsAllDay: false,
-                }));
-                
-                setEvents(formattedEvents);
-                setLoading(false);
-            });
+            loadEvents()
         }
     }, [selectedDate, selectedView]);
 
+    useEffect(() => {
+        if (filterChanged && !showFilter){
+            setFilterChanged(false);
+            loadEvents();
+        }
+    }, [filterChanged, showFilter]);
+    
     const handleDateChange = (event) => {
         const selectedDate = event.value;
         setSelectedDate(selectedDate);
@@ -235,44 +265,121 @@ function EventCalendar() {
             </Flex>
         )
     }
-    
+
     return (
-        <Spin spinning={loading}>
-            <InnerScheduler
-                data={events}
-                hideDaySelection={true}
-                timezone={timeZone}
-                date={selectedDate}
-                defaultDate={selectedDate}
-                loading={loading}
-                setLoading={setLoading}
-                onDateChange={handleDateChange}
-                onDataChange={handleDataChange}
-                modelFields={modelFields}
-                selectedView={selectedView}
-                height={availableHeight}
-                editable={false}
-                minDate={minDate}
-                maxDate={maxDate}
-                interval={interval}
+        <>
+            <Spin spinning={loading}>
+                <InnerScheduler
+                    data={events}
+                    hideDaySelection={true}
+                    timezone={timeZone}
+                    date={selectedDate}
+                    defaultDate={selectedDate}
+                    loading={loading}
+                    setLoading={setLoading}
+                    onDateChange={handleDateChange}
+                    onDataChange={handleDataChange}
+                    modelFields={modelFields}
+                    selectedView={selectedView}
+                    height={availableHeight}
+                    editable={false}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    interval={interval}
+                >
+
+                    <DayView
+                        startTime={startTimeString}
+                        endTime={endTimeString}
+                        workDayStart={startTimeString}
+                        workDayEnd={endTimeString}
+                        slotDuration={interval}
+                        slotDivisions={1}
+                        viewItem={EventCalendarItem}
+                        hideDateRow={false}
+                    />
+
+                    <WeekView/>
+                    <MonthView selectedView={'month'}/>
+                    <AgendaView/>
+                </InnerScheduler>
+            </Spin>
+
+            <DrawerBottom
+                showDrawer={showFilter}
+                closeDrawer={() => {
+                    setShowFilter(false);
+                }}
+                label={'Filter'}
+                showButton={true}
+                confirmButtonText={'Filter'}
+                onConfirmButtonClick={() => {
+                    setShowFilter(false);
+                }}
             >
+                <>
+                    {anyInList(eventCategories) &&
+                        <PaddingBlock>
+                            <label className={globalStyles.globalLabel}>
+                                Categories
+                            </label>
 
-                <DayView
-                    startTime={startTimeString}
-                    endTime={endTimeString}
-                    workDayStart={startTimeString}
-                    workDayEnd={endTimeString}
-                    slotDuration={interval}
-                    slotDivisions={1}
-                    viewItem={EventCalendarItem}
-                    hideDateRow={false}
-                />
+                            <Selector className={globalStyles.filterSelector}
+                                //showCheckMark={false}
+                                      multiple={true}
+                                      onChange={(selectedValues) => {
+                                          setFilterChanged(true);
 
-                <WeekView/>
-                <MonthView selectedView={'month'}/>
-                <AgendaView/>
-            </InnerScheduler>
-        </Spin>
+                                          setEventCategories(prevCategories =>
+                                              prevCategories.map(eventCategory => ({
+                                                  ...eventCategory,
+                                                  Selected: selectedValues.includes(eventCategory.Id)
+                                              }))
+                                          );
+                                      }}
+                                      options={eventCategories.map(eventCategory => ({
+                                          label: eventCategory.Name,
+                                          value: eventCategory.Id
+                                      }))}
+                                      defaultValue={eventCategories
+                                          .filter(eventCategory => eventCategory.Selected)
+                                          .map(eventCategory => eventCategory.Id)}
+                            />
+                        </PaddingBlock>
+                    }
+
+                    {anyInList(eventSessions) &&
+                        <PaddingBlock onlyTop={true}>
+                            <label className={globalStyles.globalLabel}>
+                                Sessions
+                            </label>
+
+                            <Selector className={globalStyles.filterSelector}
+                                //showCheckMark={false}
+                                      multiple={true}
+                                      onChange={(selectedValues) => {
+                                          setFilterChanged(true);
+
+                                          setEventSessions(prevSessions =>
+                                              prevSessions.map(eventSession => ({
+                                                  ...prevSession,
+                                                  Selected: selectedValues.includes(eventSession.Id)
+                                              }))
+                                          );
+                                      }}
+                                      options={eventSessions.map(eventSession => ({
+                                          label: eventSession.Name,
+                                          value: eventSession.Id
+                                      }))}
+                                      defaultValue={eventSessions
+                                          .filter(eventSession => eventSession.Selected)
+                                          .map(eventSession => eventSession.Id)}
+                            />
+                        </PaddingBlock>
+                    }
+                </>
+            </DrawerBottom>
+        </>
     )
 }
 
