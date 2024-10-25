@@ -46,7 +46,10 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         {
             key: 'home',
             title: 'Home',
-            icon: <HomeOutlined />
+            icon: <HomeOutlined />,
+            onClick: (key) => {
+                console.log(22)
+            },
         },
         {
             key: 'reserve',

@@ -245,7 +245,7 @@ function EventCalendar() {
                 />
 
                 <WeekView/>
-                <MonthView/>
+                <MonthView height={80}/>
                 <AgendaView/>
             </InnerScheduler>
         </div>
