@@ -23,6 +23,7 @@ export const SchedulerEditSlot = React.forwardRef((props, ref) => {
         onFormItemChange,
         useTextSchedulerSlot,
         openReservationCreateModal,
+        selectedView,
         ...viewSlotProps
     } = props;
 
@@ -249,6 +250,7 @@ export const SchedulerEditSlot = React.forwardRef((props, ref) => {
                 tabIndex={tabIndex}
                 useTextSchedulerSlot={useTextSchedulerSlot}
                 openReservationCreateModal={openReservationCreateModal}
+                selectedView={selectedView}
                 dataItem={createDataItemFromSlot()}
                 // Focus
                 // onFocus={handleFocus}

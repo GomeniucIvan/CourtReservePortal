@@ -1,6 +1,6 @@
 ﻿import Scheduler from "../../../components/scheduler/Scheduler.jsx";
 import React, {useEffect, useState} from "react";
-import {Button, Flex, Segmented, Skeleton, Space} from "antd";
+import {Button, Flex, Segmented, Skeleton, Space, Spin} from "antd";
 import {FilterOutlined} from "@ant-design/icons";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {InnerScheduler} from "../../../components/scheduler/partial/InnerScheduler.jsx";
@@ -15,18 +15,25 @@ import '@progress/kendo-date-math/tz/America/New_York';
 import {useNavigate} from "react-router-dom";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
-import {dateToTimeString, toAspNetDateTime, toReactDate} from "../../../utils/DateUtils.jsx";
+import {
+    dateFormatByUiCulture,
+    dateTimeToFormat,
+    dateToTimeString,
+    toAspNetDateTime,
+    toReactDate
+} from "../../../utils/DateUtils.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import dayjs from "dayjs";
 import apiService from "../../../api/api.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
+import {saveCookie} from "../../../utils/CookieUtils.jsx";
 
 const {Text} = Typography
 
 function EventCalendar() {
     const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent} = useApp();
     const [isFilterOpened, setIsFilterOpened] = useState(false);
-    const [selectedView, setSelectedView] = useState('Day');
+    const [selectedView, setSelectedView] = useState('');
     const {availableHeight, isMockData} = useApp();
     const [events, setEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
@@ -43,23 +50,37 @@ function EventCalendar() {
 
     const {orgId} = useAuth();
     
+    const persistSelectedView = async (value) => {
+        let response = await appService.post(`/app/Online/AjaxController/PersistEventsCalendar?viewType=${value}&isLeague=false`);
+    }
+
+    useEffect(() => {
+        if (isNullOrEmpty(selectedView)){
+            //loading?
+            setHeaderRightIcons('');
+        } else{
+            setHeaderRightIcons(
+                <Space className={globalStyles.headerRightActions}>
+                    <Segmented
+                        defaultValue={selectedView}
+                        options={['Day', 'Week', 'Month', 'Agenda']}
+                        onChange={(value) => {
+                            setSelectedView(value);
+                            //not async
+                            persistSelectedView(value);
+                        }}
+                    />
+
+                    <Button type="default" icon={<FilterOutlined/>} size={'medium'}
+                            onClick={() => setIsFilterOpened(true)}/>
+                </Space>
+            )
+        }
+    }, [selectedView]);
+    
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(null);
-        setHeaderRightIcons(
-            <Space className={globalStyles.headerRightActions}>
-                <Segmented
-                    defaultValue={selectedView}
-                    options={['Day', 'Week', 'Month', 'Agenda']}
-                    onChange={(value) => {
-                        setSelectedView(value);
-                    }}
-                />
-
-                <Button type="default" icon={<FilterOutlined/>} size={'medium'}
-                        onClick={() => setIsFilterOpened(true)}/>
-            </Space>
-        )
 
         if (isMockData){
             setTimeout(function(){
@@ -84,7 +105,9 @@ function EventCalendar() {
                     setEndTimeString(dateToTimeString(model.MaxCloseTime, true));
 
                     setSchedulerData(model);
-
+                    console.log(model.ViewType)
+                    setSelectedView(model.ViewType);
+                    
                     const dateToShow = toReactDate(model.SchedulerDate);
                     setMinDate(dateToShow);
                     setTimeZone(model.TimeZone);
@@ -163,7 +186,6 @@ function EventCalendar() {
                     IsAllDay: false,
                 }));
                 
-                console.log(formattedEvents)
                 setEvents(formattedEvents);
                 setLoading(false);
             });
@@ -173,10 +195,12 @@ function EventCalendar() {
     const handleDateChange = (event) => {
         const selectedDate = event.value;
         setSelectedDate(selectedDate);
+        let dateTimeToSave = dateTimeToFormat(selectedDate, dateFormatByUiCulture());
+        saveCookie('InternalCalendarDate', dateTimeToSave, 300);
     }
 
     const handleDataChange = (event) => {
-        console.log(event);
+        //console.log(event);
     }
 
     const modelFields = {
@@ -213,7 +237,7 @@ function EventCalendar() {
     }
     
     return (
-        <div>
+        <Spin spinning={loading}>
             <InnerScheduler
                 data={events}
                 hideDaySelection={true}
@@ -245,10 +269,10 @@ function EventCalendar() {
                 />
 
                 <WeekView/>
-                <MonthView height={80}/>
+                <MonthView selectedView={'month'}/>
                 <AgendaView/>
             </InnerScheduler>
-        </div>
+        </Spin>
     )
 }
 

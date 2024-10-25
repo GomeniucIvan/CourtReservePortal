@@ -245,6 +245,7 @@ export const MultiDayView = (props) => {
                                     eventOffset={props.eventOffset}
                                     closeTime={endTime}
                                     viewItem={props.viewItem}
+                                    selectedView={props.selectedView}
                                     editable={props.editable}
                                     vertical={false}
                                 />)
@@ -307,6 +308,7 @@ export const MultiDayView = (props) => {
                                                                                 form={props.form}
                                                                                 useTextSchedulerSlot={props.useTextSchedulerSlot}
                                                                                 openReservationCreateModal={props.openReservationCreateModal}
+                                                                                selectedView={props.selectedView}
                                                                                 row={rootIndex + GRID_OFFSET}
                                                                                 col={(timeRanges.length * (groupIndex || 0)) + rangeIndex}
                                                                                 isPastStart={isPastStart}

@@ -45,7 +45,7 @@ export const MonthView = (props) => {
     const fields = useSchedulerFieldsContext();
 
     const itemsPerSlot = props.itemsPerSlot || monthViewDefaultProps.itemsPerSlot;
-
+    
     const ranges = React.useMemo(
         () => toRanges(
             dateRange,
@@ -128,6 +128,7 @@ export const MonthView = (props) => {
                                 <EditSlot
                                     slot={props.slot}
                                     viewSlot={props.viewSlot}
+                                    selectedView={props.selectedView}
                                     key={slotIndex}
                                     form={props.form}
                                     {...slot}
@@ -189,6 +190,7 @@ export const MonthView = (props) => {
                         <EditItem
                             item={props.item}
                             viewItem={props.viewItem}
+                            selectedView={props.selectedView}
                             form={props.form}
                             key={item.isRecurring
                                 ? `${item.uid}:${item.group.index}:${item.range.index}:${item.originalStart}`

@@ -384,6 +384,7 @@ const InnerSchedulerComponent = memo(React.forwardRef((props, ref) => {
                        onDataAction={handleDataAction}
                        showWorkHours={showWorkHours}
                        hideDateRow={props.hideDateRow}
+                       selectedView={props.selectedView}
                        {...view.props}
                    />)}
                </div>

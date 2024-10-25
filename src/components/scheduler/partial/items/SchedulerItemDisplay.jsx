@@ -6,6 +6,7 @@ import { deleteTitle, messages} from "../messages/index.mjs";
 import { formatEventTime} from "../utils/index.jsx";
 import { useSchedulerItem} from "../hooks/useSchedulerItem.mjs";
 import { useEditable } from "../hooks/useEditable.mjs";
+import {equalString} from "../../../../utils/Utils.jsx";
 
 export const SchedulerItem = forwardRef((props, ref) => {
     const {
@@ -61,6 +62,10 @@ export const SchedulerItem = forwardRef((props, ref) => {
         color = item.current.props.dataItem.ReservationColor;
     }
 
+    if (item && item.current && item.current.props && item.current.props.dataItem && item.current.props.dataItem.EventTypeBgColor) {
+        color = item.current.props.dataItem.EventTypeBgColor;
+    }
+    
     const tabIndex = props.tabIndex !== undefined
         ? props.tabIndex === null
             ? undefined
@@ -68,13 +73,12 @@ export const SchedulerItem = forwardRef((props, ref) => {
         : props.selected
             ? 0
             : -1;
-
-    console.log(item)
     
     const className = useMemo(
         () => classNames(
             {
-                'k-event k-event-no-hint k-event-month': !props.resizeHint,
+                'k-event k-event-no-hint': !props.resizeHint,
+                'k-event-month': equalString(props.selectedView, 'month') ,
                 'k-selected': props.selected && editable.select,
                 'k-event-drag-hint': props.dragHint,
                 'k-scheduler-marquee': props.resizeHint,
@@ -106,6 +110,7 @@ export const SchedulerItem = forwardRef((props, ref) => {
             borderColor: !props.resizeHint ? color : undefined,
             backgroundColor: !props.resizeHint ? color : undefined,
             touchAction: 'none',
+            minHeight: equalString(props.selectedView, 'month') ? '80px' : '',
             ...props.style
         }),
         [color, props.style, props.resizeHint]);

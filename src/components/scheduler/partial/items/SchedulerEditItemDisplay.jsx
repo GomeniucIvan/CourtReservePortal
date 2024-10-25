@@ -659,7 +659,7 @@ export const SchedulerEditItem = React.forwardRef((
                     : undefined
                 : undefined);
     }, [items, props.tabIndex, selectedItems.length]);
-
+    
     return (
         <SchedulerEditItemContext
             props={props}
