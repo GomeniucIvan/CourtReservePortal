@@ -173,7 +173,6 @@ function ReservationRegistration() {
     });
 
     const loadData = (refresh) => {
-        console.log(22)
         if (isMockData) {
             const resv = mockData.create;
             setReservation(resv);
@@ -678,6 +677,43 @@ function ReservationRegistration() {
         }
     }, [showTermAndCondition]);
 
+    const displayPlayersInformation = () => {
+        let currentPlayersCount = ((reservationMembers?.length || 0));
+        if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
+            currentPlayersCount += formik?.values?.ReservationGuests?.length;
+        }
+
+        if (selectedReservationType){
+            let currentReservationTypeMinVariable = selectedReservationType.MinimumNumberOfPlayers;
+            let currentReservationTypeMaxVariable = selectedReservationType.MaximumNumberOfPlayers;
+            const applyNumberOfPlayersBasedOnNumberOfCourtsVariable = selectedReservationType.ApplyNumberOfPlayersBasedOnNumberOfCourts;
+            
+            if (toBoolean(applyNumberOfPlayersBasedOnNumberOfCourtsVariable)){
+                const currentCourtIdsCount = formik?.values?.CourtId.length || 1;
+                
+                if (!isNullOrEmpty(currentReservationTypeMinVariable)){
+                    currentReservationTypeMinVariable =  parseInt(currentReservationTypeMinVariable) * currentCourtIdsCount;
+                }
+
+                if (!isNullOrEmpty(currentReservationTypeMaxVariable)){
+                    currentReservationTypeMaxVariable =  parseInt(currentReservationTypeMaxVariable) * currentCourtIdsCount;
+                }
+            }
+            
+            if (!isNullOrEmpty(currentReservationTypeMinVariable) && !isNullOrEmpty(currentReservationTypeMaxVariable)){
+                return `(${currentPlayersCount}/Max ${currentReservationTypeMaxVariable})`;
+            } else if(!isNullOrEmpty(currentReservationTypeMinVariable)){
+                return `(Min ${currentReservationTypeMinVariable}/${currentPlayersCount})`;
+            } else if(!isNullOrEmpty(currentReservationTypeMaxVariable)){
+                return `(${currentPlayersCount}/Max ${currentReservationTypeMaxVariable})`;
+            } else{
+                return `(${currentPlayersCount})`;
+            }
+        } else{
+            return `(${currentPlayersCount})`;
+        }
+    }
+    
     return (
         <>
             {isFetching &&
@@ -872,7 +908,7 @@ function ReservationRegistration() {
                                             Information</Title>
                                     </Flex>
 
-                                    <Text type="secondary">(1/8)</Text>
+                                    <Text type="secondary">{displayPlayersInformation()}</Text>
                                 </Flex>
                             </Flex>
 
