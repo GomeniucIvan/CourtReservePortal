@@ -17,7 +17,7 @@ import { useInternationalization } from "../../intl/index.mjs";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
 import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerOrientationContext, useSchedulerGroupsContext, useSchedulerDateRangeContext, useSchedulerFieldsContext } from "../../context/SchedulerContext.mjs";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
-import { CurrentTimeMarker } from "../../components/CurrentTimeMarket.mjs";
+import { CurrentTimeMarker } from "../../components/CurrentTimeMarketDisplay.jsx";
 import { DateHeaderCell} from "../../components/DateHeaderCell.jsx";
 import { TimeHeaderCell } from "../../components/TimeHeaderCell.jsx";
 import { useCellSync } from "../../hooks/useCellSync.mjs";

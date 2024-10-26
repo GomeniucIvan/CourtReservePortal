@@ -102,6 +102,7 @@ function ReservationRegistration() {
     const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
 
     let selectRegisteringMemberIdRef = useRef();
+    let selectReservationTypeIdRef = useRef();
     let searchPlayerDrawerBottomRef = useRef();
 
 
@@ -172,6 +173,7 @@ function ReservationRegistration() {
     });
 
     const loadData = (refresh) => {
+        console.log(22)
         if (isMockData) {
             const resv = mockData.create;
             setReservation(resv);
@@ -249,6 +251,10 @@ function ReservationRegistration() {
                         appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxReservation/GetAvailableReservationTypes?id=${orgId}&${encodeParamsObject(reservationTypeData)}`).then(rTypes => {
                             setReservationTypes(rTypes);
                             setLoading('ReservationTypeId', false);
+                            console.log(formik)
+                            if (!isNullOrEmpty(selectReservationTypeIdRef?.current) && isNullOrEmpty(formik?.values?.ReservationTypeId)){
+                                selectReservationTypeIdRef.current.open();
+                            }
                         })
                     }
                 }
@@ -451,7 +457,6 @@ function ReservationRegistration() {
     }
 
     useEffect(() => {
-        console.log(formik?.values?.FeeResponsibility)
         if (!isNullOrEmpty(formik?.values?.RegisteringMemberId) || !isNullOrEmpty(formik?.values?.Duration)) {
             reloadPlayers()
         }
@@ -511,7 +516,7 @@ function ReservationRegistration() {
 
     useEffect(() => {
         if (shouldFetch) {
-            loadData(true);
+            //(true);
         }
     }, [shouldFetch, resetFetch]);
 
@@ -532,7 +537,7 @@ function ReservationRegistration() {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
         loadData();
-    }, [isFetching, isLoading]);
+    }, []);
 
     const isValidMatchMakerData = async () => {
         await formik.validateField('MatchMakerTypeId');
@@ -704,15 +709,17 @@ function ReservationRegistration() {
                         }
 
                         {anyInList(reservation?.FamilyMembers) &&
-                            <FormSelect form={formik}
-                                        ref={selectRegisteringMemberIdRef}
-                                        name={`RegisteringMemberId`}
-                                        label='Reserve For'
-                                        options={reservation?.FamilyMembers}
-                                        required={true}
-                                //onValueChange={onReservationTypeChange}
-                                        propText='FullName'
-                                        propValue='Id'/>
+                            <div style={{display: 'none'}}>
+                                <FormSelect form={formik}
+                                            ref={selectRegisteringMemberIdRef}
+                                            name={`RegisteringMemberId`}
+                                            label='Reserve For'
+                                            options={reservation?.FamilyMembers}
+                                            required={true}
+                                    //onValueChange={onReservationTypeChange}
+                                            propText='FullName'
+                                            propValue='Id'/>
+                            </div>
                         }
 
                         {toBoolean(reservation?.IsResourceReservation) ? (
@@ -729,6 +736,7 @@ function ReservationRegistration() {
                                         name={`ReservationTypeId`}
                                         label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
                                         options={reservationTypes}
+                                        ref={selectReservationTypeIdRef}
                                         required={true}
                                         onValueChange={onReservationTypeChange}
                                         loading={toBoolean(loadingState.ReservationTypeId)}
@@ -868,9 +876,9 @@ function ReservationRegistration() {
                                 </Flex>
                             </Flex>
 
-                            <Alert
-                                message={<div><strong>Reservation TypeName</strong> min number... 5 minutes note</div>}
-                                type="info"/>
+                            {/*<Alert*/}
+                            {/*    message={<div><strong>Reservation TypeName</strong> min number... 5 minutes note</div>}*/}
+                            {/*    type="info"/>*/}
 
                             {toBoolean(authData?.AllowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
                                 <div>
@@ -975,7 +983,7 @@ function ReservationRegistration() {
                                                 ghost
                                                 htmlType={'button'}
                                                 disabled={toBoolean(loadingState.SelectedReservationMembers)}
-                                                style={{marginTop: `${token.padding}px`}}
+                                                //style={{marginTop: `${token.padding}px`}}
                                                 onClick={() => {
                                                     setShowSearchPlayers(true)
                                                 }}>
@@ -1202,12 +1210,7 @@ function ReservationRegistration() {
 
                         {!isNullOrEmpty(disclosure) &&
                             <Flex vertical={true}>
-                                <label style={{
-                                    fontSize: token.Form.labelFontSize,
-                                    padding: token.Form.verticalLabelPadding,
-                                    marginLeft: token.Form.labelColonMarginInlineStart,
-                                    display: 'block'
-                                }}>
+                                <label className={globalStyles.globalLabel}>
                                     {disclosure?.Name}
                                 </label>
 

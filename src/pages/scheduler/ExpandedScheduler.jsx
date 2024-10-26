@@ -218,8 +218,8 @@ function ExpandedScheduler() {
         recurrenceRule: "RecurrenceRule",
         recurrenceId: "RecurrenceId",
         recurrenceExceptions: "RecurrenceException",
-        startTimezone: "StartTimezone",
-        endTimezone: "EndTimezone",
+        //startTimezone: "StartTimezone",
+        //endTimezone: "EndTimezone",
         isAllDay: "isAllDay",
     };
 

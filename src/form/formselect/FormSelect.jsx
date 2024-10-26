@@ -169,14 +169,7 @@ const FormSelect = forwardRef(({
                 </div>
             ) : (
                 <div className={cx(globalStyles.formBlock, styles.selectGlobal)}>
-                    <label htmlFor={name}
-                           style={{
-                               fontSize: token.Form.labelFontSize,
-                               padding: token.Form.verticalLabelPadding,
-                               marginLeft: token.Form.labelColonMarginInlineStart,
-                               color: token.colorText,
-                               display: 'block'
-                           }}>
+                    <label htmlFor={name} className={globalStyles.globalLabel}>
                         {label}
                         {isRequired && <span
                             style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}

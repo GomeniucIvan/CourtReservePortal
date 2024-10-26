@@ -218,7 +218,7 @@ export const SchedulerSlot = React.forwardRef((
     );
     
     if (toBoolean(props?.group?.resources[0]?.IsWailitsingData)){
-        return (<div className={'k-scheduler-cell k-slot-cell'}></div>)
+        return (<div ref={element} className={'k-scheduler-cell k-slot-cell'}></div>)
     }
     
     if (toBoolean(props.isPastStart)){

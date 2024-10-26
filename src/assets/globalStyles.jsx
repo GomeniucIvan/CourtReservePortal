@@ -312,11 +312,13 @@ export const useStyles = createStyles(({ css, token }) => ({
       padding: ${token.Form.verticalLabelPadding};
       margin-left: ${token.Form.labelColonMarginInlineStart}px;
       display: block;
+      color: ${token.colorText}
    `,
    filterSelector: css`
     --border-radius: ${token.borderRadius}px;
-    --border: solid transparent 1px;
+    --border: 1px solid ${token.colorBorder};
     --checked-border: solid var(--adm-color-primary) 1px;
     --padding: 6px 10px;
+      --color: ${token.colorBgContainer}
    `
 }));
