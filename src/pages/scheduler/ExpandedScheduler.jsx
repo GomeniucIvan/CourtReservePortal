@@ -16,10 +16,11 @@ import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/Schedu
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "../../api/app.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {toReactDate} from "../../utils/DateUtils.jsx";
+import {dateFormatByUiCulture, dateTimeToFormat, toReactDate} from "../../utils/DateUtils.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
 import dayjs from "dayjs";
 import apiService from "../../api/api.jsx";
+import {saveCookie} from "../../utils/CookieUtils.jsx";
 
 function ExpandedScheduler() {
     const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData, token, globalStyles} = useApp();
@@ -139,8 +140,9 @@ function ExpandedScheduler() {
                     
                     setSchedulerData(model);
 
-                    const dateToShow = toReactDate(model.CurrentDateTime);
-                    setMinDate(dateToShow);
+                    const currentDateTime = toReactDate(model.CurrentDateTime);
+                    const dateToShow = toReactDate(model.SchedulerDate);
+                    setMinDate(currentDateTime);
                     setTimeZone(model.TimeZone);
                     setInterval(model.MinInterval);
                     
@@ -152,16 +154,31 @@ function ExpandedScheduler() {
 
                     setCourts(formattedCourts);
                     setIsSchedulerInitializing(false);
-                    setCurrentDateTime(dateToShow);
+                    setCurrentDateTime(currentDateTime);
 
                     //always last
                     setSelectedDate(dateToShow);
+                    setTimeout(function(){
+                        //dom
+                        scrollToCurrentTime();
+                    }, 50)
                 } else{
                     navigate(r.Path);
                 }
             })
         }
     }, []);
+
+    const scrollToCurrentTime = () => {
+        const currentTimeElement = document.querySelector('.k-current-time');
+
+        if (currentTimeElement) {
+            currentTimeElement.scrollIntoView({
+                behavior: 'smooth', 
+                block: 'center', 
+            });
+        }
+    };
     
     const shouldHideButton = (courtId, slotStartInc, slotEndInc) => {
         if (!shouldHideReserveButton) {
@@ -191,6 +208,9 @@ function ExpandedScheduler() {
     const handleDateChange = (event) => {
         const selectedDate = event.value;
         setSelectedDate(selectedDate);
+
+        let dateTimeToSave = dateTimeToFormat(selectedDate, dateFormatByUiCulture());
+        saveCookie('InternalCalendarDate', dateTimeToSave, 300);
     }
     
     const handleDataChange = (e) => {
@@ -256,6 +276,8 @@ function ExpandedScheduler() {
            </Flex>
        )
     }
+    
+    
     
     return (
         <Spin spinning={loading}>

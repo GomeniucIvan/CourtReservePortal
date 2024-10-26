@@ -193,8 +193,9 @@ function EventCalendar() {
                         Selected: model.SelectedEventSessionIds.includes(eventSession.Id)
                     })))
 
+                    const currentDateTime = toReactDate(model.CurrentDateTime);
                     const dateToShow = toReactDate(model.SchedulerDate);
-                    setMinDate(dateToShow);
+                    setMinDate(currentDateTime);
                     setTimeZone(model.TimeZone);
                     setInterval(model.MinInterval);
 

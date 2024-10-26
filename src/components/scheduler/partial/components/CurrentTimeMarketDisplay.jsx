@@ -54,7 +54,7 @@ export const CurrentTimeMarker = (props) => {
     const dir = useDir(line, schedulerProps.rtl === true ? 'rtl' : undefined);
 
     const [slots] = useSchedulerViewSlotsContext();
-    console.log(slots)
+
     const position = React.useCallback(
         () => {
             if (!slots) { return; }
