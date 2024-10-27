@@ -6,7 +6,7 @@ import EventList from "../pages/event/list/EventList.jsx";
 
 export const EventRouteNames = {
     EVENT_LIST: '/event/list',
-    EVENT_DETAILS: '/event/details/:id',
+    EVENT_DETAILS: '/event/details/:number',
     EVENT_SIGNUP: '/event/signup/:id',
 };
 

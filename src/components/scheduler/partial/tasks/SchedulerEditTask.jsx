@@ -192,7 +192,7 @@ export const SchedulerEditTask = React.forwardRef((
             >
                 <div style={{minHeight: '72px', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center'}} 
                      onClick={() => {
-                    let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', dataItem.EventId);
+                    let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', dataItem.Number);
                     setPage(setDynamicPages, dataItem.EventName, route);
                     navigate(route);
                 }}>

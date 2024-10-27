@@ -135,7 +135,7 @@ function EventList() {
                                            key={index}
                                            arrowIcon={false}
                                            onClick={() => {
-                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.EventId);
+                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', item.Number);
                                                setPage(setDynamicPages, item.EventName, route);
                                                navigate(route);
                                            }}>

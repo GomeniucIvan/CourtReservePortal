@@ -281,7 +281,7 @@ function ProfileBookingList() {
                                                setPage(setDynamicPages, booking.ReservationTypeName, route);
                                                navigate(route);
                                            } else {
-                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', booking.ReservationId);
+                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', booking.Number);
                                                setPage(setDynamicPages, booking.EventName, route);
                                                navigate(route);
                                            }

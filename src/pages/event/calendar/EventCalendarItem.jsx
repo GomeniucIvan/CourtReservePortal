@@ -24,7 +24,7 @@ const EventCalendarItem = (props) => {
                      color: dataItem.EventTypeTextColor,
                  }}
                  onClick={() => {
-                     let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', dataItem.EventId);
+                     let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', dataItem.Number);
                      setPage(setDynamicPages, dataItem.EventName, route);
                      navigate(route);
                  }}>
