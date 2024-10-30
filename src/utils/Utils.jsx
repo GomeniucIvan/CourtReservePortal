@@ -5,7 +5,7 @@ export const isNullOrEmpty = (data) => {
         return true;
     }
 
-    var stringData = data.toString();
+    let stringData = data.toString();
 
     try {
         stringData = stringData.trim();
@@ -105,18 +105,6 @@ export const oneListItem = (data) => {
         return false;
     }
     return data.length <= 1;
-}
-
-
-export const extractTextFromHTML = (html, maxCharacters) => {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-
-    let text = tempDiv.textContent || tempDiv.innerText || '';
-    if (maxCharacters && text.length > maxCharacters) {
-        text = text.substring(0, maxCharacters) + '...';
-    }
-    return text;
 }
 
 export const organizationLogoSrc = (orgId, logoUrl) => {

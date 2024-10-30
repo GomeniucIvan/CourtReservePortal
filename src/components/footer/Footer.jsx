@@ -47,8 +47,8 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
             key: 'home',
             title: 'Home',
             icon: <HomeOutlined />,
-            onClick: (key) => {
-                console.log(22)
+            onClick: () => {
+                onTabBarChange('home');
             },
         },
         {
@@ -70,7 +70,10 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         {
             key: 'navigation',
             title: 'More',
-            icon: <MenuOutlined />
+            icon: <MenuOutlined />,
+            onClick: () => {
+                onTabBarChange('navigation');
+            },
         },
     ]
 
@@ -84,12 +87,12 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
 
     const footerComponent = () => {
         return (
-            <TabBar className={styles.footer} activeKey={activeKey} onChange={onTabBarChange}>
+            <TabBar className={styles.footer} activeKey={activeKey}>
                 {tabs.map(item => (
                     <TabBar.Item
                         key={item.key}
                         icon={item.icon}
-                        //title={item.title}
+                        onClick={item.onClick}
                         badge={item.badge}
                     />
                 ))}

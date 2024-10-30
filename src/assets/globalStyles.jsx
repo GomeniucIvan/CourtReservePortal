@@ -16,6 +16,11 @@ export const useStyles = createStyles(({ css, token }) => ({
         border: 1px solid ${token.colorBorder};
         position: relative;
     `,
+   cardSMPadding: css`
+        .ant-card-body {
+           padding: 14px;
+        }
+    `,
    noBottomPadding: css`
         margin-bottom: 0 !important;
     `,
@@ -224,6 +229,18 @@ export const useStyles = createStyles(({ css, token }) => ({
           }
        }
     }
+   `,
+   leftTabs: css `
+      .ant-tabs-nav-wrap {
+         .ant-tabs-nav-list {
+            .ant-tabs-tab {
+               margin: initial;
+            }
+         }
+      }
+   `,
+   scrollableTabs: css `
+   
    `,
    stickyButton: css`
       height: ${token.Button.controlHeight}px;

@@ -88,7 +88,10 @@ export const AntdProvider = ({ children }) => {
                             Modal: {
                                 fontSize: 15,
                                 fontSizeHeading5: 18
-                            }
+                            },
+                            Typography: {
+                                titleMarginTop: 0
+                            },
                         },
                     }}
                 >

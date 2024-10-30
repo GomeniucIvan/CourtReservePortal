@@ -233,3 +233,15 @@ export const dateTimeToFormat = (incDate, format) => {
     const date = dayjs(fixedDate);
     return date.format(format);
 }
+
+export const dateTimeToTimes = (incStartDate, incEndDate, format) => {
+    if (isNullOrEmpty(incStartDate) || isNullOrEmpty(incEndDate)){
+        return '';
+    }
+
+    if (equalString(format, 'friendly')){
+        return `${moment(incStartDate).format('ha').toLowerCase()} - ${moment(incEndDate).format('ha').toLowerCase()}`;
+    }
+    
+    return `${moment(incStartDate).format('ha').toLowerCase()} - ${moment(incEndDate).format('ha').toLowerCase()}`;
+}
