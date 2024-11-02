@@ -11,26 +11,28 @@ const {Title, Text} = Typography;
 const {Search} = Input;
 
 const DrawerBottom = forwardRef(({
-                          showDrawer,
-                          closeDrawer,
-                          children,
-                          label,
-                          addSearch,
-                          searchType = 1, // 1 header icon, bottom search like search players
-                          showButton,
-                          confirmButtonText,
-                          onConfirmButtonClick,
-                          onSearch,
-                          dangerButton,
-                          maxHeightVh = 60,
-                          fullHeight = false,
-                          isSearchLoading,
-                          customFooter,
-                          confirmButtonLoading
-                      }, ref) => {
-    const {token, globalStyles} = useApp();
+                                     showDrawer,
+                                     closeDrawer,
+                                     children,
+                                     label,
+                                     addSearch,
+                                     searchType = 1, // 1 header icon, bottom search like search players
+                                     showButton,
+                                     confirmButtonText,
+                                     onConfirmButtonClick,
+                                     onSearch,
+                                     dangerButton,
+                                     maxHeightVh = 60,
+                                     fullHeight = false,
+                                     isSearchLoading,
+                                     customFooter,
+                                     confirmButtonLoading
+                                 }, ref) => {
+
+    const { token, globalStyles } = useApp();
+
     const {styles} = useStyles();
-    
+
     const headerRef = useRef(null);
     const footerRef = useRef(null);
     const searchRef = useRef(null);
@@ -45,7 +47,7 @@ const DrawerBottom = forwardRef(({
             setSearchValue(incValue);
         },
     }));
-    
+
     useEffect(() => {
         if (fullHeight && showDrawer) {
             const headerHeight = headerRef.current ? headerRef.current.offsetHeight : 0;
@@ -92,7 +94,7 @@ const DrawerBottom = forwardRef(({
                 <>
                     <Flex vertical ref={headerRef}>
                         {(!addSearch || !equalString(searchType, 2)) &&
-                            <Flex justify={'space-between'} align={'center'} style={{padding: `${token.padding}px`}}>
+                            <Flex justify={'space-between'} align={'center'} style={{padding: `${token?.padding}px`}}>
                                 <Title level={4} style={{margin: 0}}>{label}</Title>
 
                                 <Flex gap={token.Custom.buttonPadding}>

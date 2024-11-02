@@ -62,7 +62,7 @@ const appService = {
             const fixedResponse = fixResponseData(response.data);
 
             
-            if (!isNullOrEmpty(fixedResponse?.baseRedirectPath)){
+            if (!isNullOrEmpty(fixedResponse?.baseRedirectPath) && typeof navigate === 'function'){
                 navigate(fixedResponse?.baseRedirectPath);
                 return;
             }

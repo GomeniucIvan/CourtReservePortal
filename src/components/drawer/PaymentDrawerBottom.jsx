@@ -42,14 +42,11 @@ const PaymentDrawerBottom = forwardRef(({
     }));
 
     useEffect(() => {
-        if (fullHeight && showDrawer) {
-            const headerHeight = headerRef.current ? headerRef.current.offsetHeight : 0;
-            const footerHeight = footerRef.current ? footerRef.current.offsetHeight : 0;
-            setTopBottomHeight(headerHeight + footerHeight);
-        } else {
-            setTopBottomHeight('');
+        if (toBoolean(paymentData?.show)){
+            const footerHeight = footerRef.current ? footerRef.current.offsetHeight + (token.padding * 3) : 0;
+            setTopBottomHeight(footerHeight);
         }
-    }, [fullHeight, showDrawer]);
+    }, [paymentData?.show, footerRef.current]);
 
     useEffect(() => {
         if (drawerOpenerAndClose){
@@ -97,7 +94,7 @@ const PaymentDrawerBottom = forwardRef(({
     return (
         <>
             {toBoolean(paymentData?.show) &&
-               <div style={{height: '80px'}}>
+               <div style={{height: `${topBottomHeight}px`}}>
                    <Popup
                        visible={true}
                        mask={isDrawerOpen}

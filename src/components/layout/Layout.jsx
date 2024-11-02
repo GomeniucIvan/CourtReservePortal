@@ -21,15 +21,19 @@ import {Flex} from "antd";
 import {Skeleton} from 'antd-mobile'
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import appService from "../../api/app.jsx";
-import {useAntd} from "../../context/AntdProvider.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 import apiService, {setRequestData} from "../../api/api.jsx";
 import {useSafeArea} from "../../context/SafeAreaContext.jsx";
+import {match} from "path-to-regexp";
 
 function Layout() {
     const location = useLocation();
-    let currentRoute = AppRoutes.find(route => route.path === location.pathname);
+    let currentRoute = AppRoutes.find(route => {
+        const matcher = match(route.path, { decode: decodeURIComponent });
+        return matcher(location.pathname);
+    });
+    
     const headerRef = useRef(null);
     const footerRef = useRef(null);
     const {styles} = useStyles();
@@ -117,7 +121,7 @@ function Layout() {
                 }
 
                 //set from organization load
-                setIsFetching(false);
+                //setIsFetching(false);
             }
         }
 
@@ -130,8 +134,6 @@ function Layout() {
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
         let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsets?.top || 0) - (safeAreaInsets?.bottom || 0);
 
-        console.log(footerHeight)
-        
         if (toBoolean(currentRoute?.fullHeight)) {
             calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
         }

@@ -93,18 +93,13 @@ const FormInput = ({ label,
     }
     
     return (
-        <div className={cx(globalStyles.formBlock, className, styles.input) }>
-            <label htmlFor={name}
-                   style={{
-                       fontSize: token.Form.labelFontSize,
-                       padding: token.Form.verticalLabelPadding,
-                       marginLeft: token.Form.labelColonMarginInlineStart,
-                       display: 'block'
-                   }}>
+        <div className={cx(globalStyles.formBlock, className, styles.input)}>
+            <label htmlFor={name} className={globalStyles.globalLabel}>
                 {label}
-                {isRequired && <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
+                {isRequired &&
+                    <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
-            
+
             <Input
                 {...props}
                 {...field}
@@ -123,12 +118,13 @@ const FormInput = ({ label,
                 className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
+                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                     {meta.error}
                 </Paragraph>
             ) : (
                 form.status && form.status[name] && (
-                    <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
+                    <Paragraph
+                        style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                         {form.status[name]}
                     </Paragraph>
                 )

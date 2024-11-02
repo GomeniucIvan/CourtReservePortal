@@ -342,5 +342,39 @@ export const useStyles = createStyles(({ css, token }) => ({
     --checked-border: solid var(--adm-color-primary) 1px;
     --padding: 6px 10px;
       --color: ${token.colorBgContainer}
+   `,
+   modalFull: css `
+      .adm-center-popup-wrap {
+         left: ${token.padding}px;
+         transform: translate(0%, -50%);
+      }
+
+      .adm-center-popup-body {
+         width: calc(100vw - ${token.padding *2}px);
+         height: calc(100vh - ${token.padding *2}px);
+         max-height: calc(100vh - ${token.padding *2}px);
+         padding-top: 0;
+      }
+      
+      .adm-modal-title {
+         padding: ${token.padding}px;
+      }
+      
+      .adm-modal-content {
+         max-height: calc(100vh - 80px - ${token.padding *2}px);
+         padding: 0 ${token.padding}px;
+      }
+
+      .adm-modal-footer {
+         padding: ${token.padding/2}px ${token.padding}px ${token.padding}px;
+         display: flex;
+         flex-direction: row;
+         justify-content: space-around;
+         
+         .adm-space-item {
+            width: calc((100vw / 2) - ${token.padding * 2}px - ${token.padding}px);
+            margin-bottom: 0;
+         }
+      }
    `
 }));

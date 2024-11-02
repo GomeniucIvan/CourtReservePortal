@@ -29,14 +29,7 @@ const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isReq
     
     return (
         <div className={cx(globalStyles.formBlock)}>
-            <label htmlFor={name}
-                   style={{
-                       fontSize: token.Form.labelFontSize,
-                       padding: token.Form.verticalLabelPadding,
-                       marginLeft: token.Form.labelColonMarginInlineStart,
-                       color: token.colorText,
-                       display: 'block'
-                   }}>
+            <label htmlFor={name} className={globalStyles.globalLabel}>
                 {label}
                 {isRequired &&
                     <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
@@ -53,12 +46,13 @@ const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isReq
             />
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
+                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                     {meta.error}
                 </Paragraph>
             ) : (
                 form.status && form.status[name] && (
-                    <Paragraph style={{ color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart }}>
+                    <Paragraph
+                        style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                         {form.status[name]}
                     </Paragraph>
                 )

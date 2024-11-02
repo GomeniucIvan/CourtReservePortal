@@ -1,14 +1,15 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
-import {useApp} from "../../../context/AppProvider.jsx";
+import React, {useEffect, useRef, useState} from "react";
+import {AppProvider, useApp} from "../../../context/AppProvider.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {Button, Flex, List, Typography, Switch, Skeleton, Divider} from "antd";
+import {Button, Flex, List, Typography, Switch, Skeleton } from "antd";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import mockData from "../../../mocks/event-data.json";
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
+import {AuthProvider, useAuth} from "../../../context/AuthProvider.jsx";
+
 import {
     anyInList,
     equalString,
@@ -20,8 +21,10 @@ import {
 import {dateTimeToFormat, dateTimeToTimes} from "../../../utils/DateUtils.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import PaymentDrawerBottom from "../../../components/drawer/PaymentDrawerBottom.jsx";
-import {any} from "prop-types";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
+import {Toast} from "antd-mobile";
+import DisclosuresPartial from "../../home/disclosure/DisclosuresPartial.jsx";
+import Modal from "../../../components/modal/Modal.jsx";
 
 const {Title, Text} = Typography;
 
@@ -31,7 +34,12 @@ function EventRegistration({fullRegistration}) {
     const {orgId, authData} = useAuth();
     const [event, setEvent] = useState(null);
     const [members, setMembers] = useState([]);
+    const disclosureSignHandler = useRef();
+    const disclosureRef = useRef();
     const [isFetching, setIsFetching] = useState(true);
+    const [disclosureModalData, setDisclosureModalData] = useState(null);
+    const [selectedReservationIds, setSelectedReservationIds] = useState([]);
+    const [disclosureSubmitting, setDisclosureSubmitting] = useState(false);
 
     const {
         setIsFooterVisible,
@@ -47,6 +55,7 @@ function EventRegistration({fullRegistration}) {
     } = useApp();
 
     const loadData = async (refresh) => {
+
         setIsFetching(true);
         if (isMockData) {
             const details = mockData.details;
@@ -54,6 +63,7 @@ function EventRegistration({fullRegistration}) {
             setIsFetching(false);
         } else {
             let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_Get?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&ajaxCall=false&isFullEventReg=${toBoolean(fullRegistration)}`);
+
             if (toBoolean(response?.isValid)){
                 setEvent(response.Data);
                 const allMembers = [];
@@ -62,11 +72,11 @@ function EventRegistration({fullRegistration}) {
                 response.Data.FamilyMembers.map(familyMember => {
                     allMembers.push(familyMember);
                 })
-                
+
                 let udfs = response.Data.Udfs;
                 if (anyInList(udfs)){
                     allMembers.forEach(member => {
-                        member.MemberUdfs = udfs; 
+                        member.MemberUdfs = udfs;
                     });
                 }
                 setMembers(allMembers);
@@ -157,99 +167,151 @@ function EventRegistration({fullRegistration}) {
         );
     };
 
+    const onWaiverSignPostSuccess = () => {
+        setDisclosureModalData(null)
+        
+        //todo we should persist all information, udf, checked and so on
+        loadData();
+    }
+
+    const loadMemberWaivers = async (memberId) => {
+        let selectedReservationId = toBoolean(event?.NoDropInRegistration) ? 0 : reservationId;
+        let reservationIds = !toBoolean(event?.NoDropInRegistration) ? selectedReservationIds: '';
+
+        let response = await appService.get(navigate, `/app/Online/Disclosures/Pending?id=${orgId}&userId=${memberId}&eventId=${eventId}&reservationId=${selectedReservationId}&selectedReservationIdsString=${reservationIds}`);
+
+        if (toBoolean(response?.IsValid)) {
+            disclosureSignHandler.current?.close();
+            let disclosureData = response.Data;
+
+            let members = disclosureData.Members;
+            //show only for selected member
+            disclosureData.Members = members.filter(member => equalString(member.MemberId, memberId));
+            setDisclosureModalData(disclosureData);
+        }
+    }
+
     return (
-        <PaddingBlock topBottom={true}>
-            {isFetching &&
-                <Flex vertical={true} gap={16}>
-                    <Flex vertical={true} gap={4}>
-                        <Skeleton.Button active={true} block
-                                         style={{height: `40px`, width: `${randomNumber(45, 75)}%`}}/>
-                        <Skeleton.Button active={true} block
-                                         style={{height: `19px`, width: `${randomNumber(45, 75)}%`}}/>
-                    </Flex>
-
-                    <Flex vertical={true} gap={4}>
-                        {emptyArray(6).map((item, index) => (
-                            <div key={index}>
-                                <Skeleton.Button active={true} block
-                                                 style={{height: `26px`, width: `${randomNumber(45, 75)}%`}}/>
-                            </div>
-                        ))}
-                    </Flex>
-
-                    <Skeleton.Button active={true} block style={{height: `80px`}}/>
-                </Flex>
-            }
-            {!isFetching &&
-                <>
-                    <div style={{marginBottom: `${token.padding}px`}}>
-                        <Title level={4} style={{marginBottom: 0}}>
-                            {event?.EventName}
-                        </Title>
-                        <Text type="secondary">{event?.Type}</Text>
-                    </div>
-
-                    <Flex vertical={true} gap={token.padding}>
-                        <Flex vertical gap={4}>
-                            {(!toBoolean(event?.IsSignUpForEntireEvent) && !toBoolean(event?.NoDropInRegistration)) &&
-                                <CardIconLabel icon={'calendar'}
-                                               description={dateTimeToFormat(event?.SelectedReservation.Start, 'ddd, MMM Do')}/>
-                            }
-                            {(anyInList(event?.OtherFromSameEvent) && toBoolean(event?.NoDropInRegistration)) &&
-                                <CardIconLabel icon={'calendar'} description={event?.GetDateDisplayNoDropInHeader}/>
-                            }
-                            <CardIconLabel icon={'clock'}
-                                           description={dateTimeToTimes(event?.SelectedReservation.Start, event?.SelectedReservation.End, 'friendly')}/>
+        <>
+            <PaddingBlock topBottom={true}>
+                {isFetching &&
+                    <Flex vertical={true} gap={16}>
+                        <Flex vertical={true} gap={4}>
+                            <Skeleton.Button active={true} block
+                                             style={{height: `40px`, width: `${randomNumber(45, 75)}%`}}/>
+                            <Skeleton.Button active={true} block
+                                             style={{height: `19px`, width: `${randomNumber(45, 75)}%`}}/>
                         </Flex>
 
-                        {moreThanOneInList(members) &&
-                            <>
-                                <List
-                                    itemLayout="horizontal"
-                                    dataSource={members}
-                                    bordered
-                                    renderItem={(member, index) => {
-                                        let requireToSignWaiver = equalString(member.DisclosureStatus, 2) && !toBoolean(member.InitialCheck);
-                                        
-                                        return (
-                                            <List.Item className={globalStyles.listItemSM}>
-                                                <Flex justify={'space-between'} align={'center'} className={'width-100'}>
-                                                    <Title level={5} onClick={() => {if (!requireToSignWaiver){toggleInitialCheck(index)}}}>
-                                                        {member.FullName}
-                                                    </Title>
-                                                    <Switch checked={member.IsChecked}
-                                                            onChange={() => toggleInitialCheck(index)} disabled={requireToSignWaiver}/>
-                                                </Flex>
+                        <Flex vertical={true} gap={4}>
+                            {emptyArray(6).map((item, index) => (
+                                <div key={index}>
+                                    <Skeleton.Button active={true} block
+                                                     style={{height: `26px`, width: `${randomNumber(45, 75)}%`}}/>
+                                </div>
+                            ))}
+                        </Flex>
 
-                                                {toBoolean(member.HasDisclosureToSign) &&
-                                                    <>
-                                                        <Divider />
-                                                        <Flex justify={'space-between'} align={'center'} className={'width-100'}>
-                                                            <Text>
-                                                                Sign Waiver(s)
-                                                            </Text>
-                                                            <Button>Sign</Button>
-                                                        </Flex>
-                                                    </>
-                                                }
-
-                                                {toBoolean(member.IsChecked) &&
-                                                    <>
-                                                        <FormCustomFields customFields={member.MemberUdfs} form={formik} />
-                                                    </>
-                                                }
-
-                                            </List.Item>
-                                        )
-                                    }}
-                                />
-                            </>
-                        }
+                        <Skeleton.Button active={true} block style={{height: `80px`}}/>
                     </Flex>
-                </>
-            }
+                }
+                {!isFetching &&
+                    <>
+                        <div style={{marginBottom: `${token.padding}px`}}>
+                            <Title level={4} style={{marginBottom: 0}}>
+                                {event?.EventName}
+                            </Title>
+                            <Text type="secondary">{event?.Type}</Text>
+                        </div>
 
-        </PaddingBlock>
+                        <Flex vertical={true} gap={token.padding}>
+                            <Flex vertical gap={4}>
+                                {(!toBoolean(event?.IsSignUpForEntireEvent) && !toBoolean(event?.NoDropInRegistration)) &&
+                                    <CardIconLabel icon={'calendar'}
+                                                   description={dateTimeToFormat(event?.SelectedReservation.Start, 'ddd, MMM Do')}/>
+                                }
+                                {(anyInList(event?.OtherFromSameEvent) && toBoolean(event?.NoDropInRegistration)) &&
+                                    <CardIconLabel icon={'calendar'} description={event?.GetDateDisplayNoDropInHeader}/>
+                                }
+                                <CardIconLabel icon={'clock'}
+                                               description={dateTimeToTimes(event?.SelectedReservation.Start, event?.SelectedReservation.End, 'friendly')}/>
+                            </Flex>
+
+                            {moreThanOneInList(members) &&
+                                <>
+                                    <List
+                                        itemLayout="horizontal"
+                                        dataSource={members}
+                                        bordered
+                                        renderItem={(member, index) => {
+                                            let requireToSignWaiver = equalString(member.DisclosureStatus, 2) && !toBoolean(member.InitialCheck);
+
+                                            return (
+                                                <List.Item className={globalStyles.listItemSM}>
+                                                    <Flex justify={'space-between'} align={'center'} className={'width-100'}>
+                                                        <Title level={5} onClick={() => {if (!requireToSignWaiver){toggleInitialCheck(index)}}}>
+                                                            {member.FullName}
+                                                        </Title>
+                                                        <Switch checked={member.IsChecked}
+                                                                onChange={() => toggleInitialCheck(index)} disabled={requireToSignWaiver}/>
+                                                    </Flex>
+
+                                                    {toBoolean(member.HasDisclosureToSign) &&
+                                                        <div>
+                                                            <label htmlFor={name} className={globalStyles.globalLabel}>
+                                                                Sign Waiver(s)
+                                                            </label>
+                                                            <Button size={'small'} type={'primary'} onClick={() => {
+                                                                disclosureSignHandler.current = Toast.show({
+                                                                    icon: 'loading',
+                                                                    content: '',
+                                                                    maskClickable: false,
+                                                                    duration: 0
+                                                                })
+                                                                loadMemberWaivers(member.Id);
+                                                            }}>
+                                                                Sign
+                                                            </Button>
+                                                        </div>
+                                                    }
+
+                                                    {toBoolean(member.IsChecked) &&
+                                                        <>
+                                                            <FormCustomFields customFields={member.MemberUdfs} form={formik} index={index}/>
+                                                        </>
+                                                    }
+
+                                                </List.Item>
+                                            )
+                                        }}
+                                    />
+                                </>
+                            }
+                        </Flex>
+                    </>
+                }
+
+            </PaddingBlock>
+
+            <Modal show={!isNullOrEmpty(disclosureModalData)}
+                   onClose={() => {setDisclosureModalData(null)}}
+                   loading={disclosureSubmitting}
+                   onConfirm={() => {
+                       disclosureRef.current.submit();
+                   }}
+                   title={'Waiver(s)'}>
+
+                <DisclosuresPartial orgId={orgId}
+                                    ref={disclosureRef}
+                                    isModal={true}
+                                    isFormSubmit={(e) =>{
+                                        setDisclosureSubmitting(e);
+                                    }}
+                                    disclosureData={disclosureModalData}
+                                    onPostSuccess={onWaiverSignPostSuccess}
+                                    navigate={navigate}/>
+            </Modal>
+        </>
     )
 }
 

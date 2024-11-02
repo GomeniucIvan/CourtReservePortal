@@ -52,7 +52,6 @@ export const AuthProvider = ({children}) => {
     const setAuthorizationData = async (memberResponseData) => {
         setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
         
-        console.log(memberResponseData)
         if (!isNullOrEmpty(memberResponseData.RequestData)){
             setRequestData(memberResponseData.RequestData)
         }

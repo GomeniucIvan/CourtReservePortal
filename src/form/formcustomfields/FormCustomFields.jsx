@@ -8,7 +8,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import React from "react";
 const {Title} = Typography;
 
-const FormCustomFields = ({ customFields, form, keyPrefix, loading }) => {
+const FormCustomFields = ({ customFields, form, keyPrefix, loading, name, index }) => {
     const {globalStyles} = useApp();
     
     if (isNullOrEmpty(customFields)) {
@@ -29,9 +29,18 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading }) => {
             </div>
         )
     }
+
+    const onFieldChange = (fieldId, value) => {
+        if (!isNullOrEmpty(index)){
+            form.setFieldValue(`members[${index}].MemberUdfs[${fieldId}]`, value); 
+        }
+    };
     
     return customFields.map(({ UdfType, FieldType, Label, Id, IsRequired, Options }) => {
-        const name = isNullOrEmpty(keyPrefix) ? `udf_${Id}` : `${keyPrefix}.udf_${Id}`;
+        if (isNullOrEmpty(name)){
+            name = isNullOrEmpty(keyPrefix) ? `udf_${Id}` : `${keyPrefix}.udf_${Id}`;
+        }
+
         const type = UdfType || FieldType;
         
         switch (type) {
@@ -45,6 +54,9 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading }) => {
                         //placeholder={Label}
                         required={IsRequired}
                         form={form}
+                        onInput={(e) => {
+                            onFieldChange(Id, e.target.value)
+                        }}
                     />
                 );
 
