@@ -21,6 +21,11 @@ export const useStyles = createStyles(({ css, token }) => ({
            padding: 14px;
         }
     `,
+   listItemSM: css`
+      &.ant-list-item{
+         padding-inline: 12px;
+      }
+   `,
    noBottomPadding: css`
         margin-bottom: 0 !important;
     `,

@@ -16,8 +16,8 @@ export const useStyles = createStyles(({css, token}) => ({
             margin: ${token.Button.paddingXS / 2}px 0px;
         }
         
-        h1, h2, h3, h4, h5 {
-            margin-block-start: 0;
+        .width-100{
+            width: 100%;
         }
     `,
     layoutExtra: css`

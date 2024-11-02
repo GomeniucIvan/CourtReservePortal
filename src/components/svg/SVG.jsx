@@ -45,6 +45,7 @@ const SGV = ({ icon, color = 'black', size = '24', style= '', preventFill = fals
                     if (!toBoolean(preventFill)) {
                         path.setAttribute('stroke', 'transparent');
                         path.setAttribute('fill', color);
+                        svg.setAttribute('fill', color);
                     }
 
                     if (!toBoolean(preventStroke)){

@@ -24,8 +24,7 @@ import appService from "../../api/app.jsx";
 import {useAntd} from "../../context/AntdProvider.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
-import apiService, {getBearerToken, setBearerToken, setRequestData} from "../../api/api.jsx";
-import {stringToJson} from "../../utils/ListUtils.jsx";
+import apiService, {setRequestData} from "../../api/api.jsx";
 import {useSafeArea} from "../../context/SafeAreaContext.jsx";
 
 function Layout() {
@@ -131,6 +130,8 @@ function Layout() {
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
         let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsets?.top || 0) - (safeAreaInsets?.bottom || 0);
 
+        console.log(footerHeight)
+        
         if (toBoolean(currentRoute?.fullHeight)) {
             calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
         }
@@ -155,7 +156,7 @@ function Layout() {
                 window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
             }
         };
-    }, [isFooterVisible, footerContent]);
+    }, [isFooterVisible, footerContent, footerRef.current]);
 
     useEffect(() => {
         calculateMaxHeight();
@@ -202,6 +203,10 @@ function Layout() {
             }
             .magic-dots.slick-dots li.slick-active button::before{
                 color: ${token.colorPrimary} !important;
+            }
+            h1, h2, h3, h4, h5 {
+                margin-block-start: 0;
+                margin-block-end: 0;
             }
             `;
         document.head.appendChild(style);

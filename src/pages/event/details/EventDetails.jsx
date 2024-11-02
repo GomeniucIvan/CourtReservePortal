@@ -18,6 +18,8 @@ import {isNullOrEmptyHtmlCode} from "../../../utils/HtmlUtils.jsx";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
 import {dateTimeToFormat, dateTimeToTimes} from "../../../utils/DateUtils.jsx";
 import {costDisplay} from "../../../utils/CostUtils.jsx";
+import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
+import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
 
 const {Title, Text} = Typography;
 
@@ -257,7 +259,7 @@ function EventDetails() {
                     {anyInList(event?.EventTags) &&
                         <Flex gap={token.padding/2}>
                             {event.EventTags.map(eventTag => (
-                                <Tag color={eventTag.TextColor} style={{ backgroundColor: eventTag.BackgroundColor }}>{eventTag.Name}</Tag>
+                                <Tag color={eventTag.TextColor} key={eventTag.EventTagId} style={{ backgroundColor: eventTag.BackgroundColor }}>{eventTag.Name}</Tag>
                             ))}
                         </Flex>
                     }
@@ -355,6 +357,12 @@ function EventDetails() {
                                 {toBoolean(registration?.ShowRegisterBtn) &&
                                     <Button type="primary"
                                             block
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'reservationId', event.ReservationId);
+                                                route = toRoute(route, 'eventId', event.EventId);
+                                                setPage(setDynamicPages, event.EventName, route);
+                                                navigate(route);
+                                            }}
                                             htmlType={'button'}>
                                         Register
                                     </Button>
@@ -363,6 +371,12 @@ function EventDetails() {
                                 {toBoolean(registration?.ShowRegisterForDateBtn) &&
                                     <Button type="primary"
                                             block
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'reservationId', event.ReservationId);
+                                                route = toRoute(route, 'eventId', event.EventId);
+                                                setPage(setDynamicPages, event.EventName, route);
+                                                navigate(route);
+                                            }}
                                             htmlType={'button'}>
                                         Register for {registration?.FriendlyMdDate}
                                     </Button>
@@ -371,6 +385,12 @@ function EventDetails() {
                                 {toBoolean(registration?.ShowRegisterForFullEventBtn) &&
                                     <Button type="primary"
                                             block
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_FULL_SIGNUP, 'reservationId', event.ReservationId);
+                                                route = toRoute(route, 'eventId', event.EventId);
+                                                setPage(setDynamicPages, event.EventName, route);
+                                                navigate(route);
+                                            }}
                                             htmlType={'button'}>
                                         Register to Full Event
                                     </Button>

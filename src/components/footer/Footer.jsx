@@ -8,7 +8,6 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {Flex} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
-import SGV from "../svg/SVG.jsx";
 
 import {HomeOutlined, PlusSquareOutlined, CalendarOutlined, MenuOutlined} from "@ant-design/icons";
 import {MessageOutline} from "antd-mobile-icons";
