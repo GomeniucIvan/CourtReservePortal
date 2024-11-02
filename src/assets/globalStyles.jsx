@@ -376,5 +376,15 @@ export const useStyles = createStyles(({ css, token }) => ({
             margin-bottom: 0;
          }
       }
-   `
+   `,
+   playersCard: css`
+        .ant-card-body {
+            padding: 10px;
+        }
+    `,
+   noPlayersCard: css`
+    .ant-card-body {
+      padding: 0px;
+    }
+  `,
 }));

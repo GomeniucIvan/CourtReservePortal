@@ -25,6 +25,7 @@ import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.js
 import {Toast} from "antd-mobile";
 import DisclosuresPartial from "../../home/disclosure/DisclosuresPartial.jsx";
 import Modal from "../../../components/modal/Modal.jsx";
+import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
 
 const {Title, Text} = Typography;
 
@@ -136,6 +137,7 @@ function EventRegistration({fullRegistration}) {
 
     const initialValues = {
         reservationTypeId: '',
+        ReservationGuests: []
     };
 
     const validationSchema = Yup.object({
@@ -286,6 +288,14 @@ function EventRegistration({fullRegistration}) {
                                         }}
                                     />
                                 </>
+                            }
+
+                            {(toBoolean(event?.AllowGuests) && members.filter(resMember => toBoolean(resMember.IsChecked)).length > 0) &&
+                                <RegistrationGuestBlock disableAddGuest={false}
+                                                        formik={formik}
+                                                        showGuestOwner={members.filter(resMember => toBoolean(resMember.IsChecked)).length > 1}
+                                                        reservationMembers={members.filter(resMember => toBoolean(resMember.IsChecked))}
+                                                        showAllCosts={false}/>
                             }
                         </Flex>
                     </>

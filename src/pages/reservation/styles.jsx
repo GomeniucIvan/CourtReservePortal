@@ -12,16 +12,6 @@ export const useStyles = createStyles(({ css, token }) => ({
             margin-left: ${token.Custom.cardIconPadding}px; 
         }
   `,
-    playersCard: css`
-        .ant-card-body {
-            padding: 10px;
-        }
-    `,
-  noPlayersCard: css`
-    .ant-card-body {
-      padding: 0px;
-    }
-  `,
     playersDivider: css`
         margin: 12px 0;
     `
