@@ -12,9 +12,10 @@ import {cx} from "antd-style";
 import {costDisplay} from "../../utils/CostUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
+import FormCustomFields from "../../form/formcustomfields/FormCustomFields.jsx";
 const {Title, Text, Link} = Typography;
 
-function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reservationMembers=[], showAllCosts}) {
+function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reservationMembers=[], showAllCosts, udfs}) {
     const { token,globalStyles } = useApp();
     const [selectedGuest, setSelectedGuest] = useState(null);
 
@@ -51,9 +52,9 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                     )
 
                                     if (hasGuestsWithPayment && !isNullOrEmpty(ownerText)) {
-                                        secondRowText = `${costDisplay(v.PriceToPay)} (${ownerText})`;
+                                        secondRowText = `${costDisplay(guest.PriceToPay)} (${ownerText})`;
                                     } else if (hasGuestsWithPayment) {
-                                        secondRowText = `${costDisplay(v.PriceToPay)}`;
+                                        secondRowText = `${costDisplay(guest.PriceToPay)}`;
                                     } else if (!isNullOrEmpty(ownerText)) {
                                         secondRowText = ownerText;
                                     }
@@ -97,16 +98,13 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                     <Flex vertical
                                                           gap={token.Custom.cardIconPadding / 2}>
                                                         <Text>
-                                                            <Ellipsis direction='end'
-                                                                      content={displayFullName}/>
+                                                            <Ellipsis direction='end' content={displayFullName}/>
                                                         </Text>
-                                                        <Text
-                                                            type="secondary">${secondRowText}</Text>
+                                                        <Text type="secondary">${secondRowText}</Text>
                                                     </Flex>
                                                 </Flex>
 
-                                                <SVG icon={'edit-user'} size={23}
-                                                     color={token.colorLink}/>
+                                                <SVG icon={'edit-user'} size={23} color={token.colorLink}/>
 
                                             </Flex>
                                             {(!isLastIndex) &&
@@ -125,11 +123,12 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                 htmlType={'button'}
                                 onClick={() => {
                                     let guestObject = {
-                                        Index: isNullOrEmpty(formik?.values?.ReservationGuests?.length) ? 0 : formik.values.ReservationGuests.length,
+                                        Index: isNullOrEmpty(formik?.values?.ReservationGuests?.length) ? 1 : formik.values.ReservationGuests.length + 1,
                                         FirstName: '',
                                         LastName: '',
                                         PhoneNumber: '',
-                                        GuestOwnerId: ''
+                                        GuestOwnerId: '',
+                                        MemberUdfs: anyInList(udfs) ? udfs : []
                                     };
 
                                     let currentReservationGuests = formik.values.ReservationGuests || [];
@@ -149,7 +148,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                 closeDrawer={() => {
                     setSelectedGuest(null)
                 }}
-                label={`Edit Guest #${((selectedGuest?.Index) ?? 0)}`}
+                label={`Edit Guest #${((selectedGuest?.Index) ?? 1)}`}
                 showButton={false}
                 confirmButtonText={''}
                 onConfirmButtonClick={() => {
@@ -203,10 +202,13 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                 propValue='OrgMemberId'/>
                                 }
 
+                                <FormCustomFields customFields={selectedGuest.MemberUdfs} form={formik} index={index} name={'ReservationGuests[{index}].MemberUdfs[{Id}]'}/>
+                                
                                 {hasGuestsWithPayment &&
                                     <>
                                         <FormInput label={isOverriden ? "Daily Cost" : "Cost"}
                                                    form={formik}
+                                                   disabled={true}
                                                    name={isOverriden ? `ReservationGuests[${index}].OverriddenPrice` : `ReservationGuests[${index}].PriceToPay`}
                                         />
 
@@ -214,19 +216,19 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                             <>
                                                 <FormInput label="Subtotal"
                                                            form={formik}
-                                                           required={true}
+                                                           disabled={true}
                                                            name={`ReservationGuests[${index}].Subtotal`}
                                                 />
 
                                                 <FormInput label="Paid"
                                                            form={formik}
-                                                           required={true}
+                                                           disabled={true}
                                                            name={`ReservationGuests[${index}].PaidAmt`}
                                                 />
 
                                                 <FormInput label="Due"
                                                            form={formik}
-                                                           required={true}
+                                                           disabled={true}
                                                            name={`ReservationGuests[${index}].TotalDue`}
                                                 />
                                             </>
@@ -258,8 +260,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                         ...guest,
                                                         Index: index + 1
                                                     }));
-
-                                                console.log(updatedGuests)
+                                                
                                                 formik.setFieldValue('ReservationGuests', updatedGuests);
                                                 setSelectedGuest(null);
                                             }

@@ -8,11 +8,11 @@ import {useApp} from "../../context/AppProvider.jsx";
 import React from "react";
 const {Title} = Typography;
 
-const FormCustomFields = ({ customFields, form, keyPrefix, loading, name, index }) => {
+const FormCustomFields = ({ customFields, form, keyPrefix, loading, index, name }) => {
     const {globalStyles} = useApp();
     
     if (isNullOrEmpty(customFields)) {
-        return null;
+        return <></>;
     }
 
     if (toBoolean(loading)){
@@ -30,18 +30,24 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading, name, index 
         )
     }
 
-    const onFieldChange = (fieldId, value) => {
+    const onFieldChange = (Id, value) => {
         if (!isNullOrEmpty(index)){
-            form.setFieldValue(`members[${index}].MemberUdfs[${fieldId}]`, value); 
+            const fieldName = name
+                .replace('{index}', index)
+                .replace('{Id}', Id);
+            
+            form.setFieldValue(fieldName, value); 
         }
     };
     
     return customFields.map(({ UdfType, FieldType, Label, Id, IsRequired, Options }) => {
-        if (isNullOrEmpty(name)){
-            name = isNullOrEmpty(keyPrefix) ? `udf_${Id}` : `${keyPrefix}.udf_${Id}`;
-        }
+        const fieldName = name
+            .replace('{index}', index)
+            .replace('{Id}', Id);
 
         const type = UdfType || FieldType;
+        
+        console.log(fieldName)
         
         switch (type) {
             case 'Textbox':
@@ -49,7 +55,7 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading, name, index 
                     <FormInput
                         key={Id}
                         label={Label}
-                        name={name}
+                        name={fieldName}
                         loading={loading}
                         //placeholder={Label}
                         required={IsRequired}
@@ -65,7 +71,7 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading, name, index 
                     <FormTextArea
                         key={Id}
                         label={Label}
-                        name={name}
+                        name={fieldName}
                         loading={loading}
                         max={250}
                         //placeholder={Label}
@@ -79,7 +85,7 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading, name, index 
                     <FormSelect
                         key={Id}
                         label={Label}
-                        name={name}
+                        name={fieldName}
                         options={Options.map(udfVal => ({
                             Text: udfVal,
                             Value: udfVal

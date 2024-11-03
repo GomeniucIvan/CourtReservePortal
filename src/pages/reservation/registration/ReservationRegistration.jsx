@@ -1122,7 +1122,7 @@ function ReservationRegistration() {
                             <>
                                 <Title level={5} className={globalStyles.noTopPadding}>Additional Information</Title>
 
-                                <FormCustomFields customFields={customFields} form={formik} loading={isFetching}/>
+                                <FormCustomFields customFields={customFields} form={formik} loading={isFetching} name={`Udf[{index}]`}/>
                                 <Divider className={globalStyles.formDivider}/>
                             </>
                         }

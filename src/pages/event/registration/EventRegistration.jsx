@@ -75,6 +75,7 @@ function EventRegistration({fullRegistration}) {
                 })
 
                 let udfs = response.Data.Udfs;
+
                 if (anyInList(udfs)){
                     allMembers.forEach(member => {
                         member.MemberUdfs = udfs;
@@ -279,7 +280,7 @@ function EventRegistration({fullRegistration}) {
 
                                                     {toBoolean(member.IsChecked) &&
                                                         <>
-                                                            <FormCustomFields customFields={member.MemberUdfs} form={formik} index={index}/>
+                                                            <FormCustomFields customFields={member.MemberUdfs} form={formik} index={index} name={'members[{index}].MemberUdfs[{Id}]'}/>
                                                         </>
                                                     }
 
@@ -293,6 +294,7 @@ function EventRegistration({fullRegistration}) {
                             {(toBoolean(event?.AllowGuests) && members.filter(resMember => toBoolean(resMember.IsChecked)).length > 0) &&
                                 <RegistrationGuestBlock disableAddGuest={false}
                                                         formik={formik}
+                                                        udfs={event.Udfs}
                                                         showGuestOwner={members.filter(resMember => toBoolean(resMember.IsChecked)).length > 1}
                                                         reservationMembers={members.filter(resMember => toBoolean(resMember.IsChecked))}
                                                         showAllCosts={false}/>
