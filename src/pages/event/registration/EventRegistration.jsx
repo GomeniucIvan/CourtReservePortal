@@ -201,21 +201,21 @@ function EventRegistration({fullRegistration}) {
                     <Flex vertical={true} gap={16}>
                         <Flex vertical={true} gap={4}>
                             <Skeleton.Button active={true} block
-                                             style={{height: `40px`, width: `${randomNumber(45, 75)}%`}}/>
+                                             style={{height: `60px`, width: `${randomNumber(45, 75)}%`}}/>
                             <Skeleton.Button active={true} block
-                                             style={{height: `19px`, width: `${randomNumber(45, 75)}%`}}/>
+                                             style={{height: `40px`, width: `${randomNumber(45, 75)}%`}}/>
                         </Flex>
 
                         <Flex vertical={true} gap={4}>
                             {emptyArray(6).map((item, index) => (
                                 <div key={index}>
                                     <Skeleton.Button active={true} block
-                                                     style={{height: `26px`, width: `${randomNumber(45, 75)}%`}}/>
+                                                     style={{height: `50px`, width: `${randomNumber(45, 75)}%`}}/>
                                 </div>
                             ))}
                         </Flex>
 
-                        <Skeleton.Button active={true} block style={{height: `80px`}}/>
+                        <Skeleton.Button active={true} block style={{height: `120px`}}/>
                     </Flex>
                 }
                 {!isFetching &&
