@@ -353,7 +353,7 @@ function MyProfileDetails({selectedTab}) {
                 </>
             }
 
-            <FormCustomFields customFields={profileData?.CustomFields} form={formik} loading={isFetching} name={`CustomFields[{index}]`} />
+            <FormCustomFields customFields={profileData?.CustomFields} form={formik} loading={isFetching} name={`CustomFields[{udfIndex}].Value`} />
             
             <FormSwitch label={t('profile.excludeAccountInformationFromPublicGroups')}
                         form={formik}

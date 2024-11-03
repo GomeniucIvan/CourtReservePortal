@@ -108,7 +108,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
 
                                             </Flex>
                                             {(!isLastIndex) &&
-                                                <Divider className={styles.playersDivider}/>
+                                                <Divider className={globalStyles.playersDivider}/>
                                             }
                                         </div>
                                     )
@@ -202,7 +202,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                 propValue='OrgMemberId'/>
                                 }
 
-                                <FormCustomFields customFields={selectedGuest.MemberUdfs} form={formik} index={index} name={'ReservationGuests[{index}].MemberUdfs[{Id}]'}/>
+                                <FormCustomFields customFields={selectedGuest.MemberUdfs} form={formik} index={index} name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>
                                 
                                 {hasGuestsWithPayment &&
                                     <>

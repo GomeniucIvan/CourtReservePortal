@@ -57,6 +57,14 @@ const FormSelect = forwardRef(({
 
     const selectRef = useRef(null);
 
+    const isNotEqualSelectValue = () => {
+       let isNotEqualValue = (isNullOrEmpty(selectedOption) && !isNullOrEmpty(field?.value) ||
+            (!isNullOrEmpty(selectedOption) && !isNullOrEmpty(selectedOption[propValue]) && isNullOrEmpty(field?.value)) ||
+            (!isNullOrEmpty(selectedOption) && !isNullOrEmpty(selectedOption[propValue]) && !equalString(selectedOption[propValue], field?.value)));
+        
+        return isNotEqualValue;
+    }
+    
     useEffect(() => {
         if (!fetching) {
             if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
@@ -68,10 +76,12 @@ const FormSelect = forwardRef(({
                     if (toBoolean(multi)) {
                         setMultiSelectedValues(field.value);
                     } else {
-                        const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
-                        if (selectedOptionInList) {
-                            if (isNullOrEmpty(selectedOption) || !equalString(selectedOptionInList[propValue], selectedOption[propValue])){
-                                onValueSelect(selectedOptionInList, true)
+                        if (isNotEqualSelectValue()){
+                            const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
+                            if (selectedOptionInList) {
+                                if (isNullOrEmpty(selectedOption) || !equalString(selectedOptionInList[propValue], selectedOption[propValue])){
+                                    onValueSelect(selectedOptionInList, true)
+                                }
                             }
                         }
                     }
@@ -92,20 +102,23 @@ const FormSelect = forwardRef(({
     
     useEffect(() => {
         if (!multi){
-            if (!equalString(selectedOption, field?.value)){
+            console.log(selectedOption)
+            console.log(field?.value)
+            if (isNotEqualSelectValue()){
+                
                 let selectedOptionInList = options.find(option => equalString(option[propValue], field?.value));
 
                 if (selectedOptionInList) {
                     setSelectedOption(selectedOptionInList);
                 }
-            }  
+            }
         }
     }, [field?.value]);
     
-    const onValueSelect = (selectedOption, forceReload) => {
+    const onValueSelect = (selectedOption) => {
         let selectedDropdownValue = null;
 
-        if (!equalString(selectedOption[propValue], field?.value) || forceReload ){
+        if (!equalString(selectedOption[propValue], field?.value)){
             if (isNullOrEmpty(selectedOption)) {
                 selectedDropdownValue = null;
                 form.setFieldValue(name, null);

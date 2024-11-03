@@ -8,7 +8,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import React from "react";
 const {Title} = Typography;
 
-const FormCustomFields = ({ customFields, form, keyPrefix, loading, index, name }) => {
+const FormCustomFields = ({ customFields, form, loading, index, name }) => {
     const {globalStyles} = useApp();
     
     if (isNullOrEmpty(customFields)) {
@@ -29,25 +29,13 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading, index, name 
             </div>
         )
     }
-
-    const onFieldChange = (Id, value) => {
-        if (!isNullOrEmpty(index)){
-            const fieldName = name
-                .replace('{index}', index)
-                .replace('{Id}', Id);
-            
-            form.setFieldValue(fieldName, value); 
-        }
-    };
     
-    return customFields.map(({ UdfType, FieldType, Label, Id, IsRequired, Options }) => {
+    return customFields.map(({ UdfType, FieldType, Label, Id, IsRequired, Options }, udfIndex) => {
         const fieldName = name
             .replace('{index}', index)
-            .replace('{Id}', Id);
+            .replace('{udfIndex}', udfIndex);
 
         const type = UdfType || FieldType;
-        
-        console.log(fieldName)
         
         switch (type) {
             case 'Textbox':
@@ -60,9 +48,6 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading, index, name 
                         //placeholder={Label}
                         required={IsRequired}
                         form={form}
-                        onInput={(e) => {
-                            onFieldChange(Id, e.target.value)
-                        }}
                     />
                 );
 
@@ -90,7 +75,7 @@ const FormCustomFields = ({ customFields, form, keyPrefix, loading, index, name 
                             Text: udfVal,
                             Value: udfVal
                         }))}
-                        propText='Value'
+                        propText='Text'
                         propValue='Value'
                         fetching={loading}
                         required={IsRequired}

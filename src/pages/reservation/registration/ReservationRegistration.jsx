@@ -950,7 +950,7 @@ function ReservationRegistration() {
                                                     <div key={index}>
                                                         <Skeleton.Button block key={index} active={true}
                                                                          style={{height: `48px`}}/>
-                                                        <Divider className={styles.playersDivider}/>
+                                                        <Divider className={globalStyles.playersDivider}/>
                                                     </div>
                                                 ))}
                                             </>
@@ -1006,7 +1006,7 @@ function ReservationRegistration() {
                                                                 }
                                                             </Flex>
 
-                                                            <Divider className={styles.playersDivider}/>
+                                                            <Divider className={globalStyles.playersDivider}/>
                                                         </div>
                                                     )
                                                 })}
@@ -1122,7 +1122,7 @@ function ReservationRegistration() {
                             <>
                                 <Title level={5} className={globalStyles.noTopPadding}>Additional Information</Title>
 
-                                <FormCustomFields customFields={customFields} form={formik} loading={isFetching} name={`Udf[{index}]`}/>
+                                <FormCustomFields customFields={customFields} form={formik} loading={isFetching} name={`Udf[{udfIndex}].Value`}/>
                                 <Divider className={globalStyles.formDivider}/>
                             </>
                         }
@@ -1551,7 +1551,7 @@ function ReservationRegistration() {
                                                 </Flex>
 
                                                 {!isLastIndex &&
-                                                    <Divider className={styles.playersDivider}/>
+                                                    <Divider className={globalStyles.playersDivider}/>
                                                 }
                                             </div>
                                         )
