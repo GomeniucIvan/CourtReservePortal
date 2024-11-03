@@ -102,8 +102,6 @@ const FormSelect = forwardRef(({
     
     useEffect(() => {
         if (!multi){
-            console.log(selectedOption)
-            console.log(field?.value)
             if (isNotEqualSelectValue()){
                 
                 let selectedOptionInList = options.find(option => equalString(option[propValue], field?.value));

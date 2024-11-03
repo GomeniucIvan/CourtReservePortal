@@ -145,6 +145,11 @@ function Layout() {
     useEffect(() => {
         calculateMaxHeight();
 
+        setTimeout(function(){
+            //dom, pages like payment drawer bottom not updates height instantly
+            calculateMaxHeight();
+        }, 50)
+        
         window.addEventListener('resize', calculateMaxHeight);
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', calculateMaxHeight);

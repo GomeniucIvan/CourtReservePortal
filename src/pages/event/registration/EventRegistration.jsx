@@ -295,6 +295,7 @@ function EventRegistration({fullRegistration}) {
                                 <RegistrationGuestBlock disableAddGuest={false}
                                                         formik={formik}
                                                         udfs={event.Udfs}
+                                                        guestOrgMemberIdValue={'OrganizationMemberId'}
                                                         showGuestOwner={members.filter(resMember => toBoolean(resMember.IsChecked)).length > 1}
                                                         reservationMembers={members.filter(resMember => toBoolean(resMember.IsChecked))}
                                                         showAllCosts={false}/>

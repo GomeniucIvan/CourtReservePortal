@@ -15,7 +15,7 @@ import SVG from "../svg/SVG.jsx";
 import FormCustomFields from "../../form/formcustomfields/FormCustomFields.jsx";
 const {Title, Text, Link} = Typography;
 
-function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reservationMembers=[], showAllCosts, udfs}) {
+function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reservationMembers=[], showAllCosts, udfs, guestOrgMemberIdValue}) {
     const { token,globalStyles } = useApp();
     const [selectedGuest, setSelectedGuest] = useState(null);
 
@@ -199,7 +199,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                     //reloadPlayers();
                                                 }}
                                                 propText='FullName'
-                                                propValue='OrgMemberId'/>
+                                                propValue={isNullOrEmpty(guestOrgMemberIdValue) ? 'OrgMemberId' : guestOrgMemberIdValue}/>
                                 }
 
                                 <FormCustomFields customFields={selectedGuest.MemberUdfs} form={formik} index={index} name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>

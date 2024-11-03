@@ -43,7 +43,7 @@ const PaymentDrawerBottom = forwardRef(({
 
     useEffect(() => {
         if (toBoolean(paymentData?.show)){
-            const footerHeight = footerRef.current ? footerRef.current.offsetHeight + (token.padding * 3) : 0;
+            const footerHeight = footerRef.current ? footerRef.current.offsetHeight + (token.padding * 3) - 6 : 0; //6 is line drawer
             setTopBottomHeight(footerHeight);
         }
     }, [paymentData?.show, footerRef.current]);
@@ -126,27 +126,11 @@ const PaymentDrawerBottom = forwardRef(({
                                        cursor: 'pointer'
                                    }}
                                >
-                                   {(!isDrawerOpen && 1 == 2) && (
-                                       <div style={{marginTop: '-8px'}}>
-                                           <SVG icon={'drawer-up'} size={14} color={token.colorText}/>
-                                       </div>
-                                   )}
                                </div>
                            </Flex>
 
                            {isDrawerOpen &&
                                <>
-                                   {1 == 2 &&
-                                       <div ref={headerRef} style={{padding: `${token.padding}px`}}>
-                                           <Flex justify={'space-between'} align={'center'}>
-                                               <Title level={4} style={{margin: 0}}>{label}</Title>
-                                               <Button type="default" icon={<CloseOutline/>} size={'middle'}
-                                                       onClick={() => setIsDrawerOpen(false)}/>
-                                           </Flex>
-                                       </div>
-                                   }
-
-
                                    <div style={{ overflowY: 'auto', flex: '1'}}>
                                        <Flex vertical={true} gap={token.padding /2}>
                                            <Title level={4}>Payment Details</Title>
