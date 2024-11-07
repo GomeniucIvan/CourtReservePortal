@@ -1,5 +1,4 @@
-﻿import styles from './LeagueRegistration.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 
 function LeagueRegistration() {
     const navigate = useNavigate();

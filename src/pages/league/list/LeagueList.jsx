@@ -1,5 +1,4 @@
-﻿import styles from './LeagueList.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 
 function LeagueList() {
     const navigate = useNavigate();

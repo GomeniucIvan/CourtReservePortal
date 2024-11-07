@@ -47,7 +47,6 @@ function ProfileBookingDetails() {
         } else {
             appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/ApiReservation?id=${orgId}&reservationId=${id}`).then(r => {
                 if (toBoolean(r?.IsValid)) {
-                    console.log(r.Data.Reservation)
                     setBooking(r.Data.Reservation);
                 }
             })

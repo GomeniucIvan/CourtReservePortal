@@ -312,6 +312,8 @@ function EventRegistration({fullRegistration}) {
                    onConfirm={() => {
                        disclosureRef.current.submit();
                    }}
+                   showConfirmButton={true}
+                   confirmButtonText={'Sign'}
                    title={'Waiver(s)'}>
 
                 <DisclosuresPartial orgId={orgId}

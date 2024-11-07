@@ -13,7 +13,7 @@ import mockData from "../../../mocks/scheduler-data.json";
 import EventCalendarItem from "./EventCalendarItem.jsx";
 import '@progress/kendo-date-math/tz/America/New_York';
 import {useNavigate} from "react-router-dom";
-import appService, {apiRoutes} from "../../../api/app.jsx";
+import appService from "../../../api/app.jsx";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {
     dateFormatByUiCulture,
@@ -24,7 +24,6 @@ import {
 } from "../../../utils/DateUtils.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import dayjs from "dayjs";
-import apiService from "../../../api/api.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {saveCookie} from "../../../utils/CookieUtils.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
@@ -58,6 +57,9 @@ function EventCalendar() {
 
     const persistSelectedView = async (value) => {
         let response = await appService.post(`/app/Online/AjaxController/PersistEventsCalendar?viewType=${value}&isLeague=false`);
+        if (response) {
+            
+        }
     }
 
     const loadEvents = () => {

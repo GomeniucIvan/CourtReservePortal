@@ -45,5 +45,8 @@ export const useStyles = createStyles(({ css, token }) => ({
         .ant-picker-body {
             padding: 8px !important;
         }
+    `,
+    barcodeWrapper: css`
+        height: 100%;
     `
 }));

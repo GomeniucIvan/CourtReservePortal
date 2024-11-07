@@ -1,9 +1,10 @@
-﻿import {useNavigate} from "react-router-dom";
+﻿import * as React from "react";
+import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import mockData from "../../../mocks/event-data.json";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {Card, Ellipsis, List} from 'antd-mobile'
-import {anyInList, equalString, isNullOrEmpty} from "../../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
 import {Button, Segmented, Space, Flex, Typography, Progress} from "antd";
@@ -15,9 +16,11 @@ import SVG from "../../../components/svg/SVG.jsx";
 import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import HeaderSearch from "../../../components/header/HeaderSearch.jsx";
-import * as React from "react";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
+import appService, {apiRoutes} from "../../../api/app.jsx";
+import {useAuth} from "../../../context/AuthProvider.jsx";
+import ListFilter from "../../../components/filter/ListFilter.jsx";
 
 const {Title, Text} = Typography;
 
@@ -41,8 +44,46 @@ function EventList() {
     const [isFilterOpened, setIsFilterOpened] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [isFetching, setIsFetching] = useState(true);
+    const {orgId, authData} = useAuth();
+    const [filter, setFilter] = useState(null);
+    const [eventData, setEventData] = useState(null);
+    
+    const loadEvents = async (data) => {
+        let postData = {
+            MinPrice: null,
+            MaxPrice: null,
+            SessionIdsString: null,
+            InstructorIdsString: null,
+            EventTypeIdsString: null,
+            TimeOfDayString: null,
+            DayOfWeeksString: null,
+            DatesString: null,
+            FilterText: null,
+            CustomDate_Start: null,
+            CustomDate_End: null ,
+            FilterTimeOfADayStart: null,
+            FilterTimeOfADayEnd: null,
+            EventRegistrationTypeId: null,
+            EventSortBy: 1,
+            EmbedCodeId: null,
+            Filter: filter,
+            preventCookieSave: true,
+            FilterPublicKey: '',
+            HideIneligibleAndFullEvents: false,
+            CostTypeId: authData?.CostTypeId,
+            SkipRows: 0,
+            EventTagIdsString: null
+        };
 
-    const loadData = (refresh) => {
+        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiLoadEvents?id=${orgId}`, postData);
+        if (toBoolean(response?.IsValid)){
+            console.log(response.Data)
+            setEvents(response.Data.List)
+            setHasMore(response.Data.TotalRecords > response.Data.List.length)
+        }
+    }
+    
+    const loadData = async (refresh) => {
         setIsFetching(true);
 
         if (isMockData) {
@@ -51,8 +92,15 @@ function EventList() {
             setLoadedEvents(list);
             setIsFetching(false);
         } else {
-            alert('todo eve list');
-            setIsFetching(true);
+
+            let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiList?id=${orgId}&costTypeId=${authData?.CostTypeId}`);
+            
+            if (toBoolean(response?.IsValid)) {
+                setEventData(response.Data);
+                
+                await loadEvents(response.Data);
+            }
+            setIsFetching(false);
         }
 
         resetFetch();
@@ -106,10 +154,15 @@ function EventList() {
                 setHasMore(false); // No more events to load after this batch
             }
         } else {
-            alert('todo eve list')
+            
         }
     }
 
+    const closeFilter = (isFilterChange, filter) => {
+
+        setIsFilterOpened(false);
+    }
+    
     return (
         <>
             <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
@@ -135,7 +188,7 @@ function EventList() {
                                            key={index}
                                            arrowIcon={false}
                                            onClick={() => {
-                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', item.Number);
+                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', item.NextReservationNumber);
                                                setPage(setDynamicPages, item.EventName, route);
                                                navigate(route);
                                            }}>
@@ -211,16 +264,7 @@ function EventList() {
             </List>
             <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
 
-            <DrawerBottom showDrawer={isFilterOpened}
-                          closeDrawer={() => setIsFilterOpened(false)}
-                          showButton={true}
-                          confirmButtonText={'Filter'}
-                          label='Filter'
-                          onConfirmButtonClick={() => {
-                              setIsFilterOpened(false);
-                          }}>
-                <div>test</div>
-            </DrawerBottom>
+            <ListFilter show={isFilterOpened} data={eventData} closeFilter={closeFilter} filter={filter} />
         </>
     )
 }

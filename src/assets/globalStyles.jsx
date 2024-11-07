@@ -389,5 +389,10 @@ export const useStyles = createStyles(({ css, token }) => ({
   `,
    playersDivider: css`
         margin: 12px 0;
-    `
+    `,
+   drawerRow: css`
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+   `
 }));

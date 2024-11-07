@@ -1,5 +1,5 @@
 ﻿import {useStyles} from "./styles.jsx";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
 import mockData from "../../../mocks/home-data.json";
@@ -21,20 +21,22 @@ import {useAuth} from "../../../context/AuthProvider.jsx";
 import {stringToJson} from "../../../utils/ListUtils.jsx";
 import {string} from "yup";
 import {useSafeArea} from "../../../context/SafeAreaContext.jsx";
+import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
+import DrawerBarcode from "../../../components/drawer/DrawerBarcode.jsx";
 
 function Dashboard() {
     const { styles } = useStyles();
     const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,globalStyles  } = useApp();
     const {orgId, setAuthorizationData} = useAuth();
-    const {safeAreaInsets} = useSafeArea();
     
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [organizations, setOrganizations] = useState([]);
     const navigate = useNavigate();
+    const drawerBarcodeRef = useRef();
     
-    const loadData = (refresh) => {
+    const loadData = async (refresh) => {
         if (isMockData){
             const dashboardData = mockData.dashboard.index;
             setDashboardData(dashboardData);
@@ -50,14 +52,16 @@ function Dashboard() {
                 }
             }
 
-            apiService.authData(orgId,{loadWeatherData:true,includeDashboardData:true}).then(authResponse => {
-                if (toBoolean(authResponse?.IsValid)) {
-                    setAuthorizationData(authResponse.Data);
-                    setDashboardData(authResponse.Data);
-                    toLocalStorage('dashboardData', authResponse.Data);
-                    setIsFetching(false);
-                }
-            })
+            let authResponse = await apiService.authData(orgId,{loadWeatherData:true,includeDashboardData:true});
+
+            console.log(authResponse)
+            
+            if (toBoolean(authResponse?.IsValid)) {
+                setAuthorizationData(authResponse.Data);
+                setDashboardData(authResponse.Data);
+                toLocalStorage('dashboardData', authResponse.Data);
+                setIsFetching(false);
+            }
         }
         
         setIsLoading(false);
@@ -86,6 +90,21 @@ function Dashboard() {
             <div className={cx(styles.orgArea, 'safe-area-top')}>
                 <Button onClick={() => navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
                 <Button onClick={() => navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
+                <Button onClick={() => navigate(EventRouteNames.EVENT_LIST)}>Event List</Button>
+
+                {toBoolean(dashboardData?.OrgShowBarcode) &&
+                    <>
+                        <Button onClick={() => {
+                            if (drawerBarcodeRef.current) {
+                                drawerBarcodeRef.current.open();
+                            }
+                        }}>
+                            Barcode
+                        </Button>
+
+                        <DrawerBarcode ref={drawerBarcodeRef} format={dashboardData?.OrgBarcodeFormat} familyList={stringToJson(dashboardData?.FamilyMembesJson)}/>
+                    </>
+                }
             </div>
 
             <DashboardAnnouncements dashboardData={dashboardData} isFetching={isFetching}/>
