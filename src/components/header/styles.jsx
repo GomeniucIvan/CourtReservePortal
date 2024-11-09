@@ -27,6 +27,12 @@ export const useStyles = createStyles(({ css, token }) => {
             .adm-nav-bar-left {
                 flex: 0;
             }
+            
+            .adm-nav-bar-right {
+                .ant-badge-count {
+                    top: 2px;
+                }
+            }
         `,
         headerLoadingBar: css`
             ${loadingAnimation};
@@ -39,5 +45,8 @@ export const useStyles = createStyles(({ css, token }) => {
             animation: loadingHeader 3s linear infinite;
             background-color: ${token.colorPrimary};
         `,
+        headerFilterButton: css`
+            height:  ${token.headerActionHeight}px;
+        `
     };
 });

@@ -1,12 +1,12 @@
 ﻿import DrawerBottom from "../drawer/DrawerBottom.jsx";
-import {anyInList, isNullOrEmpty} from "../../utils/Utils.jsx";
+import {anyInList, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {Selector} from "antd-mobile";
 import {Slider} from "antd";
 import React, {useEffect, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 
-function ListFilter({data ,show, closeFilter}) {
+function ListFilter({data ,show, onClose}) {
     let [filterChanged, setFilterChanged] = useState(false);
     let [eventTypes, setEventTypes] = useState([]);
     let [eventSessions, setEventSessions] = useState([]);
@@ -43,17 +43,26 @@ function ListFilter({data ,show, closeFilter}) {
         }
     }, [data]);
 
+    const onFilterClose = () =>{
+        let filteredData = {
+            EventTypeIds : eventTypes.filter(et => toBoolean(et.Selected)).map(et => et.Id),
+            EventSessionIds : eventSessions.filter(et => toBoolean(et.Selected)).map(et => et.Id),
+        };
+
+        onClose(filteredData);
+    }
+    
     return (
         <DrawerBottom
             showDrawer={show}
             closeDrawer={() => {
-                closeFilter(null, filterChanged);
+                onFilterClose();
             }}
             label={'Filter'}
             showButton={true}
             confirmButtonText={'Filter'}
             onConfirmButtonClick={() => {
-                closeFilter(null, filterChanged);
+                onFilterClose();
             }}
         >
             <>
@@ -82,7 +91,7 @@ function ListFilter({data ,show, closeFilter}) {
 
                                       setEventTypes(prevSessions =>
                                           prevSessions.map(et => ({
-                                              ...prevSession,
+                                              ...et,
                                               Selected: selectedValues.includes(et.Id)
                                           }))
                                       );
@@ -112,7 +121,7 @@ function ListFilter({data ,show, closeFilter}) {
 
                                       setEventSessions(prevSessions =>
                                           prevSessions.map(et => ({
-                                              ...prevSession,
+                                              ...et,
                                               Selected: selectedValues.includes(et.Id)
                                           }))
                                       );
@@ -142,7 +151,7 @@ function ListFilter({data ,show, closeFilter}) {
 
                                       setInstructors(prevSessions =>
                                           prevSessions.map(et => ({
-                                              ...prevSession,
+                                              ...et,
                                               Selected: selectedValues.includes(et.Id)
                                           }))
                                       );

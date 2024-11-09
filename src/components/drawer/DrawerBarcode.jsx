@@ -7,6 +7,8 @@ import {useApp} from "../../context/AppProvider.jsx";
 import Modal from "../modal/Modal.jsx";
 import {useStyles} from "./styles.jsx";
 import Barcode from "react-barcode";
+import DrawerBottom from "./DrawerBottom.jsx";
+import FormDrawerRadio from "../../form/formradio/FormDrawerRadio.jsx";
 
 const {Title} = Typography;
 
@@ -54,53 +56,44 @@ const DrawerBarcode = forwardRef(({familyList = [], format}, ref) => {
                 </Flex>
             </Modal>
 
-            <Popup
-                visible={toBoolean(showDrawer)}
-                onMaskClick={() => {
-                    setShowDrawer(false);
-                }}
-                onClose={() => {
-                    setShowDrawer(false);
-                }}
-                bodyStyle={{
-                    height: 'auto',
-                    maxHeight: `60vh`,
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}
+            <DrawerBottom
+                showDrawer={toBoolean(showDrawer)}
+                closeDrawer={() => {setShowDrawer(false)}}
+                label={'Family Members'}
+                showButton={false}
+                confirmButtonText={'Close'}
+                onConfirmButtonClick={() => {setShowDrawer(false)}}
             >
-                <>
-                    <Flex vertical>
-                        <>
-                            {anyInList(familyList) &&
-                                <>
-                                    {familyList.map((familyMember, index) => {
-                                        let isLastItem = index === familyList.length - 1;
+                <Flex vertical>
+                    <>
+                        {anyInList(familyList) &&
+                            <>
+                                {familyList.map((familyMember, index) => {
+                                    let isLastItem = index === familyList.length - 1;
 
-                                        return (
-                                            <div key={familyMember.OrgMemberId} onClick={() => {
-                                                setShowDrawer(false);
-                                                setBarcode(familyMember);
-                                            }}>
-                                                <PaddingBlock>
-                                                    <Flex className={globalStyles.drawerRow}>
-                                                        <Title level={5}>
-                                                            {familyMember.FullName}
-                                                        </Title>
-                                                    </Flex>
-                                                </PaddingBlock>
-                                                {!isLastItem &&
-                                                    <Divider className={globalStyles.noMargin}/>
-                                                }
-                                            </div>
-                                        )
-                                    })}
-                                </>
-                            }
-                        </>
-                    </Flex>
-                </>
-            </Popup>
+                                    return (
+                                        <div key={familyMember.OrgMemberId} onClick={() => {
+                                            setShowDrawer(false);
+                                            setBarcode(familyMember);
+                                        }}>
+                                            <PaddingBlock>
+                                                <Flex className={globalStyles.drawerRow}>
+                                                    <Title level={5}>
+                                                        {familyMember.FullName}
+                                                    </Title>
+                                                </Flex>
+                                            </PaddingBlock>
+                                            {!isLastItem &&
+                                                <Divider className={globalStyles.noMargin}/>
+                                            }
+                                        </div>
+                                    )
+                                })}
+                            </>
+                        }
+                    </>
+                </Flex>
+            </DrawerBottom>
         </>
     )
 })

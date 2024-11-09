@@ -7,20 +7,20 @@ import {Card, Ellipsis, List} from 'antd-mobile'
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
-import {Button, Segmented, Space, Flex, Typography, Progress} from "antd";
-import {BarsOutlined, AppstoreOutlined, FilterOutlined} from "@ant-design/icons";
+import {Segmented, Space, Flex, Typography, Progress} from "antd";
+import {BarsOutlined, AppstoreOutlined} from "@ant-design/icons";
 import {cx} from "antd-style";
 import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
 import SVG from "../../../components/svg/SVG.jsx";
 import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.jsx";
-import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import HeaderSearch from "../../../components/header/HeaderSearch.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import ListFilter from "../../../components/filter/ListFilter.jsx";
+import HeaderFilter from "../../../components/header/HeaderFilter.jsx";
 
 const {Title, Text} = Typography;
 
@@ -41,12 +41,12 @@ function EventList() {
     const [loadedEvents, setLoadedEvents] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('event-list-format', 'list'), 'list'));
-    const [isFilterOpened, setIsFilterOpened] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [isFetching, setIsFetching] = useState(true);
     const {orgId, authData} = useAuth();
-    const [filter, setFilter] = useState(null);
     const [eventData, setEventData] = useState(null);
+    const [filteredCount, setFilteredCount] = useState(0);
     
     const loadEvents = async (data) => {
         let postData = {
@@ -66,7 +66,7 @@ function EventList() {
             EventRegistrationTypeId: null,
             EventSortBy: 1,
             EmbedCodeId: null,
-            Filter: filter,
+            Filter: '',
             preventCookieSave: true,
             FilterPublicKey: '',
             HideIneligibleAndFullEvents: false,
@@ -114,6 +114,10 @@ function EventList() {
 
     useEffect(() => {
         setIsFooterVisible(true);
+        loadData();
+    }, []);
+
+    useEffect(() => {
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
                 <HeaderSearch setText={setSearchText}/>
@@ -130,14 +134,11 @@ function EventList() {
                     ]}
                 />
 
-                <Button type="default" icon={<FilterOutlined/>} size={'medium'}
-                        onClick={() => setIsFilterOpened(true)}/>
+                <HeaderFilter count={filteredCount} onClick={() => setShowFilter(true)} />
             </Space>
         )
-
-        loadData();
-    }, []);
-
+    }, [filteredCount])
+    
     const loadMore = async () => {
         if (isMockData) {
             if (events.length >= loadedEvents.length) {
@@ -158,9 +159,13 @@ function EventList() {
         }
     }
 
-    const closeFilter = (isFilterChange, filter) => {
+    const onFilterClose = (filter) => {
+        
+        let filteredEventTypes = filter.EventTypeIds;
+        let filteredCount = filteredEventTypes.length;
 
-        setIsFilterOpened(false);
+        setShowFilter(false);
+        setFilteredCount(filteredCount);
     }
     
     return (
@@ -262,9 +267,9 @@ function EventList() {
                     }
                 </>
             </List>
+            
             <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
-
-            <ListFilter show={isFilterOpened} data={eventData} closeFilter={closeFilter} filter={filter} />
+            <ListFilter show={showFilter} data={eventData} onClose={onFilterClose} />
         </>
     )
 }

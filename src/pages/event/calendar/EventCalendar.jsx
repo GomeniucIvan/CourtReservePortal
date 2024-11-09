@@ -1,7 +1,5 @@
-﻿import Scheduler from "../../../components/scheduler/Scheduler.jsx";
-import React, {useEffect, useState} from "react";
+﻿import React, {useEffect, useState} from "react";
 import {Button, Flex, Segmented, Skeleton, Space, Spin} from "antd";
-import {FilterOutlined} from "@ant-design/icons";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {InnerScheduler} from "../../../components/scheduler/partial/InnerScheduler.jsx";
 import {DayView} from "../../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
@@ -14,7 +12,7 @@ import EventCalendarItem from "./EventCalendarItem.jsx";
 import '@progress/kendo-date-math/tz/America/New_York';
 import {useNavigate} from "react-router-dom";
 import appService from "../../../api/app.jsx";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {
     dateFormatByUiCulture,
     dateTimeToFormat,
@@ -26,11 +24,8 @@ import {useAuth} from "../../../context/AuthProvider.jsx";
 import dayjs from "dayjs";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {saveCookie} from "../../../utils/CookieUtils.jsx";
-import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {Selector} from "antd-mobile";
-
-const {Text} = Typography
+import HeaderFilter from "../../../components/header/HeaderFilter.jsx";
+import ListFilter from "../../../components/filter/ListFilter.jsx";
 
 function EventCalendar() {
     const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent, token} = useApp();
@@ -49,9 +44,7 @@ function EventCalendar() {
     const [startTimeString, setStartTimeString] = useState('')
     const [endTimeString, setEndTimeString] = useState('')
     const [schedulerData, setSchedulerData] = useState(null);
-    const [eventCategories, setEventCategories] = useState([]);
-    const [eventSessions, setEventSessions] = useState([]);
-    const [filterChanged, setFilterChanged] = useState(false);
+    const [filteredCount, setFilteredCount] = useState(0);
 
     const {orgId} = useAuth();
 
@@ -102,16 +95,16 @@ function EventCalendar() {
                 Month: dayjs(endDayToPass).month() + 1,
                 Day: dayjs(endDayToPass).date()
             },
-            Categories: eventCategories
-                .filter(eventCategory => eventCategory.Selected)
-                .map(eventCategory => eventCategory.Id),
+            // Categories: eventCategories
+            //     .filter(eventCategory => eventCategory.Selected)
+            //     .map(eventCategory => eventCategory.Id),
             UiCulture: schedulerData.UiCulture,
             CostTypeId: schedulerData.CostTypeId,
             MemberId: schedulerData.MemberId,
             FamilyId: schedulerData.FamilyId,
-            EventSessionIds: eventSessions
-                .filter(eventSession => eventSession.Selected)
-                .map(eventSession => eventSession.Id)
+            // EventSessionIds: eventSessions
+            //     .filter(eventSession => eventSession.Selected)
+            //     .map(eventSession => eventSession.Id)
         }
 
         appService.get(navigate, `/app/Online/Calendar/ReadCalendarEvents?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
@@ -131,6 +124,8 @@ function EventCalendar() {
         });
     }
     
+    
+    
     useEffect(() => {
         if (isNullOrEmpty(selectedView)){
             //loading?
@@ -138,26 +133,22 @@ function EventCalendar() {
         } else{
             setHeaderRightIcons(
                 <Space className={globalStyles.headerRightActions}>
-                    <Segmented
-                        defaultValue={selectedView}
-                        options={['Day', 'Week', 'Month', 'Agenda']}
-                        onChange={(value) => {
-                            setSelectedView(value);
-                            //not async
-                            persistSelectedView(value);
-                        }}
-                    />
-
-                    <Button type="default" icon={<FilterOutlined/>} size={'medium'}
-                            onClick={() => setShowFilter(true)}/>
+                    <HeaderFilter count={filteredCount} 
+                                  onClick={() => setShowFilter(true)} 
+                                  showCalendarOptions={true} 
+                                  selectedView={schedulerData?.ViewType} 
+                                  onCalendarOptionChange={(e) => {
+                                      setSelectedView(e);
+                                      persistSelectedView(e);
+                                  }}  />
                 </Space>
             )
         }
-    }, [selectedView]);
-
+    }, [selectedView, filteredCount]);
+    
     useEffect(() => {
         setIsFooterVisible(true);
-        setFooterContent(null);
+        setFooterContent('');
 
         if (isMockData){
             setTimeout(function(){
@@ -184,17 +175,6 @@ function EventCalendar() {
                     setSchedulerData(model);
                     setSelectedView(model.ViewType);
 
-                    setEventCategories(model.EventCategories.map(eventCategory => ({
-                        Id: eventCategory.Id,
-                        Name: eventCategory.Name,
-                        Selected: model.SelectedCategories.includes(eventCategory.Id)
-                    })))
-                    setEventSessions(model.EventSessions.map(eventSession => ({
-                        Id: eventSession.Id,
-                        Name: eventSession.Name,
-                        Selected: model.SelectedEventSessionIds.includes(eventSession.Id)
-                    })))
-
                     const currentDateTime = toReactDate(model.CurrentDateTime);
                     const dateToShow = toReactDate(model.SchedulerDate);
                     setMinDate(currentDateTime);
@@ -217,13 +197,6 @@ function EventCalendar() {
             loadEvents()
         }
     }, [selectedDate, selectedView]);
-
-    useEffect(() => {
-        if (filterChanged && !showFilter){
-            setFilterChanged(false);
-            loadEvents();
-        }
-    }, [filterChanged, showFilter]);
     
     const handleDateChange = (event) => {
         const selectedDate = event.value;
@@ -269,6 +242,16 @@ function EventCalendar() {
         )
     }
 
+    const onFilterClose = (filter) => {
+        let filteredEventTypes = filter.EventTypeIds;
+        let filteredCount = filteredEventTypes.length;
+
+        loadEvents();
+        
+        setShowFilter(false);
+        setFilteredCount(filteredCount);
+    }
+    
     return (
         <>
             <Spin spinning={loading}>
@@ -308,80 +291,7 @@ function EventCalendar() {
                 </InnerScheduler>
             </Spin>
 
-            <DrawerBottom
-                showDrawer={showFilter}
-                closeDrawer={() => {
-                    setShowFilter(false);
-                }}
-                label={'Filter'}
-                showButton={true}
-                confirmButtonText={'Filter'}
-                onConfirmButtonClick={() => {
-                    setShowFilter(false);
-                }}
-            >
-                <>
-                    {anyInList(eventCategories) &&
-                        <PaddingBlock>
-                            <label className={globalStyles.globalLabel}>
-                                Categories
-                            </label>
-
-                            <Selector className={globalStyles.filterSelector}
-                                //showCheckMark={false}
-                                      multiple={true}
-                                      onChange={(selectedValues) => {
-                                          setFilterChanged(true);
-
-                                          setEventCategories(prevCategories =>
-                                              prevCategories.map(eventCategory => ({
-                                                  ...eventCategory,
-                                                  Selected: selectedValues.includes(eventCategory.Id)
-                                              }))
-                                          );
-                                      }}
-                                      options={eventCategories.map(eventCategory => ({
-                                          label: eventCategory.Name,
-                                          value: eventCategory.Id
-                                      }))}
-                                      defaultValue={eventCategories
-                                          .filter(eventCategory => eventCategory.Selected)
-                                          .map(eventCategory => eventCategory.Id)}
-                            />
-                        </PaddingBlock>
-                    }
-
-                    {anyInList(eventSessions) &&
-                        <PaddingBlock onlyTop={true}>
-                            <label className={globalStyles.globalLabel}>
-                                Sessions
-                            </label>
-
-                            <Selector className={globalStyles.filterSelector}
-                                //showCheckMark={false}
-                                      multiple={true}
-                                      onChange={(selectedValues) => {
-                                          setFilterChanged(true);
-
-                                          setEventSessions(prevSessions =>
-                                              prevSessions.map(eventSession => ({
-                                                  ...prevSession,
-                                                  Selected: selectedValues.includes(eventSession.Id)
-                                              }))
-                                          );
-                                      }}
-                                      options={eventSessions.map(eventSession => ({
-                                          label: eventSession.Name,
-                                          value: eventSession.Id
-                                      }))}
-                                      defaultValue={eventSessions
-                                          .filter(eventSession => eventSession.Selected)
-                                          .map(eventSession => eventSession.Id)}
-                            />
-                        </PaddingBlock>
-                    }
-                </>
-            </DrawerBottom>
+            <ListFilter show={showFilter} data={schedulerData} onClose={onFilterClose} />
         </>
     )
 }

@@ -188,6 +188,10 @@ function Layout() {
                 margin: 0px;
             }
            
+           .adm-nav-bar-back {
+                padding: 0px;
+           }
+           
             .adm-modal-footer.adm-space {
                 --gap-vertical: ${token.Custom.buttonPadding}px;
             }

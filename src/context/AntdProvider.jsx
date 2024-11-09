@@ -44,7 +44,9 @@ export const AntdProvider = ({ children }) => {
                         algorithm: toBoolean(isDarkMode) ? theme.darkAlgorithm : theme.defaultAlgorithm,
                         token: {
                             colorPrimary: primaryColor,
-                            boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px'
+                            boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px',
+                            headerActionHeight: 32,
+                            borderRadiusSM: 8
                         },
                         components: {
                             Custom: {

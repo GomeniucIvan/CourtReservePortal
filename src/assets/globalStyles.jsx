@@ -70,22 +70,22 @@ export const useStyles = createStyles(({ css, token }) => ({
    headerRightActions: css`
       .ant-input {
          display: none !important;
-         height: 32px;
+         height: ${token.headerActionHeight}px;
       }
       
       .ant-input-group{
          margin-left: -30px;
 
          .ant-btn{
-            height: 32px;
+            height: ${token.headerActionHeight}px;
             width: 32px;
             border-radius: ${token.borderRadius}px !important;
          }
       }
       
       .ant-space-item {
-         .ant-btn-icon-only{
-            height: 32px;
+         .ant-btn-icon-only {
+            height: ${token.headerActionHeight}px;
             width: 32px;
          }
       }

@@ -5,6 +5,7 @@ import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useStyles} from "./styles.jsx";
 import {Button, Flex, Typography} from "antd";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
+import {cx} from "antd-style";
 
 const {Title} = Typography;
 
@@ -25,7 +26,7 @@ function Modal({ children,
 
     const modalContent = (
         <div className={styles.overlay}>
-            <div className={styles.container} onClick={(e) => e.stopPropagation()}>
+            <div className={cx(styles.container, 'safe-area-top')} onClick={(e) => e.stopPropagation()}>
                 {!isNullOrEmpty(title) &&
                     <Flex align={'center'} justify={'center'} className={styles.title}>
                         <Title level={5}>{title}</Title>
@@ -36,7 +37,7 @@ function Modal({ children,
                 </div>
                 <PaddingBlock topBottom={true}>
                     <Flex align={'center'} justify={'space-between'} gap={token.padding}>
-                        <Button type={'default'} disabled={loading} block onClick={onClose}>Close</Button>
+                        <Button type={showConfirmButton ? 'default' : 'primary'} disabled={loading} block onClick={onClose}>Close</Button>
 
                         {showConfirmButton &&
                             <Button type={'primary'} loading={loading} block onClick={onConfirm}>{confirmButtonText}</Button>                    
