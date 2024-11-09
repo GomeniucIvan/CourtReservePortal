@@ -13,7 +13,8 @@ export const apiRoutes = {
     HUB_URL_READ: appUrl,
     MemberSchedulersApiUrl: appUrl,
     ServiceMemberPortal: appUrl,
-    EventsApiUrl: appUrl
+    EventsApiUrl: appUrl,
+    MemberTransactionsUrl: appUrl
 }
 
 const axiosInstance = axios.create({
