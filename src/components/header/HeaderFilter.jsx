@@ -38,9 +38,7 @@ const HeaderFilter = ({count, onClick, showCalendarOptions, selectedView, onCale
         <Flex gap={token.paddingXS}>
             {toBoolean(showCalendarOptions) &&
                 <>
-                    <Button color="default" 
-                            size={'small'}
-                            variant="filled" 
+                    <Button size={'small'}
                             className={styles.headerFilterButton}
                             onClick={() => {setIsDrawerOpen(true)}}>
                         {selectedViewOptionValue}

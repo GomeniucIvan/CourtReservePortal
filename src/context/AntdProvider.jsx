@@ -15,7 +15,7 @@ export const AntdProvider = ({ children }) => {
     const [isDarkMode, setIsDarkMode] = useState(fromLocalStorage('darkmode', 'False'));
 
     useEffect(() => {
-        const message = JSON.stringify({ type: 'updateMobileStatusBar', style: (isDarkMode ? 'light' : 'dark') });
+        const message = JSON.stringify({ type: 'updateMobileStatusBar', style: (isDarkMode ? 'dark' : 'light') });
         if (window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(message);
         }

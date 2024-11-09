@@ -42,9 +42,8 @@ export const AuthProvider = ({children}) => {
         setOrgId(null);
         setAuthData(null);
         
-        appService.get(navigate, '/app/online/logout').then(r => {
-            console.log('Login logout');
-        })
+        let response = await appService.get(navigate, '/app/online/logout');
+        console.log('Login logout');
         
         return true;
     }
