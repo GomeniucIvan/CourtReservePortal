@@ -3,6 +3,8 @@ import {SafeArea as AntSafeArea} from 'antd-mobile'
 import {useLocation} from "react-router-dom";
 import AppRoutes from "../routes/AppRoutes.jsx";
 import {theme} from "antd";
+import {match} from "path-to-regexp";
+import {toBoolean} from "../utils/Utils.jsx";
 
 const SafeAreaContext = createContext();
 export const useSafeArea = () => useContext(SafeAreaContext);
@@ -12,7 +14,12 @@ const {useToken} = theme;
 const SafeArea = ({children}) => {
     const {token} = useToken();
     const location = useLocation();
-    let currentRoute = AppRoutes.find(route => route.path === location.pathname);
+
+    let currentRoute = AppRoutes.find(route => {
+        const matcher = match(route.path, { decode: decodeURIComponent });
+        return matcher(location.pathname);
+        
+    });
 
     const [safeAreaCurrent, setSafeAreaInsetsCurrent] = useState({
         top: 0,
@@ -73,7 +80,7 @@ const SafeArea = ({children}) => {
                 right: parseInt(right),
             });
             
-            if (currentRoute.fullHeight) {
+            if (toBoolean(currentRoute?.fullHeight)) {
                 setSafeAreaInsetsCurrent({
                     top: 0,
                     bottom: 0,

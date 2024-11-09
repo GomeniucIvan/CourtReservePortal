@@ -26,6 +26,7 @@ import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 import apiService, {setRequestData} from "../../api/api.jsx";
 import {useSafeArea} from "../../context/SafeAreaContext.jsx";
 import {match} from "path-to-regexp";
+import {ErrorBoundary} from "react-error-boundary";
 
 function Layout() {
     const location = useLocation();
@@ -264,6 +265,26 @@ function Layout() {
 
     const skeletonArray = Array.from({length: 5});
 
+    function ErrorFallback({ error }) {
+        //todo implement by email
+        const isDevelopment = process.env.NODE_ENV === 'development' || 1 == 1;
+
+        return (
+            <PaddingBlock topBottom={true}>
+                <h2>Something went wrong:</h2>
+                <div style={{maxWidth: '80vw'}}>
+                    <p><strong>Error Message:</strong> {error.message}</p>
+                    
+                    {isDevelopment && (
+                        <div style={{whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>
+                            {error.stack}
+                        </div>
+                    )}
+                </div>
+            </PaddingBlock>
+        );
+    }
+    
     return (
         <div className={styles.root}>
             {(currentRoute && !toBoolean(isFetching)) &&
@@ -273,41 +294,45 @@ function Layout() {
             }
 
             <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
-                <LayoutExtra/>
-
-                {toBoolean(isFetching) ? (
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <>
-                        <div className={'safe-area-top'}></div>
+                        <LayoutExtra/>
 
-                        <PaddingBlock topBottom={true}>
-                            <Flex vertical={true} gap={token.padding}>
-                                {skeletonArray.map((_, index) => (
-                                    <Skeleton key={index} animated className={styles.skeleton}/>
-                                ))}
-                            </Flex>
-                        </PaddingBlock>
+                        {toBoolean(isFetching) ? (
+                            <>
+                                <div className={'safe-area-top'}></div>
+
+                                <PaddingBlock topBottom={true}>
+                                    <Flex vertical={true} gap={token.padding}>
+                                        {skeletonArray.map((_, index) => (
+                                            <Skeleton key={index} animated className={styles.skeleton}/>
+                                        ))}
+                                    </Flex>
+                                </PaddingBlock>
+                            </>
+                        ) : (
+                            <PullToRefresh onRefresh={refreshData}
+                                           disabled={toBoolean(disablePullDownToRefresh)}
+                                           pullingText={'Pull down to refresh.'}
+                                           refreshingText={'Loading...'}
+                                           completeText={'Refresh successful.'}
+                                           canReleaseText={'Release to refresh immediately.'}>
+                                <Routes>
+                                    {AppRoutes.map((route, index) => {
+                                        const {element, path, ...rest} = route;
+
+                                        return <Route
+                                            onUpdate={() => window.scrollTo(0, 0)}
+                                            key={index}
+                                            path={path}
+                                            {...rest}
+                                            element={element}/>;
+                                    })}
+                                </Routes>
+                            </PullToRefresh>
+                        )}
                     </>
-                ) : (
-                    <PullToRefresh onRefresh={refreshData}
-                                   disabled={toBoolean(disablePullDownToRefresh)}
-                                   pullingText={'Pull down to refresh.'}
-                                   refreshingText={'Loading...'}
-                                   completeText={'Refresh successful.'}
-                                   canReleaseText={'Release to refresh immediately.'}>
-                        <Routes>
-                            {AppRoutes.map((route, index) => {
-                                const {element, path, ...rest} = route;
-
-                                return <Route
-                                    onUpdate={() => window.scrollTo(0, 0)}
-                                    key={index}
-                                    path={path}
-                                    {...rest}
-                                    element={element}/>;
-                            })}
-                        </Routes>
-                    </PullToRefresh>
-                )}
+                </ErrorBoundary>
             </div>
 
             <div ref={footerRef}>
