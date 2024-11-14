@@ -17,11 +17,14 @@ import {useAuth} from "../../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../../utils/ListUtils.jsx";
 import {parseSafeInt} from "../../../../utils/NumberUtils.jsx";
 import {costDisplay} from "../../../../utils/CostUtils.jsx";
+import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
+import {useNavigate} from "react-router-dom";
 
 function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     const {token, globalStyles, availableHeight, isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent} = useApp();
     const {orgId} = useAuth();
-
+    const navigate = useNavigate();
+    
     const [selectedSegmentTab, setSelectedSegmentTab] = useState(selectedTabStorage('billing_transaction', 'Unpaid'));
     const {styles} = useStyles();
     const [unpaidFees, setUnpaidFees] = useState(null);
@@ -230,7 +233,11 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                                 )
                             }
                             {toBoolean(transactionHeaderData.ShowPay) &&
-                                <Button size={'small'} type={'primary'} className={globalStyles.stickyButton}>
+                                <Button size={'small'} type={'primary'}
+                                        className={globalStyles.stickyButton}
+                                        onClick={() =>{
+                                    navigate(ProfileRouteNames.PROFILE_BILLING_PAYMENTS);
+                                }}>
                                     Pay All
                                 </Button>
                             }

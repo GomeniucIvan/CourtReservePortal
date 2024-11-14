@@ -122,7 +122,7 @@ const FormInput = ({ label,
                     {meta.error}
                 </Paragraph>
             ) : (
-                form.status && form.status[name] && (
+                form && form.status && form.status[name] && (
                     <Paragraph
                         style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                         {form.status[name]}

@@ -1,5 +1,5 @@
 import {fromAuthLocalStorage} from "../storage/AppStorage.jsx";
-import {toBoolean} from "./Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "./Utils.jsx";
 
 const genders = () => {
     let list = [];
@@ -97,6 +97,36 @@ export const numberList = (minValue, maxValue) => {
         list.push({Text: minValue + i, Value: minValue + i})
     }
     return list;
+}
+
+export const memberPaymentProfiles = (profiles, includeNewCard) => {
+    if (isNullOrEmpty(profiles)){
+        profiles = [];
+    }
+    
+    let paymentTypes = profiles.map(profile => {
+        return {
+            Value : profile.Id,
+            Text: equalString(profile.AccountType,2) ? `eCheck ****${profile.Last4Digits}` : `Credit Card **** ${profile.Last4Digits}`
+        }
+    })
+
+
+    if (toBoolean(includeNewCard)) {
+        let newPaymentTypes = [];
+        newPaymentTypes.push({
+            Text: 'New Credit Card',
+            Value: 1
+        });
+
+        if (anyInList(paymentTypes)) {
+            newPaymentTypes = newPaymentTypes.concat(paymentTypes);
+        }
+
+        paymentTypes = newPaymentTypes;
+    }
+    
+    return paymentTypes;
 }
 
 export const bookingTypes = bookingTypesFunc();

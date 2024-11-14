@@ -9,6 +9,7 @@ import MyProfile from "../pages/profile/myprofile/MyProfile.jsx";
 import ProfileStringingList from "../pages/profile/stringing/list/ProfileStringingList.jsx";
 import ProfileStringingDetails from "../pages/profile/stringing/details/ProfileStringingDetails.jsx";
 import ProfilePaymentProfileList from "../pages/profile/paymentprofile/list/ProfilePaymentProfileList.jsx";
+import ProfileBillingPayment from "../pages/profile/billing/payment/ProfileBillingPayment.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
@@ -20,6 +21,8 @@ export const ProfileRouteNames = {
     PROFILE_CALENDAR_FEED: `/profile/calendar`,
     PROFILE_MEMBERSHIP: `/profile/membership`,
     PROFILE_BILLING: `/profile/billing`,
+    PROFILE_BILLING_PAYMENT: `/profile/payment/:id`,
+    PROFILE_BILLING_PAYMENTS: `/profile/payments`,
     PROFILE_STRINGING: `/profile/stringing`,
     PROFILE_STRINGING_DETAILS: `/profile/stringing/:id`,
     PROFILE_PAYMENT_PROFILE_LIST: `/profile/payment-profiles`
@@ -73,6 +76,18 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_BILLING,
         element: <ProfileBilling />,
         title: 'billing',
+        disablePullDown: true
+    },
+    {
+        path: ProfileRouteNames.PROFILE_BILLING_PAYMENT,
+        element: <ProfileBillingPayment />,
+        title: 'billingPayment',
+        disablePullDown: true
+    },
+    {
+        path: ProfileRouteNames.PROFILE_BILLING_PAYMENTS,
+        element: <ProfileBillingPayment />,
+        title: 'billingPayment',
         disablePullDown: true
     },
     {
