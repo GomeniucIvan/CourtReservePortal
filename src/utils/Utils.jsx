@@ -1,4 +1,5 @@
 import {pNotify} from "../components/notification/PNotify.jsx";
+export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const isNullOrEmpty = (data) => {
     if (data === undefined || data === '' || data === null || data === 'undefined' || data === 'null') {
@@ -224,4 +225,12 @@ export const fullNameInitials = (fullName) => {
     }
 
    return namesArray[0].charAt(0).toUpperCase() + namesArray[namesArray.length - 1].charAt(0).toUpperCase();
+}
+
+export const isValidEmail = (incEmail) => {
+    if (isNullOrEmpty(incEmail)) {
+        return false;
+    }
+
+    return emailRegex.test(incEmail);
 }

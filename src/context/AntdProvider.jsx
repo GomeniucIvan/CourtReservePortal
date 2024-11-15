@@ -46,7 +46,10 @@ export const AntdProvider = ({ children }) => {
                             colorPrimary: primaryColor,
                             boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px',
                             headerActionHeight: 32,
-                            borderRadiusSM: 8
+                            borderRadiusSM: 8,
+                            paddingXS: 4,
+                            paddingSM: 8,
+                            inputLeftPadding: 12
                         },
                         components: {
                             Custom: {
@@ -94,6 +97,7 @@ export const AntdProvider = ({ children }) => {
                             },
                             Typography: {
                                 titleMarginTop: 0,
+                                lineHeight: '26px',
                                 titleMarginBottom: 0,
                                 fontSizeHeading1: 20,
                                 fontSizeHeading2: 18,

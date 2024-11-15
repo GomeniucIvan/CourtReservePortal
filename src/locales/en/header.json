@@ -1,11 +1,15 @@
 ﻿{
+  "gettingStarted": "Get Started",
+  "loginCreateAccount": "Create Account",
+  "loginAuthorize": "Log In",
+  
   "scheduler": "Scheduler",
   "announcements": "Announcements",
   "announcementDetails": "Announcement Details",
   "leagues": "Leagues",
   "eventCalendar": "Event Calendar",
   "more": "More",
-  "gettingStarted": "Get Started",
+
   "accountVerification": "Account Verification",
   "verificationCode": "Verification Code",
   "events": "Events",

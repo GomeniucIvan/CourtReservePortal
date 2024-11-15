@@ -7,20 +7,22 @@ import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
-import {equalString, focus, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {equalString, focus, isNullOrEmpty, isValidEmail, toBoolean} from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import PageForm from "../../../form/pageform/PageForm.jsx";
 import apiService, {getBearerToken, setBearerToken} from "../../../api/api.jsx";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import appService from "../../../api/app.jsx";
+import {useTranslation} from "react-i18next";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginGetStarted() {
     const {setFormikData, isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent} = useApp();
-    
+    const {t} = useTranslation('');
     const navigate = useNavigate();
+    
     useEffect(() => {
         setIsFooterVisible(false);
         setFooterContent('');
@@ -33,7 +35,7 @@ function LoginGetStarted() {
     };
 
     const startValidationSchema = Yup.object({
-        email: Yup.string().required('Email is required.')
+        email: Yup.string().required(t(`login.getStarted.form.emailRequired`))
     });
 
     const startFormik = useFormik({
@@ -44,77 +46,66 @@ function LoginGetStarted() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
             if (isMockData) {
-                setTimeout(function () {
-                    const emailExists = mockData.login.started.member.email === values.email;
 
-                    if (emailExists) {
-                        setFormikData(values);
-                        navigate(AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION);
-                    } else {
-                        ModalClose({
-                            title: 'Not Found',
-                            content: 'Player with such email not found.',
-                            showIcon: false,
-                            onOk: () => {
-                                focus('email');
-                            }
-                        });
-                    }
-                    setIsLoading(false);
-                }, 1000);
             } else {
-                apiService.post('/api/create-account/email-check', {
+                let response = await apiService.post('/api/create-account/email-check', {
                     email: values.email,
                     spGuideId: ''
-                }).then(response => {
-                    if (toBoolean(response?.IsValid)) {
-                        if (equalString(response.Data, 0)) {
-                            setStatus({email: 'Email not found.'});
+                });
+
+                setIsLoading(false);
+                if (toBoolean(response?.IsValid)) {
+                    if (equalString(response.Data, 0)) {
+                        if (isValidEmail(values.email)) {
+                            //new email
+                            setFormikData(values);
+                            navigate(AuthRouteNames.LOGIN_CREATE_ACCOUNT);
+                        } else{
+                            //invalid email
+                            setStatus({email: t(`login.getStarted.form.emailNotFound`)});
                             ModalClose({
-                                title: 'Not Found',
-                                content: 'Player with such email not found.',
+                                title: t(`login.getStarted.form.emailNotFound`),
+                                content: t(`login.getStarted.form.emailNotFoundDescription`),
                                 showIcon: false,
                                 onOk: () => {
                                     focus('email');
                                 }
                             });
-                        } else if (equalString(response.Data, 1)) {
-                            setFormikData(values);
-                            navigate(AuthRouteNames.LOGIN_AUTHORIZE);
                         }
-                    } else {
-                        ModalClose({
-                            title: 'Error',
-                            content: response.Message,
-                            showIcon: false,
-                            onOk: () => {
-                                focus('email');
-                            }
-                        });
+                    } else if (equalString(response.Data, 1)) {
+                        //exists
+                        setFormikData(values);
+                        navigate(AuthRouteNames.LOGIN_AUTHORIZE);
                     }
-
-                    setIsLoading(false);
-                });
+                } else {
+                    ModalClose({
+                        title: 'Error',
+                        content: response.Message,
+                        showIcon: false,
+                        onOk: () => {
+                            focus('email');
+                        }
+                    });
+                }
             }
         },
     });
 
     return (
         <>
-            <PaddingBlock>
-                <Title level={3}>Let’s Get Started!</Title>
+            <PaddingBlock topBottom={true}>
+                <Title level={1}>{t(`login.getStarted.title`)}</Title>
 
                 <Paragraph>
-                    Enter your email to get started. If you don't have
-                    an account yet, you will be prompted to create one.
+                    {t(`login.getStarted.description`)}
                 </Paragraph>
 
                 <PageForm
                     formik={startFormik}>
-                    <FormInput label="Email"
+                    <FormInput label={t(`login.getStarted.form.email`)}
                                form={startFormik}
                                name='email'
-                               placeholder='Enter your email'
+                               placeholder={t(`login.getStarted.form.emailPlaceholder`)}
                                required='true'
                     />
 
@@ -123,16 +114,16 @@ function LoginGetStarted() {
                             loading={isLoading}
                             onClick={startFormik.handleSubmit}
                     >
-                        Login
+                        {t(`login.getStarted.button.login`)}
                     </Button>
                     <Paragraph className={'sm-padding'}>
-                        By continuing, you agree to CourtReserve’s{' '}
-                        <Link href="https://ant.design" target="_blank">
-                            Terms of Service{' '}
+                        {t(`login.getStarted.continueAgree`)}{' '}
+                        <Link href="https://cr1.io/-1" target="_blank">
+                            {t(`login.getStarted.termAndService`)}{' '}
                         </Link>
                         and{' '}
-                        <Link href="https://ant.design" target="_blank">
-                            Privacy Policy
+                        <Link href="https://cr1.io/-2" target="_blank">
+                            {t(`login.getStarted.privacyPolicy`)}
                         </Link>
                     </Paragraph>
                 </PageForm>

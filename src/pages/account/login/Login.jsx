@@ -63,13 +63,14 @@ function Login() {
                             className={styles.loginButton}
                             block
                             onClick={() => navigate(AuthRouteNames.LOGIN_GET_STARTED)}>
-                        Get Started
+                        {t(`login.button.getStarted`)}
                     </Button>
 
                     <Paragraph className={globalStyles.textCenter}>
-                        Already have an account?
+                        {t(`login.haveAnAccount`)}
+                        
                         <Link style={{ fontWeight: 600 }} onClick={() => navigate(AuthRouteNames.LOGIN_AUTHORIZE)}>
-                            {' '}Log In
+                            {' '}{t(`login.link.login`)}
                         </Link>
                     </Paragraph>
                 </Flex>

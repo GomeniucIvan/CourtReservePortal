@@ -8,16 +8,24 @@ export const useStyles = createStyles(({css, token}) => ({
 
         form {
             .ant-btn {
-                margin: ${token.Button.paddingXS / 2}px 0px;
+                margin: ${token.paddingXS}px 0px;
             }
         }
 
         .sm-padding {
-            margin: ${token.Button.paddingXS / 2}px 0px;
+            margin: ${token.paddingXS}px 0px;
         }
         
         .width-100{
             width: 100%;
+        }
+        
+        .ant-typography + .ant-typography {
+            padding-top: ${token.paddingSM}px;
+        }
+
+        .ant-input {
+            padding-left: ${token.inputLeftPadding}px;
         }
     `,
     layoutExtra: css`

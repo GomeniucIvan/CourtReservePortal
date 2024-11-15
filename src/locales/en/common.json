@@ -157,6 +157,49 @@
     "slide3Text": "Events & Schedules",
     "slide3Description": "Join club events, view and manage schedules in one place",
     "slide4Text": "Improve Stats",
-    "slide4Description": "Track performance stats and make data-driven improvements"
+    "slide4Description": "Track performance stats and make data-driven improvements",
+    "haveAnAccount": "Already have an account?",
+    "link": {
+      "login": "Log In"
+    },
+    "button" : {
+      "getStarted" : "Get Started"
+    },
+    
+    "getStarted": {
+      "title": "Let’s Get Started!",
+      "description": "Enter your email to get started. If you don't have\n an account yet, you will be prompted to create one.",
+      "continueAgree": "By continuing, you agree to CourtReserve’s",
+      "termAndService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "button": {
+        "login": "Login"
+      },
+      "form": {
+        "email" : "Email",
+        "emailRequired": "Email is required.",
+        "emailPlaceholder": "Enter your Email",
+        "emailNotFound": "Email not found",
+        "emailNotFoundDescription": "No member associated with the provided email address."
+      }
+    },
+    "createAccount": {
+      "title": "Set Up Your Account",
+      "description": "Your password must be between 6-40 characters in length.",
+      "form": {
+        "email" : "Email",
+        "password": "Password",
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password needs to be 6 characters at min.",
+        "passwordMatch": "Passwords must match.",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordRequired": "Confirm Password is required.",
+        "passwordPlaceholder": "Enter your Password",
+        "confirmPasswordPlaceholder": "Enter your Confirm Password"
+      },
+      "button": {
+        "continue": "Continue"
+      }
+    }
   }
 }
