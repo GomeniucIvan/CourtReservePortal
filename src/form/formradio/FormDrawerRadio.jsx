@@ -58,7 +58,7 @@ const FormDrawerRadio = ({
                                 onChange={(e) => handleMultiChange(option[propValue], e.target.checked)}
                             />
 
-                            <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)}
+                            <Title level={1} className={cx(styles.radioLabel, globalStyles.noSpace)}
                                    style={{marginRight: 'auto'}}
                                    onClick={() => handleMultiChange(option[propValue], !isChecked)}>
                                 {isNullOrEmpty(option[propText]) ? (
@@ -102,7 +102,7 @@ const FormDrawerRadio = ({
                                 }
                             }}
                         >
-                            <Title level={5} className={cx(styles.radioLabel, globalStyles.noSpace)}>
+                            <Title level={1} className={cx(styles.radioLabel, globalStyles.noSpace)}>
                                 {isNullOrEmpty(option[propText]) ? (
                                     <></>
                                 ) : (

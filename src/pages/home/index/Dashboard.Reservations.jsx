@@ -42,7 +42,7 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
                     </div>
 
                     <div>
-                        <Title level={5} className={cx(globalStyles.cardItemTitle, isUnpaid && globalStyles.urgentcardItemTitle, globalStyles.noBottomPadding)}>
+                        <Title level={1} className={cx(globalStyles.cardItemTitle, isUnpaid && globalStyles.urgentcardItemTitle, globalStyles.noBottomPadding)}>
                             <Ellipsis direction='end' content={booking.Title}/>
                         </Title>
 

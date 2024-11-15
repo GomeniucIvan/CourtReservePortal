@@ -125,7 +125,7 @@ function LoginAuthorize() {
     return (
         <>
             <PaddingBlock>
-                <Title level={4}>Log In to Access Your Account</Title>
+                <Title level={3}>Log In to Access Your Account</Title>
 
                 <PageForm formik={formik}>
                     <FormInput label="Email"

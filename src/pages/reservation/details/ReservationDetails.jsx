@@ -72,7 +72,7 @@ function ProfileBookingDetails() {
                             {booking.Members.map((member, index) => (
                                 <div key={index}>
                                     <Card className={cx(globalStyles.card)}>
-                                        <Title level={5} className={cx(globalStyles.cardItemTitle)}>
+                                        <Title level={1} className={cx(globalStyles.cardItemTitle)}>
                                             <Ellipsis direction='end' content={member.FullName}/>
                                         </Title>
                                         <Text type="secondary"
@@ -147,7 +147,7 @@ function ProfileBookingDetails() {
                     </div>
 
                     <div>
-                        <Title level={5} style={{marginTop: 0}} className={globalStyles.noBottomPadding}>
+                        <Title level={1} style={{marginTop: 0}} className={globalStyles.noBottomPadding}>
                             {booking?.ReservationType}
                         </Title>
 

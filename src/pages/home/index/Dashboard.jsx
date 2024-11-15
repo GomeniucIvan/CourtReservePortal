@@ -122,7 +122,7 @@ function Dashboard() {
             {anyInList(stringToJson(dashboardData?.DashboardLinksJson)) &&
                 <>
                     <div className={cx(styles.header)} style={{padding: `0px ${token.padding}px`}}>
-                        <Title level={4}>Additional Links</Title>
+                        <Title level={3}>Additional Links</Title>
                     </div>
                     <CardLinks links={stringToJson(dashboardData?.DashboardLinksJson)} isFetching={isFetching}/>
                 </>

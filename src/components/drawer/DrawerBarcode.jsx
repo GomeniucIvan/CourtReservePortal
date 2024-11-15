@@ -78,7 +78,7 @@ const DrawerBarcode = forwardRef(({familyList = [], format}, ref) => {
                                         }}>
                                             <PaddingBlock>
                                                 <Flex className={globalStyles.drawerRow}>
-                                                    <Title level={5}>
+                                                    <Title level={1}>
                                                         {familyMember.FullName}
                                                     </Title>
                                                 </Flex>

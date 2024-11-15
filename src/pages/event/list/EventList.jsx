@@ -207,7 +207,7 @@ function EventList() {
                                                     </div>
 
                                                     <div>
-                                                        <Title level={5}
+                                                        <Title level={1}
                                                                className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
                                                             <Ellipsis direction='end' content={item.EventName}/>
                                                         </Title>

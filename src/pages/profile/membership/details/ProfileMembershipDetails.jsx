@@ -72,7 +72,7 @@ function ProfileMembershipDetails() {
             <PaddingBlock >
                 <Text> ref: https://dribbble.com/shots/20602433-Gym-Mobile-App</Text>
 
-                <Title level={4}>{data?.Membership?.Name}</Title>
+                <Title level={3}>{data?.Membership?.Name}</Title>
 
                 <CardIconLabel icon={'money'} description={data?.BillingDetails?.MembershipPriceDisplay}/>
                 <CardIconLabel icon={'money'} description={`Next Billing Date: ${data?.BillingDetails?.NextBillingDateDisplay}`}/>

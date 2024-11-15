@@ -91,7 +91,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                               borderRadius: 50,
                                                               backgroundColor: 'red'
                                                           }}>
-                                                        <Title level={5}
+                                                        <Title level={1}
                                                                className={cx(globalStyles.noSpace)}>{fullNameInitials(fullName)}</Title>
                                                     </Flex>
 

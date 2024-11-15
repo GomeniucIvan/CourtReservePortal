@@ -46,7 +46,7 @@ function Login() {
                 <Swiper autoplay={false} className={globalStyles.swiper}>
                     {emptyArray(4).map((item, index) => (
                         <Swiper.Item key={index}>
-                            <Title level={2} className={globalStyles.textCenter}>{t(`login.slide${index+1}Text`)} </Title>
+                            <Title style={{fontSize: '30px'}} level={1} className={globalStyles.textCenter}>{t(`login.slide${index+1}Text`)} </Title>
                             <Flex align={'center'} justify={'center'}>
                                 <Text style={{fontSize: '20px'}} className={globalStyles.textCenter}>{t(`login.slide${index+1}Description`)}</Text>
                             </Flex>

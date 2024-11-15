@@ -26,9 +26,9 @@ const EntityCard = ({children, title, link, addPadding, isFetching}) => {
 
             {!isFetching &&
                 <div className={cx(styles.header, toBoolean(addPadding) && styles.headerPadding)}>
-                    <Title level={4}>{title}</Title>
+                    <Title level={1}>{title}</Title>
 
-                    <Title level={5} style={{color: token.colorLink}} onClick={() => navigate(link)}>
+                    <Title level={3} style={{color: token.colorLink}} onClick={() => navigate(link)}>
                         {t('seeAll')}
                     </Title>
                 </div>

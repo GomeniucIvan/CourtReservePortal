@@ -735,7 +735,7 @@ function ReservationRegistration() {
             {!isFetching &&
                 <>
                     <PaddingBlock topBottom={true}>
-                        <Title level={5} className={globalStyles.noTopPadding}>Reservation Details</Title>
+                        <Title level={1} className={globalStyles.noTopPadding}>Reservation Details</Title>
 
                         {!isNullOrEmpty(reservation?.InstructorId) &&
                             <FormInput form={formik}
@@ -904,7 +904,7 @@ function ReservationRegistration() {
                             <Flex vertical gap={token.Custom.cardIconPadding / 2}>
                                 <Flex justify={'space-between'} align={'center'}>
                                     <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                        <Title level={5} className={cx(globalStyles.noSpace)}>Players
+                                        <Title level={1} className={cx(globalStyles.noSpace)}>Players
                                             Information</Title>
                                     </Flex>
 
@@ -970,7 +970,7 @@ function ReservationRegistration() {
                                                                               borderRadius: 50,
                                                                               backgroundColor: 'red'
                                                                           }}>
-                                                                        <Title level={5}
+                                                                        <Title level={1}
                                                                                className={cx(globalStyles.noSpace)}>{fullNameInitials(reservationMember.FullName)}</Title>
                                                                     </Flex>
 
@@ -1044,7 +1044,7 @@ function ReservationRegistration() {
                                 <Flex vertical gap={token.Custom.cardIconPadding / 2}>
                                     <Flex justify={'space-between'} align={'center'}>
                                         <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                            <Title level={5} className={cx(globalStyles.noSpace)}>Miscellaneous
+                                            <Title level={1} className={cx(globalStyles.noSpace)}>Miscellaneous
                                                 Items</Title>
                                             <Text
                                                 type="secondary">({miscFeesQuantities.length})</Text>
@@ -1086,7 +1086,7 @@ function ReservationRegistration() {
                                                                 className={cx(globalStyles.noSpace)}>{item.Text}</Text>
 
                                                             <Flex gap={token.padding} align={'center'}>
-                                                                <Title level={5} className={cx(globalStyles.noSpace)}>
+                                                                <Title level={1} className={cx(globalStyles.noSpace)}>
                                                                     <Text style={{opacity: '0.6'}}>x </Text>
                                                                     {item.Quantity}
                                                                 </Title>
@@ -1120,7 +1120,7 @@ function ReservationRegistration() {
 
                         {anyInList(customFields) &&
                             <>
-                                <Title level={5} className={globalStyles.noTopPadding}>Additional Information</Title>
+                                <Title level={1} className={globalStyles.noTopPadding}>Additional Information</Title>
 
                                 <FormCustomFields customFields={customFields} form={formik} loading={isFetching} name={`Udf[{udfIndex}].Value`}/>
                                 <Divider className={globalStyles.formDivider}/>
@@ -1456,7 +1456,7 @@ function ReservationRegistration() {
                                                                               borderRadius: 50,
                                                                               backgroundColor: 'red'
                                                                           }}>
-                                                                        <Title level={5}
+                                                                        <Title level={1}
                                                                                className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
                                                                     </Flex>
 
@@ -1523,7 +1523,7 @@ function ReservationRegistration() {
                                         return (
                                             <div key={index}>
                                                 <Flex justify={'space-between'} align={'center'}>
-                                                    <Title level={5}
+                                                    <Title level={1}
                                                            className={cx(globalStyles.noSpace)}>{miscItem.Text}</Title>
 
                                                     <Flex gap={token.padding} align={'center'}>
@@ -1538,7 +1538,7 @@ function ReservationRegistration() {
                                                                  color={token.colorError}/>
                                                         </div>
 
-                                                        <Title level={5} style={{minWidth: '26px', textAlign: 'center'}}
+                                                        <Title level={1} style={{minWidth: '26px', textAlign: 'center'}}
                                                                className={cx(globalStyles.noSpace)}>{miscItem.Quantity}</Title>
 
                                                         <div onClick={() => {

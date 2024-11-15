@@ -88,7 +88,7 @@ function ProfileStringingList() {
                   onClick={() => {
 
                   }}>
-                <Title level={4} style={{margin: 0}}>Job #{stringingJob.JobNumber}</Title>
+                <Title level={3} style={{margin: 0}}>Job #{stringingJob.JobNumber}</Title>
                 <Text className={globalStyles.block}>{stringingJob.PlayerFullName}</Text>
                 <Text className={globalStyles.block}>{stringingJob.RacquetsNumber} Raquet</Text>
                 <Text className={globalStyles.block}>{stringingJob.CreatedOnDisplay}</Text>

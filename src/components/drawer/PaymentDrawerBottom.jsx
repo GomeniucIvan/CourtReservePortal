@@ -133,13 +133,13 @@ const PaymentDrawerBottom = forwardRef(({
                                <>
                                    <div style={{ overflowY: 'auto', flex: '1'}}>
                                        <Flex vertical={true} gap={token.padding /2}>
-                                           <Title level={4}>Payment Details</Title>
+                                           <Title level={3}>Payment Details</Title>
 
                                            <Card className={cx(globalStyles.card,globalStyles.cardSMPadding)} style={{marginTop: token.padding/2, marginBottom: token.padding/2}}>
                                                {paymentData.list.map((paymentListItem, index) => {
                                                    return (
                                                        <Flex key={index} vertical={true}>
-                                                           <Text level={5} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
+                                                           <Text level={1} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
 
                                                            {paymentListItem.items.map((paymentItem, paymentItemIndex) => {
                                                                return (
@@ -163,7 +163,7 @@ const PaymentDrawerBottom = forwardRef(({
                            <div ref={footerRef} style={{position: 'sticky', bottom: 0, width: '100%'}}>
                                <Flex vertical={true} gap={token.padding}>
                                    <Flex align={'center'} justify={'space-between'}>
-                                       <Title level={5}>Total Due</Title>
+                                       <Title level={1}>Total Due</Title>
 
                                        <Flex align={'center'} gap={4} onClick={() => {
                                            if (toBoolean(paymentData?.requireOnlinePayment)) {
@@ -178,7 +178,7 @@ const PaymentDrawerBottom = forwardRef(({
                                            }
                                        }}>
 
-                                           <Title level={5}>{costDisplay(paymentData?.totalDue)}</Title>
+                                           <Title level={1}>{costDisplay(paymentData?.totalDue)}</Title>
                                            {(toBoolean(paymentData?.requireOnlinePayment)) &&
                                                <div>
                                                    <SVG icon={'question-mark'} size={16} color={token.colorError} preventStroke={false}/>

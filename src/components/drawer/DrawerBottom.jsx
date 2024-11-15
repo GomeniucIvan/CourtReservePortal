@@ -95,7 +95,7 @@ const DrawerBottom = forwardRef(({
                     <Flex vertical ref={headerRef}>
                         {(!addSearch || !equalString(searchType, 2)) &&
                             <Flex justify={'space-between'} align={'center'} style={{padding: `${token?.padding}px`}}>
-                                <Title level={4} style={{margin: 0}}>{label}</Title>
+                                <Title level={3} style={{margin: 0}}>{label}</Title>
 
                                 <Flex gap={token.Custom.buttonPadding}>
                                     {(addSearch && equalString(searchType, 1)) &&

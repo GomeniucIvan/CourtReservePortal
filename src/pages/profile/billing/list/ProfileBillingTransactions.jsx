@@ -184,7 +184,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                                           }}>
 
                                         {!isNullOrEmpty(fee.ReservationType) &&
-                                            <Title level={5}
+                                            <Title level={1}
                                                    className={cx(globalStyles.cardItemTitle, globalStyles.urgentcardItemTitle, globalStyles.noBottomPadding)}>
                                                 <Ellipsis direction='end' content={fee.ReservationType}/>
                                             </Title>
@@ -216,17 +216,17 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                             {isNullOrEmpty(transactionHeaderData?.Credit) ?
                                 (
                                 <Flex vertical={true}>
-                                    <Title level={5} className={cx(globalStyles.noSpace)}>{transactionHeaderData.PaymentTitle}</Title>
+                                    <Title level={1} className={cx(globalStyles.noSpace)}>{transactionHeaderData.PaymentTitle}</Title>
                                     <Text>{costDisplay(transactionHeaderData.Balance, true)}</Text>
                                 </Flex>
                             ) : (
                                     <Flex vertical={true}>
                                         <Flex gap={token.paddingSM}>
-                                            <Title level={5} className={cx(globalStyles.noSpace)}>Balance</Title>
+                                            <Title level={1} className={cx(globalStyles.noSpace)}>Balance</Title>
                                             <Text>{costDisplay(transactionHeaderData.Balance, true)}</Text>
                                         </Flex>
                                         <Flex gap={token.paddingSM}>
-                                            <Title level={5} className={cx(globalStyles.noSpace)}>Credit</Title>
+                                            <Title level={1} className={cx(globalStyles.noSpace)}>Credit</Title>
                                             <Text>{costDisplay(transactionHeaderData.Credit, true)}</Text>
                                         </Flex>
                                     </Flex>

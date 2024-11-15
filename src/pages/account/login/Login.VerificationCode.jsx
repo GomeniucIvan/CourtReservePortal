@@ -147,7 +147,7 @@ function LoginVerificationCode() {
     return (
         <>
             <PaddingBlock>
-                <Title level={4}>Please Check Your Phone</Title>
+                <Title level={3}>Please Check Your Phone</Title>
 
                 <Paragraph>
                     We've sent a 6-digit code to <strong>***-***-9650</strong>. The code expires in 15 minutes. Please

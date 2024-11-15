@@ -115,13 +115,13 @@ const Notification = ({type, title, description, onClose, duration}) => {
                 <div style={{flex: 1}}>
                     {!isNullOrEmpty(title) &&
                         <>
-                            <Title level={4} style={{margin: 0}}>{title}</Title>
+                            <Title level={3} style={{margin: 0}}>{title}</Title>
                             <Text>{description}</Text>
                         </>
                     }
                     {isNullOrEmpty(title) &&
                         <>
-                            <Title level={5} style={{margin: 0}}>{description}</Title>
+                            <Title level={1} style={{margin: 0}}>{description}</Title>
                         </>
                     }
                 </div>

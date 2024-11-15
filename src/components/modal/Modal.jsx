@@ -29,7 +29,7 @@ function Modal({ children,
             <div className={cx(styles.container, 'safe-area-top')} onClick={(e) => e.stopPropagation()}>
                 {!isNullOrEmpty(title) &&
                     <Flex align={'center'} justify={'center'} className={styles.title}>
-                        <Title level={5}>{title}</Title>
+                        <Title level={1}>{title}</Title>
                     </Flex>
                 }
                 <div className={styles.body}>

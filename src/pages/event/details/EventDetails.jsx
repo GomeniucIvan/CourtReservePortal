@@ -265,7 +265,7 @@ function EventDetails() {
                     }
                     
                     <div style={{marginBottom: `${token.padding}px`}}>
-                        <Title level={4} style={{marginBottom: 0}}>
+                        <Title level={3} style={{marginBottom: 0}}>
                             {event?.EventName}
 
                             {toBoolean(event?.IsFeatured) &&

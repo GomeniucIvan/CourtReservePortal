@@ -98,7 +98,7 @@ function LoginAccountVerification() {
     return (
        <>
            <PaddingBlock>
-               <Title level={4}>Please Check Your Email</Title>
+               <Title level={3}>Please Check Your Email</Title>
 
                <Paragraph>
                    We've sent a 6-digit code to <strong>chr****@email.com</strong>. The code expires in 15 minutes. Please enter it below.

@@ -94,7 +94,12 @@ export const AntdProvider = ({ children }) => {
                             },
                             Typography: {
                                 titleMarginTop: 0,
-                                titleMarginBottom: 0
+                                titleMarginBottom: 0,
+                                fontSizeHeading1: 20,
+                                fontSizeHeading2: 18,
+                                fontSizeHeading3: 16,
+                                fontSizeHeading4: 14,
+                                fontSizeHeading5: 12
                             },
                         },
                     }}

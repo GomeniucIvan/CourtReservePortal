@@ -43,7 +43,7 @@ function LoginAccountIdentification() {
     return (
        <>
            <PaddingBlock>
-               <Title level={4}>Let's Find Your Account</Title>
+               <Title level={3}>Let's Find Your Account</Title>
 
                <Paragraph>
                    Enter your email to get started. If you don't have an account yet, you will be prompted to create one.

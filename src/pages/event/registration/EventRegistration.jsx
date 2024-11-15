@@ -221,7 +221,7 @@ function EventRegistration({fullRegistration}) {
                 {!isFetching &&
                     <>
                         <div style={{marginBottom: `${token.padding}px`}}>
-                            <Title level={4} style={{marginBottom: 0}}>
+                            <Title level={3} style={{marginBottom: 0}}>
                                 {event?.EventName}
                             </Title>
                             <Text type="secondary">{event?.Type}</Text>
@@ -252,7 +252,7 @@ function EventRegistration({fullRegistration}) {
                                             return (
                                                 <List.Item className={globalStyles.listItemSM}>
                                                     <Flex justify={'space-between'} align={'center'} className={'width-100'}>
-                                                        <Title level={5} onClick={() => {if (!requireToSignWaiver){toggleInitialCheck(index)}}}>
+                                                        <Title level={1} onClick={() => {if (!requireToSignWaiver){toggleInitialCheck(index)}}}>
                                                             {member.FullName}
                                                         </Title>
                                                         <Switch checked={member.IsChecked}

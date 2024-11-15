@@ -320,7 +320,7 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                                                                                 >
                                                                                     {isNullOrEmpty(disclosure.SignatureDataUrl) ? (
                                                                                             <Title
-                                                                                                level={4}>{t('disclosure.clickToSign')}</Title>
+                                                                                                level={3}>{t('disclosure.clickToSign')}</Title>
                                                                                         ) :
                                                                                         (
                                                                                             <img
@@ -337,7 +337,7 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                                                                                     <Flex gap={token.Custom.buttonPadding}
                                                                                           vertical={true}>
                                                                                         <div>
-                                                                                            <Title level={5}
+                                                                                            <Title level={1}
                                                                                                    className={globalStyles.noMargin}>{t('disclosure.signedBy')}</Title>
                                                                                             <Text>{authData?.MemberFirstName} {authData?.MemberLastName}</Text>
                                                                                         </div>

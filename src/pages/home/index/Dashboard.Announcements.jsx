@@ -82,7 +82,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
                   onClick={() => {
                       setSelectedAnnouncement(globalAnn);
                   }}>
-                <Title level={5}
+                <Title level={1}
                        className={cx(globalStyles.cardItemTitle, isUrgent && globalStyles.urgentcardItemTitle)}>
                     <Ellipsis direction='end' content={globalAnn.Title}/>
                 </Title>

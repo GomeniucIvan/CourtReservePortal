@@ -89,27 +89,27 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                         <Flex vertical={true} gap={token.padding}>
                             {packages.map((pack, index) => (
                                 <Card className={cx(globalStyles.card, globalStyles.clickableCard)} key={index}>
-                                    <Title level={5}
+                                    <Title level={1}
                                            className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
                                         <Ellipsis direction='end' content={pack.Name}/>
                                     </Title>
 
-                                    <Title level={5}
+                                    <Title level={1}
                                            className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
                                         <Ellipsis direction='end' content={pack.Name}/>
                                     </Title>
 
-                                    <Title level={5}
+                                    <Title level={1}
                                            className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
                                         <Ellipsis direction='end' content={pack.Name}/>
                                     </Title>
 
-                                    <Title level={5}
+                                    <Title level={1}
                                            className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
                                         <Ellipsis direction='end' content={pack.Name}/>
                                     </Title>
 
-                                    <Title level={5}
+                                    <Title level={1}
                                            className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
                                         <Ellipsis direction='end' content={pack.Name}/>
                                     </Title>

@@ -104,7 +104,7 @@ const FormRangePicker = ({
                 <>
                     <Flex vertical>
                         <Flex justify={'space-between'} align={'center'} style={{padding: `${token.padding}px`}}>
-                            <Title level={4} style={{margin: 0}}>{t(filterLabel)}</Title>
+                            <Title level={3} style={{margin: 0}}>{t(filterLabel)}</Title>
 
                             <Button type="default" icon={<CloseOutline/>} size={'middle'} onClick={handleCloseClick}/>
                         </Flex>

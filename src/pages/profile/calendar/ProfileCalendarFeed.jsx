@@ -47,10 +47,10 @@ function ProfileCalendarFeed() {
     
     return (
         <PaddingBlock topBottom={false}>
-            <Title level={4}>{e(t('profile.calendar.feedTitle'))}</Title>
+            <Title level={3}>{e(t('profile.calendar.feedTitle'))}</Title>
 
             <Link href={calendarUrl} target="_blank" style={{paddingBottom: token.padding, display: 'block'}}>
-                <Title level={5} type={'link'} style={{color: token.colorLink}}> {calendarUrl}</Title>
+                <Title level={1} type={'link'} style={{color: token.colorLink}}> {calendarUrl}</Title>
             </Link>
 
             <InlineBlock>

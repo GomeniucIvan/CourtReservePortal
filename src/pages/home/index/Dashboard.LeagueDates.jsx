@@ -26,7 +26,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
             {leaguesDates.map((leagueSessionDate, index) => (
                 <div key={index}>
                     <Card className={cx(globalStyles.card, globalStyles.clickableCard)} onClick={() => navigate(`/league/details/${leagueSessionDate.Id}`)}>
-                        <Title level={5} className={globalStyles.noTopPadding}>
+                        <Title level={1} className={globalStyles.noTopPadding}>
                             <CardIconLabel icon={'paddle'} description={`Game Day #${leagueSessionDate.GameDayNumber}`} />
                         </Title>
 
