@@ -21,7 +21,7 @@ const {Paragraph, Link, Title} = Typography;
 function LoginCreateAccount() {
     const {setFormikData, isLoading, setIsLoading, formikData, setIsFooterVisible, setFooterContent} = useApp();
     const email = formikData?.email;
-    const {t} = useTranslation('');
+    const {t} = useTranslation('login');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,11 +42,11 @@ function LoginCreateAccount() {
     }, []);
 
     const validationSchema = Yup.object({
-        email: Yup.string().required(t(`login.getStarted.form.emailRequired`)),
-        password: Yup.string().required(t(`login.createAccount.form.passwordRequired`))
-            .min(6, t(`login.createAccount.form.passwordMinLength`)),
-        confirmPassword: Yup.string().required(t(`login.createAccount.form.confirmPasswordRequired`))
-            .oneOf([Yup.ref('password'), null], t(`login.createAccount.form.passwordMatch`)),
+        email: Yup.string().required(t(`getStarted.form.emailRequired`)),
+        password: Yup.string().required(t(`createAccount.form.passwordRequired`))
+            .min(6, t(`createAccount.form.passwordMinLength`)),
+        confirmPassword: Yup.string().required(t(`createAccount.form.confirmPasswordRequired`))
+            .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
     });
 
     const formik = useFormik({
@@ -67,34 +67,34 @@ function LoginCreateAccount() {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={1}>{t(`login.createAccount.title`)}</Title>
+                <Title level={1}>{t(`createAccount.title`)}</Title>
 
                 <Paragraph>
-                    {t(`login.createAccount.description`)}
+                    {t(`createAccount.description`)}
                 </Paragraph>
 
                 <PageForm formik={formik}>
-                    <FormInput label={t(`login.getStarted.form.email`)}
+                    <FormInput label={t(`getStarted.form.email`)}
                                form={formik}
                                name='email'
                                disabled={true}
-                               placeholder={t(`login.getStarted.form.emailPlaceholder`)}
+                               placeholder={t(`getStarted.form.emailPlaceholder`)}
                     />
 
-                    <FormInput label={t(`login.createAccount.form.password`)}
+                    <FormInput label={t(`createAccount.form.password`)}
                                form={formik}
                                name='password'
                                required={true}
                                addIconToSeePassword={true}
-                               placeholder={t(`login.createAccount.form.passwordPlaceholder`)}
+                               placeholder={t(`createAccount.form.passwordPlaceholder`)}
                     />
 
-                    <FormInput label={t(`login.createAccount.form.confirmPassword`)}
+                    <FormInput label={t(`createAccount.form.confirmPassword`)}
                                form={formik}
                                name='confirmPassword'
                                required={true}
                                addIconToSeePassword={true}
-                               placeholder={t(`login.createAccount.form.confirmPasswordPlaceholder`)}
+                               placeholder={t(`createAccount.form.confirmPasswordPlaceholder`)}
                     />
                     
                     <Button type="primary"
@@ -102,7 +102,7 @@ function LoginCreateAccount() {
                             loading={isLoading}
                             onClick={formik.handleSubmit}
                     >
-                        {t(`login.createAccount.button.continue`)}
+                        {t(`createAccount.button.continue`)}
                     </Button>
                 </PageForm>
             </PaddingBlock>

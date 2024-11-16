@@ -20,7 +20,7 @@ const {Paragraph, Link, Title} = Typography;
 
 function LoginGetStarted() {
     const {setFormikData, isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent} = useApp();
-    const {t} = useTranslation('');
+    const {t} = useTranslation('login');
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -35,7 +35,7 @@ function LoginGetStarted() {
     };
 
     const startValidationSchema = Yup.object({
-        email: Yup.string().required(t(`login.getStarted.form.emailRequired`))
+        email: Yup.string().required(t(`getStarted.form.emailRequired`))
     });
 
     const startFormik = useFormik({
@@ -62,10 +62,10 @@ function LoginGetStarted() {
                             navigate(AuthRouteNames.LOGIN_CREATE_ACCOUNT);
                         } else{
                             //invalid email
-                            setStatus({email: t(`login.getStarted.form.emailNotFound`)});
+                            setStatus({email: t(`getStarted.form.emailNotFound`)});
                             ModalClose({
-                                title: t(`login.getStarted.form.emailNotFound`),
-                                content: t(`login.getStarted.form.emailNotFoundDescription`),
+                                title: t(`getStarted.form.emailNotFound`),
+                                content: t(`getStarted.form.emailNotFoundDescription`),
                                 showIcon: false,
                                 onOk: () => {
                                     focus('email');
@@ -94,18 +94,18 @@ function LoginGetStarted() {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={1}>{t(`login.getStarted.title`)}</Title>
+                <Title level={1}>{t(`getStarted.title`)}</Title>
 
                 <Paragraph>
-                    {t(`login.getStarted.description`)}
+                    {t(`getStarted.description`)}
                 </Paragraph>
 
                 <PageForm
                     formik={startFormik}>
-                    <FormInput label={t(`login.getStarted.form.email`)}
+                    <FormInput label={t(`getStarted.form.email`)}
                                form={startFormik}
                                name='email'
-                               placeholder={t(`login.getStarted.form.emailPlaceholder`)}
+                               placeholder={t(`getStarted.form.emailPlaceholder`)}
                                required='true'
                     />
 
@@ -114,16 +114,16 @@ function LoginGetStarted() {
                             loading={isLoading}
                             onClick={startFormik.handleSubmit}
                     >
-                        {t(`login.getStarted.button.login`)}
+                        {t(`getStarted.button.login`)}
                     </Button>
                     <Paragraph className={'sm-padding'}>
-                        {t(`login.getStarted.continueAgree`)}{' '}
+                        {t(`getStarted.continueAgree`)}{' '}
                         <Link href="https://cr1.io/-1" target="_blank">
-                            {t(`login.getStarted.termAndService`)}{' '}
+                            {t(`getStarted.termAndService`)}{' '}
                         </Link>
                         and{' '}
                         <Link href="https://cr1.io/-2" target="_blank">
-                            {t(`login.getStarted.privacyPolicy`)}
+                            {t(`getStarted.privacyPolicy`)}
                         </Link>
                     </Paragraph>
                 </PageForm>

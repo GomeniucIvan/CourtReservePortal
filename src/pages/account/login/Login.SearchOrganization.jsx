@@ -2,7 +2,7 @@ import {useFormik} from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useRef, useState} from "react";
-import {Button, Empty, Flex, Input, Skeleton, Tag, Typography} from 'antd';
+import {Button, Descriptions, Empty, Flex, Input, Skeleton, Tag, Typography} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
@@ -15,12 +15,15 @@ import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.js
 import * as React from "react";
 import {Card, Ellipsis} from "antd-mobile";
 import {useStyles} from "./styles.jsx";
+import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
+import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
+import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 
 const {Text, Title} = Typography;
 
 function LoginSearchOrganization() {
     const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight} = useApp();
-    const {t} = useTranslation('');
+    const {t} = useTranslation('login');
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(false);
     const [searchValue, setSearchValue] = useState(false);
@@ -28,13 +31,14 @@ function LoginSearchOrganization() {
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [hasMore, setHasMore] = useState(false);
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
-    
+    const [showSelectedOrganization, setShowSelectedOrganization] = useState(false);
+
     const email = formikData?.email;
     const password = formikData?.password;
     const confirmPassword = formikData?.confirmPassword;
     const { styles } = useStyles();
     const headerRef = useRef();
-    
+
     useEffect(() => {
         setIsFooterVisible(false);
         fixHeaderItems();
@@ -45,7 +49,7 @@ function LoginSearchOrganization() {
                     disabled={isFetching}
                     loading={isLoading}
                     onClick={formik.handleSubmit}>
-                {t('login.searchOrganization.button.continue')}
+                {t('searchOrganization.button.continue')}
             </Button>
         </PaddingBlock>);
     }, []);
@@ -72,13 +76,13 @@ function LoginSearchOrganization() {
 
         }
     }
-    
+
     const validationSchema = Yup.object({
-        email: Yup.string().required(t(`login.getStarted.form.emailRequired`)),
-        password: Yup.string().required(t(`login.createAccount.form.passwordRequired`))
-            .min(6, t(`login.createAccount.form.passwordMinLength`)),
-        confirmPassword: Yup.string().required(t(`login.createAccount.form.confirmPasswordRequired`))
-            .oneOf([Yup.ref('password'), null], t(`login.createAccount.form.passwordMatch`)),
+        email: Yup.string().required(t(`getStarted.form.emailRequired`)),
+        password: Yup.string().required(t(`createAccount.form.passwordRequired`))
+            .min(6, t(`createAccount.form.passwordMinLength`)),
+        confirmPassword: Yup.string().required(t(`createAccount.form.confirmPasswordRequired`))
+            .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
     });
 
     const formik = useFormik({
@@ -89,18 +93,22 @@ function LoginSearchOrganization() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
+            let formikValues = values;
+            formikValues.selectedOrgId = selectedOrganization.Id;
+            setFormikData(formikValues);
 
+            navigate(AuthRouteNames.LOGIN_ORGANIZATION);
 
             setIsLoading(false);
         },
     });
-    
+
     const loadOrganizations = async (loadMore) =>{
         if (!isNullOrEmpty(searchValue) && searchValue.length >=4){
             if (!loadMore){
                 setOrganizations([]);
             }
-            
+
             setIsLoading(true);
             setIsFetching(true);
 
@@ -128,19 +136,19 @@ function LoginSearchOrganization() {
             setHasMore(false)
         }
     }
-    
+
     useEffect(() => {
         loadOrganizations();
     }, [searchValue])
-    
+
     return (
         <>
             <>
                 <div ref={headerRef}>
                     <PaddingBlock headerSearch={true}>
-                        <FormInput label={t('login.searchOrganization.form.search')}
-                                   placeholder={t(`login.searchOrganization.form.searchPlaceholder`)}
-                                   description={t(`login.searchOrganization.form.searchDescription`)}
+                        <FormInput label={t('searchOrganization.form.search')}
+                                   placeholder={t(`searchOrganization.form.searchPlaceholder`)}
+                                   description={t(`searchOrganization.form.searchDescription`)}
                                    onInputTimeout={400}
                                    className={'no-margin'}
                                    onInput={(e) => {
@@ -148,7 +156,7 @@ function LoginSearchOrganization() {
                                    }}/>
                     </PaddingBlock>
                 </div>
-                
+
 
                 {(isFetching && !anyInList(organizations)) &&
                     <PaddingBlock onlyBottom={true}>
@@ -179,6 +187,7 @@ function LoginSearchOrganization() {
                                                 className={cx(globalStyles.card, globalStyles.clickableCard, globalStyles.cardSMPadding)}
                                                 onClick={() => {
                                                     setSelectedOrganization(organization);
+                                                    setShowSelectedOrganization(true);
                                                 }}>
                                                 <Flex gap={token.padding} align={'center'}>
                                                     <Flex justify={'center'}
@@ -214,11 +223,62 @@ function LoginSearchOrganization() {
                                 })}
                             </Flex>
 
-                            <InfiniteScroll loadMore={() => {loadOrganizations(true)}} hasMore={hasMore}/>
+                            {hasMore &&
+                                <InfiniteScroll loadMore={() => {loadOrganizations(true)}} hasMore={hasMore}/>
+                            }
                         </PaddingBlock>
                     </div>
                 }
             </>
+
+            <DrawerBottom showDrawer={showSelectedOrganization}
+                          closeDrawer={() => setShowSelectedOrganization(false)}
+                          showButton={true}
+                          customFooter={<Flex gap={token.padding}>
+                              <Button block onClick={() => setShowSelectedOrganization(false)}>
+                                  {t(`searchOrganization.drawer.close`)}
+                              </Button>
+
+                              <Button type={'primary'} block onClick={() => {
+                                  formik.submitForm();
+                              }}>
+                                  {t(`searchOrganization.drawer.select`)}
+                              </Button>
+                          </Flex>}
+                          label={t(`searchOrganization.drawer.title`)}>
+                <PaddingBlock onlyBottom={true}>
+
+                    <Flex align={"center"} justify={"center"}>
+                        {!isNullOrEmpty(selectedOrganization?.FullLogoUrl) &&
+                            <img style={{height: '56px', paddingBottom: token.padding}} src={selectedOrganization?.FullLogoUrl}/>
+                        }
+                    </Flex>
+                    <Descriptions>
+                        <Descriptions.Item label={t(`searchOrganization.drawer.name`)}>{selectedOrganization?.Name}</Descriptions.Item>
+
+                        {!isNullOrEmpty(selectedOrganization?.Address1) &&
+                            <Descriptions.Item label={t(`searchOrganization.drawer.address1`)}>{selectedOrganization?.Address1}</Descriptions.Item>
+                        }
+                        {!isNullOrEmpty(selectedOrganization?.Address2) &&
+                            <Descriptions.Item label={t(`searchOrganization.drawer.address2`)}>{selectedOrganization?.Address2}</Descriptions.Item>
+                        }
+                        {!isNullOrEmpty(selectedOrganization?.PhoneNumber) &&
+                            <Descriptions.Item label={t(`searchOrganization.drawer.phoneNumber`)}>{selectedOrganization?.PhoneNumber}</Descriptions.Item>
+                        }
+                        {!isNullOrEmpty(selectedOrganization?.City) &&
+                            <Descriptions.Item label={t(`searchOrganization.drawer.city`)}>{selectedOrganization?.City}</Descriptions.Item>
+                        }
+                        {!isNullOrEmpty(selectedOrganization?.State) &&
+                            <Descriptions.Item label={t(`searchOrganization.drawer.state`)}>{selectedOrganization?.State}</Descriptions.Item>
+                        }
+
+                        <Descriptions.Item label={t(`searchOrganization.drawer.workingHours`)}>TODO PROC!</Descriptions.Item>
+                        <Descriptions.Item label="Facebook">TODO PROC!</Descriptions.Item>
+                        <Descriptions.Item label={t(`searchOrganization.drawer.website`)}>TODO PROC!</Descriptions.Item>
+
+                    </Descriptions>
+                </PaddingBlock>
+            </DrawerBottom>
         </>
     )
 }

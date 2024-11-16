@@ -20,7 +20,7 @@ function Login() {
     const {setIsFooterVisible, token, setHeaderRightIcons, globalStyles, setFormikData} = useApp();
     const {memberId, logout} = useAuth();
     const location = useLocation();
-    const {t} = useTranslation('');
+    const {t} = useTranslation('login');
     
     useEffect(() => {
         setIsFooterVisible(false);
@@ -46,9 +46,9 @@ function Login() {
                 <Swiper autoplay={false} className={globalStyles.swiper}>
                     {emptyArray(4).map((item, index) => (
                         <Swiper.Item key={index}>
-                            <Title style={{fontSize: '30px'}} level={1} className={globalStyles.textCenter}>{t(`login.slide${index+1}Text`)} </Title>
+                            <Title style={{fontSize: '30px'}} level={1} className={globalStyles.textCenter}>{t(`slide${index+1}Text`)} </Title>
                             <Flex align={'center'} justify={'center'}>
-                                <Text style={{fontSize: '20px'}} className={globalStyles.textCenter}>{t(`login.slide${index+1}Description`)}</Text>
+                                <Text style={{fontSize: '20px'}} className={globalStyles.textCenter}>{t(`slide${index+1}Description`)}</Text>
                             </Flex>
 
                            <Flex style={{height: '440px'}} vertical={true} justify={'center'}>
@@ -63,14 +63,14 @@ function Login() {
                             className={styles.loginButton}
                             block
                             onClick={() => navigate(AuthRouteNames.LOGIN_GET_STARTED)}>
-                        {t(`login.button.getStarted`)}
+                        {t(`button.getStarted`)}
                     </Button>
 
                     <Paragraph className={globalStyles.textCenter}>
-                        {t(`login.haveAnAccount`)}
+                        {t(`haveAnAccount`)}
                         
                         <Link style={{ fontWeight: 600 }} onClick={() => navigate(AuthRouteNames.LOGIN_AUTHORIZE)}>
-                            {' '}{t(`login.link.login`)}
+                            {' '}{t(`link.login`)}
                         </Link>
                     </Paragraph>
                 </Flex>

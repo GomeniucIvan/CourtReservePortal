@@ -12,6 +12,7 @@ export const AuthRouteNames = {
     LOGIN_AUTHORIZE: '/login-authorize',
     LOGIN_CREATE_ACCOUNT: '/login-create',
     LOGIN_ORGANIZATION: '/login-organization',
+    LOGIN_ADDITIONAL_INFO: '/login-info',
     LOGIN_ACCOUNT_VERIFICATION: '/login-account-verification',
     LOGIN_VERIFICATION_CODE: '/login-verification-code',
 };
@@ -40,6 +41,12 @@ const AuthRoutes = [
         path: AuthRouteNames.LOGIN_ORGANIZATION,
         element: <LoginSearchOrganization />,
         title: 'loginOrganization',
+        unauthorized: true
+    },
+    {
+        path: AuthRouteNames.LOGIN_ADDITIONAL_INFO,
+        element: <LoginSearchOrganization />,
+        title: 'loginAdditionalInfo',
         unauthorized: true
     },
     {
