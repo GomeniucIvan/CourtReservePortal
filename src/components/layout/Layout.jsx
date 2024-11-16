@@ -10,7 +10,7 @@ import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {
     authMember,
     clearAllLocalStorage,
-    fromAuthLocalStorage, fromLocalStorage,
+    fromAuthLocalStorage,
     toAuthLocalStorage,
     toLocalStorage
 } from "../../storage/AppStorage.jsx";
@@ -40,8 +40,8 @@ function Layout() {
     const {styles} = useStyles();
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
-
     const [maxHeight, setMaxHeight] = useState(0);
+    
     const {
         footerContent,
         isFooterVisible,

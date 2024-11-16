@@ -142,7 +142,7 @@ const FormInput = ({ label,
             )}
             {!isNullOrEmpty(description) &&
                 <Paragraph
-                    style={{color: token.colorTextTertiary, marginLeft: token.Form.labelColonMarginInlineStart, fontSize: token.fontSizeSM}}>
+                    style={{color: token.colorTextTertiary, marginLeft: token.Form.labelColonMarginInlineStart, fontSize: token.fontSizeSM, marginBottom: token.paddingXS}}>
                     {description}
                 </Paragraph>
             }

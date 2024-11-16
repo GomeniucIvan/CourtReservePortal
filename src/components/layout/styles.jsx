@@ -27,6 +27,10 @@ export const useStyles = createStyles(({css, token}) => ({
         .ant-input {
             padding-left: ${token.inputLeftPadding}px;
         }
+        
+        .no-margin {
+            margin: 0px !important;
+        }
     `,
     layoutExtra: css`
         position: absolute;

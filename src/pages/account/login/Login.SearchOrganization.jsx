@@ -1,7 +1,7 @@
 import {useFormik} from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Button, Empty, Flex, Input, Skeleton, Tag, Typography} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
@@ -19,7 +19,7 @@ import {useStyles} from "./styles.jsx";
 const {Text, Title} = Typography;
 
 function LoginSearchOrganization() {
-    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent} = useApp();
+    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight} = useApp();
     const {t} = useTranslation('');
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(false);
@@ -27,14 +27,17 @@ function LoginSearchOrganization() {
     const [organizations, setOrganizations] = useState([]);
     const [selectedOrganization, setSelectedOrganization] = useState(null);
     const [hasMore, setHasMore] = useState(false);
+    const [bodyHeight, setBodyHeight] = useState(availableHeight);
     
     const email = formikData?.email;
     const password = formikData?.password;
     const confirmPassword = formikData?.confirmPassword;
     const { styles } = useStyles();
+    const headerRef = useRef();
     
     useEffect(() => {
         setIsFooterVisible(false);
+        fixHeaderItems();
         setFooterContent(<PaddingBlock topBottom={true}>
             <Button type="primary"
                     block
@@ -61,6 +64,14 @@ function LoginSearchOrganization() {
     //         navigate(AuthRouteNames.LOGIN_GET_STARTED);
     //     }
     // }, []);
+
+    const fixHeaderItems = () => {
+        if (headerRef.current) {
+            setBodyHeight(availableHeight - headerRef.current.offsetHeight - 8); //added padding for description search
+        } else{
+
+        }
+    }
     
     const validationSchema = Yup.object({
         email: Yup.string().required(t(`login.getStarted.form.emailRequired`)),
@@ -102,7 +113,7 @@ function LoginSearchOrganization() {
             };
 
             let response = await apiService.post('/api/create-account/search-organization', postModel);
-            console.log(response)
+
             if (toBoolean(response?.IsValid)){
                 const resultData = response.Data;
                 let dbOrganizations = resultData.Organizations;
@@ -124,76 +135,90 @@ function LoginSearchOrganization() {
     
     return (
         <>
-            <PaddingBlock topBottom={true}>
-                <FormInput label={t('login.searchOrganization.form.search')}
-                           placeholder={t(`login.searchOrganization.form.searchPlaceholder`)}
-                           description={t(`login.searchOrganization.form.searchDescription`)}
-                           onInputTimeout={400}
-                           onInput={(e) => {
-                               setSearchValue(e);
-                }}/>
+            <>
+                <div ref={headerRef}>
+                    <PaddingBlock headerSearch={true}>
+                        <FormInput label={t('login.searchOrganization.form.search')}
+                                   placeholder={t(`login.searchOrganization.form.searchPlaceholder`)}
+                                   description={t(`login.searchOrganization.form.searchDescription`)}
+                                   onInputTimeout={400}
+                                   className={'no-margin'}
+                                   onInput={(e) => {
+                                       setSearchValue(e);
+                                   }}/>
+                    </PaddingBlock>
+                </div>
+                
 
                 {(isFetching && !anyInList(organizations)) &&
-                    <>
-                        <Flex vertical={true} gap={token.padding}>
-                            {emptyArray(8).map((item, index) => (
-                                <div key={index}>
-                                    <Skeleton.Button active={true} block style={{height: `80px`}}/>
-                                </div>
-                            ))}
-                        </Flex>
-                    </>
+                    <PaddingBlock onlyBottom={true}>
+                        <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
+                            <Flex vertical={true} gap={token.padding}>
+                                {emptyArray(8).map((item, index) => (
+                                    <div key={index}>
+                                        <Skeleton.Button active={true} block style={{height: `80px`}}/>
+                                    </div>
+                                ))}
+                            </Flex>
+                        </div>
+                    </PaddingBlock>
                 }
-                
-                {(!isNullOrEmpty(searchValue) && searchValue.length >=4 && !anyInList(organizations)) &&
+
+                {(!isNullOrEmpty(searchValue) && searchValue.length >=4 && !anyInList(organizations) && !isFetching) &&
                     <Empty  />
                 }
 
                 {anyInList(organizations) &&
-                    <>
-                        <Flex vertical={true} gap={token.padding}>
-                            {organizations.map((organization, index) => {
-                                return (
-                                    <div key={index}>
-                                        <Card className={cx(globalStyles.card, globalStyles.clickableCard, globalStyles.cardSMPadding)}
-                                              onClick={() => {
-                                                  setSelectedOrganization(organization);
-                                              }}>
-                                            <Flex gap={token.padding} align={'center'}>
-                                                <Flex justify={'center'} 
-                                                      align={'center'} 
-                                                      className={cx(styles.searchOrganizationImage, isNullOrEmpty(organization.FullLogoUrl) && styles.searchOrganizationNoImage) }>
-                                                    {isNullOrEmpty(organization.FullLogoUrl) &&
-                                                        <img src='https://app.courtreserve.com/Content/Images/icons-svg/no-photos.svg'/>
-                                                    }
+                    <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
+                        <PaddingBlock onlyBottom={true}>
+                            <Flex vertical={true} gap={token.padding}>
+                                {organizations.map((organization, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <Card
+                                                className={cx(globalStyles.card, globalStyles.clickableCard, globalStyles.cardSMPadding)}
+                                                onClick={() => {
+                                                    setSelectedOrganization(organization);
+                                                }}>
+                                                <Flex gap={token.padding} align={'center'}>
+                                                    <Flex justify={'center'}
+                                                          align={'center'}
+                                                          className={cx(styles.searchOrganizationImage, isNullOrEmpty(organization.FullLogoUrl) && styles.searchOrganizationNoImage)}>
+                                                        {isNullOrEmpty(organization.FullLogoUrl) &&
+                                                            <img
+                                                                src='https://app.courtreserve.com/Content/Images/icons-svg/no-photos.svg'/>
+                                                        }
 
-                                                    {!isNullOrEmpty(organization.FullLogoUrl) &&
-                                                        <img src={organization.FullLogoUrl} />
-                                                    }
-                                                </Flex>
+                                                        {!isNullOrEmpty(organization.FullLogoUrl) &&
+                                                            <img src={organization.FullLogoUrl}/>
+                                                        }
+                                                    </Flex>
 
-                                                <Flex vertical={true} gap={token.paddingXS}>
-                                                    
-                                                    <Title level={3}>
-                                                        <Ellipsis direction='end' content={organization.Name}/>
-                                                    </Title>
-                                                    {!isNullOrEmpty(organization.FullAddress) &&
-                                                        <Text className={cx(token.colorTextTertiary, globalStyles.noPadding, styles.searchOrganizationFullAddress)}>
-                                                            <Ellipsis rows={2} direction='end' content={organization.FullAddress}/>
-                                                        </Text>
-                                                    }
+                                                    <Flex vertical={true} gap={token.paddingXS}>
+
+                                                        <Title level={3}>
+                                                            <Ellipsis direction='end' content={organization.Name}/>
+                                                        </Title>
+                                                        {!isNullOrEmpty(organization.FullAddress) &&
+                                                            <Text
+                                                                className={cx(token.colorTextTertiary, globalStyles.noPadding, styles.searchOrganizationFullAddress)}>
+                                                                <Ellipsis rows={2} direction='end'
+                                                                          content={organization.FullAddress}/>
+                                                            </Text>
+                                                        }
+                                                    </Flex>
                                                 </Flex>
-                                            </Flex>
-                                        </Card>
-                                    </div>
-                                )
-                            })}
-                        </Flex>
-                    </>
+                                            </Card>
+                                        </div>
+                                    )
+                                })}
+                            </Flex>
+
+                            <InfiniteScroll loadMore={() => {loadOrganizations(true)}} hasMore={hasMore}/>
+                        </PaddingBlock>
+                    </div>
                 }
-                
-                <InfiniteScroll loadMore={() => {loadOrganizations(true)}} hasMore={hasMore}/>
-            </PaddingBlock>
+            </>
         </>
     )
 }
