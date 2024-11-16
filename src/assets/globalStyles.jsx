@@ -186,6 +186,9 @@ export const useStyles = createStyles(({ css, token }) => ({
    noMargin: css`
       margin: 0 !important;
    `,
+   noPadding: css`
+      padding: 0 !important;
+   `,
    formDivider: css`
       width: calc(100% + ${token.padding * 2}px);
       margin-left: -${token.padding}px;

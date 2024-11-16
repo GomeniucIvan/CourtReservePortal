@@ -4,12 +4,14 @@ import LoginAccountVerification from "../pages/account/login/Login.AccountVerifi
 import LoginVerificationCode from "../pages/account/login/Login.VerificationCode.jsx";
 import LoginAuthorize from "../pages/account/login/Login.Authorize.jsx";
 import LoginCreateAccount from "../pages/account/login/Login.CreateAccount.jsx";
+import LoginSearchOrganization from "../pages/account/login/Login.SearchOrganization.jsx";
 
 export const AuthRouteNames = {
     LOGIN: '/login',
     LOGIN_GET_STARTED: '/login-get-started',
     LOGIN_AUTHORIZE: '/login-authorize',
     LOGIN_CREATE_ACCOUNT: '/login-create',
+    LOGIN_ORGANIZATION: '/login-organization',
     LOGIN_ACCOUNT_VERIFICATION: '/login-account-verification',
     LOGIN_VERIFICATION_CODE: '/login-verification-code',
 };
@@ -32,6 +34,12 @@ const AuthRoutes = [
         path: AuthRouteNames.LOGIN_CREATE_ACCOUNT,
         element: <LoginCreateAccount />,
         title: 'loginCreateAccount',
+        unauthorized: true
+    },
+    {
+        path: AuthRouteNames.LOGIN_ORGANIZATION,
+        element: <LoginSearchOrganization />,
+        title: 'loginOrganization',
         unauthorized: true
     },
     {

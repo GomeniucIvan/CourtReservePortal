@@ -27,7 +27,6 @@ function LoginCreateAccount() {
     useEffect(() => {
         setIsFooterVisible(false);
         setFooterContent('');
-        setFormikData(null);
     }, []);
 
     const initialValues = {
@@ -58,7 +57,9 @@ function LoginCreateAccount() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-
+            setFormikData(values);
+            navigate(AuthRouteNames.LOGIN_ORGANIZATION);
+            
             setIsLoading(false);
         },
     });

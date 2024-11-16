@@ -54,3 +54,11 @@ export const getUserDefinedFieldsList = (form, prefix) => {
 export const emptyArray = (count = 20) => {
     return Array(count).fill({});
 }
+
+export const countListItems = (list) => {
+    if (isNullOrEmpty(list)){
+        list = [];
+    }
+    
+    return list.length;
+}

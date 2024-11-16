@@ -1,0 +1,25 @@
+﻿import { createStyles } from 'antd-style';
+
+export const useStyles = createStyles(({ css, token }) => ({
+    searchOrganizationImage: css`
+       width: 56px;
+       height: 56px;
+
+        img {
+            width: -webkit-fill-available;
+            height: max-content;
+        }
+  `,
+    searchOrganizationNoImage: css`
+        background-color: ${token.colorCourtReserve};
+        border-radius: ${token.borderRadius}px;
+
+        img {
+            padding: 10px;
+        }
+    `,
+    searchOrganizationFullAddress: css`
+        opacity: 0.6;
+        line-height: 16px;
+    `
+}));

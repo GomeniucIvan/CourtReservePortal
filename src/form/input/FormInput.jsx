@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import {Input, Skeleton, Typography} from "antd";
 const { Paragraph } = Typography;
-import {calculateSkeletonLabelWidth, equalString, toBoolean} from "../../utils/Utils.jsx";
+import {calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useStyles} from "./styles.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
@@ -11,6 +11,7 @@ const FormInput = ({ label,
                        name,
                        isSearch,
                        required,
+                       onInputTimeout = 10,
                        onInput,
                        value,
                        disabled,
@@ -22,7 +23,8 @@ const FormInput = ({ label,
                        disableAutoCapitalize,
                        isExpiryDate,
                        className,
-                        loading,
+                       loading,
+                        description,
                        ...props }) => {
     const { token, globalStyles } = useApp();
     
@@ -34,7 +36,8 @@ const FormInput = ({ label,
     const {styles} = useStyles();
     
     const inputRef = useRef(null);
-
+    const timeoutRef = useRef(null);
+    
     if (form && typeof form.getFieldProps === 'function') {
         field = form.getFieldProps(name);
         meta = form.getFieldMeta(name);
@@ -62,9 +65,15 @@ const FormInput = ({ label,
             }
         }
 
-        if (typeof onInput === 'function') {
-            onInput(event);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
         }
+
+        timeoutRef.current = setTimeout(() => {
+            if (typeof onInput === 'function') {
+                onInput(event.target.value);
+            }
+        }, onInputTimeout);
     };
 
     const handeInputFocus = () => {
@@ -73,7 +82,9 @@ const FormInput = ({ label,
 
     const handleInputBlur = (e) => {
         setIsFocused(false);
-        form.handleBlur(e);
+        if (form){
+            form.handleBlur(e); 
+        }
     }
 
     
@@ -129,6 +140,12 @@ const FormInput = ({ label,
                     </Paragraph>
                 )
             )}
+            {!isNullOrEmpty(description) &&
+                <Paragraph
+                    style={{color: token.colorTextTertiary, marginLeft: token.Form.labelColonMarginInlineStart, fontSize: token.fontSizeSM}}>
+                    {description}
+                </Paragraph>
+            }
         </div>
     )
 };

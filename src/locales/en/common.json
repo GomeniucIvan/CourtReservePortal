@@ -200,6 +200,16 @@
       "button": {
         "continue": "Continue"
       }
+    },
+    "searchOrganization": {
+      "form": {
+        "search" : "Search",
+        "searchPlaceholder": "Search organization",
+        "searchDescription": "Enter at least 4 characters"
+      },
+      "button": {
+        "continue": "Continue"
+      }
     }
   }
 }
