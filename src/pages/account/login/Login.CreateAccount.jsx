@@ -42,10 +42,10 @@ function LoginCreateAccount() {
     }, []);
 
     const validationSchema = Yup.object({
-        email: Yup.string().required(t(`getStarted.form.emailRequired`)),
-        password: Yup.string().required(t(`createAccount.form.passwordRequired`))
+        email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')})),
+        password: Yup.string().required(t('common:requiredMessage', {label: t('createAccount.form.password')}))
             .min(6, t(`createAccount.form.passwordMinLength`)),
-        confirmPassword: Yup.string().required(t(`createAccount.form.confirmPasswordRequired`))
+        confirmPassword: Yup.string().required(t('common:requiredMessage', {label: t('createAccount.form.confirmPassword')}))
             .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
     });
 

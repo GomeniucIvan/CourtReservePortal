@@ -5,6 +5,7 @@ import LoginVerificationCode from "../pages/account/login/Login.VerificationCode
 import LoginAuthorize from "../pages/account/login/Login.Authorize.jsx";
 import LoginCreateAccount from "../pages/account/login/Login.CreateAccount.jsx";
 import LoginSearchOrganization from "../pages/account/login/Login.SearchOrganization.jsx";
+import LoginAdditionalInfo from "../pages/account/login/Login.AdditionalInfo.jsx";
 
 export const AuthRouteNames = {
     LOGIN: '/login',
@@ -45,7 +46,7 @@ const AuthRoutes = [
     },
     {
         path: AuthRouteNames.LOGIN_ADDITIONAL_INFO,
-        element: <LoginSearchOrganization />,
+        element: <LoginAdditionalInfo />,
         title: 'loginAdditionalInfo',
         unauthorized: true
     },

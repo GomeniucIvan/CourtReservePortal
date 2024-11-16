@@ -124,7 +124,7 @@ function ProfileBillingPayment({}) {
                             <Flex vertical={true} gap={8}>
                                 <Skeleton.Button active={true} block
                                                  style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
-                                <Skeleton.Button active={true} block style={{height: `40px`}}/>
+                                <Skeleton.Button active={true} block style={{height: `${token.Input.controlHeight}px`}}/>
                             </Flex>
                         </div>
                     ))}

@@ -25,7 +25,6 @@
     },
     "form": {
       "email" : "Email",
-      "emailRequired": "Email is required.",
       "emailPlaceholder": "Enter your Email",
       "emailNotFound": "Email not found",
       "emailNotFoundDescription": "No member associated with the provided email address."
@@ -37,11 +36,9 @@
     "form": {
       "email" : "Email",
       "password": "Password",
-      "passwordRequired": "Password is required.",
       "passwordMinLength": "Password needs to be 6 characters at min.",
       "passwordMatch": "Passwords must match.",
       "confirmPassword": "Confirm Password",
-      "confirmPasswordRequired": "Confirm Password is required.",
       "passwordPlaceholder": "Enter your Password",
       "confirmPasswordPlaceholder": "Enter your Confirm Password"
     },
@@ -69,7 +66,23 @@
       "city": "City",
       "state": "State",
       "workingHours": "Working Hours",
-      "website": "Website",
+      "website": "Website"
+    }
+  },
+  "additionalInfo": {
+    "form": {
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter your First Name",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter your Last Name",
+      "streetAddress": "Street Address",
+      "streetAddressRequired": "Street Address is required.",
+      "city": "City",
+      "cityRequired": "City is required."
+    },
+    
+    "button": {
+      "continue" : "Continue"
     }
   }
 }

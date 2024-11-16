@@ -20,7 +20,7 @@ const {Paragraph, Link, Title} = Typography;
 
 function LoginGetStarted() {
     const {setFormikData, isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent} = useApp();
-    const {t} = useTranslation('login');
+    const { t } = useTranslation('login');
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -35,7 +35,7 @@ function LoginGetStarted() {
     };
 
     const startValidationSchema = Yup.object({
-        email: Yup.string().required(t(`getStarted.form.emailRequired`))
+        email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')}))
     });
 
     const startFormik = useFormik({

@@ -36,6 +36,7 @@ function LoginSearchOrganization() {
     const email = formikData?.email;
     const password = formikData?.password;
     const confirmPassword = formikData?.confirmPassword;
+    const spGuideId = formikData?.spGuideId;
     const { styles } = useStyles();
     const headerRef = useRef();
 
@@ -58,16 +59,17 @@ function LoginSearchOrganization() {
         email: email,
         password: password,
         confirmPassword: confirmPassword,
+        spGuideId: spGuideId,
         selectedOrgId: ''
     };
 
-    // useEffect(() => {
-    //     if (isNullOrEmpty(email) || 
-    //         isNullOrEmpty(password) || 
-    //         isNullOrEmpty(confirmPassword)){
-    //         navigate(AuthRouteNames.LOGIN_GET_STARTED);
-    //     }
-    // }, []);
+    useEffect(() => {
+        if (isNullOrEmpty(email) || 
+            isNullOrEmpty(password) || 
+            isNullOrEmpty(confirmPassword)){
+            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+        }
+    }, []);
 
     const fixHeaderItems = () => {
         if (headerRef.current) {
@@ -97,7 +99,7 @@ function LoginSearchOrganization() {
             formikValues.selectedOrgId = selectedOrganization.Id;
             setFormikData(formikValues);
 
-            navigate(AuthRouteNames.LOGIN_ORGANIZATION);
+            navigate(AuthRouteNames.LOGIN_ADDITIONAL_INFO);
 
             setIsLoading(false);
         },
