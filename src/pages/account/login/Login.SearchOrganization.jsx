@@ -32,6 +32,7 @@ function LoginSearchOrganization() {
     const [hasMore, setHasMore] = useState(false);
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
     const [showSelectedOrganization, setShowSelectedOrganization] = useState(false);
+    const [showNoOrganizations, setShowNoOrganizations] = useState(false);
 
     const email = formikData?.email;
     const password = formikData?.password;
@@ -110,10 +111,14 @@ function LoginSearchOrganization() {
         },
     });
 
-    const loadOrganizations = async (loadMore) =>{
+    const loadOrganizations = async (loadMore) => {
+        setShowNoOrganizations(false)
+        
         if (!isNullOrEmpty(searchValue) && searchValue.length >=4){
+            let currentOrganizations = organizations;
             if (!loadMore){
                 setOrganizations([]);
+                currentOrganizations = [];
             }
 
             setIsLoading(true);
@@ -123,7 +128,7 @@ function LoginSearchOrganization() {
                 InputValue: searchValue,
                 TakeRows: 30,
                 SpGuideId: '',
-                SkipRows: countListItems(organizations),
+                SkipRows: countListItems(currentOrganizations),
                 RemoveOrgId: selectedOrganization?.Id
             };
 
@@ -133,7 +138,9 @@ function LoginSearchOrganization() {
                 const resultData = response.Data;
                 let dbOrganizations = resultData.Organizations;
                 setOrganizations(prev => [...prev, ...dbOrganizations]);
-                setHasMore(resultData.LeftCount > 0)
+                setHasMore(resultData.LeftCount > 0);
+
+                setShowNoOrganizations(!anyInList(currentOrganizations) && !anyInList(dbOrganizations));
             }
 
             setIsFetching(false);
@@ -179,8 +186,8 @@ function LoginSearchOrganization() {
                     </PaddingBlock>
                 }
 
-                {(!isNullOrEmpty(searchValue) && searchValue.length >=4 && !anyInList(organizations) && !isFetching) &&
-                    <Empty  />
+                {showNoOrganizations &&
+                    <Empty />
                 }
 
                 {anyInList(organizations) &&
@@ -242,7 +249,10 @@ function LoginSearchOrganization() {
                           closeDrawer={() => setShowSelectedOrganization(false)}
                           showButton={true}
                           customFooter={<Flex gap={token.padding}>
-                              <Button block onClick={() => setShowSelectedOrganization(false)}>
+                              <Button block onClick={() => {
+                                  setShowSelectedOrganization(false);
+                                  setSelectedOrganization(null);
+                              }}>
                                   {t(`searchOrganization.drawer.close`)}
                               </Button>
 

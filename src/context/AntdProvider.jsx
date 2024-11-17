@@ -50,7 +50,15 @@ export const AntdProvider = ({ children }) => {
                             borderRadiusSM: 8,
                             paddingXS: 4,
                             paddingSM: 8,
-                            inputLeftPadding: 12
+                            inputLeftPadding: 12,
+                            fontSizeIcon: 14,
+                            fontSizeXS: 10,
+                            fontSizeSM: 12,
+                            fontSize: 14,
+                            fontSizeLG: 16,
+                            fontSizeXL: 20,
+                            colorSecondary: '#a1a1a1'
+                            
                         },
                         components: {
                             Custom: {

@@ -6,6 +6,7 @@ import {useStyles} from "./styles.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import {useTranslation} from "react-i18next";
+import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 
 const FormInput = ({ label,
                        form,
@@ -114,24 +115,47 @@ const FormInput = ({ label,
                     <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
 
-            <Input
-                {...props}
-                {...field}
-                onInput={handleInputChange}
-                disabled={disabled}
-                onFocus={handeInputFocus}
-                onBlur={handleInputBlur}
-                name={name}
-                autoCapitalize={toBoolean(disableAutoCapitalize) || equalString(props.type, 'password') ? "off" : "words"}
-                autoCorrect="off"
-                autoComplete="off"
-                spellCheck="false"
-                ref={inputRef}
-                placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
-                status={toBoolean(hasError) ? 'error' : ''}
-                type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
-                className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
-
+            {toBoolean(addIconToSeePassword) ? 
+                (<Input.Password
+                        {...props}
+                        {...field}
+                        onInput={handleInputChange}
+                        disabled={disabled}
+                        onFocus={handeInputFocus}
+                        onBlur={handleInputBlur}
+                        name={name}
+                        autoCapitalize={toBoolean(disableAutoCapitalize) || equalString(props.type, 'password') ? "off" : "words"}
+                        autoCorrect="off"
+                        autoComplete="off"
+                        spellCheck="false"
+                        ref={inputRef}
+                        iconRender={(visible) =>
+                            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                        }
+                        placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
+                        status={toBoolean(hasError) ? 'error' : ''}
+                        type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
+                        className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
+                ) :
+                (<Input
+                        {...props}
+                        {...field}
+                        onInput={handleInputChange}
+                        disabled={disabled}
+                        onFocus={handeInputFocus}
+                        onBlur={handleInputBlur}
+                        name={name}
+                        autoCapitalize={toBoolean(disableAutoCapitalize) || equalString(props.type, 'password') ? "off" : "words"}
+                        autoCorrect="off"
+                        autoComplete="off"
+                        spellCheck="false"
+                        ref={inputRef}
+                        placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
+                        status={toBoolean(hasError) ? 'error' : ''}
+                        type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
+                        className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
+                )}
+            
             {hasError && meta && typeof meta.error === 'string' ? (
                 <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                     {meta.error}

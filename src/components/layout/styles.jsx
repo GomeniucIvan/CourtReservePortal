@@ -31,6 +31,9 @@ export const useStyles = createStyles(({css, token}) => ({
         .ant-select.ant-select-multiple .ant-select-selection-placeholder {
             padding-left: ${token.inputLeftPadding-6}px !important;
         }
+        .ant-input-password{
+            padding-left: 0px;
+        }
         
         .no-margin {
             margin: 0px !important;

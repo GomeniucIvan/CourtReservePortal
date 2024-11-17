@@ -59,7 +59,6 @@ function LoginAdditionalInfo() {
                     block
                     htmlType="submit"
                     disabled={isFetching}
-                    loading={isLoading}
                     onClick={formik.handleSubmit}>
                 {t('additionalInfo.button.continue')}
             </Button>
@@ -166,14 +165,13 @@ function LoginAdditionalInfo() {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-
-            console.log(values);
             
-            if (skipReviewAndMemberships || 1 == 1){
+            if (skipReviewAndMemberships){
                 setIsLoading(false);
                 setShowReviewModal(true)
             } else {
                 setIsLoading(false);
+                navigate(AuthRouteNames.LOGIN_MEMBERSHIP);
             }
         },
     });
@@ -186,10 +184,12 @@ function LoginAdditionalInfo() {
         if (toBoolean(response?.IsValid)){
             const data = response.Data;
             setAdditionInfoData(data);
-            setSkipReviewAndMemberships(!toBoolean(data?.RequireMembershipOnSignUpForm) && !toBoolean(data?.RequireCardOnFile) && !toBoolean(data.IsDisclosuresRequired));
+            let skipReviewAndMemberships = !toBoolean(data?.RequireMembershipOnSignUpForm) && !toBoolean(data?.RequireCardOnFile) && !toBoolean(data.IsDisclosuresRequired);
+            setSkipReviewAndMemberships(skipReviewAndMemberships);
             
             formik.setValues({
                 ...formik.values,
+                skipReview: (!toBoolean(data?.RequireCardOnFile) && !toBoolean(data.IsDisclosuresRequired)),
                 uiCulture: data.UiCulture || formik.values.uiCulture,
                 paymentProvider: data.PaymentProvider || formik.values.paymentProvider,
                 ratingCategories: data.RatingCategories || formik.values.ratingCategories,

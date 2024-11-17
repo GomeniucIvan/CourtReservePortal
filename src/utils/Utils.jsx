@@ -234,3 +234,11 @@ export const isValidEmail = (incEmail) => {
 
     return emailRegex.test(incEmail);
 }
+
+export const containsNoCase = (str1, str2) => {
+    if (!str1 || !str2) {
+        return false;
+    }
+
+    return str1.toLowerCase().includes(str2.toLowerCase());
+};

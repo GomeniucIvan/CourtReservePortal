@@ -90,11 +90,24 @@
       "continue" : "Continue"
     }
   },
+  "membership": {
+    "selectPlan" : "Select Plan",
+    "seeDetails": "See Additional Details",
+    "ageRestrictionMessage": "Age Restrictions may apply",
+    "free": "Free",
+    "full": "Full",
+    "familyMembership": "Family Membership",
+    "initiationFee": "{{price}} initiation fee",
+    "effective": "Effective {{date}}",
+    "paymentOptions": "Payment Options"
+  },
   "review": {
     "modalTitle": "Review",
     "confirmMessage": "Review the information provided and confirm before creating your account.",
     "orgInfo": "Organization Info",
     "profileInfo": "Profile Info",
-    "additionalInfo": "Additional Info"
+    "additionalInfo": "Additional Info",
+    "membership": "Membership Info",
+    "membershipPrice": "Price"
   }
 }

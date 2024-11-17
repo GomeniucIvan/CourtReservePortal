@@ -1,6 +1,6 @@
 ﻿import { useApp } from "../../context/AppProvider.jsx";
 
-function PaddingBlock({ children, topBottom = false, leftRight = true, onlyBottom = false, onlyTop = false,headerSearch = false }) {
+function PaddingBlock({ children, topBottom = false, leftRight = true, onlyBottom = false, onlyTop = false,headerSearch = false, style = {} }) {
     const { token } = useApp();
 
     const paddingTopBottom = topBottom ? token.padding : 0;
@@ -16,6 +16,7 @@ function PaddingBlock({ children, topBottom = false, leftRight = true, onlyBotto
     return (
         <div
             style={{
+                ...style,
                 padding: `${paddingTop}px ${paddingLeftRight}px ${paddingBottom}px ${paddingLeftRight}px`
             }}
         >

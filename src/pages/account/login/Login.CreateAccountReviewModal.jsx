@@ -42,6 +42,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
     const {isLoading, setIsLoading, token} = useApp();
     const {t} = useTranslation('login');
     let values = formik?.values;
+    let membership = values?.selectedMembership;
     
     const createAccount = async () => {
         setIsLoading(true);
@@ -125,6 +126,19 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                                             )
                                         })}
                                     </>
+                                }
+                            </Descriptions>
+                        </>
+                    }
+
+                    {!isNullOrEmpty(values?.selectedMembership?.Id) &&
+                        <>
+                            <Divider />
+
+                            <Descriptions title={t('review.membership')}>
+                                <Descriptions.Item label={t('review.membershipName')}>{membership?.Name}</Descriptions.Item>
+                                {toBoolean(membership?.OneFreePaymentOption) &&
+                                    <Descriptions.Item label={t('review.membershipPrice')}>{t(`membership.free`)}</Descriptions.Item>
                                 }
                             </Descriptions>
                         </>
