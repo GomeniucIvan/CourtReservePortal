@@ -112,7 +112,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                                     <>
                                         {values?.ratingCategories.map((ratingCategory, index) => {
                                             return (
-                                                <Descriptions.Item key={index} label={ratingCategory.Name}>{(ratingCategory.AllowMultupleRatingValues ? 'SelectedRatingsIds TODO' : 'SelectedRatingId TODO')}</Descriptions.Item>
+                                                <Descriptions.Item key={`rating_${index}`} label={ratingCategory.Name}>{(ratingCategory.AllowMultupleRatingValues ? 'SelectedRatingsIds TODO' : 'SelectedRatingId TODO')}</Descriptions.Item>
                                             )
                                         })}
                                     </>
@@ -121,7 +121,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                                     <>
                                         {values?.userDefinedFields.map((udf, index) => {
                                             return (
-                                                <Descriptions.Item key={index} label={udf.Label}>{udf.Value}</Descriptions.Item>
+                                                <Descriptions.Item key={`udf_${index}`} label={udf.Label}>{udf.Value}</Descriptions.Item>
                                             )
                                         })}
                                     </>

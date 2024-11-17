@@ -4,7 +4,7 @@ import {anyInList, equalString, isNullOrEmpty, toBoolean} from "./Utils.jsx";
 const genders = () => {
     let list = [];
     list.push({Text: "gender.none", Value: 'None', translate: true});
-    list.push({Text: "gender.male", Value: 'Female', translate: true});
+    list.push({Text: "gender.male", Value: 'Male', translate: true});
     list.push({Text: "gender.female", Value: 'Female', translate: true});
     list.push({Text: "gender.preferNotToDisclose", Value: 'PND', translate: true});
     return list;

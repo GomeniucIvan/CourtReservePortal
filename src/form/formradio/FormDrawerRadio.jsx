@@ -102,7 +102,8 @@ const FormDrawerRadio = ({
                                 }
                             }}
                         >
-                            <Title level={1} className={cx(styles.radioLabel, globalStyles.noSpace)}>
+                            <Title level={3} className={cx(styles.radioLabel, globalStyles.noSpace)}
+                                   style={{width: '100%'}}>
                                 {isNullOrEmpty(option[propText]) ? (
                                     <></>
                                 ) : (

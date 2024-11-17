@@ -80,7 +80,8 @@ export const AntdProvider = ({ children }) => {
                             Select: {
                                 borderRadius: 8,
                                 controlHeight: 40,
-                                activeShadow: 'none'
+                                activeShadow: 'none',
+                                activeBorderColor: '#d9d9d9'
                             },
                             Form: {
                                 labelFontSize: 14,
@@ -105,6 +106,9 @@ export const AntdProvider = ({ children }) => {
                                 fontSizeHeading3: 16,
                                 fontSizeHeading4: 14,
                                 fontSizeHeading5: 12
+                            },
+                            Descriptions: {
+                                itemPaddingBottom: 8
                             },
                         },
                     }}
