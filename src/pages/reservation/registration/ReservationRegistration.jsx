@@ -724,7 +724,7 @@ function ReservationRegistration() {
                                 <Flex vertical={true} gap={8}>
                                     <Skeleton.Button active={true} block
                                                      style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
-                                    <Skeleton.Button active={true} block style={{height: `${token.Input.controlHeight}px`}}/>
+                                    <Skeleton.Button active={true} block style={{height: token.Input.controlHeight}}/>
                                 </Flex>
                             </div>
                         ))}

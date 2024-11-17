@@ -24,8 +24,12 @@ export const useStyles = createStyles(({css, token}) => ({
             padding-top: ${token.paddingSM}px;
         }
 
-        .ant-input {
-            padding-left: ${token.inputLeftPadding}px;
+        .ant-input,
+        .ant-select:not(.ant-select-multiple) .ant-select-selector {
+            padding-left: ${token.inputLeftPadding}px !important;
+        }
+        .ant-select.ant-select-multiple .ant-select-selection-placeholder {
+            padding-left: ${token.inputLeftPadding-6}px !important;
         }
         
         .no-margin {

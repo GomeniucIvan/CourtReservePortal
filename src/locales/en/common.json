@@ -21,6 +21,7 @@
   "stateRequired": "State is required.",
   "province": "Province",
   "selectPlaceholder": "Select {{label}}",
+  "inputPlaceholder": "Enter {{label}}",
   "requiredMessage": "{{label}} is required.",
   
   "announcement": {

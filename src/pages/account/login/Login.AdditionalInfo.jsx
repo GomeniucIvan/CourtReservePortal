@@ -8,6 +8,7 @@ import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {
+    anyInList,
     equalString,
     focus,
     isNullOrEmpty,
@@ -18,22 +19,28 @@ import {
 } from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import PageForm from "../../../form/pageform/PageForm.jsx";
-import apiService, {getBearerToken, setBearerToken} from "../../../api/api.jsx";
+import apiService from "../../../api/api.jsx";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import appService from "../../../api/app.jsx";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {isCanadaCulture} from "../../../utils/OrganizationUtils.jsx";
+import {isCanadaCulture, requiredMessage} from "../../../utils/OrganizationUtils.jsx";
 import {isNonUsCulture} from "../../../utils/DateUtils.jsx";
+import FormSelect from "../../../form/formselect/FormSelect.jsx";
+import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
+import {genderList} from "../../../utils/SelectUtils.jsx";
+import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
+import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
+import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginAdditionalInfo() {
-    const {setFormikData, formikData, isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent} = useApp();
+    const {setFormikData, formikData, isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent} = useApp();
     const [isFetching, setIsFetching] = useState(true);
     const [additionInfoData, setAdditionInfoData] = useState(null);
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [skipReviewAndMemberships, setSkipReviewAndMemberships] = useState(false);
     const {t} = useTranslation('login');
     const navigate = useNavigate();
 
@@ -41,8 +48,10 @@ function LoginAdditionalInfo() {
     const password = formikData?.password;
     const confirmPassword = formikData?.confirmPassword;
     const selectedOrgId = formikData?.selectedOrgId;
+    const selectedOrgName = formikData?.selectedOrgName;
+    const selectedOrgFullAddress = formikData?.selectedOrgFullAddress;
     const spGuideId = formikData?.spGuideId;
-    
+
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(<PaddingBlock topBottom={true}>
@@ -62,7 +71,10 @@ function LoginAdditionalInfo() {
         password: password,
         confirmPassword: confirmPassword,
         selectedOrgId: selectedOrgId,
+        selectedOrgName: selectedOrgName,
+        selectedOrgFullAddress: selectedOrgFullAddress,
         spGuideId: spGuideId,
+        uiCulture: '',
 
         firstName: '',
         lastName: '',
@@ -74,9 +86,13 @@ function LoginAdditionalInfo() {
         gender: '',
         city: '',
         state: '',
-        zipCode: ''
+        zipCode: '',
+        paymentProvider: null,
+
+        ratingCategories: [],
+        userDefinedFields: [],
     };
-    
+
     useEffect(() => {
         if (isNullOrEmpty(email) ||
             isNullOrEmpty(password) ||
@@ -88,51 +104,53 @@ function LoginAdditionalInfo() {
 
     const getValidationSchema = (signupForm) => {
         let schemaFields = {
-            email: Yup.string().required(t(`getStarted.form.emailRequired`)),
-            password: Yup.string().required(t(`createAccount.form.passwordRequired`))
+            firstName: Yup.string().required(requiredMessage(t, 'additionalInfo.form.firstName')),
+            lastName: Yup.string().required(requiredMessage(t, 'additionalInfo.form.lastName')),
+            email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')})),
+            password: Yup.string().required(t('common:requiredMessage', {label: t('createAccount.form.password')}))
                 .min(6, t(`createAccount.form.passwordMinLength`)),
-            confirmPassword: Yup.string().required(t(`createAccount.form.confirmPasswordRequired`))
+            confirmPassword: Yup.string().required(t('common:requiredMessage', {label: t('createAccount.form.confirmPassword')}))
                 .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
             selectedOrgId:  Yup.string().required('Organization is required.')
         };
 
         if (signupForm) {
             if (signupForm.IncludeAddressBlock && signupForm.IsAddressBlockRequired) {
-                schemaFields.streetAddress = Yup.string().required(t(`additionalInfo.form.streetAddressRequired`));
-                schemaFields.city = Yup.string().requiredt(t(`additionalInfo.form.cityRequired`));
-                schemaFields.state = Yup.string().required(isCanadaCulture(signupForm.UiCulture) ? 'Province is required.' : 'State is required.');
-                schemaFields.zipCode = Yup.string().required(isNonUsCulture(signupForm.UiCulture) ? 'Postal Code is required.' : 'Zip Code is required.');
+                schemaFields.streetAddress = Yup.string().required(t('common:requiredMessage', {label: t('additionalInfo.form.streetAddress')}));
+                schemaFields.city = Yup.string().required(t('common:requiredMessage', {label: t('additionalInfo.form.city')}));
+                schemaFields.state = Yup.string().required(t('common:requiredMessage', {label: t(isCanadaCulture(signupForm.UiCulture) ? 'additionalInfo.form.province' : 'additionalInfo.form.state')}) );
+                schemaFields.zipCode = Yup.string().required(t('common:requiredMessage', {label: t(isNonUsCulture(signupForm.UiCulture) ? 'additionalInfo.form.postalCode' : 'additionalInfo.form.zipCode')}));
             }
             if (signupForm.IncludePhoneNumberBlock && signupForm.IsPhoneNumberRequired) {
-                schemaFields.phoneNumber = Yup.string().required('Phone Number is required.');
+                schemaFields.phoneNumber = Yup.string().required(requiredMessage(t, 'additionalInfo.form.phoneNumber'));
             }
             if (signupForm.IncludeDateOfBirthBlock && signupForm.IsDateOfBirthRequired) {
-                schemaFields.dateOfBirthString = Yup.string().required('Date of Birth is required.');
+                schemaFields.dateOfBirthString = Yup.string().required(requiredMessage(t, 'additionalInfo.form.dateOfBirth'));
             }
             if (signupForm.IncludeMembershipNumber && signupForm.IsMembershipNumberRequired) {
-                schemaFields.membershipNumber = Yup.string().required('Membership Number is required.');
+                schemaFields.membershipNumber = Yup.string().required(requiredMessage(t, 'additionalInfo.form.membershipNumber'));
             }
             if (signupForm.IncludeGender && signupForm.IsGenderRequired) {
-                schemaFields.gender = Yup.string().required('Gender is required.');
+                schemaFields.gender = Yup.string().required(requiredMessage(t, 'additionalInfo.form.gender'));
             }
-
+            
             // Add validation for rating categories
             if (signupForm.RatingCategories) {
-                signupForm.RatingCategories.forEach(category => {
+                signupForm.RatingCategories.forEach((category, index) => {
                     if (category.IsRequired) {
                         if (category.AllowMultipleRatingValues) {
-                            schemaFields[`rat_${category.Id}`] = Yup.array().min(1, `${category.Name} is required.`).required(`${category.Name} is required.`)
+                            schemaFields[`ratingCategories[${index}].SelectedRatingsIds`] = Yup.array().min(1, requiredMessage(t, category.Name)).required(requiredMessage(t, category.Name))
                         } else {
-                            schemaFields[`rat_${category.Id}`] = Yup.string().required(`${category.Name} is required.`);
+                            schemaFields[`ratingCategories[${index}].SelectedRatingId`] = Yup.string().required(requiredMessage(t, category.Name));
                         }
                     }
                 });
             }
 
             if (signupForm.UserDefinedFields) {
-                signupForm.UserDefinedFields.forEach(udf => {
+                signupForm.UserDefinedFields.forEach((udf, index) => {
                     if (udf.IsRequired) {
-                        schemaFields[`udf_${udf.Id}`] = Yup.string().required(`${udf.Label} is required.`);
+                        schemaFields[`userDefinedFields[${index}].Value`] = Yup.string().required(requiredMessage(t, udf.Label));
                     }
                 });
             }
@@ -140,36 +158,55 @@ function LoginAdditionalInfo() {
 
         return Yup.object(schemaFields);
     };
-    
-    const validationSchema = Yup.object({
-
-    });
 
     const formik = useFormik({
         initialValues: initialValues,
-        validationSchema: validationSchema,
+        validationSchema: getValidationSchema(additionInfoData),
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-           
+
+            console.log(values);
+            
+            if (skipReviewAndMemberships){
+                setIsLoading(false);
+                setShowReviewModal(true)
+            } else {
+                setIsLoading(false);
+            }
         },
     });
 
     const loadData = async () => {
         setIsFetching(true);
         setIsLoading(true);
-        
-        const response = await apiService.get(`create-account/signup-form?orgId=${nullToEmpty(formik?.values?.selectedOrgId)}&spGuideId=${formik?.values?.spGuideId}`);
+
+        const response = await apiService.get(`/api/create-account/signup-form?orgId=${nullToEmpty(formik?.values?.selectedOrgId)}&spGuideId=${nullToEmpty(formik?.values?.spGuideId)}`);
         if (toBoolean(response?.IsValid)){
             const data = response.Data;
             setAdditionInfoData(data);
+            setSkipReviewAndMemberships(!toBoolean(data?.RequireMembershipOnSignUpForm) && !toBoolean(data?.RequireCardOnFile) && !toBoolean(data.IsDisclosuresRequired));
+            
+            formik.setValues({
+                ...formik.values,
+                uiCulture: data.UiCulture || formik.values.uiCulture,
+                paymentProvider: data.PaymentProvider || formik.values.paymentProvider,
+                ratingCategories: data.RatingCategories || formik.values.ratingCategories,
+                userDefinedFields: data.UserDefinedFields || formik.values.userDefinedFields,
+            });
 
+            //formik validation
+            getValidationSchema(data);
         }
 
         setIsFetching(false);
         setIsLoading(false);
     }
+
+    useEffect(() => {
+        loadData();
+    }, []);
     
     return (
         <>
@@ -189,7 +226,7 @@ function LoginAdditionalInfo() {
                 </PaddingBlock>
             }
 
-            {!isFetching &&
+            {(!isFetching && !isNullOrEmpty(additionInfoData)) &&
                 <PaddingBlock topBottom={true}>
 
                     <PageForm
@@ -207,10 +244,101 @@ function LoginAdditionalInfo() {
                                    required='true'
                         />
 
-                       
+                        {additionInfoData.IncludeGender &&
+                            <FormSelect
+                                form={formik}
+                                name='gender'
+                                label={t(`additionalInfo.form.gender`)}
+                                options={genderList}
+                                required={additionInfoData.IsGenderRequired}
+                            />
+                        }
+
+
+                        {additionInfoData.IncludePhoneNumberBlock &&
+                            <FormInput label={t(`additionalInfo.form.phoneNumber`)}
+                                       form={formik}
+                                       name='phoneNumber'
+                                       required={additionInfoData.IsPhoneNumberRequired}
+                            />
+                        }
+
+                        {additionInfoData.IncludeMembershipNumber &&
+                            <FormInput label={t(`additionalInfo.form.membershipNumber`)}
+                                       form={formik}
+                                       name='membershipNumber'
+                                       required={additionInfoData.IsMembershipNumberRequired}
+                            />
+                        }
+
+                        {additionInfoData.IncludeDateOfBirthBlock &&
+                            <FormDateOfBirth label={t(`additionalInfo.form.dateOfBirth`)}
+                                             form={formik}
+                                             uiCulture={additionInfoData.UiCulture}
+                                             required={additionInfoData.IsDateOfBirthRequired}
+                                             name='dateOfBirthString'
+                            />
+                        }
+
+                        {additionInfoData.IncludeAddressBlock &&
+                            <>
+                                <FormInput label={t(`additionalInfo.form.streetAddress`)}
+                                           form={formik}
+                                           name='streetAddress'
+                                           required={additionInfoData.IsAddressBlockRequired}
+                                />
+
+                                <FormInput label={t(`additionalInfo.form.city`)}
+                                           form={formik}
+                                           name='city'
+                                           required={additionInfoData.IsAddressBlockRequired}
+                                />
+
+                                <Flex gap={token.padding}>
+                                    <FormStateProvince form={formik}
+                                                       dropdown={toBoolean(additionInfoData?.ShowStatesDropdown)}
+                                                       uiCulture={additionInfoData.UiCulture}
+                                                       nameKey={`state`}
+                                                       required={additionInfoData.IsAddressBlockRequired}
+                                    />
+
+                                    <FormInput label={isNonUsCulture(additionInfoData.UiCulture) ? t(`additionalInfo.form.postalCode`) : t(`additionalInfo.form.zipCode`)}
+                                               form={formik}
+                                               name='zipCode'
+                                               required={additionInfoData.IsAddressBlockRequired}
+                                    />
+                                </Flex>
+                            </>
+                        }
+
+                        <FormCustomFields customFields={formik?.values?.userDefinedFields}
+                                          form={formik}
+                                          name={`userDefinedFields[{udfIndex}].Value`} />
+                        
+                        {anyInList(formik?.values?.ratingCategories) &&
+                            <>
+                                {formik.values.ratingCategories.map((ratingCategory, index) => {
+                                    return (
+                                        <FormSelect
+                                            key={index}
+                                            label={ratingCategory.Name}
+                                            name={toBoolean(ratingCategory.AllowMultipleRatingValues) ? `ratingCategories[${index}].SelectedRatingsIds` : `ratingCategories[${index}].SelectedRatingId`}
+                                            propText='Name'
+                                            propValue={'Id'}
+                                            multi={ratingCategory.AllowMultipleRatingValues}
+                                            options={ratingCategory.Ratings}
+                                            required={ratingCategory.IsRequired}
+                                            form={formik}
+                                        />
+                                    )
+                                })}
+                            </>
+                        }
                     </PageForm>
                 </PaddingBlock>
             }
+            
+            <LoginCreateAccountReviewModal formik={formik} show={showReviewModal}/>
         </>
     )
 }

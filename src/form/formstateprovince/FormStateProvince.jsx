@@ -14,13 +14,14 @@ const FormStateProvince = ({
                                dropdown,
                                name,
                                required,
-                               loading
+                               loading,
+                               uiCulture,
                            }) => {
-    
+
     const {globalStyles} = useApp();
-    const isCanada = isCanadaCulture();
+    const isCanada = isCanadaCulture(uiCulture);
     const {t} = useTranslation('');
-    
+
     if (toBoolean(loading)) {
         return (
             <div className={cx(globalStyles.formBlock)}>

@@ -33,7 +33,7 @@ const FormSelect = forwardRef(({
     const [selectedOption, setSelectedOption] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [showClearButton, setShowClearButton] = useState(false);
-    const [initValueInitialized, setInitialValueInitialized] = useState(false);
+    const [initialValueInitialized, setInitialValueInitialized] = useState(false);
     const [innerPlaceholder, setInnerPlaceholder] = useState('');
     const isRequired = toBoolean(required);
     const {token, globalStyles} = useApp();
@@ -67,7 +67,7 @@ const FormSelect = forwardRef(({
     
     useEffect(() => {
         if (!fetching) {
-            if (form && typeof form.getFieldProps === 'function' && !initValueInitialized) {
+            if (form && typeof form.getFieldProps === 'function' && !initialValueInitialized) {
                 field = form.getFieldProps(name);
 
                 if (field && !isNullOrEmpty(field.value)){
@@ -85,10 +85,12 @@ const FormSelect = forwardRef(({
                             }
                         }
                     }
+                } else{
+                    setInitialValueInitialized(true); 
                 }
             }
         }
-    }, [fetching, initValueInitialized, multi, name, options]);
+    }, [fetching, initialValueInitialized, multi, name, options]);
 
     const closeDrawer = () => {
         setIsDrawerOpen(false);
@@ -115,7 +117,7 @@ const FormSelect = forwardRef(({
     
     const onValueSelect = (selectedOption) => {
         let selectedDropdownValue = null;
-
+        
         if (!equalString(selectedOption[propValue], field?.value)){
             if (isNullOrEmpty(selectedOption)) {
                 selectedDropdownValue = null;
@@ -157,13 +159,13 @@ const FormSelect = forwardRef(({
         if (toBoolean(multi) && form && !fetching){
             const currentValue = field?.value;
 
-            if (initValueInitialized){
+            if (initialValueInitialized){
                 if (JSON.stringify(currentValue) !== JSON.stringify(multiSelectedValues)) {
                     form.setFieldValue(name, multiSelectedValues);
                 }
             }
         }
-    }, [multiSelectedValues, fetching, field, form, initValueInitialized, multi, name]);
+    }, [multiSelectedValues, fetching, field, form, initialValueInitialized, multi, name]);
     
     return (
         <>

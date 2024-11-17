@@ -76,13 +76,25 @@
       "lastName": "Last Name",
       "lastNamePlaceholder": "Enter your Last Name",
       "streetAddress": "Street Address",
-      "streetAddressRequired": "Street Address is required.",
+      "fullAddress": "Address",
       "city": "City",
-      "cityRequired": "City is required."
+      "gender": "Gender",
+      "phoneNumber": "Phone Number",
+      "membershipNumber": "Membership Number",
+      "dateOfBirth": "Date of Birth",
+      "postalCode": "Postal Code",
+      "zipCode": "Zip Code"
     },
     
     "button": {
       "continue" : "Continue"
     }
+  },
+  "review": {
+    "modalTitle": "Review",
+    "confirmMessage": "Review the information provided and confirm before creating your account.",
+    "orgInfo": "Organization Info",
+    "profileInfo": "Profile Info",
+    "additionalInfo": "Additional Info"
   }
 }

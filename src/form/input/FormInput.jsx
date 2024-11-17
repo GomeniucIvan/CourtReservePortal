@@ -5,6 +5,7 @@ import {calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from
 import {useStyles} from "./styles.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
+import {useTranslation} from "react-i18next";
 
 const FormInput = ({ label,
                        form,
@@ -24,6 +25,7 @@ const FormInput = ({ label,
                        isExpiryDate,
                        className,
                        loading,
+                        placeholder,
                         description,
                        ...props }) => {
     const { token, globalStyles } = useApp();
@@ -37,6 +39,7 @@ const FormInput = ({ label,
     
     const inputRef = useRef(null);
     const timeoutRef = useRef(null);
+    const {t} = useTranslation('');
     
     if (form && typeof form.getFieldProps === 'function') {
         field = form.getFieldProps(name);
@@ -124,6 +127,7 @@ const FormInput = ({ label,
                 autoComplete="off"
                 spellCheck="false"
                 ref={inputRef}
+                placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                 status={toBoolean(hasError) ? 'error' : ''}
                 type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
                 className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>

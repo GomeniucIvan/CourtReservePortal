@@ -60,7 +60,10 @@ function LoginSearchOrganization() {
         password: password,
         confirmPassword: confirmPassword,
         spGuideId: spGuideId,
-        selectedOrgId: ''
+        selectedOrgId: '',
+        selectedOrgName: '',
+        selectedOrgFullAddress: '',
+        
     };
 
     useEffect(() => {
@@ -97,6 +100,8 @@ function LoginSearchOrganization() {
 
             let formikValues = values;
             formikValues.selectedOrgId = selectedOrganization.Id;
+            formikValues.selectedOrgName = selectedOrganization.Name;
+            formikValues.selectedOrgFullAddress = selectedOrganization.FullAddress;
             setFormikData(formikValues);
 
             navigate(AuthRouteNames.LOGIN_ADDITIONAL_INFO);
