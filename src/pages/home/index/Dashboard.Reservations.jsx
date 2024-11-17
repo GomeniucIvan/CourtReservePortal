@@ -1,7 +1,6 @@
 ﻿import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
-import {e} from "../../../utils/OrganizationUtils.jsx";
 import {Badge, Button, Flex, Tag, Typography} from "antd";
 import {Card, Ellipsis, ErrorBlock} from "antd-mobile";
 import {cx} from "antd-style";

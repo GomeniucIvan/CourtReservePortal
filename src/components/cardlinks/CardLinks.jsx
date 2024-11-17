@@ -4,7 +4,7 @@ const { Text } = Typography;
 import {useApp} from "../../context/AppProvider.jsx";
 import {anyInList, equalString} from "../../utils/Utils.jsx";
 import {Card} from "antd";
-import {e} from "../../utils/OrganizationUtils.jsx";
+import {e} from "../../utils/TranslateUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
 import {useNavigate} from "react-router-dom";

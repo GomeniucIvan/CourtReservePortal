@@ -1,14 +1,6 @@
 import {getCurrencyTypeByCultureInfo} from "./DateUtils.jsx";
 import {equalString, isNullOrEmpty} from "./Utils.jsx";
 
-export const e = (string) => {
-    return string;
-}
-
-export const requiredMessage = (t, key) => {
-    return t('common:requiredMessage', {label: t(key)})
-}
-
 export const isCanadaCulture = (uiCulture) => {
     let culture = getCurrencyTypeByCultureInfo(uiCulture);
     return equalString(culture, 'enca');

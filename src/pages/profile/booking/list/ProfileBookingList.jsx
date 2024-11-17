@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
 import {anyInList, containsString, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
 import {cx} from "antd-style";
-import {e} from "../../../../utils/OrganizationUtils.jsx";
+import {e} from "../../../../utils/TranslateUtils.jsx";
 import {useApp} from "../../../../context/AppProvider.jsx";
 import mockData from "../../../../mocks/reservation-data.json";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";

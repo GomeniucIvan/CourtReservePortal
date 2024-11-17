@@ -24,7 +24,7 @@ import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {isCanadaCulture, requiredMessage} from "../../../utils/OrganizationUtils.jsx";
+import {isCanadaCulture} from "../../../utils/OrganizationUtils.jsx";
 import {isNonUsCulture} from "../../../utils/DateUtils.jsx";
 import FormSelect from "../../../form/formselect/FormSelect.jsx";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
@@ -32,6 +32,7 @@ import {genderList} from "../../../utils/SelectUtils.jsx";
 import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
 import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
+import {requiredMessage} from "../../../utils/TranslateUtils.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -105,10 +106,10 @@ function LoginAdditionalInfo() {
         let schemaFields = {
             firstName: Yup.string().required(requiredMessage(t, 'additionalInfo.form.firstName')),
             lastName: Yup.string().required(requiredMessage(t, 'additionalInfo.form.lastName')),
-            email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')})),
-            password: Yup.string().required(t('common:requiredMessage', {label: t('createAccount.form.password')}))
+            email: Yup.string().required(requiredMessage(t, 'getStarted.form.email')),
+            password: Yup.string().required(requiredMessage(t, 'createAccount.form.password'))
                 .min(6, t(`createAccount.form.passwordMinLength`)),
-            confirmPassword: Yup.string().required(t('common:requiredMessage', {label: t('createAccount.form.confirmPassword')}))
+            confirmPassword: Yup.string().required(requiredMessage(t, 'createAccount.form.confirmPassword'))
                 .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
             selectedOrgId:  Yup.string().required('Organization is required.')
         };

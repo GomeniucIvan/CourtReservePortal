@@ -1,7 +1,7 @@
 ﻿import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {SlickSlider} from "../../../components/slickslider/SlickSlider.jsx";
 import EntityCard from "../../../components/entitycard/EntityCard.jsx";
-import {e} from "../../../utils/OrganizationUtils.jsx";
+import {e} from "../../../utils/TranslateUtils.jsx";
 import { Button } from 'antd'
 import { ErrorBlock } from 'antd-mobile'
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";

@@ -1,7 +1,7 @@
 ﻿import {useEffect, useState} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {e} from "../../../utils/OrganizationUtils.jsx";
+import {e} from "../../../utils/TranslateUtils.jsx";
 import {Button, Skeleton, Typography} from "antd";
 import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
 import appService from "../../../api/app.jsx";
