@@ -2,7 +2,7 @@ import {useFormik} from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useState} from "react";
-import {Button, Descriptions, Flex, QRCode, Skeleton, Typography} from 'antd';
+import {Button, Descriptions, Divider, Flex, QRCode, Skeleton, Typography} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
@@ -58,10 +58,10 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                    showConfirmButton={true}
                    title={t('review.modalTitle')}>
                 
-                <Flex vertical={true}>
-                    <Title level={3}>{t('review.confirmMessage')}</Title>
+                <PaddingBlock>
+                    <Title level={4} style={{paddingBottom: token.padding}}>{t('review.confirmMessage')}</Title>
 
-                    <Descriptions title={t('review.orgInfo')}>
+                    <Descriptions title={t('review.orgInfo')} >
                         <Descriptions.Item label={t(`searchOrganization.drawer.name`)}>{values?.selectedOrgName}</Descriptions.Item>
 
                         {!isNullOrEmpty(values?.OrgFullAddress) &&
@@ -69,6 +69,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         }
                     </Descriptions>
 
+                    <Divider />
                     <Descriptions title={t('review.profileInfo')}>
                         <Descriptions.Item label={t(`getStarted.form.email`)}>{values?.email}</Descriptions.Item>
                         <Descriptions.Item label={t(`additionalInfo.form.firstName`)}>{values?.firstName}</Descriptions.Item>
@@ -103,28 +104,32 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                     </Descriptions>
 
                     {(anyInList(values?.ratingCategories) || anyInList(values?.userDefinedFields)) &&
-                        <Descriptions title={t('review.additionalInfo')}>
-                            {anyInList(values?.ratingCategories) &&
-                                <>
-                                {values?.ratingCategories.map((ratingCategory, index) => {
-                                        return (
-                                            <Descriptions.Item key={index} label={ratingCategory.Name}>{(ratingCategory.AllowMultupleRatingValues ? 'SelectedRatingsIds TODO' : 'SelectedRatingId TODO')}</Descriptions.Item>
-                                        )
-                                    })}
-                                </>
-                            }
-                            {anyInList(values?.userDefinedFields) &&
-                                <>
-                                    {values?.userDefinedFields.map((udf, index) => {
-                                        return (
-                                            <Descriptions.Item key={index} label={udf.Label}>{udf.Value}</Descriptions.Item>
-                                        )
-                                    })}
-                                </>
-                            }
-                        </Descriptions>
+                        <>
+                            <Divider />
+
+                            <Descriptions title={t('review.additionalInfo')}>
+                                {anyInList(values?.ratingCategories) &&
+                                    <>
+                                        {values?.ratingCategories.map((ratingCategory, index) => {
+                                            return (
+                                                <Descriptions.Item key={index} label={ratingCategory.Name}>{(ratingCategory.AllowMultupleRatingValues ? 'SelectedRatingsIds TODO' : 'SelectedRatingId TODO')}</Descriptions.Item>
+                                            )
+                                        })}
+                                    </>
+                                }
+                                {anyInList(values?.userDefinedFields) &&
+                                    <>
+                                        {values?.userDefinedFields.map((udf, index) => {
+                                            return (
+                                                <Descriptions.Item key={index} label={udf.Label}>{udf.Value}</Descriptions.Item>
+                                            )
+                                        })}
+                                    </>
+                                }
+                            </Descriptions>
+                        </>
                     }
-                </Flex>
+                </PaddingBlock>
             </Modal>
         </>
     )

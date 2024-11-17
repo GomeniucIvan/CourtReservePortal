@@ -169,7 +169,7 @@ function LoginAdditionalInfo() {
 
             console.log(values);
             
-            if (skipReviewAndMemberships){
+            if (skipReviewAndMemberships || 1 == 1){
                 setIsLoading(false);
                 setShowReviewModal(true)
             } else {
@@ -338,7 +338,7 @@ function LoginAdditionalInfo() {
                 </PaddingBlock>
             }
             
-            <LoginCreateAccountReviewModal formik={formik} show={showReviewModal}/>
+            <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
         </>
     )
 }
