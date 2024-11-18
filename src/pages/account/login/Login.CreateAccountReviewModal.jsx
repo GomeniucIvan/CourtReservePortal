@@ -60,7 +60,12 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                    title={t('review.modalTitle')}>
                 
                 <PaddingBlock>
-                    <Title level={4} style={{paddingBottom: token.padding}}>{t('review.confirmMessage')}</Title>
+                    <Title level={4} style={{paddingBottom: token.padding}}>
+                        {!isNullOrEmpty(values?.reviewModalTitle) ? 
+                            (<>{values?.reviewModalTitle}</>):(
+                            <>{t('review.confirmMessage')}</>
+                        )}
+                    </Title>
 
                     <Descriptions title={t('review.orgInfo')} >
                         <Descriptions.Item label={t(`searchOrganization.drawer.name`)}>{values?.selectedOrgName}</Descriptions.Item>

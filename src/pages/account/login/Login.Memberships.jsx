@@ -28,7 +28,7 @@ function LoginMemberships() {
     const [memberships, setMemberships] = useState(null);
     const [viewMembership, setViewMembership] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(null);
-
+    
     const email = formikData?.email;
     const password = formikData?.password;
     const confirmPassword = formikData?.confirmPassword;
@@ -56,6 +56,7 @@ function LoginMemberships() {
         let values = incData;
         if (values){
             values.selectedMembership = {};
+            values.reviewModalTitle = '';
         }
 
         return values;
@@ -86,31 +87,15 @@ function LoginMemberships() {
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
-            setIsLoading(true);
             let costType = values.selectedMembership;
-
-            console.log(values)
             
             if (costType && costType.OneFreePaymentOption && toBoolean(skipReview)) {
+                formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
                 setShowReviewModal(true);
-                
-                // let confirmMessageText = `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Continue?`;
-                //
-                // reactSwal(
-                //     'Confirm Membership',
-                //     `${confirmMessageText}`,
-                //     /*showConfirmButton*/ true,
-                //     /*showCancelButton*/ true,
-                //     /*confirmButtonText*/ 'Yes',
-                //     /*cancelButtonText*/ 'Cancel',
-                //     /*onConfirm*/() => { setStep(/*currentTab*/'submit-create', /*goBack*/ false, /*currentIsSelected*/ true) },
-                //     /*onCancel*/() => {   },
-                //     /*customSettings*/ { isRow: false }
-                // );
             } else {
-                //setStep('review', /*goBack*/ false, /*currentIsSelected*/ true);
+                setFormikData(values);
+                navigate(AuthRouteNames.LOGIN_REVIEW);
             }
-            
         },
     });
 
