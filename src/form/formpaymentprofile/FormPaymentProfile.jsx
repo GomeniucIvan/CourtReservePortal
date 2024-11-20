@@ -912,16 +912,17 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     <FormInput label="First Name"
                                form={form}
                                required={true}
-                               name='card_FirstName'
+                               name='card_firstName'
                     />
                     <FormInput label="Last Name"
                                form={form}
                                required={true}
-                               name='card_LastName'
+                               name='card_lastName'
                     />
                 </>
             }
-
+            
+            {/*STRIPE*/}
             {(equalString(paymentProvider, 1) && showCardDetails) &&
                 <>
                     <div className={cx(globalStyles.formBlock)}>
@@ -968,7 +969,9 @@ const FormPaymentProfile = React.forwardRef(({ form,
                                    form={form}
                                    name='card_expiryDate'
                                    placeholder='MM/YY'
+                                   mask={'XX/XX'}
                                    required={true}
+                                   onlyDigits={true}
                                    maxLength='5'
                                    isExpiryDate={true}
                         />

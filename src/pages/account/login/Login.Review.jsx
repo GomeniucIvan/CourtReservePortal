@@ -1,12 +1,8 @@
-import {useFormik} from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import React, {useEffect, useState} from "react";
-import {Button, Divider, Flex, Skeleton, Typography} from 'antd';
-import FormInput from "../../../form/input/FormInput.jsx";
+import {Button, Checkbox, Divider, Flex, Skeleton, Typography} from 'antd';
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
-import mockData from "../../../mocks/auth-data.json";
-import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {
     anyInList,
     equalString,
@@ -33,6 +29,12 @@ import FormSelect from "../../../form/formselect/FormSelect.jsx";
 import {memberPaymentProfiles} from "../../../utils/SelectUtils.jsx";
 import FormPaymentProfile from "../../../form/formpaymentprofile/FormPaymentProfile.jsx";
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
+import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
+import {DownloadOutlined} from "@ant-design/icons";
+import {isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
+import {Document} from "react-pdf";
+import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
+import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -45,6 +47,7 @@ function LoginReview() {
     const [selectedMembershipRequirePayment, setSelectedMembershipRequirePayment] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [showTermAndCondition, setShowTermAndCondition] = useState(false);
 
     const email = formikData?.email;
     const password = formikData?.password;
@@ -87,8 +90,8 @@ function LoginReview() {
     }, []);
 
     const initialValues = {
-        card_firstName: formikData?.values?.firstName,
-        card_lastName: formikData?.values?.lastName,
+        card_firstName: '',
+        card_lastName: '',
         card_streetAddress: '',
         card_streetAddress2: '',
         card_city: '',
@@ -224,13 +227,12 @@ function LoginReview() {
         return Yup.object(schemaFields);
     }
     
-    const formik = useFormik({
+    const formik = useCustomFormik({
         initialValues: getMembershipInitialValues(formikData),
         validationSchema: validationSchema,
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
-            console.log(values)
             
             setShowReviewModal(true);
         },
@@ -339,7 +341,39 @@ function LoginReview() {
                             />
                         </PaddingBlock>
                     }
+                    
+                    {toBoolean(formik?.values?.isDisclosuresRequired) &&
+                        <PaddingBlock>
+                            <Flex align={'center'}>
+                                <Checkbox onChange={(e) => {formik.setFieldValue('disclosureAgree', e.target.checked)}}>I agree to the </Checkbox>
+                                <u style={{color: token.colorLink}}
+                                   onClick={() => setShowTermAndCondition(true)}> Terms and
+                                    Conditions</u>
+                            </Flex>
+                        </PaddingBlock>
+                    }
 
+                    <DrawerBottom
+                        showDrawer={showTermAndCondition}
+                        showButton={true}
+                        customFooter={<Flex gap={token.padding}>
+                            <Button type={'primary'} block onClick={() => {
+                                setShowTermAndCondition(false)
+                            }}>
+                                {t('common:close')}
+                            </Button>
+                        </Flex>}
+                        closeDrawer={() => setShowTermAndCondition(false)}
+                        label={'Terms and Conditions'}
+                        onConfirmButtonClick={() => setShowTermAndCondition(false)}
+                    >
+                        <PaddingBlock>
+                            {!isNullOrEmpty(formik?.values?.disclosures) &&
+                                <IframeContent content={formik?.values?.disclosures} id={'login-disclosure'}/>
+                            }
+                        </PaddingBlock>
+                    </DrawerBottom>
+                    
                     <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
                 </>
             }

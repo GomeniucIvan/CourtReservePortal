@@ -38,6 +38,10 @@ export const useStyles = createStyles(({css, token}) => ({
         .no-margin {
             margin: 0px !important;
         }
+
+        .ant-checkbox-inner {
+            border-radius: ${token.checkboxBorderRadius}px;
+        }
     `,
     layoutExtra: css`
         position: absolute;

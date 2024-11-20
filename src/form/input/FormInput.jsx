@@ -22,10 +22,11 @@ const FormInput = ({ label,
                        displayPassword,
                        onlyDigits,
                        style,
+                       mask,
                        disableAutoCapitalize,
-                       isExpiryDate,
                        className,
                        loading,
+                       isExpiryDate,
                         placeholder,
                         description,
                        ...props }) => {
@@ -54,10 +55,50 @@ const FormInput = ({ label,
     let hasError = meta && meta.error && meta.touched;
     
     addIconToSeePassword = addIconToSeePassword || equalString(name, 'password');
+
+    const applyMask = (value, pattern) => {
+        if (!pattern) return value;
+
+        
+        const cleanValue = value.replace(/\D+/g, '');
+        let maskedValue = '';
+        let maskIndex = 0, valueIndex = 0;
+
+        while (valueIndex < cleanValue.length) {
+            if (maskIndex >= pattern.length) break; 
+
+            const currentMaskChar = pattern[maskIndex];
+            const currentValueChar = cleanValue[valueIndex];
+
+            if (currentMaskChar === "X") {
+                maskedValue += currentValueChar;
+                valueIndex++; 
+            } else {
+                maskedValue += currentMaskChar; 
+                if (cleanValue.length > valueIndex) {
+                    maskIndex++;
+                    continue;
+                }
+            }
+
+            maskIndex++;
+        }
+
+        return maskedValue;
+    };
+    
+    
     const handleInputChange = (event) => {
         let { value } = event.target;
 
-        if (onlyDigits) {
+        value = applyMask(value, mask);
+
+        if (!isNullOrEmpty(mask)){
+            if (inputRef.current) {
+                inputRef.current.value = value;
+            }
+        }
+        else if (onlyDigits) {
             value = value.replace(/[^\d]/g, '');
 
             if (props.maxLength && value.length > props.maxLength) {
@@ -68,7 +109,7 @@ const FormInput = ({ label,
                 inputRef.current.value = value;
             }
         }
-
+        
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
@@ -76,6 +117,10 @@ const FormInput = ({ label,
         timeoutRef.current = setTimeout(() => {
             if (typeof onInput === 'function') {
                 onInput(event.target.value);
+            }
+
+            if (form) {
+                form.setFieldValue(name, value, false);
             }
         }, onInputTimeout);
     };
@@ -114,7 +159,6 @@ const FormInput = ({ label,
                 {isRequired &&
                     <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
-
             {toBoolean(addIconToSeePassword) ? 
                 (<Input.Password
                         {...props}
@@ -135,7 +179,7 @@ const FormInput = ({ label,
                         placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                         status={toBoolean(hasError) ? 'error' : ''}
                         type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
-                        className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
+                        className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
                 ) :
                 (<Input
                         {...props}
@@ -153,7 +197,7 @@ const FormInput = ({ label,
                         placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                         status={toBoolean(hasError) ? 'error' : ''}
                         type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
-                        className={`form-control ${hasError ? 'is-invalid' : ''} ${disabled ? 'd-none' : ''} ${toBoolean(isExpiryDate) ? 'fn-card-date-mask' : ''}  ${isFocused ? 'item-focus' : ''}`}/>
+                        className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
                 )}
             
             {hasError && meta && typeof meta.error === 'string' ? (

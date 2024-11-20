@@ -1,18 +1,13 @@
-import {useFormik} from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useState} from "react";
 import {Button, Flex, Skeleton, Typography} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
-import mockData from "../../../mocks/auth-data.json";
-import {ModalClose} from "../../../utils/ModalUtils.jsx";
+
 import {
     anyInList,
-    equalString,
-    focus,
     isNullOrEmpty,
-    isValidEmail,
     nullToEmpty,
     randomNumber,
     toBoolean
@@ -33,6 +28,7 @@ import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
 import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import {requiredMessage} from "../../../utils/TranslateUtils.jsx";
+import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -93,6 +89,8 @@ function LoginAdditionalInfo() {
         paymentProvider: null,
         requireCardOnFile: false,
         isDisclosuresRequired: false,
+        disclosures: '',
+        formIncludes: {},
         paymentTypes: [],
 
         ratingCategories: [],
@@ -165,7 +163,7 @@ function LoginAdditionalInfo() {
         return Yup.object(schemaFields);
     };
 
-    const formik = useFormik({
+    const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: getValidationSchema(additionInfoData),
         validateOnBlur: true,
@@ -201,6 +199,7 @@ function LoginAdditionalInfo() {
                 uiCulture: data.UiCulture || formik.values.uiCulture,
                 requireCardOnFile: data.RequireCardOnFile,
                 paymentTypes: data.PaymentTypes,
+                disclosures: data.Disclosures,
                 isDisclosuresRequired: !isNullOrEmpty(data.Disclosures) && toBoolean(data.IsDisclosuresRequired),
                 paymentProvider: data.PaymentProvider || formik.values.paymentProvider,
                 stripePublishableKey: data.StripePublishableKey || formik.values.stripePublishableKey,
@@ -208,6 +207,13 @@ function LoginAdditionalInfo() {
                 showStatesDropdown: toBoolean(data?.ShowStatesDropdown) || formik.values.showStatesDropdown,
                 ratingCategories: data.RatingCategories || formik.values.ratingCategories,
                 userDefinedFields: data.UserDefinedFields || formik.values.userDefinedFields,
+                formIncludes: {
+                    IncludePhoneNumber: toBoolean(data.PhoneNumber?.IncludePhoneNumber),
+                    IncludeGender: toBoolean(data.MemberGender?.IncludeGender),
+                    IncludeAddressBlock: toBoolean(data.Address?.IncludeAddressBlock),
+                    IncludeMembershipNumber: toBoolean(data.Membership?.IncludeMembershipNumber),
+                    IncludeDateOfBirthBlock: toBoolean(data.DateOfBirth?.IncludeDateOfBirthBlock),
+                }
             });
 
             //formik validation

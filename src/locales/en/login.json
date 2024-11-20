@@ -113,6 +113,8 @@
     "paymentProfileBillingDescription": "This organization requires that you save a payment profile to your account",
     "membership": "Membership",
     "paymentFrequency": "Payment Frequency",
+    "frequency": "Frequency",
+    "membershipName": "Name",
     "button" : {
       "continue": "Continue"
     }
