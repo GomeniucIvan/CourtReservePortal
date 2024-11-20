@@ -99,7 +99,7 @@ export const numberList = (minValue, maxValue) => {
     return list;
 }
 
-export const memberPaymentProfiles = (profiles, includeNewCard) => {
+export const memberPaymentProfiles = (profiles, includeNewCard, newCreditLabel) => {
     if (isNullOrEmpty(profiles)){
         profiles = [];
     }

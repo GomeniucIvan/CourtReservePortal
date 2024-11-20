@@ -107,7 +107,14 @@
     "orgInfo": "Organization Info",
     "profileInfo": "Profile Info",
     "additionalInfo": "Additional Info",
-    "membership": "Membership Info",
-    "membershipPrice": "Price"
+    "membershipInfo": "Membership Info",
+    "membershipPrice": "Price",
+    "paymentProfileBilling": "Payment Profile & Billing",
+    "paymentProfileBillingDescription": "This organization requires that you save a payment profile to your account",
+    "membership": "Membership",
+    "paymentFrequency": "Payment Frequency",
+    "button" : {
+      "continue": "Continue"
+    }
   }
 }

@@ -124,8 +124,8 @@ function LoginAuthorize() {
 
     return (
         <>
-            <PaddingBlock>
-                <Title level={3}>Log In to Access Your Account</Title>
+            <PaddingBlock topBottom={true}>
+                <Title level={3} style={{paddingBottom: token.paddingSM}}>Log In to Access Your Account</Title>
 
                 <PageForm formik={formik}>
                     <FormInput label="Email"

@@ -13,6 +13,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import {isNonUsCulture} from "../../utils/DateUtils.jsx";
 import FormSwitch from "../formswitch/FormSwitch.jsx";
+import FormStateProvince from "../formstateprovince/FormStateProvince.jsx";
 const { Paragraph } = Typography;
 
 let resolvePaymentRequest, rejectPaymentRequest;
@@ -26,9 +27,17 @@ const FormPaymentProfile = React.forwardRef(({ form,
                                                  sourcePage,
                                                  calculateTotalToPay,
                                                  joinOrgId,
+                                                 isPaymentProfile,
                                                  allowToSavePaymentProfile,
+                                                 showStatesDropdown,
+                                                 uiCulture,
+                                                 paymentProviderData = {},
+                                                 hideFields = {
+                                                     address2: false,
+                                                     phoneNumber: false
+                                                 },
                                                  onAccountTypeChange}, ref) => {
-    
+
     const [validationMessage, setValidationMessage] = useState('');
     const [stripe, setStripe] = useState(null);
     const [stripeCardElement, setStripeCardElement] = useState(null);
@@ -50,11 +59,11 @@ const FormPaymentProfile = React.forwardRef(({ form,
     const [validationMessages, setValidationMessages] = useState({});
     const {authData} = useAuth();
     const {token, globalStyles} = useApp();
-    
-    let paymentProvider = authData.PaymentProvider;
-    let stripeKey = authData.StripePublishableKey;
-    let isUsingCollectJs = authData.IsUsingCollectJs;
-    
+
+    let paymentProvider = authData?.PaymentProvider || paymentProviderData?.PaymentProvider;
+    let stripeKey = authData?.StripePublishableKey || paymentProviderData?.StripePublishableKey;
+    let isUsingCollectJs = authData?.IsUsingCollectJs || paymentProviderData?.IsUsingCollectJs;
+
     const [fieldValidity, setFieldValidity] = useState({
         ccnumber: false,
         ccexp: false,
@@ -541,14 +550,14 @@ const FormPaymentProfile = React.forwardRef(({ form,
             accountTypeChange(form?.values?.card_accountType, true);
         }
     }, [])
-    
+
     const cssCardConnect = "form{display:flex;height: 44px;}input{height: 36px;width: 100%;border-radius:8px;border: 1px solid #dfdfdf;padding-left: 12px;font-size: 14px;font-family: system-ui;outline: none;}body{margin: 0;}";
     const encodedCssCardConnect = encodeURIComponent(cssCardConnect);
 
     if (isNullOrEmpty(paymentTypes)) {
         paymentTypes = [];
     }
-    
+
     const checkConvinienceFeeDisplay = (selectedAccountType) => {
         let clearConvinienceFeeText = true;
 
@@ -565,6 +574,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
     }
 
     const accountTypeChange = (selectedValue, isInitialCall) => {
+        console.log(selectedValue)
         setShowCardDetails(equalString(selectedValue, 1));
         setShowECheckDetails(equalString(selectedValue, 2));
         checkConvinienceFeeDisplay(selectedValue);
@@ -573,7 +583,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
         if (!isInitialCall){
             if (typeof onAccountTypeChange === 'function') {
                 onAccountTypeChange(selectedValue);
-            } 
+            }
         }
 
         if (equalString(paymentProvider, 4)) {
@@ -792,7 +802,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                         text: data.error,
                         showIcon: false,
                         onOk: () => {
-                            
+
                         }
                     });
 
@@ -804,7 +814,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
             }
         });
     };
-    
+
     return (
         <>
             <FormSelect
@@ -911,7 +921,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     />
                 </>
             }
-            
+
             {(equalString(paymentProvider, 1) && showCardDetails) &&
                 <>
                     <div className={cx(globalStyles.formBlock)}>
@@ -1119,27 +1129,34 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     <FormInput label="Street Address"
                                form={form}
                                name='card_streetAddress' />
-                    
-                    <FormInput label="Street Address2"
-                               form={form}
-                               name='card_streetAddress2' />
+
+                    {!toBoolean(hideFields?.address2) &&
+                        <FormInput label="Street Address2"
+                                   form={form}
+                                   name='card_streetAddress2' />
+                    }
 
                     <FormInput label="City"
                                form={form}
                                name='card_city' />
 
-                    <FormInput label="State"
-                               form={form}
-                               name='card_state' />
+                    <Flex gap={token.padding}>
+                        <FormStateProvince form={form}
+                                           dropdown={toBoolean(showStatesDropdown)}
+                                           uiCulture={uiCulture}
+                                           name='card_state'
+                        />
 
-                    <FormInput label={isNonUsCulture() ? 'Postal Code' : 'Zip Code'}
-                               form={form}
-                               required={true}
-                               name='card_zipCode' />
-                    
-                    <FormInput label={'Phone Number'}
-                               form={form}
-                               name='card_phoneNumber' />
+                        <FormInput label={isNonUsCulture() ? 'Postal Code' : 'Zip Code'}
+                                   form={form}
+                                   name='card_zipCode' />
+                    </Flex>
+
+                    {!toBoolean(hideFields?.phoneNumber) &&
+                        <FormInput label={'Phone Number'}
+                                   form={form}
+                                   name='card_phoneNumber' />
+                    }
                 </>
             }
 

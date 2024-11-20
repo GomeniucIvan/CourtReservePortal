@@ -176,7 +176,7 @@ function LoginSearchOrganization() {
                     <PaddingBlock onlyBottom={true}>
                         <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
                             <Flex vertical={true} gap={token.padding}>
-                                {emptyArray(8).map((item, index) => (
+                                {emptyArray(4).map((item, index) => (
                                     <div key={index}>
                                         <Skeleton.Button active={true} block style={{height: `80px`}}/>
                                     </div>

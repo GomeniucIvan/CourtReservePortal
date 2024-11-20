@@ -75,6 +75,9 @@ function LoginAdditionalInfo() {
         selectedOrgFullAddress: selectedOrgFullAddress,
         spGuideId: spGuideId,
         uiCulture: '',
+        stripePublishableKey: '',
+        isUsingCollectJs: '',
+        showStatesDropdown: '',
 
         firstName: '',
         lastName: '',
@@ -88,6 +91,9 @@ function LoginAdditionalInfo() {
         state: '',
         zipCode: '',
         paymentProvider: null,
+        requireCardOnFile: false,
+        isDisclosuresRequired: false,
+        paymentTypes: [],
 
         ratingCategories: [],
         userDefinedFields: [],
@@ -172,6 +178,7 @@ function LoginAdditionalInfo() {
                 setShowReviewModal(true)
             } else {
                 setIsLoading(false);
+                setFormikData(values);
                 navigate(AuthRouteNames.LOGIN_MEMBERSHIP);
             }
         },
@@ -192,7 +199,13 @@ function LoginAdditionalInfo() {
                 ...formik.values,
                 skipReview: (!toBoolean(data?.RequireCardOnFile) && !toBoolean(data.IsDisclosuresRequired)),
                 uiCulture: data.UiCulture || formik.values.uiCulture,
+                requireCardOnFile: data.RequireCardOnFile,
+                paymentTypes: data.PaymentTypes,
+                isDisclosuresRequired: !isNullOrEmpty(data.Disclosures) && toBoolean(data.IsDisclosuresRequired),
                 paymentProvider: data.PaymentProvider || formik.values.paymentProvider,
+                stripePublishableKey: data.StripePublishableKey || formik.values.stripePublishableKey,
+                isUsingCollectJs: data.IsUsingCollectJs || formik.values.isUsingCollectJs,
+                showStatesDropdown: toBoolean(data?.ShowStatesDropdown) || formik.values.showStatesDropdown,
                 ratingCategories: data.RatingCategories || formik.values.ratingCategories,
                 userDefinedFields: data.UserDefinedFields || formik.values.userDefinedFields,
             });
@@ -254,7 +267,6 @@ function LoginAdditionalInfo() {
                                 required={additionInfoData.IsGenderRequired}
                             />
                         }
-
 
                         {additionInfoData.IncludePhoneNumberBlock &&
                             <FormInput label={t(`additionalInfo.form.phoneNumber`)}

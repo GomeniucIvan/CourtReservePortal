@@ -3,6 +3,7 @@ import {Input, Skeleton} from "antd";
 import {calculateSkeletonLabelWidth, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
+import {useStyles} from "./styles.jsx";
 
 const FormInputDisplay = ({ label,
                        form,
@@ -15,6 +16,7 @@ const FormInputDisplay = ({ label,
                        ...props }) => {
     
     const { token, globalStyles } = useApp();
+    const {styles} = useStyles();
     
     let field = '';
     let meta = null;
@@ -63,6 +65,7 @@ const FormInputDisplay = ({ label,
                 readOnly={true}
                 defaultValue={value}
                 name={name}
+                className={styles.inputFilled}
                 variant="filled"
                 autoCorrect="off"
                 autoComplete="off"

@@ -46,16 +46,16 @@ function LoginMemberships() {
             isNullOrEmpty(confirmPassword) ||
             isNullOrEmpty(selectedOrgId)){
             navigate(AuthRouteNames.LOGIN_GET_STARTED);
+        } else{
+            loadMemberships();   
         }
-
-        loadMemberships();
-
     }, []);
 
     const getMembershipInitialValues = (incData) => {
         let values = incData;
         if (values){
             values.selectedMembership = {};
+            values.selectedMembershipId = '';
             values.reviewModalTitle = '';
         }
 
@@ -67,7 +67,7 @@ function LoginMemberships() {
             setIsFetching(true);
             setIsLoading(true);
             const response = await apiService.get(`/api/create-account/membership-signup-form?orgId=${nullToEmpty(selectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
-            console.log(response)
+
             if (response.IsValid) {
                 setMemberships(response.Data);
             }
@@ -90,6 +90,7 @@ function LoginMemberships() {
             let costType = values.selectedMembership;
             
             if (costType && costType.OneFreePaymentOption && toBoolean(skipReview)) {
+                formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
                 formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
                 setShowReviewModal(true);
             } else {
@@ -106,7 +107,7 @@ function LoginMemberships() {
                     <Flex vertical={true} gap={token.padding}>
                         {emptyArray(8).map((item, index) => (
                             <div key={index}>
-                                <Skeleton.Button active={true} block style={{height: `90px`}}/>
+                                <Skeleton.Button active={true} block style={{height: `180px`}}/>
                             </div>
                         ))}
                     </Flex>

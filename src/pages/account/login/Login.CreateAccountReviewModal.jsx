@@ -18,23 +18,11 @@ import {
     toBoolean
 } from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import PageForm from "../../../form/pageform/PageForm.jsx";
-import apiService, {getBearerToken, setBearerToken} from "../../../api/api.jsx";
-import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import appService from "../../../api/app.jsx";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {isCanadaCulture, requiredMessage} from "../../../utils/OrganizationUtils.jsx";
-import {dateToTimeString, isNonUsCulture} from "../../../utils/DateUtils.jsx";
-import FormSelect from "../../../form/formselect/FormSelect.jsx";
-import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
-import {genderList} from "../../../utils/SelectUtils.jsx";
-import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
-import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
+import {isCanadaCulture} from "../../../utils/OrganizationUtils.jsx";
+import {isNonUsCulture} from "../../../utils/DateUtils.jsx";
 import Modal from "../../../components/modal/Modal.jsx";
-import Barcode from "react-barcode";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -140,7 +128,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         <>
                             <Divider />
 
-                            <Descriptions title={t('review.membership')}>
+                            <Descriptions title={t('review.membershipInfo')}>
                                 <Descriptions.Item label={t('review.membershipName')}>{membership?.Name}</Descriptions.Item>
                                 {toBoolean(membership?.OneFreePaymentOption) &&
                                     <Descriptions.Item label={t('review.membershipPrice')}>{t(`membership.free`)}</Descriptions.Item>
