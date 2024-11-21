@@ -102,7 +102,7 @@ function LoginAdditionalInfo() {
             isNullOrEmpty(password) ||
             isNullOrEmpty(confirmPassword) ||
             isNullOrEmpty(selectedOrgId)){
-            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+            navigate(AuthRouteNames.LOGIN);
         }
     }, []);
 

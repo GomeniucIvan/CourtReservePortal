@@ -72,7 +72,7 @@ function LoginReview() {
             isNullOrEmpty(password) ||
             isNullOrEmpty(confirmPassword) ||
             isNullOrEmpty(selectedOrgId)){
-            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+            navigate(AuthRouteNames.LOGIN);
         } else{
             let selectedMembership = formik?.values?.selectedMembership;
 

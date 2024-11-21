@@ -1,4 +1,3 @@
-import styles from './Login.module.less'
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
@@ -6,7 +5,6 @@ import {theme, Typography, Col, Row, Button, Form} from "antd";
 import PasscodeInput from "../../../form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {equalString, focus, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import mockData from "../../../mocks/auth-data.json";
@@ -17,6 +15,7 @@ import {toAuthLocalStorage, toLocalStorage} from "../../../storage/AppStorage.js
 import apiService, {setRequestData} from "../../../api/api.jsx";
 import appService from "../../../api/app.jsx";
 import {useAntd} from "../../../context/AntdProvider.jsx";
+import * as React from "react";
 
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
@@ -28,32 +27,34 @@ function LoginVerificationCode() {
         isLoading,
         setIsLoading,
         setFormikData,
-        isMockData,
         setIsFooterVisible,
         globalStyles
     } = useApp();
     const {setShouldLoadOrgData, setAuthorizationData} = useAuth();
 
     const email = formikData?.email;
-    const password = formikData?.password;
 
+    const sendVerificationCode = async () => {
+        const response = await apiService.post(`/api/account-verification/request-code?initialAuthCode=${formikData.secretKey}&spGuideId=${formikData.spGuideId}`);
+    }
+    
     useEffect(() => {
         setIsFooterVisible(false);
 
-        if (isNullOrEmpty(email) || isNullOrEmpty(password)) {
-            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+        if (isNullOrEmpty(email)) {
+            navigate(AuthRouteNames.LOGIN);
+        } else{
+            sendVerificationCode();
         }
     }, []);
 
     const initialValues = {
         email: email,
-        password: password,
         passcode: ''
     };
 
     const validationSchema = Yup.object({
         email: Yup.string().required('Email is required.'),
-        password: Yup.string().required('Password is required.'),
         passcode: Yup.string()
             .required('Passcode is required.')
             .min(6, 'Passcode must be exactly 6 characters.')
@@ -68,66 +69,27 @@ function LoginVerificationCode() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            if (isMockData) {
-                setTimeout(function () {
-                    const memberExists = mockData.login.started.member.email === values.email &&
-                        mockData.login.started.member.password === values.password &&
-                        mockData.login.started.member.passcode === values.passcode;
+            const response = await apiService.post(`/api/account-verification/verify-code?initialAuthCode=${formikData.secretKey}&code=${values.passCode}&spGuideId=${formikData.spGuideId}`);
+            setIsLoading(false);
 
-                    if (memberExists) {
-                        setFormikData(null);
-                        navigate(HomeRouteNames.INDEX);
-                        toAuthLocalStorage('member', {email: values.email});
-                    } else {
-                        ModalClose({
-                            title: 'Passcode',
-                            content: 'Entered passcode is incorrect',
-                            showIcon: false,
-                            onOk: () => {
-                                //focus('password');
-                            }
-                        });
-                    }
-                    setIsLoading(false);
-
-                }, 2000);
+            if (response.IsValid) {
+                let formikValues = {
+                    email: values.email,
+                    ssoKey: response.Data.SsoKey,
+                    spGuideId: formikData.spGuideId,
+                    secretKey: formikData.secretKey,
+                };
+                
+                setFormikData(formikValues);
+                navigate(AuthRouteNames.LOGIN_UPDATE_PASSWORD);
             } else {
-                if (!equalString(values.passcode, 333444)) {
-                    ModalClose({
-                        title: 'Passcode',
-                        content: 'Entered passcode is incorrect',
-                        showIcon: false,
-                        onOk: () => {
-                            //focus('password');
-                        }
-                    });
-
-                    setIsLoading(false);
-                } else {
-                    appService.post('/app/Online/Account/Login', {
-                        UserNameOrEmail: values.email,
-                        Password: values.password
-                    }).then(response => {
-
-                        if (response.IsValid) {
-                            setFormikData(null);
-                            const responseData = response.Data;
-                            setRequestData(responseData.RequestData);
-
-                            apiService.authData(responseData.OrgId, {loadWeatherData:true,includeDashboardData:true}).then(authResponse => {
-                                if (toBoolean(authResponse?.IsValid)) {
-                                    setAuthorizationData(authResponse.Data);
-                                    setShouldLoadOrgData(false);
-
-                                    //always last
-                                    //navigate(response.Path);
-                                }
-                            })
-                        }
-
-                        setIsLoading(false);
-                    });
-                }
+                ModalClose({
+                    content: response.Message,
+                    showIcon: false,
+                    onOk: () => {
+                        
+                    }
+                });
             }
         },
     });
@@ -140,18 +102,13 @@ function LoginVerificationCode() {
         }
     }, [formik?.values?.passcode]);
 
-    useEffect(() => {
-        setIsFooterVisible(false);
-    }, []);
-
     return (
         <>
-            <PaddingBlock>
-                <Title level={3}>Please Check Your Phone</Title>
+            <PaddingBlock topBottom={true}>
+                <Title level={1}>{t(`verificationCode.title`)}</Title>
 
                 <Paragraph>
-                    We've sent a 6-digit code to <strong>***-***-9650</strong>. The code expires in 15 minutes. Please
-                    enter it below.
+                    {t(`verificationCode.description`, {email: formikData?.maskedEmail})}
                 </Paragraph>
 
                 <Form

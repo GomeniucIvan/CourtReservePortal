@@ -1,20 +1,13 @@
-import {useFormik} from 'formik';
 import {useApp} from "../../../context/AppProvider.jsx";
-import * as Yup from "yup";
-import {useEffect, useState} from "react";
-import {Button, Descriptions, Divider, Flex, QRCode, Skeleton, Typography} from 'antd';
-import FormInput from "../../../form/input/FormInput.jsx";
+import {useRef} from "react";
+import {Descriptions, Divider, Typography} from 'antd';
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
-import mockData from "../../../mocks/auth-data.json";
+import ReCAPTCHA from 'react-google-recaptcha';
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {
     anyInList,
     equalString,
-    focus,
     isNullOrEmpty,
-    isValidEmail,
-    nullToEmpty, oneListItem,
-    randomNumber,
     toBoolean
 } from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
@@ -23,29 +16,41 @@ import * as React from "react";
 import {isCanadaCulture} from "../../../utils/OrganizationUtils.jsx";
 import {isNonUsCulture} from "../../../utils/DateUtils.jsx";
 import Modal from "../../../components/modal/Modal.jsx";
-import {logInfo} from "../../../utils/ConsoleUtils.jsx";
+import {logFormikErrors, logInfo} from "../../../utils/ConsoleUtils.jsx";
+import appService from "../../../api/app.jsx";
+import {useNavigate} from "react-router-dom";
+import apiService, {setRequestData} from "../../../api/api.jsx";
+import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import {getConfigValue} from "../../../config/WebConfig.jsx";
+import {useAuth} from "../../../context/AuthProvider.jsx";
 
-const {Paragraph, Link, Title} = Typography;
+const {Title} = Typography;
 
 function LoginCreateAccountReviewModal({show, setShow, formik}) {
     const {isLoading, setIsLoading, token} = useApp();
+
+    const {
+        setAuthorizationData
+    } = useAuth();
     const {t} = useTranslation('login');
     let values = formik?.values;
     let membership = values?.selectedMembership;
+    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
     let selectedFrequencyValue = '';
-    
-    console.log(values)
+    const navigate = useNavigate();
+    const recaptchaRef = useRef();
     
     const createAccount = async () => {
         setIsLoading(true);
 
         const postModel = {
             MembershipId: membership?.CostTypeId,
-            PaymentFrequency: membership?.paymentFrequency,
+            PaymentFrequency: values?.paymentFrequency,
             IsMobileLayout: true,
             SsoKey: '',
-            //Token: await reviewFormRef.current.getCaptchaToken(),
-            SpGuideId: formik?.values?.SpGuideId,
+            Token: await recaptchaRef.current.executeAsync(),
+            SpGuideId: values?.SpGuideId,
             IsNewAuth: true,
             OrgFields: {
                 MembershipId: membership?.CostTypeId,
@@ -94,7 +99,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                 //Number: "",
                 CardNumber: values?.card_number,
                 Cvv: values?.card_securityCode,
-                ExpiryDate: values?.expiryDate,
+                ExpiryDate: values?.card_expiryDate,
                 StripeBankAccountToken: values?.card_number,
                 AccountType: values?.card_accountType,
                 AccountNumber: values?.card_accountNumber,
@@ -110,7 +115,65 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
             Country: values?.card_country
         }
         
-        console.log(postModel)
+        let response = await appService.post(`/app/Online/Portal/RegisterAccount?id=${values.selectedOrgId}`, postModel);
+
+        if (toBoolean(response?.IsValid)){
+            let memberId = response.memberId;
+            let requestData = await appService.get(navigate, `/app/Online/Account/RequestData?id=${values.selectedOrgId}&memberId=${memberId}`);
+            
+            if (requestData.IsValid) {
+                const responseData = requestData.Data;
+                setRequestData(responseData.RequestData);
+
+                let authResponse = await apiService.authData(values.selectedOrgId);
+
+                if (toBoolean(authResponse?.IsValid)) {
+                    await setAuthorizationData(authResponse.Data);
+
+                    setIsLoading(false);
+                    let navigationKey = response.key.toLowerCase();
+                    
+                    switch (navigationKey) {
+                        case 'logout':
+                            navigate(AuthRouteNames.LOGIN);
+                            break;
+
+                        case 'paymymembershipfees':
+                            navigate(ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST);
+                            break;
+
+                        case 'mymembership':
+                            navigate(ProfileRouteNames.PROFILE_MEMBERSHIP);
+                            break;
+
+                        case 'myclubs':
+                            navigate(HomeRouteNames.MY_CLUBS);
+                            break;
+
+                        case 'dashboard':
+                            navigate(HomeRouteNames.INDEX);
+                            break;
+
+                        case 'memberships':
+                            navigate(HomeRouteNames.MEMBERSHIPS);
+                            break;
+                            
+                        case 'myfamily':
+                            navigate(ProfileRouteNames.PROFILE_FAMILY_LIST);
+                            break;
+                    }
+                }
+            }
+        } else{
+            ModalClose({
+                content: response.Message,
+                showIcon: false,
+                onOk: () => {
+
+                }
+            });
+            setIsLoading(false);
+        }
     }
     
     let selectedRatingCategoryWithRatings = [];
@@ -130,7 +193,6 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                     selectedRatingIds.push(ratingCategory.SelectedRatingId)
                 }
             }
-            console.log(selectedRatingIds)
             if (anyInList(selectedRatingIds)) {
                 let selectedOptions = ratingCategory.Ratings
                     .filter(rating => selectedRatingIds.includes(rating.Id))
@@ -151,7 +213,8 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
             .filter(udf => !isNullOrEmpty(udf.Value))
     }
     
-    logInfo(membership);
+    logInfo();
+    console.log(values);
     
     if (!isNullOrEmpty(membership)){
         let selectedPaymentFrequency = values?.paymentFrequency;
@@ -220,7 +283,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         }
                     </Descriptions>
 
-                    {(anyInList(ratingCategories) || anyInList(values?.userDefinedFields)) &&
+                    {(anyInList(ratingCategories) || anyInList(userDefinedFields)) &&
                         <>
                             <Divider />
 
@@ -259,6 +322,12 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                             </Descriptions>
                         </>
                     }
+
+                    <ReCAPTCHA
+                        ref={recaptchaRef}
+                        size="invisible"
+                        sitekey={captchaKey}
+                    />
                 </PaddingBlock>
             </Modal>
         </>

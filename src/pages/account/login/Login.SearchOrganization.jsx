@@ -71,7 +71,7 @@ function LoginSearchOrganization() {
         if (isNullOrEmpty(email) || 
             isNullOrEmpty(password) || 
             isNullOrEmpty(confirmPassword)){
-            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+            navigate(AuthRouteNames.LOGIN);
         }
     }, []);
 

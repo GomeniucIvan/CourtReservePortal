@@ -42,7 +42,7 @@ export const AuthProvider = ({children}) => {
         setOrgId(null);
         setAuthData(null);
         
-        let response = await appService.get(navigate, '/app/online/logout');
+        let response = await appService.get(navigate, '/app/MobileSso/LogOutRequest');
         console.log('Login logout');
         
         return true;

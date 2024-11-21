@@ -118,5 +118,28 @@
     "button" : {
       "continue": "Continue"
     }
+  },
+  "requestCode" : {
+    "title": "Let's Find Your Account",
+    "description": "Enter your email to get started. If you don't have an account yet, you will be prompted to create one.",
+    "form": {
+      "email": "Email",
+      "emailPlaceholder": "Enter your Email"
+    },
+    "button": {
+      "continue": "Continue"
+    }
+  },
+  "verificationCode": {
+    "title": "Check Your Email",
+    "description": "We've sent a 6-digit code to <strong>{{email}}</strong>. The code expires in 15 minutes. Please enter it below."
+  },
+  "updatePassword": {
+    "title": "Create New Password",
+    "description": "New password must be between 6-40 characters in length.",
+    "form": {
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    }
   }
 }

@@ -50,6 +50,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
 
     const tokenizerUrl = getConfigValue('CardConnect_TokenizerURL');
+    console.log(tokenizerUrl)
     const stripeCardElementRef = useRef(null);
     const fortisElementRef = useRef(null);
     const hidePostalCode = false;

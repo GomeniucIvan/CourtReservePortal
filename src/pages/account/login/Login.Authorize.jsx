@@ -28,6 +28,7 @@ function LoginAuthorize() {
         setIsFooterVisible,
         setHeaderRightIcons,
         globalStyles,
+        setFormikData,
         token
     } = useApp();
     const {spGuideId, setAuthorizationData} = useAuth();
@@ -122,6 +123,14 @@ function LoginAuthorize() {
         },
     });
 
+    const navigateToRequestACode = () => {
+        setFormikData({
+            email: formik?.values?.email
+        });
+        
+        navigate(AuthRouteNames.LOGIN_REQUEST_CODE)
+    }
+    
     return (
         <>
             <PaddingBlock topBottom={true}>
@@ -163,6 +172,7 @@ function LoginAuthorize() {
 
                     <Button htmlType="button"
                             block
+                            onClick={navigateToRequestACode}
                             disabled={isLoading}>
                         Request a Code
                     </Button>

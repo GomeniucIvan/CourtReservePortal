@@ -8,6 +8,7 @@ import LoginSearchOrganization from "../pages/account/login/Login.SearchOrganiza
 import LoginAdditionalInfo from "../pages/account/login/Login.AdditionalInfo.jsx";
 import LoginMemberships from "../pages/account/login/Login.Memberships.jsx";
 import LoginReview from "../pages/account/login/Login.Review.jsx";
+import LoginRequestCode from "../pages/account/login/Login.RequestCode.jsx";
 
 export const AuthRouteNames = {
     LOGIN: '/login',
@@ -20,6 +21,8 @@ export const AuthRouteNames = {
     LOGIN_VERIFICATION_CODE: '/login-verification-code',
     LOGIN_MEMBERSHIP: '/login-membership',
     LOGIN_REVIEW: '/login-review',
+    LOGIN_REQUEST_CODE: '/login-request-code',
+    LOGIN_UPDATE_PASSWORD: '/login-update-password',
 };
 
 const AuthRoutes = [
@@ -40,6 +43,12 @@ const AuthRoutes = [
         path: AuthRouteNames.LOGIN_CREATE_ACCOUNT,
         element: <LoginCreateAccount />,
         title: 'loginCreateAccount',
+        unauthorized: true
+    },
+    {
+        path: AuthRouteNames.LOGIN_REQUEST_CODE,
+        element: <LoginRequestCode />,
+        title: 'loginRequestCode',
         unauthorized: true
     },
     {

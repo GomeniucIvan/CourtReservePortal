@@ -20,7 +20,8 @@ export const HomeRouteNames = {
     MORE_NAVIGATION: `/more`,
     DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
     MY_CLUBS: `/myclubs`,
-    MEMBER_GROUP: `/membergroup/:id`
+    MEMBER_GROUP: `/membergroup/:id`,
+    MEMBERSHIPS: `/memberships`
 };
 
 const HomeRoutes = [

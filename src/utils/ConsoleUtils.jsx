@@ -8,7 +8,7 @@ const styles = {
     gray: 'color: gray; font-weight: bold;',
 };
 
-const icons = {
+const consoleIcons = {
     error: '❌',
     success: '✅',
     info: 'ℹ️',
@@ -33,27 +33,23 @@ const icons = {
 };
 
 export const logError = (message) => {
-    console.error(`%c${icons.error} ${message}`, styles.red);
+    console.error(`%c${consoleIcons.error} ${message}`, styles.red);
 };
 
 export const logSuccess = (message) => {
-    console.log(`%c${icons.success} ${message}`, styles.green);
+    console.log(`%c${consoleIcons.success} ${message}`, styles.green);
 };
 
 
 export const logInfo = (message) => {
-    if (!isNullOrEmpty(message)){
-        console.info(`%c${icons.info}`, styles.blue);
-        console.log(message);   
-    }
+    return console.log(`%c${consoleIcons.success}`, styles.blue)
 };
 
 
 export const logWarning = (message) => {
-    console.warn(`%c${icons.warning} ${message}`, styles.yellow);
+    console.warn(`%c${consoleIcons.warning} ${message}`, styles.yellow);
 };
 
-export const logFormikErrors = (errors) => {
-    console.log(`%c${icons.formikError} Formik Errors:`, styles.gray);
-    console.log(errors);
+export const logFormikErrors = () => {
+    console.log(`%c${consoleIcons.formikError} Formik Errors:`, styles.gray);
 };

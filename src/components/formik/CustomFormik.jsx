@@ -11,7 +11,9 @@ const useCustomFormik = (config) => {
             Object.keys(formik.errors).length > 0 &&
             formik.submitCount > 0
         ) {
-            logFormikErrors(formik.errors)
+
+            logFormikErrors();
+            console.log(formik.errors);
             
             const errorElement = document.querySelector('.ant-input-status-error');
             if (errorElement) {
