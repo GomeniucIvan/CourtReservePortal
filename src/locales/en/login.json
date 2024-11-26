@@ -18,6 +18,7 @@
     "title": "Let’s Get Started!",
     "description": "Enter your email to get started. If you don't have\n an account yet, you will be prompted to create one.",
     "continueAgree": "By continuing, you agree to CourtReserve’s",
+    "and": "and",
     "termAndService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
     "button": {
@@ -132,7 +133,15 @@
   },
   "verificationCode": {
     "title": "Check Your Email",
-    "description": "We've sent a 6-digit code to <strong>{{email}}</strong>. The code expires in 15 minutes. Please enter it below."
+    "description": "We've sent a 6-digit code to <strong>{{email}}</strong>. The code expires in 15 minutes. Please enter it below.",
+    "resendCode": "Resend Code",
+    "didntGetCode": "Didn't get the code?",
+    "button": {
+      "continue": "Continue"
+    },
+    "form": {
+      "passcode": "Passcode"
+    }
   },
   "updatePassword": {
     "title": "Create New Password",

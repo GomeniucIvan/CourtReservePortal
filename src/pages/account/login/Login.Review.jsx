@@ -14,25 +14,16 @@ import {
     toBoolean
 } from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import PageForm from "../../../form/pageform/PageForm.jsx";
-import apiService, {getBearerToken, setBearerToken} from "../../../api/api.jsx";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import appService from "../../../api/app.jsx";
 import {useTranslation} from "react-i18next";
-import {getMembershipText} from "../../../utils/TranslateUtils.jsx";
 import {orgCardCountryCode} from "../../../utils/OrganizationUtils.jsx";
 import {costDisplay, membershipPaymentFrequencyCost, membershipRequirePayment} from "../../../utils/CostUtils.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import FormInputDisplay from "../../../form/input/FormInputDisplay.jsx";
 import FormSelect from "../../../form/formselect/FormSelect.jsx";
-import {memberPaymentProfiles} from "../../../utils/SelectUtils.jsx";
 import FormPaymentProfile from "../../../form/formpaymentprofile/FormPaymentProfile.jsx";
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
-import {DownloadOutlined} from "@ant-design/icons";
-import {isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
-import {Document} from "react-pdf";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 

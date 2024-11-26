@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {theme, Typography, Col, Row, Button, Form} from "antd";
@@ -7,16 +7,13 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import {equalString, focus, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
-import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
-import {toAuthLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 import apiService, {setRequestData} from "../../../api/api.jsx";
-import appService from "../../../api/app.jsx";
-import {useAntd} from "../../../context/AntdProvider.jsx";
 import * as React from "react";
 import {useTranslation} from "react-i18next";
+import {useStyles} from "./styles.jsx";
 
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
@@ -33,11 +30,18 @@ function LoginVerificationCode() {
         globalStyles
     } = useApp();
     const {setShouldLoadOrgData, setAuthorizationData} = useAuth();
-
+    const [resendCodeDisabled, setResendCodeDisabled] = useState(true);
+    const {styles} = useStyles();
+    
     const email = formikData?.email;
 
     const sendVerificationCode = async () => {
+        setResendCodeDisabled(true);
         const response = await apiService.post(`/api/account-verification/request-code?initialAuthCode=${formikData.secretKey}&spGuideId=${formikData.spGuideId}`);
+
+        setTimeout(function(){
+            setResendCodeDisabled(false);
+        }, 15000)
     }
     
     useEffect(() => {
@@ -48,6 +52,10 @@ function LoginVerificationCode() {
         } else{
             sendVerificationCode();
         }
+        
+        setTimeout(function(){
+            setResendCodeDisabled(false);
+        }, 15000)
     }, []);
 
     const initialValues = {
@@ -56,9 +64,9 @@ function LoginVerificationCode() {
     };
 
     const validationSchema = Yup.object({
-        email: Yup.string().required('Email is required.'),
+        email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')})),
         passcode: Yup.string()
-            .required('Passcode is required.')
+            .required(t('common:requiredMessage', {label: t('verificationCode.form.passcode')}))
             .min(6, 'Passcode must be exactly 6 characters.')
             .max(6, 'Passcode must be exactly 6 characters.')
     });
@@ -111,7 +119,11 @@ function LoginVerificationCode() {
                 <Title level={1}>{t(`verificationCode.title`)}</Title>
 
                 <Paragraph>
-                    {t(`verificationCode.description`, {email: formikData?.maskedEmail})}
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html: t(`verificationCode.description`, { email: formikData?.maskedEmail }),
+                        }}
+                    />
                 </Paragraph>
 
                 <Form
@@ -122,11 +134,16 @@ function LoginVerificationCode() {
                     <PasscodeInput seperated length={6} name={'passcode'} form={formik}/>
 
                     <Row justify={'space-between'} className={globalStyles.inputBottomLink}>
-                        <Col span={12}><Text type="secondary">Didn't get the code?</Text></Col>
+                        <Col span={12}><Text type="secondary">{t('verificationCode.didntGetCode')}</Text></Col>
 
                         {/*//styles. not working use inline style*/}
                         <Col span={12} style={{textAlign: 'end'}}>
-                            <Text type="primary">Resend Code</Text>
+                            <Button color="default" variant="link"
+                                    className={styles.resendCodeButton}
+                                    disabled={resendCodeDisabled}
+                                    onClick={sendVerificationCode}>
+                                {t('verificationCode.resendCode')}
+                            </Button>
                         </Col>
                     </Row>
                 </Form>
@@ -136,7 +153,7 @@ function LoginVerificationCode() {
                         htmlType="submit"
                         loading={isLoading}
                         onClick={formik.handleSubmit}>
-                    Continue
+                    {t('verificationCode.button.continue')}
                 </Button>
             </PaddingBlock>
         </>

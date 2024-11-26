@@ -56,5 +56,15 @@ export const useStyles = createStyles(({ css, token }) => ({
     background-color: color-mix(in srgb, ${token.colorPrimary} 10%, transparent) ;
     border-bottom-left-radius: ${token.borderRadius}px;
     border-bottom-right-radius: ${token.borderRadius}px;
+  `,
+  resendCodeButton: css`
+    padding: 0;
+    margin: 0px !important;
+    max-height: 22px;
+    color: ${token.colorLink} !important;
+    
+    &:disabled{
+      opacity: 0.6;
+    }
   `
 }));

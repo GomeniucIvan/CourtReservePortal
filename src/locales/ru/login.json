@@ -1,0 +1,179 @@
+﻿{
+  "slide1Text": "Быстрая бронь",
+  "slide1Description": "Простое бронирование кортов для игроков и администраторов клуба",
+  "slide2Text": "Профиль и членства",
+  "slide2Description": "Управляйте профилями, членствами и коммуникацией клуба",
+  "slide3Text": "События и расписания",
+  "slide3Description": "Присоединяйтесь к клубным событиям, просматривайте и управляйте расписаниями в одном месте",
+  "slide4Text": "Улучшайте статистику",
+  "slide4Description": "Отслеживайте статистику производительности и улучшайте результаты на основе данных",
+  "haveAnAccount": "Уже есть аккаунт?",
+  "link": {
+    "login": "Войти"
+  },
+  "button": {
+    "getStarted": "Начать"
+  },
+  "getStarted": {
+    "title": "Начнем!",
+    "description": "Введите свою электронную почту, чтобы начать. Если у вас еще нет аккаунта, вам предложат создать его.",
+    "continueAgree": "Продолжая, вы соглашаетесь с",
+    "and": "и",
+    "termAndService": "Условиями использования",
+    "privacyPolicy": "Политикой конфиденциальности CourtReserve",
+    "button": {
+      "login": "Войти"
+    },
+    "form": {
+      "email": "Электронная почта",
+      "emailPlaceholder": "Введите вашу электронную почту",
+      "emailNotFound": "Электронная почта не найдена",
+      "emailNotFoundDescription": "Не найден пользователь с указанным адресом электронной почты."
+    }
+  },
+  "createAccount": {
+    "title": "Создайте свой аккаунт",
+    "description": "Ваш пароль должен быть длиной от 6 до 40 символов.",
+    "form": {
+      "email": "Электронная почта",
+      "password": "Пароль",
+      "passwordMinLength": "Пароль должен содержать не менее 6 символов.",
+      "passwordMatch": "Пароли должны совпадать.",
+      "confirmPassword": "Подтвердите пароль",
+      "passwordPlaceholder": "Введите ваш пароль",
+      "confirmPasswordPlaceholder": "Введите подтверждение пароля"
+    },
+    "button": {
+      "continue": "Продолжить"
+    }
+  },
+  "searchOrganization": {
+    "form": {
+      "search": "Поиск",
+      "searchPlaceholder": "Искать организацию",
+      "searchDescription": "Введите не менее 4 символов"
+    },
+    "button": {
+      "continue": "Продолжить"
+    },
+    "drawer": {
+      "title": "Организация",
+      "close": "Закрыть",
+      "select": "Выбрать",
+      "name": "Название",
+      "address1": "Адрес 1",
+      "address2": "Адрес 2",
+      "phoneNumber": "Номер телефона",
+      "city": "Город",
+      "state": "Штат",
+      "workingHours": "Рабочие часы",
+      "website": "Веб-сайт"
+    }
+  },
+  "additionalInfo": {
+    "form": {
+      "firstName": "Имя",
+      "firstNamePlaceholder": "Введите ваше имя",
+      "lastName": "Фамилия",
+      "lastNamePlaceholder": "Введите вашу фамилию",
+      "streetAddress": "Улица",
+      "fullAddress": "Адрес",
+      "city": "Город",
+      "gender": "Пол",
+      "phoneNumber": "Номер телефона",
+      "membershipNumber": "Номер членства",
+      "dateOfBirth": "Дата рождения",
+      "postalCode": "Почтовый индекс",
+      "zipCode": "Почтовый индекс"
+    },
+    "button": {
+      "continue": "Продолжить"
+    }
+  },
+  "membership": {
+    "selectPlan": "Выберите план",
+    "seeDetails": "Смотреть дополнительные детали",
+    "ageRestrictionMessage": "Могут применяться возрастные ограничения",
+    "free": "Бесплатно",
+    "full": "Полный",
+    "familyMembership": "Семейное членство",
+    "initiationFee": "Вступительный взнос {{price}}",
+    "effective": "Действует с {{date}}",
+    "paymentOptions": "Варианты оплаты"
+  },
+  "review": {
+    "modalTitle": "Обзор",
+    "confirmMessage": "Проверьте предоставленную информацию и подтвердите перед созданием аккаунта.",
+    "orgInfo": "Информация об организации",
+    "profileInfo": "Информация о профиле",
+    "additionalInfo": "Дополнительная информация",
+    "membershipInfo": "Информация о членстве",
+    "membershipPrice": "Стоимость",
+    "paymentProfileBilling": "Платежный профиль и выставление счетов",
+    "paymentProfileBillingDescription": "Эта организация требует, чтобы вы сохранили платежный профиль в своем аккаунте",
+    "membership": "Членство",
+    "paymentFrequency": "Частота платежей",
+    "frequency": "Частота",
+    "membershipName": "Название",
+    "button": {
+      "continue": "Продолжить"
+    }
+  },
+  "requestCode": {
+    "title": "Найдем ваш аккаунт",
+    "description": "Введите свою электронную почту, чтобы начать. Если у вас еще нет аккаунта, вам предложат создать его.",
+    "form": {
+      "email": "Электронная почта",
+      "emailPlaceholder": "Введите вашу электронную почту"
+    },
+    "button": {
+      "continue": "Продолжить"
+    }
+  },
+  "verificationCode": {
+    "title": "Проверьте вашу электронную почту",
+    "description": "Мы отправили 6-значный код на <strong>{{email}}</strong>. Код истекает через 15 минут. Введите его ниже.",
+    "resendCode": "Отправить код повторно",
+    "didntGetCode": "Не получили код?",
+    "button": {
+      "continue": "Продолжить"
+    },
+    "form": {
+      "passcode": "Код"
+    }
+  },
+  "updatePassword": {
+    "title": "Создайте новый пароль",
+    "description": "Новый пароль должен быть длиной от 6 до 40 символов.",
+    "form": {
+      "password": "Пароль",
+      "confirmPassword": "Подтвердите пароль"
+    },
+    "button": {
+      "updatePassword": "Обновить пароль",
+      "skip": "Пропустить"
+    }
+  },
+  "forgotPassword": {
+    "title": "Забыли пароль",
+    "description": "Введите адрес электронной почты, связанный с вашим аккаунтом, чтобы получить ссылку для сброса пароля.",
+    "email": "Электронная почта",
+    "button": {
+      "submit": "Отправить"
+    }
+  },
+  "authorize": {
+    "title": "Войдите, чтобы получить доступ к вашему аккаунту",
+    "forgotPassword": "Забыли пароль?",
+    "form": {
+      "email": "Электронная почта",
+      "emailPlaceholder": "Введите вашу электронную почту",
+      "password": "Пароль",
+      "passwordPlaceholder": "Введите ваш пароль"
+    },
+    "button": {
+      "continue": "Продолжить",
+      "requestACode": "Запросить код"
+    }
+  }
+}

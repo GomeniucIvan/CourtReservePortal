@@ -8,12 +8,7 @@ import {useTranslation} from "react-i18next";
 import {useApp} from "../../../../context/AppProvider.jsx";
 import {emptyArray} from "../../../../utils/ListUtils.jsx";
 import {useStyles} from "./styles.jsx";
-import {DeleteOutlined} from "@ant-design/icons";
 import {cx} from "antd-style";
-import {setPage, toRoute} from "../../../../utils/RouteUtils.jsx";
-import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
-import {Ellipsis} from "antd-mobile";
-import CardIconLabel from "../../../../components/cardiconlabel/CardIconLabel.jsx";
 import {isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
 const {Title, Text} = Typography;
 

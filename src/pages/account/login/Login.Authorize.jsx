@@ -182,14 +182,14 @@ function LoginAuthorize() {
                         {t('authorize.button.requestACode')}
                     </Button>
 
-                    <Paragraph>
-                        By continuing, you agree to CourtReserve’s
-                        <Link style={{fontWeight: 600}} href={'https://cr1.io/-1'} target={'_blank'}>
-                            {' '}Terms of Service{' '}
+                    <Paragraph className={'sm-padding'}>
+                        {t(`getStarted.continueAgree`)}{' '}
+                        <Link href="https://cr1.io/-1" target="_blank">
+                            {t(`getStarted.termAndService`)}{' '}
                         </Link>
-                        and
-                        <Link style={{fontWeight: 600}} href={'https://cr1.io/-2'} target={'_blank'}>
-                            {' '}Privacy Policy
+                        {t(`getStarted.and`)}{' '}
+                        <Link href="https://cr1.io/-2" target="_blank">
+                            {t(`getStarted.privacyPolicy`)}
                         </Link>
                     </Paragraph>
                 </PageForm>

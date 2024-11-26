@@ -5,15 +5,12 @@ import {useEffect} from "react";
 import {Button, Typography} from 'antd';
 import FormInput from "../../../form/input/FormInput.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
-import mockData from "../../../mocks/auth-data.json";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {equalString, focus, isNullOrEmpty, isValidEmail, toBoolean} from "../../../utils/Utils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import PageForm from "../../../form/pageform/PageForm.jsx";
 import apiService, {getBearerToken, setBearerToken} from "../../../api/api.jsx";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import appService from "../../../api/app.jsx";
 import {useTranslation} from "react-i18next";
 
 const {Paragraph, Link, Title} = Typography;
@@ -121,7 +118,7 @@ function LoginGetStarted() {
                         <Link href="https://cr1.io/-1" target="_blank">
                             {t(`getStarted.termAndService`)}{' '}
                         </Link>
-                        and{' '}
+                        {t(`getStarted.and`)}{' '}
                         <Link href="https://cr1.io/-2" target="_blank">
                             {t(`getStarted.privacyPolicy`)}
                         </Link>
