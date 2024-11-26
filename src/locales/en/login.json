@@ -145,5 +145,27 @@
       "updatePassword" : "Update Password",
       "skip": "Skip"
     }
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "description": "Enter the email address associated with your account below to receive a reset password link.",
+    "email": "Email",
+    "button": {
+      "submit": "Submit"
+    }
+  },
+  "authorize": {
+    "title": "Log In to Access Your Account",
+    "forgotPassword": "Forgot Password?",
+    "form" : {
+      "email": "Email",
+      "emailPlaceholder": "Enter Your Email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your Password"
+    },
+    "button": {
+      "continue": "Continue",
+      "requestACode": "Request a Code"
+    }
   }
 }

@@ -19,6 +19,7 @@ import appService from "../../../api/app.jsx";
 import {toAuthLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
 import {useAntd} from "../../../context/AntdProvider.jsx";
+import {useTranslation} from "react-i18next";
 
 function LoginAuthorize() {
     const {
@@ -35,7 +36,8 @@ function LoginAuthorize() {
     const email = formikData?.email;
     const isFromGetStarted = toBoolean(formikData?.isFromGetStarted);
     const navigate = useNavigate();
-
+    const {t} = useTranslation('login');
+    
     const initialValues = {
         email: email,
         password: ''
@@ -47,8 +49,8 @@ function LoginAuthorize() {
     }, []);
 
     const validationSchema = Yup.object({
-        email: Yup.string().required('Email is required.'),
-        password: Yup.string().required('Password is required.'),
+        email: Yup.string().required(t('common:requiredMessage', {label: t('authorize.form.email')})),
+        password: Yup.string().required(t('common:requiredMessage', {label: t('authorize.form.password')})),
     });
 
     const formik = useFormik({
@@ -110,7 +112,6 @@ function LoginAuthorize() {
                     return;  
                 }
 
-                
                 const responseData = loginApiResponse.Data;
                 setRequestData(responseData.RequestData);
                 const authResponse = await apiService.authData(responseData.OrgId);
@@ -134,29 +135,33 @@ function LoginAuthorize() {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={3} style={{paddingBottom: token.paddingSM}}>Log In to Access Your Account</Title>
+                <Title level={3} style={{paddingBottom: token.paddingSM}}>{t('authorize.title')}</Title>
 
                 <PageForm formik={formik}>
-                    <FormInput label="Email"
+                    <FormInput label={t('authorize.form.email')}
                                form={formik}
                                disabled={isFromGetStarted}
                                required={!isFromGetStarted}
                                name='email'
-                               placeholder='Enter your email'
+                               placeholder={t('authorize.form.emailPlaceholder')}
                     />
 
-                    <FormInput label="Password"
+                    <FormInput label={t('authorize.form.password')}
                                form={formik}
                                className={globalStyles.formNoBottomPadding}
                                name='password'
-                               placeholder='Enter your password'
+                               placeholder={t('authorize.form.passwordPlaceholder')}
                                required={true}
                     />
 
                     <Flex justify={"start"} className={globalStyles.inputBottomLink}>
                         <Link style={{fontWeight: 600}} onClick={() => {
+                            setFormikData({
+                                email: formik?.values?.email
+                            })
+                            navigate(AuthRouteNames.LOGIN_FORGOT_PASSWORD);
                         }}>
-                            Forgot Password?
+                            {t('authorize.forgotPassword')}
                         </Link>
                     </Flex>
 
@@ -165,7 +170,7 @@ function LoginAuthorize() {
                             htmlType="submit"
                             loading={isLoading}
                             onClick={formik.handleSubmit}>
-                        Continue
+                        {t('authorize.button.continue')}
                     </Button>
 
                     <Divider><Text style={{verticalAlign: 'top', color: token.colorTextSecondary}}>or</Text></Divider>
@@ -174,7 +179,7 @@ function LoginAuthorize() {
                             block
                             onClick={navigateToRequestACode}
                             disabled={isLoading}>
-                        Request a Code
+                        {t('authorize.button.requestACode')}
                     </Button>
 
                     <Paragraph>

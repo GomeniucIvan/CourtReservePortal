@@ -10,6 +10,7 @@ import LoginMemberships from "../pages/account/login/Login.Memberships.jsx";
 import LoginReview from "../pages/account/login/Login.Review.jsx";
 import LoginRequestCode from "../pages/account/login/Login.RequestCode.jsx";
 import LoginUpdatePassword from "../pages/account/login/Login.UpdatePassword.jsx";
+import LoginForgotPassword from "../pages/account/login/Login.ForgotPassword.jsx";
 
 export const AuthRouteNames = {
     LOGIN: '/login',
@@ -24,6 +25,7 @@ export const AuthRouteNames = {
     LOGIN_REVIEW: '/login-review',
     LOGIN_REQUEST_CODE: '/login-request-code',
     LOGIN_UPDATE_PASSWORD: '/login-update-password',
+    LOGIN_FORGOT_PASSWORD: '/login-forgot-password',
 };
 
 const AuthRoutes = [
@@ -56,6 +58,12 @@ const AuthRoutes = [
         path: AuthRouteNames.LOGIN_UPDATE_PASSWORD,
         element: <LoginUpdatePassword />,
         title: 'loginUpdatePassword',
+        unauthorized: true
+    },
+    {
+        path: AuthRouteNames.LOGIN_FORGOT_PASSWORD,
+        element: <LoginForgotPassword />,
+        title: 'loginForgotPassword',
         unauthorized: true
     },
     {
