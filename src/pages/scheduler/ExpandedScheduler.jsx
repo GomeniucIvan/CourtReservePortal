@@ -7,6 +7,7 @@ import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Flex, Skeleton, Spin, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
+import moment from "moment";
 const {Text} = Typography
 import '@progress/kendo-date-math/tz/all.js';
 import {
@@ -16,7 +17,7 @@ import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/Schedu
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "../../api/app.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {dateFormatByUiCulture, dateTimeToFormat, toReactDate} from "../../utils/DateUtils.jsx";
+import {dateFormatByUiCulture, dateTimeToFormat, dateToTimeString, toReactDate} from "../../utils/DateUtils.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
 import dayjs from "dayjs";
 import apiService from "../../api/api.jsx";
@@ -35,6 +36,7 @@ function ExpandedScheduler() {
     const [isSchedulerInitializing, setIsSchedulerInitializing] = useState(true);
     const [timeZone, setTimeZone] = useState('');
     const [schedulerData, setSchedulerData] = useState(null);
+    const [schedulerHours, setSchedulerHours] = useState([]);
     
     const [selectedDate, setSelectedDate] = useState(null);
     const [currentDateTime, setCurrentDateTime] = useState(null);
@@ -49,7 +51,6 @@ function ExpandedScheduler() {
 
     useEffect(() => {
         if (!isNullOrEmpty(selectedDate) && schedulerData){
-
             const result = {
                 startDate: selectedDate,
                 //end: scheduler.view().endDate(),
@@ -74,7 +75,23 @@ function ExpandedScheduler() {
             }
 
             apiService.get(`/api/scheduler/member-expanded?id=${schedulerData.OrgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
+                if (!isNullOrEmpty(selectedDate)){
+                    const dayOfWeek = moment(selectedDate).day();
+                    const scheduleForDay = schedulerHours.find(item => item.Day === dayOfWeek);
 
+                    if (!isNullOrEmpty(scheduleForDay)){
+                        let newOpenTimeString = dateToTimeString(scheduleForDay.OpenTimeDate, true);
+                        let newCloseTimeString = dateToTimeString(scheduleForDay.CloseTimeDate, true);
+                        let isClosed = toBoolean(scheduleForDay?.IsClosed);
+
+                        debugger
+                        if (!equalString(newOpenTimeString, startTimeString) || !equalString(newCloseTimeString, endTimeString)){
+                            setStartTimeString(newOpenTimeString);
+                            setEndTimeString(newCloseTimeString);
+                        }
+                    }
+                }
+                
                 const formattedEvents = resp.Data.map(event => ({
                     ...event,
                     Start: new Date(event.Start),
@@ -109,64 +126,42 @@ function ExpandedScheduler() {
         setIsFooterVisible(true);
         setFooterContent(null);
         setHeaderRightIcons(null);
-        
-        if (isMockData){
-           setTimeout(function(){
-               setCourts(mockData.courts);
-               setIsSchedulerInitializing(false);
-           }, 100);
 
-            setTimeout(function(){
-                const formattedEvents = mockData.reservations.map(event => ({
-                    ...event,
-                    Start: new Date(event.Start),
-                    start: new Date(event.Start),
-                    End: new Date(event.End),
-                    end: new Date(event.End),
-                    isAllDay: false
+        appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`).then(r => {
+            if (toBoolean(r?.IsValid)){
+                const model = r.Data.Model;
+                setStartTimeString(dateToTimeString(model.StartTime, true));
+                setEndTimeString(dateToTimeString(model.EndTime, true));
+
+                console.log(model.SchedulerDto.OrganizationHours)
+                setSchedulerData(model);
+                setSchedulerHours(model.SchedulerDto.OrganizationHours)
+                const currentDateTime = toReactDate(model.CurrentDateTime);
+                const dateToShow = toReactDate(model.SchedulerDate);
+                setMinDate(currentDateTime);
+                setTimeZone(model.TimeZone);
+                setInterval(model.MinInterval);
+
+                const formattedCourts = model.Courts.map(court => ({
+                    ...court,
+                    Text:  courtHeader(court),
+                    Value: court.Id
                 }));
-                
-                setEvents(formattedEvents)
-            }, 400);
-        }
-        else{
-            appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`).then(r => {
-                if (toBoolean(r?.IsValid)){
-                    const model = r.Data.Model;
-                    console.log(model)
-                    
-                    setStartTimeString(r.Data.OpenTime);
-                    setEndTimeString(r.Data.CloseTime);
-                    
-                    setSchedulerData(model);
 
-                    const currentDateTime = toReactDate(model.CurrentDateTime);
-                    const dateToShow = toReactDate(model.SchedulerDate);
-                    setMinDate(currentDateTime);
-                    setTimeZone(model.TimeZone);
-                    setInterval(model.MinInterval);
-                    
-                    const formattedCourts = model.Courts.map(court => ({
-                        ...court,
-                        Text:  courtHeader(court),
-                        Value: court.Id
-                    }));
+                setCourts(formattedCourts);
+                setIsSchedulerInitializing(false);
+                setCurrentDateTime(currentDateTime);
 
-                    setCourts(formattedCourts);
-                    setIsSchedulerInitializing(false);
-                    setCurrentDateTime(currentDateTime);
-
-                    //always last
-                    setSelectedDate(dateToShow);
-                    setTimeout(function(){
-                        //dom
-                        scrollToCurrentTime();
-                    }, 50)
-                } else{
-                    navigate(r.Path);
-                }
-            })
-        }
+                //always last
+                setSelectedDate(dateToShow);
+                setTimeout(function(){
+                    //dom
+                    scrollToCurrentTime();
+                }, 50)
+            } else{
+                navigate(r.Path);
+            }
+        })
     }, []);
 
     const scrollToCurrentTime = () => {
