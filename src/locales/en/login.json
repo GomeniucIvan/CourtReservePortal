@@ -140,6 +140,10 @@
     "form": {
       "password": "Password",
       "confirmPassword": "Confirm Password"
+    },
+    "button": {
+      "updatePassword" : "Update Password",
+      "skip": "Skip"
     }
   }
 }

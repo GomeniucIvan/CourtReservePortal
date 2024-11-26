@@ -1,7 +1,7 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useApp} from "../../../context/AppProvider.jsx";
-import {theme, Typography, Col, Row, Button, Form} from "antd";
+import {theme, Typography, Col, Row, Button, Form, Flex} from "antd";
 import PasscodeInput from "../../../form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
@@ -19,6 +19,9 @@ import * as React from "react";
 import PageForm from "../../../form/pageform/PageForm.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
 import {requiredMessage} from "../../../utils/TranslateUtils.jsx";
+import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
+import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import {useTranslation} from "react-i18next";
 
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
@@ -31,8 +34,10 @@ function LoginUpdatePassword() {
         setIsLoading,
         setFormikData,
         setIsFooterVisible,
-        globalStyles
+        globalStyles,
+        token
     } = useApp();
+    
     const {setShouldLoadOrgData, setAuthorizationData} = useAuth();
 
     const email = formikData?.email;
@@ -40,7 +45,9 @@ function LoginUpdatePassword() {
     const maskedEmail = formikData?.maskedEmail;
     const spGuideId = formikData?.spGuideId;
     const ssoKey = formikData?.ssoKey;
-
+    const[isLogin, setIsLogin] = useState(false);
+    const {t} = useTranslation('login');
+    
     useEffect(() => {
         
         if (isNullOrEmpty(email) ||
@@ -66,6 +73,40 @@ function LoginUpdatePassword() {
             .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
     });
 
+    const frictLogin = async (isUpdatePassword) => {
+
+        debugger;
+        setIsLoading(isUpdatePassword);
+        setIsLogin(!isUpdatePassword);
+
+        const loginResponse = await appService.get(navigate, `/app/MobileSso/FrictLogin?ssoKey=${ssoKey}&initialAuthCode=${secretKey}&spGuideId=${spGuideId}&loaded=true`)
+        if (loginResponse){
+            let orgId = loginResponse.orgId;
+            let memberId = loginResponse.memberId;
+
+            let requestData = await appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`);
+
+            if (requestData.IsValid) {
+                const responseData = requestData.Data;
+                setRequestData(responseData.RequestData);
+
+                let authResponse = await apiService.authData(orgId);
+
+                if (toBoolean(authResponse?.IsValid)) {
+                    await setAuthorizationData(authResponse.Data);
+
+                    setIsLoading(false);
+                    setIsLogin(false);
+                    navigate(HomeRouteNames.INDEX);
+                }
+            }
+        }
+
+        setIsLoading(false);
+        setIsLogin(false);
+    }
+    
+    
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
@@ -75,10 +116,12 @@ function LoginUpdatePassword() {
             setIsLoading(true);
 
             const response = await apiService.post(`/api/create-account/update-password?ssoKey=${ssoKey}&initialAuthCode=${secretKey}&currentPassword=${values.password}&confirmPassword=${values.confirmPassword}&spGuideId=${spGuideId}`);
+        
             if (response.IsValid) {
-                setIsLoading(false);
-                frictLogin();
+               await frictLogin(true);
             }
+            
+            setIsLoading(false);
         },
     });
     
@@ -106,13 +149,24 @@ function LoginUpdatePassword() {
                                required='true'
                     />
                     
-                    <Button type="primary"
-                            block htmlType="submit"
-                            loading={isLoading}
-                            onClick={formik.handleSubmit}
-                    >
-                        {t(`requestCode.button.continue`)}
-                    </Button>
+                   <Flex vertical={true} gap={token.padding}> 
+                       <Button type="primary"
+                               block htmlType="submit"
+                               loading={isLoading}
+                               disabled={isLogin}
+                               onClick={formik.handleSubmit}
+                       >
+                           {t(`updatePassword.button.updatePassword`)}
+                       </Button>
+
+                       <Button block htmlType="button"
+                               loading={isLogin}
+                               disabled={isLoading}
+                               onClick={frictLogin}
+                       >
+                           {t(`updatePassword.button.skip`)}
+                       </Button>
+                   </Flex>
                 </PageForm>
             </PaddingBlock>
         </>

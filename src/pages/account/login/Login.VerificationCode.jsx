@@ -16,12 +16,14 @@ import apiService, {setRequestData} from "../../../api/api.jsx";
 import appService from "../../../api/app.jsx";
 import {useAntd} from "../../../context/AntdProvider.jsx";
 import * as React from "react";
+import {useTranslation} from "react-i18next";
 
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
 
 function LoginVerificationCode() {
     const navigate = useNavigate();
+    const { t } = useTranslation('login');
     const {
         formikData,
         isLoading,
@@ -69,7 +71,7 @@ function LoginVerificationCode() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            const response = await apiService.post(`/api/account-verification/verify-code?initialAuthCode=${formikData.secretKey}&code=${values.passCode}&spGuideId=${formikData.spGuideId}`);
+            const response = await apiService.post(`/api/account-verification/verify-code?initialAuthCode=${formikData.secretKey}&code=${values.passcode}&spGuideId=${formikData.spGuideId}`);
             setIsLoading(false);
 
             if (response.IsValid) {
@@ -78,6 +80,7 @@ function LoginVerificationCode() {
                     ssoKey: response.Data.SsoKey,
                     spGuideId: formikData.spGuideId,
                     secretKey: formikData.secretKey,
+                    maskedEmail: formikData?.maskedEmail
                 };
                 
                 setFormikData(formikValues);

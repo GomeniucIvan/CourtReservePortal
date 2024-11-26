@@ -1,6 +1,6 @@
 import Login from "../pages/account/login/Login.jsx";
 import LoginGetStarted from "../pages/account/login/Login.GetStarted.jsx";
-import LoginAccountVerification from "../pages/account/login/Login.AccountVerification.jsx";
+// import LoginAccountVerification from "../pages/account/login/Login.AccountVerification.jsx";
 import LoginVerificationCode from "../pages/account/login/Login.VerificationCode.jsx";
 import LoginAuthorize from "../pages/account/login/Login.Authorize.jsx";
 import LoginCreateAccount from "../pages/account/login/Login.CreateAccount.jsx";
@@ -9,6 +9,7 @@ import LoginAdditionalInfo from "../pages/account/login/Login.AdditionalInfo.jsx
 import LoginMemberships from "../pages/account/login/Login.Memberships.jsx";
 import LoginReview from "../pages/account/login/Login.Review.jsx";
 import LoginRequestCode from "../pages/account/login/Login.RequestCode.jsx";
+import LoginUpdatePassword from "../pages/account/login/Login.UpdatePassword.jsx";
 
 export const AuthRouteNames = {
     LOGIN: '/login',
@@ -17,7 +18,7 @@ export const AuthRouteNames = {
     LOGIN_CREATE_ACCOUNT: '/login-create',
     LOGIN_ORGANIZATION: '/login-organization',
     LOGIN_ADDITIONAL_INFO: '/login-info',
-    LOGIN_ACCOUNT_VERIFICATION: '/login-account-verification',
+    //LOGIN_ACCOUNT_VERIFICATION: '/login-account-verification',
     LOGIN_VERIFICATION_CODE: '/login-verification-code',
     LOGIN_MEMBERSHIP: '/login-membership',
     LOGIN_REVIEW: '/login-review',
@@ -52,6 +53,12 @@ const AuthRoutes = [
         unauthorized: true
     },
     {
+        path: AuthRouteNames.LOGIN_UPDATE_PASSWORD,
+        element: <LoginUpdatePassword />,
+        title: 'loginUpdatePassword',
+        unauthorized: true
+    },
+    {
         path: AuthRouteNames.LOGIN_ORGANIZATION,
         element: <LoginSearchOrganization />,
         title: 'loginOrganization',
@@ -81,12 +88,12 @@ const AuthRoutes = [
         title: 'gettingStarted',
         unauthorized: true
     },
-    {
-        path: AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION,
-        element: <LoginAccountVerification />,
-        title: 'accountVerification',
-        unauthorized: true
-    },
+    // {
+    //     path: AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION,
+    //     element: <LoginAccountVerification />,
+    //     title: 'accountVerification',
+    //     unauthorized: true
+    // },
     {
         path: AuthRouteNames.LOGIN_VERIFICATION_CODE,
         element: <LoginVerificationCode />,

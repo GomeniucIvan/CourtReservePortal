@@ -30,7 +30,7 @@ function LoginAccountVerification() {
 
     useEffect(() => {
         if (isNullOrEmpty(email)){
-            navigate(AuthRouteNames.LOGIN_GET_STARTED);
+            navigate(AuthRouteNames.LOGIN);
         }
     }, []);
 

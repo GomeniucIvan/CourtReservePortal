@@ -9,7 +9,7 @@ import {useEffect} from "react";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import apiService from "../../../api/api.jsx";
-import {equalString, focus, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {equalString, focus, isNullOrEmpty, nullToEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
 import {useNavigate} from "react-router-dom";
@@ -31,7 +31,7 @@ function LoginRequestCode() {
     
     const startInitialValues = {
         email: formikData?.email,
-        spGuideId: formikData?.spGuideId,
+        spGuideId: nullToEmpty(formikData?.spGuideId),
         secretKey: '',
         maskedEmail: ''
     };
@@ -76,8 +76,9 @@ function LoginRequestCode() {
                     spGuideId: values.spGuideId
                 }
                 
+                console.log(formikValues)
                 setFormikData(formikValues);
-                navigate(AuthRouteNames.LOGIN_UPDATE_PASSWORD);
+                navigate(AuthRouteNames.LOGIN_VERIFICATION_CODE);
             }
         },
     });
