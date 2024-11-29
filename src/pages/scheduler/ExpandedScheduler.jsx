@@ -74,24 +74,32 @@ function ExpandedScheduler() {
                 HideEmbedCodeReservationDetails: ''
             }
 
-            apiService.get(`/api/scheduler/member-expanded?id=${schedulerData.OrgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
-                if (!isNullOrEmpty(selectedDate)){
-                    const dayOfWeek = moment(selectedDate).day();
-                    const scheduleForDay = schedulerHours.find(item => item.Day === dayOfWeek);
+            const dayOfWeek = equalString(moment(selectedDate).day(), 0) ? 7 : moment(selectedDate).day();
+            const scheduleForDay = schedulerHours.find(item => item.Day === dayOfWeek);
 
-                    if (!isNullOrEmpty(scheduleForDay)){
-                        let newOpenTimeString = dateToTimeString(scheduleForDay.OpenTimeDate, true);
-                        let newCloseTimeString = dateToTimeString(scheduleForDay.CloseTimeDate, true);
-                        let isClosed = toBoolean(scheduleForDay?.IsClosed);
+            if (!isNullOrEmpty(scheduleForDay)){
+                let isClosed = toBoolean(scheduleForDay?.IsClosed);
+                if (isClosed && !isNullOrEmpty(interval)){
+                    const hours = Math.floor(interval / 60);
+                    const mins = interval % 60;
 
-                        debugger
-                        if (!equalString(newOpenTimeString, startTimeString) || !equalString(newCloseTimeString, endTimeString)){
-                            setStartTimeString(newOpenTimeString);
-                            setEndTimeString(newCloseTimeString);
-                        }
+                    const formattedHours = String(hours).padStart(2, "0");
+                    const formattedMinutes = String(mins).padStart(2, "0");
+                    
+                    setStartTimeString('00:00');
+                    setEndTimeString(`${formattedHours}:${formattedMinutes}`);
+                } else{
+                    let newOpenTimeString = dateToTimeString(scheduleForDay.OpenTimeDate, true);
+                    let newCloseTimeString = dateToTimeString(scheduleForDay.CloseTimeDate, true);
+                    
+                    if (!equalString(newOpenTimeString, startTimeString) || !equalString(newCloseTimeString, endTimeString)){
+                        setStartTimeString(newOpenTimeString);
+                        setEndTimeString(newCloseTimeString);
                     }
                 }
-                
+            }
+            
+            apiService.get(`/api/scheduler/member-expanded?id=${schedulerData.OrgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
                 const formattedEvents = resp.Data.map(event => ({
                     ...event,
                     Start: new Date(event.Start),
@@ -102,6 +110,7 @@ function ExpandedScheduler() {
                     isAllDay: false,
                     IsAllDay: false,
                 }));
+                
                 setEvents(formattedEvents);
                 setLoading(false);
             });
@@ -133,7 +142,6 @@ function ExpandedScheduler() {
                 setStartTimeString(dateToTimeString(model.StartTime, true));
                 setEndTimeString(dateToTimeString(model.EndTime, true));
 
-                console.log(model.SchedulerDto.OrganizationHours)
                 setSchedulerData(model);
                 setSchedulerHours(model.SchedulerDto.OrganizationHours)
                 const currentDateTime = toReactDate(model.CurrentDateTime);

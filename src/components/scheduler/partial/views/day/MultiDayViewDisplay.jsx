@@ -20,7 +20,7 @@ import { toRanges } from "../../services/rangeService.mjs";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
 import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
-import {toBoolean} from "../../../../../utils/Utils.jsx";
+import {equalString, toBoolean} from "../../../../../utils/Utils.jsx";
 
 
 const FIRST_INDEX = 0;
@@ -38,7 +38,7 @@ export const MultiDayView = (props) => {
     const intl = useInternationalization();
     const EditItem = props.editItem || SchedulerEditItem;
     const EditSlot = props.editSlot || SchedulerEditSlot;
-
+    
     const showWorkHours = props.showWorkHours;
     const numberOfDays = props.numberOfDays || multiDayViewDefaultProps.numberOfDays;
 
@@ -157,6 +157,7 @@ export const MultiDayView = (props) => {
         [occurrences, timezone, groups, dayRanges]
     );
 
+    
     const timeItems = React.useMemo(
         () => toItems(timeOccurrences, { timezone }, { groups, ranges: timeRanges })
             .filter((item) => viewStart.getTime() === viewEnd.getTime()
@@ -176,6 +177,10 @@ export const MultiDayView = (props) => {
 
     React.useMemo(() => mapItemsToSlots(timeItems, timeSlots, false), [timeItems, timeSlots]);
     React.useMemo(() => mapSlotsToItems(timeItems, timeSlots, false), [timeItems, timeSlots]);
+    
+    console.log(timeOccurrences)
+    
+    let events = timeOccurrences.filter(v => !toBoolean(v.dataItem?.IsWaitListSlot ));
     
     const head = (
         <SchedulerResourceIteratorContext.Consumer>
@@ -308,6 +313,7 @@ export const MultiDayView = (props) => {
                                                                                 form={props.form}
                                                                                 useTextSchedulerSlot={props.useTextSchedulerSlot}
                                                                                 openReservationCreateModal={props.openReservationCreateModal}
+                                                                                events={events}
                                                                                 selectedView={props.selectedView}
                                                                                 row={rootIndex + GRID_OFFSET}
                                                                                 col={(timeRanges.length * (groupIndex || 0)) + rangeIndex}

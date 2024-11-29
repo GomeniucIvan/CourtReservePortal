@@ -170,7 +170,7 @@ export const SchedulerProportionalViewItem = React.forwardRef((props, ref) => {
     }
 
     const OFFSET = viewItem.current.props.eventOffset ? 20 : 2;
-    
+
     rect.width = (props.vertical
         ? ((rect.width / mostSiblingsInSlot) - BORDER_WIDTH - (OFFSET / mostSiblingsInSlot))
         : ((total) + (BORDER_WIDTH)));

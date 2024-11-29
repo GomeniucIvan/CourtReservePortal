@@ -103,7 +103,7 @@ export const SchedulerViewItem = React.forwardRef((props, ref) => {
         const items = [];
         const dragItems = [];
         const resizeItems = [];
-
+        
         (viewItems || []).forEach((i) => {
             if(!i.current) { return; }
 

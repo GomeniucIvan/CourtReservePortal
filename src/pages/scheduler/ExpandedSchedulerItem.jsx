@@ -6,6 +6,8 @@ import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {EventRouteNames} from "../../routes/EventRoutes.jsx";
 import {useNavigate} from "react-router-dom";
+import {theme} from "antd";
+const { useToken } = theme;
 
 const ExpandedSchedulerItem = (props) => {
     const {setDynamicPages} = useApp();
@@ -18,7 +20,8 @@ const ExpandedSchedulerItem = (props) => {
     const donTrackMember = true;
     const hideCheckInFromReservations = true;
     const customSchedulerId = 11945;
-
+    const { token } = useToken();
+    
     const displayInstructorsRow = () => {
         return (<></>);
     }
@@ -143,7 +146,7 @@ const ExpandedSchedulerItem = (props) => {
                 )}
 
                 {!dataItem.IsWaitListSlot && isUsingCourtWaitListing && dataItem.ReservationQueueSlotId != null &&
-                    <div className="main-reservation-container">
+                    <div className="main-reservation-container --queue-slot">
                         <span className="pull-left">
                             <i className="fa fa-lock reservation-lock-item"></i>
                         </span>
@@ -157,8 +160,12 @@ const ExpandedSchedulerItem = (props) => {
                 }
 
                 {!dataItem.IsWaitListSlot && dataItem.ReservationQueueSlotId == null &&
-                    <div className="main-reservation-container"
-                         style={{background: dataItem.ReservationColor, color: dataItem.ReservationTextColor}}>
+                    <div className="main-reservation-container --simple-container"
+                         style={{
+                             background: dataItem.ReservationColor,
+                             color: dataItem.ReservationTextColor,
+                             height: '100%'
+                    }}>
                         {dataItem.IsCanceled && (
                             <div className="pull-left scheduler-ban-icon" data-toggle="tooltip" data-placement="top"
                                  title="Canceled">
@@ -232,9 +239,31 @@ const ExpandedSchedulerItem = (props) => {
                         )}
 
                         {dataItem.IsOrgClosed &&
-                            <div className="orgClosed" style={{width: '100%'}}>{dataItem.ReservationName}</div>}
+                            <div className={'closed-date'}
+                                 style={{
+                                     width: '100%', 
+                                     backgroundColor: token.colorError,
+                                     color: '#ffffff',
+                                     height: '100%',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     justifyContent: 'center'
+                            }}>
+                                {dataItem.ReservationName}
+                            </div>
+                        }
                         {dataItem.IsCourtClosed && (
-                            <div className="courtClosed" title={dataItem.CourtClosedReason}>
+                            <div className="closed-court"
+                                 style={{
+                                     width: '100%',
+                                     backgroundColor: token.colorError,
+                                     color: '#ffffff',
+                                     height: '100%',
+                                     display: 'flex',
+                                     alignItems: 'center',
+                                     justifyContent: 'center'
+                                 }}
+                                 title={dataItem.CourtClosedReason}>
                                 <p>{dataItem.ReservationName}</p>
                                 {dataItem.ClosedUntil && <p>{dataItem.ClosedUntil}</p>}
                             </div>

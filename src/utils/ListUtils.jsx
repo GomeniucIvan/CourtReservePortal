@@ -62,3 +62,20 @@ export const countListItems = (list) => {
     
     return list.length;
 }
+
+export const schedulerSlotIntersects = (item, events) => {
+    const itemStart = new Date(item.start).getTime();
+    const itemEnd = new Date(item.end).getTime();
+
+    return events.some(event => {
+        const eventStart = new Date(event.start).getTime();
+        const eventEnd = new Date(event.end).getTime();
+
+        return (
+            (itemStart >= eventStart && itemStart < eventEnd) || // Item starts during the event
+            (itemEnd > eventStart && itemEnd <= eventEnd) ||    // Item ends during the event
+            (itemStart <= eventStart && itemEnd >= eventEnd) || // Item fully overlaps the event
+            (eventStart < itemEnd && eventEnd > itemStart)      // Event fully overlaps the item
+        );
+    });
+};

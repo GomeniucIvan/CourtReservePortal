@@ -3,6 +3,8 @@ import { classNames } from "@progress/kendo-react-common";
 import { useSchedulerSlot } from "../hooks/useSchedulerSlotDisplay.js";
 import {equalString, toBoolean} from "../../../../utils/Utils.jsx";
 import {Typography} from "antd";
+import {inGroup} from "../services/itemsService.mjs";
+import {schedulerSlotIntersects} from "../../../../utils/ListUtils.jsx";
 const {Text} = Typography;
 
 export const SchedulerSlot = React.forwardRef((
@@ -27,10 +29,12 @@ export const SchedulerSlot = React.forwardRef((
         onKeyPress,
         onKeyUp,
         useTextSchedulerSlot,
-        openReservationCreateModal
+        openReservationCreateModal,
+        events
     } = props;
 
     const { slot, element } = useSchedulerSlot(props, ref);
+    let schedulerEvents = events || [];
 
     const tabIndex = props.tabIndex !== undefined
         ? props.tabIndex === null
@@ -224,6 +228,10 @@ export const SchedulerSlot = React.forwardRef((
     if (toBoolean(props.isPastStart)){
         return (<div ref={element} className={className} id={props.id} tabIndex={tabIndex}></div>)
     }
+
+    if (toBoolean(props?.group?.resources[0]?.IsCourtClosed)){
+        return (<div ref={element} className={'k-scheduler-cell k-slot-cell k-closed-slot'}></div>)
+    }
     
     return (
         <div
@@ -264,23 +272,25 @@ export const SchedulerSlot = React.forwardRef((
         >
             {toBoolean(useTextSchedulerSlot) ?
                 ( <div className={'k-scheduler-cell k-slot-cell'} style={{border: 'none'}}>
-
-                    <Text
-                        start={props.start.getTime()}
-                        end={props.end.getTime()}
-                        entytyid={props.group.resources[0].Value}
-                        onClick={() => {openReservationCreateModal(props, props?.group?.resources[0])}}
-                        style={{
-                            //height: '40px',
-                            width: '100%',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            display: 'flex'
-                            //display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`
-                        }}
-                    >
-                        Reserve
-                    </Text>
+                    {schedulerSlotIntersects(props, schedulerEvents) ? (
+                        <Text>
+                            
+                        </Text>
+                    ) : (<Text
+                            start={props.start.getTime()}
+                            end={props.end.getTime()}
+                            entytyid={props.group.resources[0].Value}
+                            onClick={() => {openReservationCreateModal(props, props?.group?.resources[0])}}
+                            style={{
+                                width: '100%',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                display: 'flex'
+                                //display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`
+                            }}
+                        >
+                            Reserve
+                        </Text>)}
                 </div>) :
                 (<>{props.children}</>)
              }

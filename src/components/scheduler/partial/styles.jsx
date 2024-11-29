@@ -672,7 +672,7 @@ export const useStyles = createStyles(({ css, token }) => ({
             cursor: default;
             position: absolute;
             overflow: hidden;
-            padding-right: 8px;
+            padding-right: 0px;
             touch-action: initial !important;
             z-index: 0 !important;
         }
