@@ -1,11 +1,11 @@
 ﻿import { useApp } from "../../context/AppProvider.jsx";
 import DrawerBottom from "../drawer/DrawerBottom.jsx";
-import {anyInList, fullNameInitials, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {anyInList, equalString, fullNameInitials, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import FormInput from "../../form/input/FormInput.jsx";
 import FormSelect from "../../form/formselect/FormSelect.jsx";
 import InlineBlock from "../inlineblock/InlineBlock.jsx";
-import {Button, Card, Divider, Flex, Typography} from "antd";
+import {Button, Card, Divider, Flex, Skeleton, Typography} from "antd";
 import {ModalRemove} from "../../utils/ModalUtils.jsx";
 import React, {useState} from "react";
 import {cx} from "antd-style";
@@ -13,12 +13,67 @@ import {costDisplay} from "../../utils/CostUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
 import FormCustomFields from "../../form/formcustomfields/FormCustomFields.jsx";
+import {useAuth} from "../../context/AuthProvider.jsx";
+import {emptyArray} from "../../utils/ListUtils.jsx";
 const {Title, Text, Link} = Typography;
 
-function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reservationMembers=[], showAllCosts, udfs, guestOrgMemberIdValue}) {
-    const { token,globalStyles } = useApp();
+function RegistrationGuestBlock({formik, 
+                                    disableAddGuest, 
+                                    reservationMembers=[],
+                                    showAllCosts,
+                                    udfs,
+                                    reloadPlayers,
+                                    loadingState,
+                                    setLoading,
+                                    guestOrgMemberIdValue}) {
+    
+    const { token, globalStyles } = useApp();
+    const { authData } = useAuth();
     const [selectedGuest, setSelectedGuest] = useState(null);
 
+    const addNewGuest = async () => {
+        let guestObject = {
+            FirstName: '',
+            LastName: '',
+            PhoneNumber: '',
+            GuestOwnerId: '',
+            MemberUdfs: anyInList(udfs) ? udfs : []
+        };
+
+        let currentReservationGuests = formik.values.ReservationGuests || [];
+        
+        let updatedReservationGuests = [...currentReservationGuests, guestObject];
+        await formik.setFieldValue('ReservationGuests', updatedReservationGuests);
+
+        console.log(updatedReservationGuests);
+        
+        setLoading('ReservationGuests', true);
+        setLoading('SelectedReservationMembers', true);
+        
+        //should recalculate prices and add new guest with all pricing
+        let newGuests = await reloadPlayers(null, updatedReservationGuests);
+        
+        let lastGuest = newGuests && newGuests.length > 0
+            ? newGuests[newGuests.length - 1]
+            : null;
+        
+        if (lastGuest){
+            setSelectedGuest(lastGuest);
+        }
+
+        setLoading('ReservationGuests', false);
+        setLoading('SelectedReservationMembers', false);
+    }
+    
+    const getGuestIndex = (incPlayer) => {
+        if (isNullOrEmpty(incPlayer)){
+            return 1;
+        }
+
+        const reservationGuests = formik.values.ReservationGuests || []; 
+        return reservationGuests.findIndex(guest => equalString(guest.Guid, incPlayer?.Guid)) + 1;
+    }
+    
     return (
         <>
             <div>
@@ -30,7 +85,18 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                 <Card
                     className={cx(globalStyles.card, anyInList(formik?.values?.ReservationGuests) ? globalStyles.playersCard : globalStyles.noPlayersCard)}>
                     <Flex vertical>
-                        {anyInList(formik?.values?.ReservationGuests) &&
+                        {toBoolean(loadingState.ReservationGuests) &&
+                            <>
+                                {emptyArray(anyInList(formik?.values?.ReservationGuests) ? formik?.values?.ReservationGuests.length : 1).map((item, index) => (
+                                    <div key={index}>
+                                        <Skeleton.Button block key={index} active={true} style={{height: `48px`}}/>
+                                        <Divider className={globalStyles.playersDivider}/>
+                                    </div>
+                                ))}
+                            </>
+                        }
+                        
+                        {(anyInList(formik?.values?.ReservationGuests) && !toBoolean(loadingState.ReservationGuests)) &&
                             <>
                                 {formik?.values?.ReservationGuests.map((guest, index) => {
                                     const isLastIndex = index === (formik?.values?.ReservationGuests).length - 1;
@@ -100,7 +166,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                         <Text>
                                                             <Ellipsis direction='end' content={displayFullName}/>
                                                         </Text>
-                                                        <Text type="secondary">${secondRowText}</Text>
+                                                        <Text type="secondary">{secondRowText}</Text>
                                                     </Flex>
                                                 </Flex>
 
@@ -121,21 +187,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                 ghost
                                 disabled={disableAddGuest}
                                 htmlType={'button'}
-                                onClick={() => {
-                                    let guestObject = {
-                                        Index: isNullOrEmpty(formik?.values?.ReservationGuests?.length) ? 1 : formik.values.ReservationGuests.length + 1,
-                                        FirstName: '',
-                                        LastName: '',
-                                        PhoneNumber: '',
-                                        GuestOwnerId: '',
-                                        MemberUdfs: anyInList(udfs) ? udfs : []
-                                    };
-
-                                    let currentReservationGuests = formik.values.ReservationGuests || [];
-                                    formik.setFieldValue('ReservationGuests', [...currentReservationGuests, guestObject]);
-
-                                    setSelectedGuest(guestObject);
-                                }}>
+                                onClick={addNewGuest}>
                             Add Guest
                         </Button>
                     </Flex>
@@ -148,7 +200,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                 closeDrawer={() => {
                     setSelectedGuest(null)
                 }}
-                label={`Edit Guest #${((selectedGuest?.Index) ?? 1)}`}
+                label={`Edit Guest #${getGuestIndex(selectedGuest)}`}
                 showButton={false}
                 confirmButtonText={''}
                 onConfirmButtonClick={() => {
@@ -157,7 +209,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
             >
                 <PaddingBlock>
                     {(anyInList(formik.values?.ReservationGuests) ? formik.values.ReservationGuests : []).map((guest, index) => {
-                        const showGuest = guest.Index === selectedGuest?.Index;
+                        const showGuest = equalString(guest.Guid, selectedGuest?.Guid);
                         const isOverriden = guest.IsOverriden;
 
                         if (!showGuest) {
@@ -188,7 +240,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                            name={`ReservationGuests[${index}].PhoneNumber`}
                                 />
 
-                                {showGuestOwner &&
+                                {toBoolean(authData?.AllowMembersToChangeGuestOwnerOnMemberPortal) &&
                                     <FormSelect form={formik}
                                                 name={`ReservationGuests[${index}].GuestOwnerId`}
                                                 label='Owner'
@@ -202,7 +254,7 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                                 propValue={isNullOrEmpty(guestOrgMemberIdValue) ? 'OrgMemberId' : guestOrgMemberIdValue}/>
                                 }
 
-                                <FormCustomFields customFields={selectedGuest.MemberUdfs} form={formik} index={index} name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>
+                                <FormCustomFields customFields={selectedGuest?.MemberUdfs} form={formik} index={index} name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>
                                 
                                 {hasGuestsWithPayment &&
                                     <>
@@ -235,8 +287,6 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                         }
                                     </>
                                 }
-
-
                             </div>
                         )
                     })}
@@ -254,12 +304,9 @@ function RegistrationGuestBlock({formik, disableAddGuest, showGuestOwner, reserv
                                             showIcon: false,
                                             onRemove: (e) => {
                                                 let currentReservationGuests = formik.values.ReservationGuests || [];
+                                                
                                                 const updatedGuests = currentReservationGuests
-                                                    .filter(g => g !== selectedGuest)
-                                                    .map((guest, index) => ({
-                                                        ...guest,
-                                                        Index: index + 1
-                                                    }));
+                                                    .filter(g => !equalString(g.Guid, selectedGuest.Guid));
                                                 
                                                 formik.setFieldValue('ReservationGuests', updatedGuests);
                                                 setSelectedGuest(null);

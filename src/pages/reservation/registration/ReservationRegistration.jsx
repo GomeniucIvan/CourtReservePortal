@@ -163,12 +163,7 @@ function ReservationRegistration() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            if (isMockData) {
-
-            } else {
-                //todo
-                alert('todo verification')
-            }
+            
         },
     });
 
@@ -213,6 +208,7 @@ function ReservationRegistration() {
                     }
 
                     formik.setValues({
+                        ...initialValues,
                         ReservationId: incResData.ReservationId,
                         Duration: incResData.Duration,
                         CourtId: incResData.CourtId,
@@ -250,7 +246,6 @@ function ReservationRegistration() {
                         appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxReservation/GetAvailableReservationTypes?id=${orgId}&${encodeParamsObject(reservationTypeData)}`).then(rTypes => {
                             setReservationTypes(rTypes);
                             setLoading('ReservationTypeId', false);
-                            console.log(formik)
                             if (!isNullOrEmpty(selectReservationTypeIdRef?.current) && isNullOrEmpty(formik?.values?.ReservationTypeId)){
                                 selectReservationTypeIdRef.current.open();
                             }
@@ -263,7 +258,7 @@ function ReservationRegistration() {
         resetFetch();
     }
 
-    const onReservationTypeChange = (resType) => {
+    const onReservationTypeChange = async (resType) => {
         setLoading('Duration', true);
 
         if (isMockData) {
@@ -288,29 +283,29 @@ function ReservationRegistration() {
                 selectedDuration: formik?.values?.Duration
             }
 
-            appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/GetDurationDropdown?id=${orgId}&${encodeParamsObject(reservationTypeData)}`).then(rDurations => {
-                setDurations(rDurations);
-                const selectedDuration = rDurations.find(duration => duration.Selected);
+            let rDurations = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/GetDurationDropdown?id=${orgId}&${encodeParamsObject(reservationTypeData)}`);
 
-                if (equalString(formik?.values?.Duration, selectedDuration?.Value)) {
-                    reloadPlayers();
-                } else if (selectedDuration) {
-                    formik.setFieldValue('Duration', selectedDuration.Value);
-                }
-                setLoading('Duration', false);
-            })
+            setDurations(rDurations);
+            const selectedDuration = rDurations.find(duration => duration.Selected);
+
+            if (equalString(formik?.values?.Duration, selectedDuration?.Value)) {
+                await reloadPlayers();
+            } else if (selectedDuration) {
+                await formik.setFieldValue('Duration', selectedDuration.Value);
+            }
+            
+            setLoading('Duration', false);
 
             let udfData = {
                 reservationTypeId: formik?.values?.ReservationTypeId,
                 uiCulture: authData?.UiCulture,
             }
 
-            appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`).then(rUdf => {
-                console.log(rUdf)
-                if (toBoolean(rUdf?.IsValid)) {
-                    setCustomFields(rUdf.Data);
-                }
-            })
+            let rUdf = appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`);
+
+            if (toBoolean(rUdf?.IsValid)) {
+                setCustomFields(rUdf.Data);
+            }
         }
     }
 
@@ -367,30 +362,17 @@ function ReservationRegistration() {
     }, [formik?.values?.EndTime]);
 
     //members guest table
-    const reloadPlayers = (orgMemberIdToRemove) => {
+    const reloadPlayers = async (orgMemberIdToRemove, incGuests) => {
         setLoading('SelectedReservationMembers', true);
 
-        let currentSelectedNumberOfGuests = formik?.values?.ReservationGuests?.length || 0;
-        let numberOfGuests = formik?.values?.ReservationGuests?.length || 0;
         let registeringOrganizationMemberId = null;
         let membersWithDisclosures = [];
         let refillDisclosureMemberIds = [];
-
-        const guestsArray = () => {
-            let reservationGuests = [];
-
-            if (anyInList(formik?.values?.ReservationGuests)) {
-                reservationGuests = formik.values.ReservationGuests.map(guest => ({
-                    FirstName: guest.FirstName,
-                    LastName: guest.LastName,
-                    PhoneNumber: guest.PhoneNumber,
-                    GuestOwnerId: guest.GuestOwnerId
-                }))
-            }
-
-            return reservationGuests;
-        }
-
+        
+        let resGuests = formik?.values?.ReservationGuests || [];
+        let numberOfGuests = resGuests.length;
+        let selectedNumberOfGuests = isNullOrEmpty(incGuests) ? numberOfGuests : incGuests.length;
+        
         const firstOwnerMemberId = reservationMembers.find(member => toBoolean(member.IsOwner));
         let filteredReservationMembers = reservationMembers.filter(
             member => member.OrgMemberId !== orgMemberIdToRemove
@@ -412,7 +394,6 @@ function ReservationRegistration() {
             RegisteringOrganizationMemberId: registeringOrganizationMemberId,
             RegisteringMemberId: formik?.values?.RegisteringMemberId,
             Date: toAspNetDateTime(reservation.Date),
-            NumberOfGuests: numberOfGuests,
             MembersString: JSON.stringify(filteredReservationMembers.map(member => ({
                 OrgMemberId: member.OrgMemberId,
                 PriceToPay: member.PriceToPay,
@@ -427,10 +408,11 @@ function ReservationRegistration() {
             InstructorId: reservation.InstructorId,
             MembersWithDisclosures: membersWithDisclosures,
             RefillMemberDisclosures: refillDisclosureMemberIds,
-            GuestsString: JSON.stringify(guestsArray()),
+            NumberOfGuests: numberOfGuests,
+            SelectedNumberOfGuests: selectedNumberOfGuests,
+            GuestsString: JSON.stringify(resGuests),
             IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation) && toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker),
             CourtId: formik?.values?.CourtId,
-            SelectedNumberOfGuests: currentSelectedNumberOfGuests,
             FeeResponsibility: formik?.values.FeeResponsibility,
             AuthUserId: reservation.MemberId,
             IsMobileLayout: true,
@@ -438,21 +420,26 @@ function ReservationRegistration() {
             IsModernTemplate: true
         };
 
-
-        appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData).then(r => {
-            if (r.IsValid) {
-                setReservationMembers(r.Data.MemberData.SelectedMembers);
-                let responseReservationGuests = r.Data.MemberData.ReservationGuests;
-
-                if (anyInList(responseReservationGuests)) {
-                    formik.setValues('ReservationGuests', responseReservationGuests)
-                }
-
-                setPlayersModelData(r.Data.MemberData);
+        let responseReservationGuests = [];
+        let r = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData);
+        if (r.IsValid) {
+            setReservationMembers(r.Data.MemberData.SelectedMembers);
+            responseReservationGuests = r.Data.MemberData.ReservationGuests || [];
+            
+            if (anyInList(responseReservationGuests)){
+                await formik.setFieldValue('ReservationGuests', responseReservationGuests)  
             }
 
-            setLoading('SelectedReservationMembers', false);
-        });
+            setPlayersModelData(r.Data.MemberData);
+        }
+
+        setLoading('SelectedReservationMembers', false);
+        
+        if (!isNullOrEmpty(incGuests)){
+            return responseReservationGuests;
+        }
+        
+        return null;
     }
 
     useEffect(() => {
@@ -689,7 +676,7 @@ function ReservationRegistration() {
             const applyNumberOfPlayersBasedOnNumberOfCourtsVariable = selectedReservationType.ApplyNumberOfPlayersBasedOnNumberOfCourts;
 
             if (toBoolean(applyNumberOfPlayersBasedOnNumberOfCourtsVariable)){
-                const currentCourtIdsCount = formik?.values?.CourtId.length || 1;
+                const currentCourtIdsCount = formik?.values?.CourtId?.length || 1;
 
                 if (!isNullOrEmpty(currentReservationTypeMinVariable)){
                     currentReservationTypeMinVariable =  parseInt(currentReservationTypeMinVariable) * currentCourtIdsCount;
@@ -1031,8 +1018,10 @@ function ReservationRegistration() {
 
                             {(toBoolean(selectedReservationType?.AllowGuestsOnMemberPortal) && isNullOrEmpty(reservation.InstructorId)) &&
                                 <RegistrationGuestBlock disableAddGuest={toBoolean(loadingState.SelectedReservationMembers)}
-                                                        showGuestOwner={toBoolean(authData?.allowMembersToChangeGuestOwnerOnMemberPortal)}
                                                         reservationMembers={reservationMembers}
+                                                        reloadPlayers={reloadPlayers}
+                                                        loadingState={loadingState}
+                                                        setLoading={setLoading}
                                                         formik={formik}
                                                         showAllCosts={(!isNullOrEmpty(playersModelData?.ReservationId) && playersModelData?.ReservationId > 0)}/>
                             }

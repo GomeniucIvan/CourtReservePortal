@@ -15,13 +15,14 @@ if (!isProduction){
 export default defineConfig({
     plugins: [react()],
     build: {
+        sourcemap: !isProduction,
         minify: 'terser',
         terserOptions: {
             compress: {
-                drop_console: false, // true, //prod true
+                drop_console: false, // true, //prod true !! Set to true in production to remove console logs
             },
             output: {
-                comments: true, //false, //prod false
+                comments: true, //false, //prod false !!// Include comments in development for debugging
             },
         },
     },

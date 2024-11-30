@@ -8,11 +8,7 @@ import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {
-    authMember,
-    clearAllLocalStorage,
-    fromAuthLocalStorage,
-    toAuthLocalStorage,
-    toLocalStorage
+    fromAuthLocalStorage
 } from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";

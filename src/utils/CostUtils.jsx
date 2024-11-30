@@ -15,8 +15,6 @@ export const costDisplay = (price, negative) => {
         price = price * -1;
     }
     
-    console.log(price)
-    
     return `${getCurrencySymbolByCulture()}${price.toFixed(2)}`;
 }
 

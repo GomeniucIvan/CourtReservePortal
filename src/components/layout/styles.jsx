@@ -19,10 +19,6 @@ export const useStyles = createStyles(({css, token}) => ({
         .width-100{
             width: 100%;
         }
-        
-        .ant-typography + .ant-typography {
-            padding-top: ${token.paddingSM}px;
-        }
 
         .ant-input,
         .ant-select:not(.ant-select-multiple) .ant-select-selector {
@@ -41,6 +37,10 @@ export const useStyles = createStyles(({css, token}) => ({
 
         .ant-checkbox-inner {
             border-radius: ${token.checkboxBorderRadius}px;
+        }
+        
+        .ant-ribbon{
+            border-radius: ${token.ribonBorderRadius}px;
         }
     `,
     layoutExtra: css`
