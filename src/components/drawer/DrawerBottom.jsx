@@ -37,11 +37,11 @@ const DrawerBottom = forwardRef(({
     const headerRef = useRef(null);
     const footerRef = useRef(null);
     const searchRef = useRef(null);
-    const drawerBody = useRef(null);
     
     const [topBottomHeight, setTopBottomHeight] = useState('');
     const [searchValue, setSearchValue] = useState('');
-
+    const [isFullyOpened, setIsFullyOpened] = useState(false);
+    
     // Use useRef to persist the debounceTimeout value between renders
     const debounceTimeoutRef = useRef(null);
 
@@ -77,18 +77,12 @@ const DrawerBottom = forwardRef(({
     };
 
     useEffect(() => {
-        if (drawerBody.current) {
-            if (!showDrawer) {
-                drawerBody.current.style.overflow = 'hidden';
-            } else {
-                
-                //overflow:auto not display full height on children appear
-                const timeout = setTimeout(() => {
-                    drawerBody.current.style.overflow = '';
-                }, 100);
-
-                return () => clearTimeout(timeout);
-            }
+        if (!showDrawer) {
+            setIsFullyOpened(false);
+        } else {
+            setTimeout(() => {
+                setIsFullyOpened(true);
+            }, 100);
         }
     }, [showDrawer]);
     
@@ -142,8 +136,7 @@ const DrawerBottom = forwardRef(({
                         }
                     </Flex>
 
-                    <div className={cx(styles.drawerBody)} 
-                         ref={drawerBody}
+                    <div className={cx(isFullyOpened && styles.drawerBodyOpened, !isFullyOpened && styles.drawerBodyClosed)}
                          style={{ height: (fullHeight ? `calc(${maxHeightVh}vh - ${topBottomHeight}px)` : '')}}>
                         {children}
                     </div>
