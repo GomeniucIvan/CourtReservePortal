@@ -51,7 +51,7 @@ function ExpandedScheduler() {
 
     useEffect(() => {
         if (!isNullOrEmpty(selectedDate) && schedulerData){
-            console.log(selectedDate)
+
             const result = {
                 startDate: selectedDate,
                 //end: scheduler.view().endDate(),

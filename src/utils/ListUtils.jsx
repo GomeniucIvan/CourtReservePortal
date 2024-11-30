@@ -1,4 +1,4 @@
-import {isNullOrEmpty} from "./Utils.jsx";
+import {equalString, isNullOrEmpty} from "./Utils.jsx";
 
 const isValidJson = (jsonString) => {
     if (isNullOrEmpty(jsonString)){
@@ -72,10 +72,11 @@ export const schedulerSlotIntersects = (item, events) => {
         const eventEnd = new Date(event.end).getTime();
 
         return (
-            (itemStart >= eventStart && itemStart < eventEnd) || // Item starts during the event
-            (itemEnd > eventStart && itemEnd <= eventEnd) ||    // Item ends during the event
-            (itemStart <= eventStart && itemEnd >= eventEnd) || // Item fully overlaps the event
-            (eventStart < itemEnd && eventEnd > itemStart)      // Event fully overlaps the item
+           equalString(event?.dataItem?.CourtId, item.group?.resources[0]?.Id) &&
+            ((itemStart >= eventStart && itemStart < eventEnd) || // Item starts during the event
+                (itemEnd > eventStart && itemEnd <= eventEnd) ||    // Item ends during the event
+                (itemStart <= eventStart && itemEnd >= eventEnd) || // Item fully overlaps the event
+                (eventStart < itemEnd && eventEnd > itemStart))      // Event fully overlaps the item)
         );
     });
 };
