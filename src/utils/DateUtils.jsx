@@ -1,11 +1,5 @@
 import {equalString, isNullOrEmpty} from "./Utils.jsx";
-import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 import moment from "moment";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 let clientUiCulture = 'en-US';
 
@@ -151,41 +145,28 @@ export const cultureStartingWithDay = (uiCulture) => {
     return isStartingWithDay;
 }
 
+export const fromAspDate = (dateString) => {
+    if (!dateString) return null;
+    return moment(dateString).toDate();
+}
+
+export const fromAspDateToString = (dateString) => {
+    if (!dateString) return null;
+    return moment(dateString).format(`${dateFormatByUiCulture()} HH:mm:ss`);
+}
+
 export const fixDate = (dateString) =>{
     if (!dateString) return null;
 
-    // Check if the format is the Microsoft JSON date format
-    const msDateMatch = (dateString && typeof dateString === 'string') ? dateString.match(/\/Date\((\d+)([-+]\d+)?\)\//) : null;
-    if (msDateMatch) {
-        const ms = parseInt(msDateMatch[1], 10); // Extract milliseconds since epoch
-        //return dayjs.utc(ms).tz(dayjs.tz.guess(), true).format('YYYY-MM-DDTHH:mm:ssZ');
-        return dayjs.utc(ms).format('YYYY-MM-DDTHH:mm:ssZ');
-    }
-
-    const parsedDate = new Date(dateString);
-    if (!isNaN(parsedDate.getTime())) {
-        return parsedDate;
-    }
-
-    return null;
+    return fromAspDate(dateString);
 }
 
 export const toReactDate = (incDate) => {
     if (isNullOrEmpty(incDate)){
         return '';
     }
-
-    const formattedDate = moment(incDate).format('YYYY-MM-DD HH:mm:ss');
-    return new Date(formattedDate);
-}
-
-export const toAspDateTime = (incDate) => {
-    if (isNullOrEmpty(incDate)){
-        return '';
-    }
-
-    const formattedDate = moment(incDate).format('YYYY-MM-DD HH:mm:ss');
-    return new Date(formattedDate);
+    
+    return fromAspDate(incDate);
 }
 
 export const dateToString = (incDate) => {
@@ -193,9 +174,7 @@ export const dateToString = (incDate) => {
         return '';
     }
 
-    const fixedDate = fixDate(incDate);
-    const date = dayjs(fixedDate).utc();
-    return date.format(dateFormatByUiCulture());
+    return moment(incDate).format(dateFormatByUiCulture());
 }
 
 export const dateToTimeString = (incDate, twentyFourHourFormat) => {
@@ -218,29 +197,12 @@ export const isNonUsCulture = () => {
     return equalString(clientUiCulture, 'en-us');
 }
 
-export const toAspNetDateTime = (incDate) => {
-    if (isNullOrEmpty(incDate)) {
-        return '';
-    }
-    return moment(incDate).format('MM/DD/YYYY hh:mm:ss A');
-}
-
-export const toAspNetDate = (incDate) => {
-    return dateToString(incDate);
-    
-    // const milliseconds = parseInt(incDate.replace(/\/Date\((\d+)\)\//, '$1'), 10);
-    // console.log(milliseconds)
-    // return new Date(milliseconds);
-}
-
 export const dateTimeToFormat = (incDate, format) => {
     if (isNullOrEmpty(incDate)){
         return '';
     }
 
-    const fixedDate = fixDate(incDate);
-    const date = dayjs(fixedDate);
-    return date.format(format);
+    return incDate.format(format);
 }
 
 export const dateTimeToTimes = (incStartDate, incEndDate, format) => {

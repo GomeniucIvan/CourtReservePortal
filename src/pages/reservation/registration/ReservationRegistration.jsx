@@ -30,12 +30,8 @@ import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {
-    dateTimeToFormat,
-    dateToTimeString,
-    fixDate, toAspDateTime,
-    toAspNetDate,
-    toAspNetDateTime,
-    toReactDate
+    dateTimeToFormat, dateToString,
+    dateToTimeString
 } from "../../../utils/DateUtils.jsx";
 import {costDisplay} from "../../../utils/CostUtils.jsx";
 import {any} from "prop-types";
@@ -172,7 +168,9 @@ function ReservationRegistration() {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-
+            
+            console.log(values)
+            
             let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
             console.log(response);
             
@@ -220,7 +218,7 @@ function ReservationRegistration() {
                             formik.setFieldValue('SportTypeId', firstActiveSportTypeId);
                         }
                     }
-
+                    
                     formik.setValues({
                         ...initialValues,
                         MemberId: incResData.MemberId,
@@ -238,7 +236,7 @@ function ReservationRegistration() {
                         SelectedResourceName: incResData.SelectedResourceName,
                         StartTime: dateToTimeString(start, true),
                         EndTime: dateToTimeString(end, true),
-                        Date: toAspDateTime(incResData.Date),
+                        Date: fromAspDateToString(incResData.Date),
                     });
 
                     setIsFetching(false);
@@ -416,7 +414,7 @@ function ReservationRegistration() {
             ReservationTypeId: formik?.values?.ReservationTypeId,
             RegisteringOrganizationMemberId: registeringOrganizationMemberId,
             RegisteringMemberId: formik?.values?.RegisteringMemberId,
-            Date: toAspNetDateTime(reservation.Date),
+            Date: formik?.values?.Date,
             MembersString: JSON.stringify(filteredReservationMembers.map(member => ({
                 OrgMemberId: member.OrgMemberId,
                 PriceToPay: member.PriceToPay,

@@ -16,8 +16,7 @@ import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
 import {
     dateFormatByUiCulture,
     dateTimeToFormat,
-    dateToTimeString,
-    toAspNetDateTime,
+    dateToTimeString, fromAspDateToString,
     toReactDate
 } from "../../../utils/DateUtils.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
@@ -80,7 +79,7 @@ function EventCalendar() {
         }
 
         const result = {
-            startDate: toAspNetDateTime(selectedDate),
+            startDate: fromAspDateToString(selectedDate),
             //end: scheduler.view().endDate(),
             Date: new Date(selectedDate).toUTCString(),
             orgId: orgId,

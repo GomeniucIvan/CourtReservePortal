@@ -51,16 +51,17 @@ function ExpandedScheduler() {
 
     useEffect(() => {
         if (!isNullOrEmpty(selectedDate) && schedulerData){
+            console.log(selectedDate)
             const result = {
                 startDate: selectedDate,
                 //end: scheduler.view().endDate(),
                 orgId: schedulerData.OrgId,
                 TimeZone: schedulerData.TimeZone,
-                Date: new Date(selectedDate).toUTCString(),
+                Date: moment(selectedDate).format(dateFormatByUiCulture()),
                 KendoDate: {
-                    Year: dayjs(selectedDate).year(),    
-                    Month: dayjs(selectedDate).month() + 1,
-                    Day: dayjs(selectedDate).date()
+                    Year: moment(selectedDate).year(),
+                    Month: moment(selectedDate).month() + 1,
+                    Day: moment(selectedDate).date()
                 },
                 UiCulture: schedulerData.UiCulture,
                 CostTypeId: schedulerData.CostTypeId,
@@ -210,9 +211,18 @@ function ExpandedScheduler() {
     
     const handleDateChange = (event) => {
         const selectedDate = event.value;
-        setSelectedDate(selectedDate);
+        
+        //datepicker
+        let selectedLocalDate = selectedDate._localDate;
+        
+        //header arrows, today
+        if (isNullOrEmpty(selectedLocalDate)){
+            selectedLocalDate = selectedDate;
+        }
+        
+        setSelectedDate(selectedLocalDate);
 
-        let dateTimeToSave = dateTimeToFormat(selectedDate, dateFormatByUiCulture());
+        let dateTimeToSave = moment(selectedLocalDate).format(dateFormatByUiCulture());
         saveCookie('InternalCalendarDate', dateTimeToSave, 300);
     }
     
