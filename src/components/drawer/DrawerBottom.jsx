@@ -6,6 +6,7 @@ import {CloseOutline, SearchOutline} from "antd-mobile-icons";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
+import {cx} from "antd-style";
 
 const {Title, Text} = Typography;
 const {Search} = Input;
@@ -36,6 +37,8 @@ const DrawerBottom = forwardRef(({
     const headerRef = useRef(null);
     const footerRef = useRef(null);
     const searchRef = useRef(null);
+    const drawerBody = useRef(null);
+    
     const [topBottomHeight, setTopBottomHeight] = useState('');
     const [searchValue, setSearchValue] = useState('');
 
@@ -73,6 +76,22 @@ const DrawerBottom = forwardRef(({
         }, 1000);
     };
 
+    useEffect(() => {
+        if (drawerBody.current) {
+            if (!showDrawer) {
+                drawerBody.current.style.overflow = 'hidden';
+            } else {
+                
+                //overflow:auto not display full height on children appear
+                const timeout = setTimeout(() => {
+                    drawerBody.current.style.overflow = '';
+                }, 100);
+
+                return () => clearTimeout(timeout);
+            }
+        }
+    }, [showDrawer]);
+    
     return (
         <>
             <Popup
@@ -123,7 +142,9 @@ const DrawerBottom = forwardRef(({
                         }
                     </Flex>
 
-                    <div className={styles.drawerBottom} style={{height: (fullHeight ? `calc(${maxHeightVh}vh - ${topBottomHeight}px)` : '')}}>
+                    <div className={cx(styles.drawerBody)} 
+                         ref={drawerBody}
+                         style={{ height: (fullHeight ? `calc(${maxHeightVh}vh - ${topBottomHeight}px)` : '')}}>
                         {children}
                     </div>
 

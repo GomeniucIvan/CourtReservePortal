@@ -179,6 +179,15 @@ export const toReactDate = (incDate) => {
     return new Date(formattedDate);
 }
 
+export const toAspDateTime = (incDate) => {
+    if (isNullOrEmpty(incDate)){
+        return '';
+    }
+
+    const formattedDate = moment(incDate).format('YYYY-MM-DD HH:mm:ss');
+    return new Date(formattedDate);
+}
+
 export const dateToString = (incDate) => {
     if (isNullOrEmpty(incDate)){
         return '';

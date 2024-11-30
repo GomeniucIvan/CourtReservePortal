@@ -227,7 +227,8 @@ function ExpandedScheduler() {
             state: {
                 dataItem,
                 start,
-                end
+                end,
+                customSchedulerId
             }
         });
     }

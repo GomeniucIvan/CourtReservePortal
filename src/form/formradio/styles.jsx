@@ -15,7 +15,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         margin-right: 0;
         padding: 0 ${token.padding}px;
         border-bottom: 1px solid ${token.colorBorder};
-        
+
         &:last-child{
             border-bottom: none;
         }

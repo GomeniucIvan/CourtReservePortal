@@ -4,7 +4,7 @@ export const useStyles = createStyles(({ css, token }) => ({
     drawerButton: css`
         padding: ${token.padding}px;
     `,
-    drawerBottom: css `
+    drawerBody: css `
         overflow: auto;
     `,
     rangeDatePickerInput: css`

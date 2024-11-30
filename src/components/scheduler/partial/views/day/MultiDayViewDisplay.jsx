@@ -178,8 +178,6 @@ export const MultiDayView = (props) => {
     React.useMemo(() => mapItemsToSlots(timeItems, timeSlots, false), [timeItems, timeSlots]);
     React.useMemo(() => mapSlotsToItems(timeItems, timeSlots, false), [timeItems, timeSlots]);
     
-    console.log(timeOccurrences)
-    
     let events = timeOccurrences.filter(v => !toBoolean(v.dataItem?.IsWaitListSlot ));
     
     const head = (

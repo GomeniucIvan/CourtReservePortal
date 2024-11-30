@@ -32,7 +32,7 @@ import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {
     dateTimeToFormat,
     dateToTimeString,
-    fixDate,
+    fixDate, toAspDateTime,
     toAspNetDate,
     toAspNetDateTime,
     toReactDate
@@ -48,6 +48,7 @@ import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "../../../utils/Fil
 import {useTranslation} from "react-i18next";
 import {Document} from "react-pdf";
 import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
+import apiService from "../../../api/api.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -55,11 +56,10 @@ function ReservationRegistration() {
     const navigate = useNavigate();
     const {orgId, authData} = useAuth();
     const [isFetching, setIsFetching] = useState(true);
-    const {styles} = useStyles();
     const location = useLocation();
-    const {dataItem, start, end} = location.state || {};
+    const {dataItem, start, end, customSchedulerId} = location.state || {};
     const {t} = useTranslation('');
-
+    
     const {
         isMockData,
         setIsFooterVisible,
@@ -110,6 +110,8 @@ function ReservationRegistration() {
         ReservationTypeId: '',
         Duration: '',
         CourtId: '',
+        MemberId: '',
+        CustomSchedulerId: customSchedulerId,
         RegisteringMemberId: null,
         SelectedResourceName: null,
         StartTime: '',
@@ -121,8 +123,16 @@ function ReservationRegistration() {
         ReservationGuests: [],
         FeeResponsibility: '',
         ResourceIds: [],
+        OrgId: orgId,
+        Date: '',
 
-
+        //
+        IsConsolidatedScheduler: false,
+        IsFromDynamicSlots: false,
+        InstructorId: '',
+        ReservationQueueId: '',
+        ReservationQueueSlotId: '',
+        
         //match maker   
         SportTypeId: '',
         MatchMakerTypeId: '',
@@ -135,7 +145,7 @@ function ReservationRegistration() {
         Description: null,
         MatchMakerIsPrivateMatch: false,
         MatchMakerJoinCode: '',
-
+        DisclosureAgree: false,
     };
 
     const fields = Object.keys(initialValues);
@@ -163,7 +173,10 @@ function ReservationRegistration() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
+            let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
+            console.log(response);
             
+            setIsLoading(false);
         },
     });
 
@@ -177,8 +190,9 @@ function ReservationRegistration() {
             setIsFetching(false);
         } else {
 
-            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}`).then(r => {
+            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}&customSchedulerId=${customSchedulerId}`).then(r => {
                 if (toBoolean(r?.IsValid)) {
+                    console.log(r.Data)
                     let incResData = r.Data.ReservationModel;
                     let matchMakerData = r.Data.MatchMakerData;
                     let matchMakerShowSportTypes = toBoolean(r.Data.MatchMakerShowSportTypes);
@@ -209,13 +223,22 @@ function ReservationRegistration() {
 
                     formik.setValues({
                         ...initialValues,
+                        MemberId: incResData.MemberId,
+                        CustomSchedulerId: incResData.CustomSchedulerId,
+                        IsConsolidatedScheduler: incResData.IsConsolidatedScheduler,
+                        IsFromDynamicSlots: incResData.IsFromDynamicSlots,
+                        InstructorId: incResData.InstructorId,
+                        ReservationQueueId: incResData.ReservationQueueId,
+                        ReservationQueueSlotId: incResData.ReservationQueueSlotId,
+                        OrgId: incResData.OrgId,
                         ReservationId: incResData.ReservationId,
                         Duration: incResData.Duration,
                         CourtId: incResData.CourtId,
                         RegisteringMemberId: incResData.RegisteringMemberId,
                         SelectedResourceName: incResData.SelectedResourceName,
                         StartTime: dateToTimeString(start, true),
-                        EndTime: dateToTimeString(end, true)
+                        EndTime: dateToTimeString(end, true),
+                        Date: toAspDateTime(incResData.Date),
                     });
 
                     setIsFetching(false);
@@ -1123,7 +1146,7 @@ function ReservationRegistration() {
                                 </label>
 
                                 <Flex align={'center'}>
-                                    <Checkbox className={globalStyles.checkboxWithLink}>I agree to the </Checkbox>
+                                    <Checkbox className={globalStyles.checkboxWithLink} onChange={(e) => {formik.setFieldValue('DisclosureAgree', e.target.checked)}}>I agree to the </Checkbox>
                                     <u style={{color: token.colorLink}}
                                        onClick={() => setShowTermAndCondition(true)}> Terms and
                                         Conditions</u>
