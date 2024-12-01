@@ -150,6 +150,7 @@ export const fromAspDate = (dateString) => {
     return moment(dateString).toDate();
 }
 
+
 export const fromAspDateToString = (dateString) => {
     if (!dateString) return null;
     return moment(dateString).format(`${dateFormatByUiCulture()} HH:mm:ss`);
@@ -202,7 +203,7 @@ export const dateTimeToFormat = (incDate, format) => {
         return '';
     }
 
-    return incDate.format(format);
+    return moment(incDate).format(format);
 }
 
 export const dateTimeToTimes = (incStartDate, incEndDate, format) => {

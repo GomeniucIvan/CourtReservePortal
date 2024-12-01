@@ -23,28 +23,27 @@ import FormSelect from "../../../form/formselect/FormSelect.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
 import SVG from "../../../components/svg/SVG.jsx";
-import {ModalRemove} from "../../../utils/ModalUtils.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {
-    dateTimeToFormat, dateToString,
-    dateToTimeString
+    dateTimeToFormat,
+    dateToTimeString,
+    fromAspDateToString
 } from "../../../utils/DateUtils.jsx";
 import {costDisplay} from "../../../utils/CostUtils.jsx";
-import {any} from "prop-types";
 import {matchmakerGenderList, numberList} from "../../../utils/SelectUtils.jsx";
-import {toLocalStorage} from "../../../storage/AppStorage.jsx";
-import {AppstoreOutlined, BarsOutlined, DownloadOutlined} from "@ant-design/icons";
+import {DownloadOutlined} from "@ant-design/icons";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
 import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
 import {useTranslation} from "react-i18next";
 import {Document} from "react-pdf";
 import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
-import apiService from "../../../api/api.jsx";
+import FormCheckbox from "../../../form/formcheckbox/FomCheckbox.jsx";
+import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -96,6 +95,8 @@ function ReservationRegistration() {
     const [resources, setResources] = useState([]);
     const [pdfDataUrl, setPdfDataUrl] = useState(null);
     const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
+    
+    const [validationSchema, setValidationSchema] = useState(Yup.object({}));
 
     let selectRegisteringMemberIdRef = useRef();
     let selectReservationTypeIdRef = useRef();
@@ -147,21 +148,30 @@ function ReservationRegistration() {
     const fields = Object.keys(initialValues);
     const {loadingState, setLoading} = useLoadingState(fields);
 
-    const validationSchema = Yup.object({
-        ReservationTypeId: Yup.string().required('Reservation Type is require.'),
-        MatchMakerTypeId: Yup.string().when('IsOpenReservation', {
-            is: true,
-            then: (schema) => schema.required('Match Type is required.'),
-            otherwise: (schema) => schema.nullable(),
-        }),
-        // MatchMakerGender: Yup.string().when('isOpenReservation', {
-        //     is: true,
-        //     then: (schema) => schema.required('Gender Restriction is required.'),
-        //     otherwise: (schema) => schema.nullable(),
-        // }),
-    });
 
-    const formik = useFormik({
+    const getValidationSchema = () => {
+        let schemaFields = {
+            ReservationTypeId: Yup.string().required('Reservation Type is require.'),
+            MatchMakerTypeId: Yup.string().when('IsOpenReservation', {
+                is: true,
+                then: (schema) => schema.required('Match Type is required.'),
+                otherwise: (schema) => schema.nullable(),
+            }),
+        };
+
+        if(!isNullOrEmpty(disclosure)){
+            schemaFields.DisclosureAgree = Yup.bool().oneOf([true], 'You must agree to the terms & conditions.');
+        }
+
+        return Yup.object(schemaFields);
+    }
+
+    
+    useEffect(() => {
+        setValidationSchema(getValidationSchema());
+    }, [disclosure])
+    
+    const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
         validateOnBlur: true,
@@ -1138,18 +1148,12 @@ function ReservationRegistration() {
                         }
 
                         {!isNullOrEmpty(disclosure) &&
-                            <Flex vertical={true}>
-                                <label className={globalStyles.globalLabel}>
-                                    {disclosure?.Name}
-                                </label>
-
-                                <Flex align={'center'}>
-                                    <Checkbox className={globalStyles.checkboxWithLink} onChange={(e) => {formik.setFieldValue('DisclosureAgree', e.target.checked)}}>I agree to the </Checkbox>
-                                    <u style={{color: token.colorLink}}
-                                       onClick={() => setShowTermAndCondition(true)}> Terms and
-                                        Conditions</u>
-                                </Flex>
-                            </Flex>
+                           <FormCheckbox label={disclosure?.Name} 
+                                         formik={formik}
+                                         name={'DisclosureAgree'}
+                                         text={`I agree to the `} 
+                                         description={'Terms and Conditions'} 
+                                         descriptionClick={() => setShowTermAndCondition(true)}/>
                         }
                     </PaddingBlock>
 
