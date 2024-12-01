@@ -26,7 +26,8 @@ import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx"
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import {validatePaymentProfile} from "../../../utils/ValidationUtils.jsx";
+import {setFormikError, validatePaymentProfile} from "../../../utils/ValidationUtils.jsx";
+import FormCheckbox from "../../../form/formcheckbox/FomCheckbox.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -34,7 +35,6 @@ function LoginReview() {
     const {formikData, setFormikData, setIsLoading, setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
     const { t } = useTranslation('login');
     const navigate = useNavigate();
-    const [validationSchema, setValidationSchema] = useState(Yup.object({}));
     const [paymentFrequencyCost, setPaymentFrequencyCost] = useState(null);
     const [selectedMembershipRequirePayment, setSelectedMembershipRequirePayment] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
@@ -45,6 +45,8 @@ function LoginReview() {
     const password = formikData?.password;
     const confirmPassword = formikData?.confirmPassword;
     const selectedOrgId = formikData?.selectedOrgId;
+    const isDisclosuresRequired = formikData?.isDisclosuresRequired;
+    const selectedMembership = formikData?.selectedMembership;
     
     useEffect(() => {
         setIsFooterVisible(true);
@@ -66,8 +68,6 @@ function LoginReview() {
             isNullOrEmpty(selectedOrgId)){
             navigate(AuthRouteNames.LOGIN);
         } else{
-            let selectedMembership = formik?.values?.selectedMembership;
-
             if (selectedMembership) {
                 let paymentFrequencyValue = null;
                 if (!isNullOrEmpty(selectedMembership) && anyInList(selectedMembership?.DetailedPaymentOptions)) {
@@ -102,6 +102,7 @@ function LoginReview() {
         paymentFrequency: '',
         disclosureAgree: false,
         hiddenFortisTokenId: '',
+        isDisclosuresRequired: isDisclosuresRequired
     };
 
     const getMembershipInitialValues = (incData) => {
@@ -111,20 +112,13 @@ function LoginReview() {
         };
     }
 
-    const getAdditionalInfoValidationSchema = () => {
-        let selectedMembership = formik?.values?.selectedMembership;
-        
+    const validationSchema = () => {
         let schemaFields = {
 
         };
-        
+
         if (!isNullOrEmpty(selectedMembership) && moreThanOneInList(selectedMembership?.DetailedPaymentOptions)) {
             schemaFields.paymentFrequency = Yup.string().required('Payment Frequency is required.');
-        }
-        
-        if (toBoolean(formik?.values?.isDisclosuresRequired)) {
-            //todo(IV) not working
-            schemaFields.disclosureAgree = Yup.bool().oneOf([true], 'You must agree to the terms & conditions.');
         }
 
         return Yup.object(schemaFields);
@@ -132,15 +126,19 @@ function LoginReview() {
     
     const formik = useCustomFormik({
         initialValues: getMembershipInitialValues(formikData),
-        validationSchema: validationSchema,
+        validationSchema: validationSchema(),
         validation: () => {
-            
+            //card details
             let formikPaymentFrequency = formik?.values?.paymentFrequency;
-            let selectedMembership = formik?.values?.selectedMembership;
             const isMembershipRequirePayment = membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(formik?.values?.requireCardOnFile);
             let isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment);
             
             let isValidForm = true;
+            
+            if (isDisclosuresRequired && !toBoolean(formik?.values?.disclosureAgree)) {
+                setFormikError(t, formik, 'disclosureAgree', null, 'You must agree to the terms & conditions.')
+                isValidForm = false;
+            }
             
             return isValidPaymentProfile && isValidForm;
         },
@@ -151,24 +149,22 @@ function LoginReview() {
             setShowReviewModal(true);
         },
     });
-
+    
     useEffect(() => {
         if (!isNullOrEmpty(formik?.values)){
             let selectedPaymentFrequency = formik?.values?.paymentFrequency;
-            let selectedMembership = formik?.values?.selectedMembership;
 
             const isMembershipRequirePayment = membershipRequirePayment(selectedMembership, selectedPaymentFrequency);
             const paymentFrequencyCost = membershipPaymentFrequencyCost(selectedMembership, selectedPaymentFrequency);
             setPaymentFrequencyCost(paymentFrequencyCost);
             setSelectedMembershipRequirePayment(toBoolean(isMembershipRequirePayment));
-            setValidationSchema(getAdditionalInfoValidationSchema());
+
         }
     }, [formik?.values]);
     
     const checkToShowRecipient = () => {
         const selectedPaymentFrequency = formik?.values?.paymentFrequency;
         const selectedAccountType = formik?.values?.card_accountNumber;
-        const selectedMembership = formik?.values?.selectedMembership;
         let innerShowRecipient = false;
 
         if (selectedMembership && !isNullOrEmpty(selectedPaymentFrequency) && !isNullOrEmpty(selectedAccountType)) {
@@ -200,19 +196,19 @@ function LoginReview() {
 
             {!isFetching &&
                 <>
-                    {!isNullOrEmpty(formik?.values?.selectedMembership) &&
+                    {!isNullOrEmpty(selectedMembership) &&
                         <>
                             <PaddingBlock onlyTop={true}>
-                                <FormInputDisplay label={t(`review.membership`)} value={formik?.values?.selectedMembership?.Name}/>
+                                <FormInputDisplay label={t(`review.membership`)} value={selectedMembership?.Name}/>
 
-                                {anyInList(formik?.values?.selectedMembership?.DetailedPaymentOptions) &&
+                                {anyInList(selectedMembership?.DetailedPaymentOptions) &&
                                     <FormSelect
                                         form={formik}
                                         name='paymentFrequency'
                                         label={t(`review.paymentFrequency`)}
-                                        options={formik?.values?.selectedMembership?.DetailedPaymentOptions}
-                                        required={moreThanOneInList(formik?.values?.selectedMembership?.DetailedPaymentOptions)}
-                                        disabled={oneListItem(formik?.values?.selectedMembership?.DetailedPaymentOptions)}
+                                        options={selectedMembership?.DetailedPaymentOptions}
+                                        required={moreThanOneInList(selectedMembership?.DetailedPaymentOptions)}
+                                        disabled={oneListItem(selectedMembership?.DetailedPaymentOptions)}
                                         propText='Text'
                                         propValue='Value'
                                         onValueChange={e => {
@@ -224,7 +220,7 @@ function LoginReview() {
                         </>
                     }
 
-                    {(!isNullOrEmpty(formik?.values?.selectedMembership) && (selectedMembershipRequirePayment || toBoolean(formik?.values?.requireCardOnFile))) &&
+                    {(!isNullOrEmpty(selectedMembership) && (selectedMembershipRequirePayment || toBoolean(formik?.values?.requireCardOnFile))) &&
                         <Divider />
                     }
                     
@@ -256,14 +252,14 @@ function LoginReview() {
                         </PaddingBlock>
                     }
                     
-                    {toBoolean(formik?.values?.isDisclosuresRequired) &&
+                    {toBoolean(isDisclosuresRequired) &&
                         <PaddingBlock>
-                            <Flex align={'center'}>
-                                <Checkbox onChange={(e) => {formik.setFieldValue('disclosureAgree', e.target.checked)}}>I agree to the </Checkbox>
-                                <u style={{color: token.colorLink}}
-                                   onClick={() => setShowTermAndCondition(true)}> Terms and
-                                    Conditions</u>
-                            </Flex>
+                            <FormCheckbox label={''}
+                                          formik={formik}
+                                          name={'disclosureAgree'}
+                                          text={`I agree to the `}
+                                          description={'Terms and Conditions'}
+                                          descriptionClick={() => setShowTermAndCondition(true)}/>
                         </PaddingBlock>
                     }
 

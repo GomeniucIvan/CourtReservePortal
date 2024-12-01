@@ -30,9 +30,13 @@ const FormCheckbox = ({label, text, formik, name, description, descriptionClick}
     return (
         <>
             <Flex vertical={true}>
-                <label className={globalStyles.globalLabel}>
-                    {label}
-                </label>
+                {!isNullOrEmpty(label) &&
+                    <>
+                        <label className={globalStyles.globalLabel}>
+                            {label}
+                        </label>
+                    </>
+                }
 
                 <Flex align={'center'}>
                     <Checkbox className={globalStyles.checkboxWithLink} onChange={(e) => {formik.setFieldValue(name, e.target.checked)}}>{text}</Checkbox>

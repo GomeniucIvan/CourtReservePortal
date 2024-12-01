@@ -1,11 +1,18 @@
 ﻿import {anyInList, equalString, isNullOrEmpty, toBoolean} from "./Utils.jsx";
 import {logError} from "./ConsoleUtils.jsx";
+import * as Yup from "yup";
+import {requiredMessage} from "./TranslateUtils.jsx";
 
-const setFormikError = (t, formik, fieldName, label) => {
-    formik.setFieldError(fieldName, t('common:requiredMessage', {label: label}));
+export const setFormikError = (t, formik, fieldName, errorKey, error) => {
+    if (!isNullOrEmpty(errorKey)){
+        formik.setFieldError(fieldName, t('common:requiredMessage', {label: errorKey}));
+        logError(t('common:requiredMessage', {label: errorKey}));
+    } else{
+        formik.setFieldError(fieldName, error);
+        logError(error);
+    }
+    
     formik.setFieldTouched(fieldName, true, false);
-
-    logError(t('common:requiredMessage', {label: label}));
 }
 
 export const validateUdfs = (t, formik) => {
@@ -24,6 +31,38 @@ export const validateUdfs = (t, formik) => {
             let fieldName = `Udfs[${i}].Value`;
             setFormikError(t, formik, fieldName, currentUdf.Label);
             isValid = false; 
+        }
+    }
+
+    return isValid;
+};
+
+export const validateRatingCategories = (t, formik) => {
+    let ratingCategories = formik?.values?.RatingCategories;
+
+    if (!anyInList(ratingCategories)) {
+        return true;
+    }
+    
+    let isValid = true;
+
+    for (let i = 0; i < ratingCategories.length; i++) {
+        let currentRatingCategory = ratingCategories[i];
+
+        if (toBoolean(currentRatingCategory?.IsRequired)) {
+            if (category.AllowMultipleRatingValues) {
+                if (!anyInList(category?.SelectedRatingsIds)){
+                    let fieldName = `RatingCategories[${i}].SelectedRatingsIds`;
+                    setFormikError(t, formik, fieldName, category.Name);
+                    isValid = false;
+                }
+            } else{
+                if (isNullOrEmpty(category?.SelectedRatingId)){
+                    let fieldName = `RatingCategories[${i}].SelectedRatingId`;
+                    setFormikError(t, formik, fieldName, category.Name);
+                    isValid = false;
+                }
+            }
         }
     }
 

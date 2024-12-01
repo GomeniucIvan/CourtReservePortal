@@ -29,6 +29,7 @@ import FormStateProvince from "../../../form/formstateprovince/FormStateProvince
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import {requiredMessage} from "../../../utils/TranslateUtils.jsx";
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
+import {validateRatingCategories, validateUdfs} from "../../../utils/ValidationUtils.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -93,8 +94,8 @@ function LoginAdditionalInfo() {
         formIncludes: {},
         paymentTypes: [],
 
-        ratingCategories: [],
-        userDefinedFields: [],
+        RatingCategories: [],
+        Udfs: [],
     };
 
     useEffect(() => {
@@ -137,27 +138,6 @@ function LoginAdditionalInfo() {
             if (signupForm.IncludeGender && signupForm.IsGenderRequired) {
                 schemaFields.gender = Yup.string().required(requiredMessage(t, 'additionalInfo.form.gender'));
             }
-            
-            // Add validation for rating categories
-            if (signupForm.RatingCategories) {
-                signupForm.RatingCategories.forEach((category, index) => {
-                    if (category.IsRequired) {
-                        if (category.AllowMultipleRatingValues) {
-                            schemaFields[`ratingCategories[${index}].SelectedRatingsIds`] = Yup.array().min(1, requiredMessage(t, category.Name)).required(requiredMessage(t, category.Name))
-                        } else {
-                            schemaFields[`ratingCategories[${index}].SelectedRatingId`] = Yup.string().required(requiredMessage(t, category.Name));
-                        }
-                    }
-                });
-            }
-
-            if (signupForm.UserDefinedFields) {
-                signupForm.UserDefinedFields.forEach((udf, index) => {
-                    if (udf.IsRequired) {
-                        schemaFields[`userDefinedFields[${index}].Value`] = Yup.string().required(requiredMessage(t, udf.Label));
-                    }
-                });
-            }
         }
 
         return Yup.object(schemaFields);
@@ -166,6 +146,11 @@ function LoginAdditionalInfo() {
     const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: getValidationSchema(additionInfoData),
+        validation: () => {
+            const isValidUdfs = validateUdfs(t, formik);
+            const isValidRatingCategories = validateRatingCategories(t, formik);
+            return isValidUdfs && isValidRatingCategories;
+        },
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
@@ -175,8 +160,12 @@ function LoginAdditionalInfo() {
                 setIsLoading(false);
                 setShowReviewModal(true)
             } else {
+                let postModel = values;
+                postModel.customFields = values.Udfs;
+                postModel.ratingCategories = values.RatingCategories;
+                
                 setIsLoading(false);
-                setFormikData(values);
+                setFormikData(postModel);
                 navigate(AuthRouteNames.LOGIN_MEMBERSHIP);
             }
         },
@@ -205,8 +194,8 @@ function LoginAdditionalInfo() {
                 stripePublishableKey: data.StripePublishableKey || formik.values.stripePublishableKey,
                 isUsingCollectJs: data.IsUsingCollectJs || formik.values.isUsingCollectJs,
                 showStatesDropdown: toBoolean(data?.ShowStatesDropdown) || formik.values.showStatesDropdown,
-                ratingCategories: data.RatingCategories || formik.values.ratingCategories,
-                userDefinedFields: data.UserDefinedFields || formik.values.userDefinedFields,
+                RatingCategories: data.RatingCategories || formik.values.RatingCategories,
+                Udfs: data.UserDefinedFields || formik.values.Udfs,
                 formIncludes: {
                     IncludePhoneNumber: toBoolean(data.PhoneNumber?.IncludePhoneNumber),
                     IncludeGender: toBoolean(data.MemberGender?.IncludeGender),
@@ -330,18 +319,18 @@ function LoginAdditionalInfo() {
                             </>
                         }
 
-                        <FormCustomFields customFields={formik?.values?.userDefinedFields}
+                        <FormCustomFields customFields={formik?.values?.Udfs}
                                           form={formik}
-                                          name={`userDefinedFields[{udfIndex}].Value`} />
+                                          name={`Udfs[{udfIndex}].Value`} />
                         
-                        {anyInList(formik?.values?.ratingCategories) &&
+                        {anyInList(formik?.values?.RatingCategories) &&
                             <>
-                                {formik.values.ratingCategories.map((ratingCategory, index) => {
+                                {formik.values.RatingCategories.map((ratingCategory, index) => {
                                     return (
                                         <FormSelect
                                             key={index}
                                             label={ratingCategory.Name}
-                                            name={toBoolean(ratingCategory.AllowMultipleRatingValues) ? `ratingCategories[${index}].SelectedRatingsIds` : `ratingCategories[${index}].SelectedRatingId`}
+                                            name={toBoolean(ratingCategory.AllowMultipleRatingValues) ? `RatingCategories[${index}].SelectedRatingsIds` : `RatingCategories[${index}].SelectedRatingId`}
                                             propText='Name'
                                             propValue={'Id'}
                                             multi={ratingCategory.AllowMultipleRatingValues}
