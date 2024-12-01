@@ -50,11 +50,6 @@ const FormSelect = forwardRef(({
     }
 
     let hasError = meta && meta.error && meta.touched;
-
-    if (meta && equalString(name, 'Udfs[1].Value')){
-        console.log(meta);
-        console.log(meta.error);
-    }
     
     if (isNullOrEmpty(options)) {
         options = [];

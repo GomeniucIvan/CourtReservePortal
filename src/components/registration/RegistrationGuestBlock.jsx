@@ -316,13 +316,12 @@ function RegistrationGuestBlock({formik,
                                 Remove
                             </Button>
 
-                            <Button type="primary"
-                                    block
+                            <Button block
                                     htmlType={'button'}
                                     onClick={() => {
                                         setSelectedGuest(null)
                                     }}>
-                                Save
+                                Close
                             </Button>
                         </InlineBlock>
                     </div>

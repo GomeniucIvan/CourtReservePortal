@@ -1,25 +1,54 @@
-﻿import { useFormik } from "formik";
-import { useEffect } from "react";
-import { logFormikErrors } from "../../utils/ConsoleUtils.jsx";
+﻿import {useEffect} from "react";
+import {useFormik} from "formik";
 
 const useCustomFormik = (config) => {
-    const { validationSchema, ...restConfig } = config;
+    const { additionalValidation, validationSchema, ...formikConfig } = config;
 
-    const validate = validationSchema
-        ? (values) => {
+    const formik = useFormik({
+        ...formikConfig,
+        validateOnBlur: true,
+        validateOnChange: true,
+        onSubmit: async (values, actions) => {
+            let allErrors = {};
+            let isValidForm = true;
+
             try {
-                validationSchema.parse(values); // Zod validation
-                return {}; // No errors
-            } catch (err) {
-                return err.errors.reduce((acc, error) => {
-                    acc[error.path.join(".")] = error.message;
-                    return acc;
-                }, {});
+                await validationSchema.validate(values, { abortEarly: false });
+            } catch (yupValidationErrors) {
+                yupValidationErrors.inner.forEach((error) => {
+                    allErrors[error.path] = error.message;
+                });
             }
-        }
-        : undefined;
+            
+            if (Object.keys(allErrors).length > 0) {
+                actions.setErrors(allErrors);
+                actions.setSubmitting(false);
+                console.log("Validation failed:", allErrors);
+                isValidForm = false;
+            }
 
-    const formik = useFormik({ ...restConfig, validate });
+            if (additionalValidation && typeof additionalValidation === "function") {
+                const isValid = additionalValidation();
+                if(!isValid){
+                    isValidForm = false;
+                }
+            }
+            
+            // Step 4: If no errors, proceed with submission
+            if (isValidForm){
+                if (formikConfig.onSubmit) {
+                    formikConfig.onSubmit(values, actions);
+                }
+            } else{
+                setTimeout(function(){
+                    const errorElement = document.querySelector('.ant-input-status-error');
+                    if (errorElement) {
+                        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 50)
+            }
+        },
+    });
 
     useEffect(() => {
         if (
@@ -27,13 +56,7 @@ const useCustomFormik = (config) => {
             Object.keys(formik.errors).length > 0 &&
             formik.submitCount > 0
         ) {
-            logFormikErrors();
-            console.log(formik.errors);
 
-            const errorElement = document.querySelector('.ant-input-status-error');
-            if (errorElement) {
-                errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
         }
     }, [formik.errors, formik.isSubmitting, formik.submitCount]);
 

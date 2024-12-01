@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Input, Skeleton, Typography} from "antd";
 const { Paragraph } = Typography;
 import {calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
@@ -7,6 +7,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import {useTranslation} from "react-i18next";
 import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
+import {logFormikErrors} from "../../utils/ConsoleUtils.jsx";
 
 const FormInput = ({ label,
                        form,
@@ -42,6 +43,7 @@ const FormInput = ({ label,
     const inputRef = useRef(null);
     const timeoutRef = useRef(null);
     const {t} = useTranslation('');
+
     
     if (form && typeof form.getFieldProps === 'function') {
         field = form.getFieldProps(name);
