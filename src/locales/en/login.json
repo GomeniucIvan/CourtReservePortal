@@ -118,7 +118,7 @@
     "form": {
       "disclosureAgree": "I agree to the",
       "disclosureAgreeDescription": "Terms and Conditions",
-      "disclosureAgreeRequired": "I agree to the",
+      "disclosureAgreeRequired": "You must agree to the terms & conditions.",
       "paymentFrequency": "Payment Frequency"
     },
     "button" : {

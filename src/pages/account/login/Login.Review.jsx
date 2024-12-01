@@ -145,7 +145,6 @@ function LoginReview() {
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
-            
             setShowReviewModal(true);
         },
     });
