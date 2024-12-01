@@ -35,6 +35,8 @@ const FormCustomFields = ({ customFields, form, loading, index, name }) => {
             .replace('{index}', index)
             .replace('{udfIndex}', udfIndex);
 
+        
+        
         const type = UdfType || FieldType;
         
         switch (type) {

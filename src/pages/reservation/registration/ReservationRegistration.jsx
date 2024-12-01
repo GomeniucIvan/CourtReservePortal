@@ -163,13 +163,23 @@ function ReservationRegistration() {
             schemaFields.DisclosureAgree = Yup.bool().oneOf([true], 'You must agree to the terms & conditions.');
         }
 
+        if (anyInList(customFields)){
+            customFields.forEach((udf, index) => {
+                console.log(index)
+                console.log(udf)
+                if (toBoolean(udf.IsRequired)){
+                    schemaFields[`Udfs[${index}].Value`] = Yup.string().required(`${udf.Label} is required.`);
+                }
+            });
+        }
+        
         return Yup.object(schemaFields);
     }
 
     
     useEffect(() => {
         setValidationSchema(getValidationSchema());
-    }, [disclosure])
+    }, [disclosure, customFields])
     
     const formik = useCustomFormik({
         initialValues: initialValues,
@@ -217,6 +227,7 @@ function ReservationRegistration() {
                     setMatchMakerRatingCategories(r.Data.MatchMakerRatingCategories);
                     setShowResources(r.Data.ShowResources && toBoolean(authData?.AllowMembersToBookResources));
                     setCustomFields(incResData.Udf || []);
+                    formik.setFieldValue('Udfs', incResData.Udf || []);
 
                     if (toBoolean(r.Data.Disclosure?.Show)) {
                         setDisclosure(r.Data.Disclosure);
@@ -289,7 +300,13 @@ function ReservationRegistration() {
         resetFetch();
     }
 
-    const onReservationTypeChange = async (resType) => {
+    useEffect(() => {
+        if (!isNullOrEmpty(formik?.values?.ReservationTypeId)){
+            onReservationTypeChange();
+        }
+    }, [formik?.values?.ReservationTypeId]);
+    
+    const onReservationTypeChange = async () => {
         setLoading('Duration', true);
 
         if (isMockData) {
@@ -332,10 +349,16 @@ function ReservationRegistration() {
                 uiCulture: authData?.UiCulture,
             }
 
-            let rUdf = appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`);
-
+            let rUdf = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`);
             if (toBoolean(rUdf?.IsValid)) {
                 setCustomFields(rUdf.Data);
+                
+                formik.setFieldValue('Udfs', rUdf.Data.map(udf => {
+                    return {
+                        ...udf,
+                        Value: ''
+                    }
+                }));
             }
         }
     }
@@ -417,8 +440,8 @@ function ReservationRegistration() {
 
         let postData = {
             Start: formik?.values?.StartTime,
-            End: toBoolean(reservation.IsAllowedToPickStartAndEndTime) ? formik?.values?.EndTime : formik?.values?.EndTime,
-            CourtType: reservation.CourtTypeEnum,
+            End: toBoolean(reservation?.IsAllowedToPickStartAndEndTime) ? formik?.values?.EndTime : formik?.values?.EndTime,
+            CourtType: reservation?.CourtTypeEnum,
             ResourceIds: formik?.values?.ResourceIds,
             MiscFees: null,  //costs,
             ReservationTypeId: formik?.values?.ReservationTypeId,
@@ -436,7 +459,7 @@ function ReservationRegistration() {
                 Email: member.Email,
                 MembershipNumber: member.MembershipNumber,
             }))),
-            InstructorId: reservation.InstructorId,
+            InstructorId: reservation?.InstructorId,
             MembersWithDisclosures: membersWithDisclosures,
             RefillMemberDisclosures: refillDisclosureMemberIds,
             NumberOfGuests: numberOfGuests,
@@ -445,9 +468,9 @@ function ReservationRegistration() {
             IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation) && toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker),
             CourtId: formik?.values?.CourtId,
             FeeResponsibility: formik?.values.FeeResponsibility,
-            AuthUserId: reservation.MemberId,
+            AuthUserId: reservation?.MemberId,
             IsMobileLayout: true,
-            IsFamilyMember: anyInList(reservation.FamilyMembers),
+            IsFamilyMember: anyInList(reservation?.FamilyMembers),
             IsModernTemplate: true
         };
 
@@ -782,7 +805,6 @@ function ReservationRegistration() {
                                         label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
                                         options={reservation?.ReservationTypesSelectListItem}
                                         required={true}
-                                        onValueChange={onReservationTypeChange}
                                         propText='Text'
                                         propValue='Value'/>
                         ) : (
@@ -792,7 +814,6 @@ function ReservationRegistration() {
                                         options={reservationTypes}
                                         ref={selectReservationTypeIdRef}
                                         required={true}
-                                        onValueChange={onReservationTypeChange}
                                         loading={toBoolean(loadingState.ReservationTypeId)}
                                         propText='Name'
                                         propValue='Id'/>
@@ -1142,7 +1163,7 @@ function ReservationRegistration() {
                             <>
                                 <Title level={1} className={globalStyles.noTopPadding}>Additional Information</Title>
 
-                                <FormCustomFields customFields={customFields} form={formik} loading={isFetching} name={`Udf[{udfIndex}].Value`}/>
+                                <FormCustomFields customFields={formik?.values?.Udfs} form={formik} loading={isFetching} name={`Udfs[{udfIndex}].Value`}/>
                                 <Divider className={globalStyles.formDivider}/>
                             </>
                         }
