@@ -7,10 +7,14 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {EventRouteNames} from "../../routes/EventRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 import {theme} from "antd";
+import {isMemberSignUp} from "../../utils/SchedulerUtils.jsx";
+import {useAuth} from "../../context/AuthProvider.jsx";
+import {stringToJson} from "../../utils/ListUtils.jsx";
 const { useToken } = theme;
 
 const ExpandedSchedulerItem = (props) => {
     const {setDynamicPages} = useApp();
+    const {authData} = useAuth();
     const navigate = useNavigate();
 
     const dataItem = props.dataItem;
@@ -21,7 +25,7 @@ const ExpandedSchedulerItem = (props) => {
     const hideCheckInFromReservations = true;
     const customSchedulerId = 11945;
     const { token } = useToken();
-    
+
     const displayInstructorsRow = () => {
         return (<></>);
     }
@@ -97,15 +101,29 @@ const ExpandedSchedulerItem = (props) => {
                     }}
                 >
             <span onClick={() => {
-                if (isNullOrEmpty(dataItem.EventId)) {
-                    let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', dataItem.ReservationId);
-                    setPage(setDynamicPages, dataItem.ReservationType, route);
-                    navigate(route);
-                } else {
-                    let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', dataItem.Number);
-                    setPage(setDynamicPages, dataItem.Number, route);
-                    navigate(route);
+                let allowToClick = true;
+
+                if (toBoolean(dataItem.IsCanceled) ||
+                    toBoolean(dataItem.IsOrgClosed) ||
+                    toBoolean(dataItem.IsCourtClosed) ||
+                    !isNullOrEmpty(dataItem.ClosureTypeId) ||
+                    (isNullOrEmpty(dataItem.EventId) && !isMemberSignUp(dataItem.MemberIds, stringToJson(authData?.FamilyMembesJson)))
+                ) {
+                    allowToClick = false
                 }
+
+                if (allowToClick) {
+                    if (isNullOrEmpty(dataItem.EventId)) {
+                        let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', dataItem.ReservationId);
+                        setPage(setDynamicPages, dataItem.ReservationType, route);
+                        navigate(route);
+                    } else {
+                        let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', dataItem.Number);
+                        setPage(setDynamicPages, dataItem.Number, route);
+                        navigate(route);
+                    }
+                }
+
             }}>
                 {dataItem.IsWaitListSlot && dataItem.IsAvailableTemplate && (
                     <div style={{backgroundColor: '#cdf5b6', color: '#3a3a3a'}}
@@ -165,7 +183,7 @@ const ExpandedSchedulerItem = (props) => {
                              background: dataItem.ReservationColor,
                              color: dataItem.ReservationTextColor,
                              height: '100%'
-                    }}>
+                         }}>
                         {dataItem.IsCanceled && (
                             <div className="pull-left scheduler-ban-icon" data-toggle="tooltip" data-placement="top"
                                  title="Canceled">
@@ -241,14 +259,14 @@ const ExpandedSchedulerItem = (props) => {
                         {dataItem.IsOrgClosed &&
                             <div className={'closed-date'}
                                  style={{
-                                     width: '100%', 
+                                     width: '100%',
                                      backgroundColor: token.colorError,
                                      color: '#ffffff',
                                      height: '100%',
                                      display: 'flex',
                                      alignItems: 'center',
                                      justifyContent: 'center'
-                            }}>
+                                 }}>
                                 {dataItem.ReservationName}
                             </div>
                         }

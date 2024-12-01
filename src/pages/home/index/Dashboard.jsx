@@ -55,8 +55,6 @@ function Dashboard() {
 
             let authResponse = await apiService.authData(orgId,{loadWeatherData:true,includeDashboardData:true});
 
-            console.log(authResponse)
-            
             if (toBoolean(authResponse?.IsValid)) {
                 setAuthorizationData(authResponse.Data);
                 setDashboardData(authResponse.Data);

@@ -2,7 +2,7 @@
 import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
 import {getRequestData} from "./api.jsx";
 import {fixResponseData} from "../utils/apiUtils.jsx";
-import {isNullOrEmpty} from "../utils/Utils.jsx";
+import {isNullOrEmpty, toBoolean} from "../utils/Utils.jsx";
 
 const isProduction = import.meta.env.MODE === 'production';
 const appUrl = isProduction ? import.meta.env.VITE_APP_URL : '';
@@ -106,7 +106,7 @@ const appService = {
         }
     },
 
-    getRoute: async (route, url, params = {}, config = {}) => {
+    getRoute: async (route, url, params = {}, config = {}, addCookies = false) => {
         try {
             const headerToAdd = getRequestData();
             const headers = { ...config.headers };
@@ -120,6 +120,19 @@ const appService = {
                     url = url.replace('/app/', '/');
                 }
                 url = route + url;
+            }
+            
+            if (toBoolean(addCookies)){
+                if (isNullOrEmpty(params)){
+                    params = {}
+                }
+                const cookies = document.cookie.split(";").reduce((cookies, item) => {
+                    const [name, value] = item.split("=").map(c => c.trim());
+                    cookies[name] = value;
+                    return cookies;
+                }, {});
+                
+                params.cookieData = JSON.stringify(cookies)
             }
             
             const response = await axiosInstance.get(url, {

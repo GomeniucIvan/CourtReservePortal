@@ -137,7 +137,7 @@ function ExpandedScheduler() {
         setFooterContent(null);
         setHeaderRightIcons(null);
 
-        appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`).then(r => {
+        appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`, {}, {}, true).then(r => {
             if (toBoolean(r?.IsValid)){
                 const model = r.Data.Model;
                 setStartTimeString(dateToTimeString(model.StartTime, true));
