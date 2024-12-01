@@ -26,6 +26,7 @@ import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx"
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
 import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
 import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
+import {validatePaymentProfile} from "../../../utils/ValidationUtils.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -110,106 +111,17 @@ function LoginReview() {
         };
     }
 
-    const getAdditionalInfoValidationSchema = (selectedPaymentFrequency) => {
-        let formikPaymentFrequency = formik?.values?.paymentFrequency;
+    const getAdditionalInfoValidationSchema = () => {
         let selectedMembership = formik?.values?.selectedMembership;
-        let paymentProvider = formik?.values?.paymentProvider;
         
-        if (!isNullOrEmpty(selectedPaymentFrequency)) {
-            formikPaymentFrequency = selectedPaymentFrequency;
-        }
-
-        const isMembershipRequirePayment = membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(formik?.values?.requireCardOnFile);
-
         let schemaFields = {
 
         };
-
-        if (isMembershipRequirePayment) {
-            schemaFields.card_firstName = Yup.string().required('First Name is required.');
-            schemaFields.card_lastName = Yup.string().required('Last Name is required.');
-            schemaFields.card_accountType = Yup.string().required('Account Type is required.');
-
-            if (equalString(paymentProvider, 1)) {
-                //CardConnect
-                //invalid card should be allowed to submit we will throw message on response api(card-connect tokenr response)
-                schemaFields.card_number = Yup.string().required('Card Number is required.');
-                schemaFields.card_expiryDate = Yup.string().required('Expiry Date is required.');
-                schemaFields.card_securityCode = Yup.string().required('Security Code is required.');
-                schemaFields.card_country = Yup.string().required('Country is required.');
-            }
-
-            if (equalString(paymentProvider, 2)) {
-                //Stripe
-                schemaFields.card_routingNumber = Yup.string().when(`card_accountType`, {
-                    is: '2',
-                    then: (schema) => schema.required('Routing Number is required.'),
-                    otherwise: schema => schema.nullable(),
-                });
-
-                schemaFields.card_accountNumber = Yup.string().when(`card_accountType`, {
-                    is: '2',
-                    then: (schema) => schema.required('Account Number is required.'),
-                    otherwise: schema => schema.nullable(),
-                });
-
-                //for card details on post validation Stripe
-            }
-
-            if (equalString(paymentProvider, 3)) {
-                if (toBoolean(formik?.values?.isUsingCollectJs)) {
-                    //validate by iframe response
-                } else {
-                    //card
-                    schemaFields.card_routingNumber = Yup.string().when(`card_accountType`, {
-                        is: '1',
-                        then: (schema) => schema.required('Card Number is required.'),
-                        otherwise: schema => schema.nullable(),
-                    });
-
-                    schemaFields.card_accountNumber = Yup.string().when(`card_accountType`, {
-                        is: '1',
-                        then: (schema) => schema.required('Expiry Date is required.'),
-                        otherwise: schema => schema.nullable(),
-                    });
-
-                    schemaFields.card_securityCode = Yup.string().when(`card_accountType`, {
-                        is: '1',
-                        then: (schema) => schema.required('Security Code is required.'),
-                        otherwise: schema => schema.nullable(),
-                    });
-
-                    schemaFields.card_zipCode = Yup.string().when(`card_accountType`, {
-                        is: '1',
-                        then: (schema) => schema.required('Zip Code is required.'),
-                        otherwise: schema => schema.nullable(),
-                    });
-
-                    //echeck
-                    schemaFields.card_routingNumber = Yup.string().when(`card_accountType`, {
-                        is: '2',
-                        then: (schema) => schema.required('Routing Number is required.'),
-                        otherwise: schema => schema.nullable(),
-                    });
-
-                    schemaFields.card_accountNumber = Yup.string().when(`card_accountType`, {
-                        is: '2',
-                        then: (schema) => schema.required('Account Number is required.'),
-                        otherwise: schema => schema.nullable(),
-                    });
-                }
-            }
-
-            if (equalString(paymentProvider, 4)) {
-                //Fortis
-                //TODO
-            }
-        }
-
+        
         if (!isNullOrEmpty(selectedMembership) && moreThanOneInList(selectedMembership?.DetailedPaymentOptions)) {
             schemaFields.paymentFrequency = Yup.string().required('Payment Frequency is required.');
         }
-
+        
         if (toBoolean(formik?.values?.isDisclosuresRequired)) {
             //todo(IV) not working
             schemaFields.disclosureAgree = Yup.bool().oneOf([true], 'You must agree to the terms & conditions.');
@@ -221,6 +133,17 @@ function LoginReview() {
     const formik = useCustomFormik({
         initialValues: getMembershipInitialValues(formikData),
         validationSchema: validationSchema,
+        validation: () => {
+            
+            let formikPaymentFrequency = formik?.values?.paymentFrequency;
+            let selectedMembership = formik?.values?.selectedMembership;
+            const isMembershipRequirePayment = membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(formik?.values?.requireCardOnFile);
+            let isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment);
+            
+            let isValidForm = true;
+            
+            return isValidPaymentProfile && isValidForm;
+        },
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
@@ -238,7 +161,7 @@ function LoginReview() {
             const paymentFrequencyCost = membershipPaymentFrequencyCost(selectedMembership, selectedPaymentFrequency);
             setPaymentFrequencyCost(paymentFrequencyCost);
             setSelectedMembershipRequirePayment(toBoolean(isMembershipRequirePayment));
-            setValidationSchema(getAdditionalInfoValidationSchema(selectedPaymentFrequency));
+            setValidationSchema(getAdditionalInfoValidationSchema());
         }
     }, [formik?.values]);
     

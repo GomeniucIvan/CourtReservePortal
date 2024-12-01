@@ -1,6 +1,14 @@
-﻿import { anyInList, toBoolean } from "./Utils.jsx";
+﻿import {anyInList, equalString, isNullOrEmpty, toBoolean} from "./Utils.jsx";
+import {logError} from "./ConsoleUtils.jsx";
 
-export const validateUdfs = (formik) => {
+const setFormikError = (t, formik, fieldName, label) => {
+    formik.setFieldError(fieldName, t('common:requiredMessage', {label: label}));
+    formik.setFieldTouched(fieldName, true, false);
+
+    logError(t('common:requiredMessage', {label: label}));
+}
+
+export const validateUdfs = (t, formik) => {
     let formikUdfs = formik?.values?.Udfs;
 
     if (!anyInList(formikUdfs)) {
@@ -14,13 +22,125 @@ export const validateUdfs = (formik) => {
 
         if (toBoolean(currentUdf?.IsRequired) && !currentUdf?.Value?.trim()) {
             let fieldName = `Udfs[${i}].Value`;
-
-            formik.setFieldError(fieldName, `${currentUdf.Label} is required.`);
-            formik.setFieldTouched(fieldName, true, false);
-
+            setFormikError(t, formik, fieldName, currentUdf.Label);
             isValid = false; 
         }
     }
 
     return isValid;
 };
+
+export const validatePaymentProfile = (t, formik, requireCard) => {
+    let paymentProvider = formik?.values?.paymentProvider;
+    let isValid = true;
+    
+    if (requireCard) {
+        let formikValues = formik?.values;
+        
+        //default card details
+        if (isNullOrEmpty(formikValues?.card_firstName)) {
+            setFormikError(t, formik, 'card_firstName', t('common:paymentProfile.firstName'));
+            isValid = false;
+        }
+
+        if (isNullOrEmpty(formikValues?.card_lastName)) {
+            setFormikError(t, formik, 'card_lastName', t('common:paymentProfile.lastName'));
+            isValid = false;
+        }
+
+        if (isNullOrEmpty(formikValues?.card_accountType)) {
+            setFormikError(t, formik, 'card_accountType', t('common:paymentProfile.accountType'));
+            isValid = false;
+        }
+
+
+        //CardConnect
+        if (equalString(paymentProvider, 1)) {
+            //invalid card should be allowed to submit we will throw message on response api(card-connect tokenr response)
+
+            if (isNullOrEmpty(formikValues?.card_number)) {
+                setFormikError(t, formik, 'card_number', t('common:paymentProfile.cardNumber'));
+                isValid = false;
+            }
+
+            if (isNullOrEmpty(formikValues?.card_expiryDate)) {
+                setFormikError(t, formik, 'card_expiryDate', t('common:paymentProfile.expiryDate'));
+                isValid = false;
+            }
+
+            if (isNullOrEmpty(formikValues?.card_securityCode)) {
+                setFormikError(t, formik, 'card_securityCode', t('common:paymentProfile.securityCode'));
+                isValid = false;
+            }
+
+            if (isNullOrEmpty(formikValues?.card_country)) {
+                setFormikError(t, formik, 'card_country', t('common:paymentProfile.country'));
+                isValid = false;
+            }
+        }
+
+        //Stripe
+        if (equalString(paymentProvider, 2)) {
+            if (equalString(formikValues?.card_accountType, 1)){
+                //validating with token generation
+                //for card details on post validation Stripe
+            }
+            
+            //eCheck
+            if (equalString(formikValues?.card_accountType, 2)) {
+                if (isNullOrEmpty(formikValues?.card_routingNumber)) {
+                    setFormikError(t, formik, 'card_routingNumber', t('common:paymentProfile.routingNumber'));
+                    isValid = false;
+                }
+                if (isNullOrEmpty(formikValues?.card_accountNumber)) {
+                    setFormikError(t, formik, 'card_accountNumber', t('common:paymentProfile.accountNumber'));
+                    isValid = false;
+                }
+            }
+        }
+
+        //SafeSave
+        if (equalString(paymentProvider, 3)) {
+            if (toBoolean(formik?.values?.isUsingCollectJs)) {
+                //validate by iframe response
+            } else {
+                
+                //card
+                if (equalString(formikValues?.card_accountType, 1)) {
+                    if (isNullOrEmpty(formikValues?.card_number)) {
+                        setFormikError(t, formik, 'card_number', t('common:paymentProfile.cardNumber'));
+                        isValid = false;
+                    }
+
+                    if (isNullOrEmpty(formikValues?.card_expiryDate)) {
+                        setFormikError(t, formik, 'card_number', t('common:paymentProfile.expiryDate'));
+                        isValid = false;
+                    }
+
+                    if (isNullOrEmpty(formikValues?.card_securityCode)) {
+                        setFormikError(t, formik, 'card_number', t('common:paymentProfile.securityCode'));
+                        isValid = false;
+                    }
+                }
+
+                //eCheck
+                if (equalString(formikValues?.card_accountType, 2)) {
+                    if (isNullOrEmpty(formikValues?.card_routingNumber)) {
+                        setFormikError(t, formik, 'card_routingNumber', t('common:paymentProfile.routingNumber'));
+                        isValid = false;
+                    }
+                    if (isNullOrEmpty(formikValues?.card_accountNumber)) {
+                        setFormikError(t, formik, 'card_accountNumber', t('common:paymentProfile.accountNumber'));
+                        isValid = false;
+                    }
+                }
+            }
+        }
+
+        if (equalString(paymentProvider, 4)) {
+            //Fortis
+        }
+    }
+
+    return isValid;
+}

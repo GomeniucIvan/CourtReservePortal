@@ -33,7 +33,7 @@ const consoleIcons = {
 };
 
 export const logError = (message) => {
-    console.error(`%c${consoleIcons.error} ${message}`, styles.red);
+    console.warn(`%c${consoleIcons.error} ${message}`, styles.red);
 };
 
 export const logSuccess = (message) => {

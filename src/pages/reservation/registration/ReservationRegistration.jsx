@@ -175,8 +175,8 @@ function ReservationRegistration() {
     const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
-        additionalValidation: () => {
-            const isValidUdfs = validateUdfs(formik);
+        validation: () => {
+            const isValidUdfs = validateUdfs(t, formik);
             const isGuests = true;
             return isValidUdfs && isGuests;
         },

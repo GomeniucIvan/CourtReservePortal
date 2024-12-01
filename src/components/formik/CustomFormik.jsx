@@ -1,8 +1,9 @@
 ﻿import {useEffect} from "react";
 import {useFormik} from "formik";
+import {logFormikErrors} from "../../utils/ConsoleUtils.jsx";
 
 const useCustomFormik = (config) => {
-    const { additionalValidation, validationSchema, ...formikConfig } = config;
+    const { validation, validationSchema, ...formikConfig } = config;
 
     const formik = useFormik({
         ...formikConfig,
@@ -23,13 +24,12 @@ const useCustomFormik = (config) => {
             if (Object.keys(allErrors).length > 0) {
                 actions.setErrors(allErrors);
                 actions.setSubmitting(false);
-                console.log("Validation failed:", allErrors);
                 isValidForm = false;
             }
 
-            if (additionalValidation && typeof additionalValidation === "function") {
-                const isValid = additionalValidation();
-                if(!isValid){
+            if (validation && typeof validation === "function") {
+                const isValid = validation();
+                if(!isValid) {
                     isValidForm = false;
                 }
             }
@@ -39,7 +39,10 @@ const useCustomFormik = (config) => {
                 if (formikConfig.onSubmit) {
                     formikConfig.onSubmit(values, actions);
                 }
-            } else{
+            } else {
+                logFormikErrors();
+                console.log(formik.errors);
+                
                 setTimeout(function(){
                     const errorElement = document.querySelector('.ant-input-status-error');
                     if (errorElement) {
@@ -49,16 +52,6 @@ const useCustomFormik = (config) => {
             }
         },
     });
-
-    useEffect(() => {
-        if (
-            formik.isSubmitting &&
-            Object.keys(formik.errors).length > 0 &&
-            formik.submitCount > 0
-        ) {
-
-        }
-    }, [formik.errors, formik.isSubmitting, formik.submitCount]);
 
     return formik;
 };

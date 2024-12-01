@@ -50,7 +50,6 @@ const FormPaymentProfile = React.forwardRef(({ form,
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
 
     const tokenizerUrl = getConfigValue('CardConnect_TokenizerURL');
-    console.log(tokenizerUrl)
     const stripeCardElementRef = useRef(null);
     const fortisElementRef = useRef(null);
     const hidePostalCode = false;
@@ -575,7 +574,6 @@ const FormPaymentProfile = React.forwardRef(({ form,
     }
 
     const accountTypeChange = (selectedValue, isInitialCall) => {
-        console.log(selectedValue)
         setShowCardDetails(equalString(selectedValue, 1));
         setShowECheckDetails(equalString(selectedValue, 2));
         checkConvinienceFeeDisplay(selectedValue);

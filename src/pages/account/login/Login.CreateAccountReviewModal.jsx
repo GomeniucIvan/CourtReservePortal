@@ -16,7 +16,6 @@ import * as React from "react";
 import {isCanadaCulture} from "../../../utils/OrganizationUtils.jsx";
 import {isNonUsCulture} from "../../../utils/DateUtils.jsx";
 import Modal from "../../../components/modal/Modal.jsx";
-import {logFormikErrors, logInfo} from "../../../utils/ConsoleUtils.jsx";
 import appService from "../../../api/app.jsx";
 import {useNavigate} from "react-router-dom";
 import apiService, {setRequestData} from "../../../api/api.jsx";
@@ -212,9 +211,6 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
         userDefinedFields = values.userDefinedFields
             .filter(udf => !isNullOrEmpty(udf.Value))
     }
-    
-    logInfo();
-    console.log(values);
     
     if (!isNullOrEmpty(membership)){
         let selectedPaymentFrequency = values?.paymentFrequency;

@@ -148,6 +148,15 @@
   },
   "paymentProfile": {
     "addPaymentProfile" : "Create Payment Profile",
-    "paymentDecline": "Payment Decline"
+    "paymentDecline": "Payment Decline",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "accountType": "Account Type",
+    "cardNumber": "Card Number",
+    "expiryDate": "Expiry Date",
+    "securityCode": "Security Code",
+    "country": "Country",
+    "routingNumber": "Routing Number",
+    "accountNumber": "Account Number"    
   }
 }
