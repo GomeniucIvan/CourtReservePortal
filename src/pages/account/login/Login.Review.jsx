@@ -118,7 +118,7 @@ function LoginReview() {
         };
 
         if (!isNullOrEmpty(selectedMembership) && moreThanOneInList(selectedMembership?.DetailedPaymentOptions)) {
-            schemaFields.paymentFrequency = Yup.string().required('Payment Frequency is required.');
+            schemaFields.paymentFrequency = Yup.string().required(t('common:requiredMessage', {label: 'review.form.paymentFrequency'}));
         }
 
         return Yup.object(schemaFields);
@@ -136,7 +136,7 @@ function LoginReview() {
             let isValidForm = true;
             
             if (isDisclosuresRequired && !toBoolean(formik?.values?.disclosureAgree)) {
-                setFormikError(t, formik, 'disclosureAgree', null, 'You must agree to the terms & conditions.')
+                setFormikError(t, formik, 'disclosureAgree', null, t('review.form.disclosureAgreeRequired'))
                 isValidForm = false;
             }
             
@@ -205,7 +205,7 @@ function LoginReview() {
                                     <FormSelect
                                         form={formik}
                                         name='paymentFrequency'
-                                        label={t(`review.paymentFrequency`)}
+                                        label={t(`review.form.paymentFrequency`)}
                                         options={selectedMembership?.DetailedPaymentOptions}
                                         required={moreThanOneInList(selectedMembership?.DetailedPaymentOptions)}
                                         disabled={oneListItem(selectedMembership?.DetailedPaymentOptions)}
@@ -257,8 +257,8 @@ function LoginReview() {
                             <FormCheckbox label={''}
                                           formik={formik}
                                           name={'disclosureAgree'}
-                                          text={`I agree to the `}
-                                          description={'Terms and Conditions'}
+                                          text={t('review.form.disclosureAgree')}
+                                          description={t('review.form.disclosureAgreeDescription')}
                                           descriptionClick={() => setShowTermAndCondition(true)}/>
                         </PaddingBlock>
                     }
@@ -274,7 +274,7 @@ function LoginReview() {
                             </Button>
                         </Flex>}
                         closeDrawer={() => setShowTermAndCondition(false)}
-                        label={'Terms and Conditions'}
+                        label={t('review.form.disclosureAgreeDescription')}
                         onConfirmButtonClick={() => setShowTermAndCondition(false)}
                     >
                         <PaddingBlock>
