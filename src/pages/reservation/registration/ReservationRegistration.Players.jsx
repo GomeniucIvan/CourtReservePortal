@@ -44,6 +44,8 @@ function ReservationRegistrationPlayers({formik,
     
     const { globalStyles, token} = useApp();
     
+    
+    // PLAYERS FUNCTIONS START
     const onPlayersSearch = (searchVal) => {
         setSearchPlayersText(searchVal);
     }
@@ -118,6 +120,11 @@ function ReservationRegistrationPlayers({formik,
             }
         })
     }
+    // PLAYERS FUNCTIONS END
+
+    // GUESTS FUNCTIONS START
+
+    // GUESTS FUNCTIONS END
     
     return (
         <>

@@ -44,7 +44,11 @@ import {Document} from "react-pdf";
 import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
 import FormCheckbox from "../../../form/formcheckbox/FomCheckbox.jsx";
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
-import {validateReservationMatchMaker, validateUdfs} from "../../../utils/ValidationUtils.jsx";
+import {
+    validateReservationGuests,
+    validateReservationMatchMaker,
+    validateUdfs
+} from "../../../utils/ValidationUtils.jsx";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
@@ -170,8 +174,9 @@ function ReservationRegistration() {
         validationSchema: validationSchema,
         validation: () => {
             const isValidUdfs = validateUdfs(t, formik);
-            const isGuests = true;
-            return isValidUdfs && isGuests;
+            const isValidMatchMaker = validateReservationMatchMaker(t, formik, matchMaker);
+            const isGuests = validateReservationGuests(t, formik, reservationMembers, authData);
+            return isValidUdfs && isValidMatchMaker && isGuests;
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
@@ -547,7 +552,13 @@ function ReservationRegistration() {
             responseReservationGuests = r.Data.MemberData.ReservationGuests || [];
 
             if (anyInList(responseReservationGuests)){
-                await formik.setFieldValue('ReservationGuests', responseReservationGuests)
+                await formik.setFieldValue(
+                    'ReservationGuests',
+                    responseReservationGuests.map(resGuest => ({
+                        ...resGuest,
+                        Status: '' 
+                    }))
+                );
             }
 
             setPlayersModelData(r.Data.MemberData);
@@ -885,8 +896,6 @@ function ReservationRegistration() {
 
                         <ReservationRegistrationTermsAndCondition disclosure={disclosure} formik={formik} />
                     </PaddingBlock>
-
-
                 </>
             }
         </>

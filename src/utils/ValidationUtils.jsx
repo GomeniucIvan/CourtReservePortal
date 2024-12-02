@@ -1,4 +1,4 @@
-﻿import {anyInList, equalString, isNullOrEmpty, toBoolean} from "./Utils.jsx";
+﻿import {anyInList, equalString, isNullOrEmpty, moreThanOneInList, toBoolean} from "./Utils.jsx";
 import {logError} from "./ConsoleUtils.jsx";
 import * as Yup from "yup";
 import {requiredMessage} from "./TranslateUtils.jsx";
@@ -332,5 +332,44 @@ export const validateReservationMatchMaker = (t, formik, matchMakerData, returnL
     if (returnListValues){
         return items;
     }
+    return isValid;
+}
+
+export const validateReservationGuests = (t, formik, reservationMembers, org) => {
+    let reservationGuests = formik?.values?.ReservationGuests;
+
+    if (!anyInList(reservationGuests)) {
+        return true;
+    }
+
+    let isValid = true;
+
+    for (let i = 0; i < reservationGuests.length; i++) {
+        let resGuest = reservationGuests[i];
+
+        if (isNullOrEmpty(resGuest.FirstName)) {
+            let fieldName = `ReservationGuests[${i}].FirstName`;
+            setFormikError(t, formik, fieldName, 'Guest First Name');
+            formik.setFieldValue(`ReservationGuests[${i}].Status`, 'error');
+            isValid = false;
+        }
+
+        if (isNullOrEmpty(resGuest.LastName)) {
+            let fieldName = `ReservationGuests[${i}].LastName`;
+            setFormikError(t, formik, fieldName, 'Guest Last Name');
+            formik.setFieldValue(`ReservationGuests[${i}].Status`, 'error');
+            isValid = false;
+        }
+        
+        if (moreThanOneInList(reservationMembers) && isNullOrEmpty(resGuest.GuestOwnerId)){
+            if (toBoolean(org?.AllowMembersToChangeGuestOwnerOnMemberPortal)){
+                let fieldName = `ReservationGuests[${i}].GuestOwnerId`;
+                setFormikError(t, formik, fieldName, 'Guest Owner');
+                formik.setFieldValue(`ReservationGuests[${i}].Status`, 'error');
+                isValid = false;
+            }
+        }
+    }
+
     return isValid;
 }
