@@ -52,6 +52,8 @@ import {pNotify} from "../../../components/notification/PNotify.jsx";
 import {removeLastHistoryEntry} from "../../../toolkit/HistoryStack.js";
 import ReservationRegistrationPlayers from "./ReservationRegistration.Players.jsx";
 import ReservationRegistrationMatchMaker from "./ReservationRegistration.MatchMaker.jsx";
+import ReservationRegistrationMiscItems from "./ReservationRegistration.MiscItems.jsx";
+import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.TermsAndCondition.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -77,17 +79,13 @@ function ReservationRegistration() {
         isLoading,
         setDynamicPages
     } = useApp();
+    
     const [reservation, setReservation] = useState(null);
     const [matchMaker, setMatchMaker] = useState(null);
     const [reservationTypes, setReservationTypes] = useState([]);
     const [durations, setDurations] = useState([]);
     const [courts, setCourts] = useState([]);
-    const [showTermAndCondition, setShowTermAndCondition] = useState(false);
-
-
     const [shouldRebindPlayers, setShouldRebindPlayers] = useState(false);
-    const [showMiscItems, setShowMiscItems] = useState(false);
-    const [miscItems, setMiscItems] = useState([]);
     const [reservationMembers, setReservationMembers] = useState([]);
     const [playersModelData, setPlayersModelData] = useState(false);
     const [selectedReservationType, setSelectedReservationType] = useState(false);
@@ -99,16 +97,12 @@ function ReservationRegistration() {
     const [showResources, setShowResources] = useState(false);
     const [customFields, setCustomFields] = useState([]);
     const [resources, setResources] = useState([]);
-    const [pdfDataUrl, setPdfDataUrl] = useState(null);
-    const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
-
     const [validationSchema, setValidationSchema] = useState(Yup.object({}));
 
     let selectRegisteringMemberIdRef = useRef();
     let selectReservationTypeIdRef = useRef();
     let searchPlayerDrawerBottomRef = useRef();
-
 
     const initialValues = {
         ReservationTypeId: '',
@@ -335,7 +329,6 @@ function ReservationRegistration() {
     }, [formik?.values?.ReservationTypeId]);
 
     useEffect(() => {
-
         let currentPlayersCount = ((reservationMembers?.length || 0));
         if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
             currentPlayersCount += formik?.values?.ReservationGuests?.length;
@@ -640,49 +633,6 @@ function ReservationRegistration() {
         return toBoolean(reserv.IsAllowedToPickStartAndEndTime) && !isFromWaitlisting || isFromWaitlisting && equalString(reserv.DurationType, 1);
     }
 
-    const handleMiscItemChange = (increment, index) => {
-        if (increment) {
-            setMiscFeesQuantities((prevItemsState) => {
-                const newItemsState = [...prevItemsState];
-                newItemsState[index].Quantity += 1;
-                return newItemsState;
-            });
-        } else {
-            setMiscFeesQuantities((prevItemsState) => {
-                const newItemsState = [...prevItemsState];
-                if (newItemsState[index].Quantity > 0) {
-                    newItemsState[index].Quantity -= 1;
-                }
-                return newItemsState;
-            });
-        }
-    };
-
-    useEffect(() => {
-        if (isNullOrEmpty(selectedWaiverToView)) {
-            appService.get(navigate, `/app/Online/Disclosures/GetDisclosureDetailsById?id=${orgId}&disclosureId=${disclosure.Id}`).then(response => {
-                if (toBoolean(response?.IsValid)) {
-                    const incWaiver = response.Data;
-
-                    if (incWaiver && incWaiver.FullPath) {
-                        const fetchPdf = async () => {
-                            const base64String = await getPdfFileDataUrl(incWaiver.FullPath);
-                            if (base64String) {
-                                setPdfDataUrl(`data:application/pdf;base64,${base64String}`);
-                            }
-                        };
-
-                        fetchPdf();
-                    } else {
-                        setPdfDataUrl('');
-                    }
-
-                    setSelectedWaiverToView(incWaiver);
-                }
-            })
-        }
-    }, [showTermAndCondition]);
-
     const displayPlayersInformation = () => {
         let currentPlayersCount = ((reservationMembers?.length || 0));
         if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
@@ -728,8 +678,7 @@ function ReservationRegistration() {
                         {emptyArray(15).map((item, index) => (
                             <div key={index}>
                                 <Flex vertical={true} gap={8}>
-                                    <Skeleton.Button active={true} block
-                                                     style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
+                                    <Skeleton.Button active={true} block style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
                                     <Skeleton.Button active={true} block style={{height: token.Input.controlHeight}}/>
                                 </Flex>
                             </div>
@@ -910,74 +859,9 @@ function ReservationRegistration() {
                         }
 
                         <Divider className={globalStyles.formDivider}/>
-
-                        {anyInList(miscFeesQuantities) &&
-                            <>
-                                <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                    <Flex justify={'space-between'} align={'center'}>
-                                        <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                            <Title level={1} className={cx(globalStyles.noSpace)}>Miscellaneous
-                                                Items</Title>
-                                            <Text
-                                                type="secondary">({miscFeesQuantities.length})</Text>
-                                        </Flex>
-
-                                        <Link onClick={() => {
-                                            setShowMiscItems(true)
-                                        }}>
-                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                                {anyInList(miscFeesQuantities.filter(item => item.Quantity > 0)) &&
-                                                    <>
-                                                        <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
-                                                        <strong>chnageicon Edit Items</strong>
-                                                    </>
-                                                }
-
-                                                {!anyInList(miscFeesQuantities.filter(item => item.Quantity > 0)) &&
-                                                    <>
-                                                        <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
-                                                        <strong>Add Items</strong>
-                                                    </>
-                                                }
-                                            </Flex>
-                                        </Link>
-                                    </Flex>
-                                </Flex>
-
-                                {anyInList(miscFeesQuantities.filter(item => item.Quantity > 0)) &&
-                                    <div style={{marginTop: `${token.padding / 2}px`}}>
-                                        <Card
-                                            className={cx(globalStyles.card, globalStyles.playersCard)}>
-                                            {miscFeesQuantities.filter(item => item.Quantity > 0).map((item, index) => {
-                                                const isLastIndex = index === miscFeesQuantities.filter(item => item.Quantity > 0).length - 1;
-
-                                                return (
-                                                    <div key={index}>
-                                                        <Flex justify={'space-between'} align={'center'}>
-                                                            <Text
-                                                                className={cx(globalStyles.noSpace)}>{item.Text}</Text>
-
-                                                            <Flex gap={token.padding} align={'center'}>
-                                                                <Title level={1} className={cx(globalStyles.noSpace)}>
-                                                                    <Text style={{opacity: '0.6'}}>x </Text>
-                                                                    {item.Quantity}
-                                                                </Title>
-                                                            </Flex>
-                                                        </Flex>
-
-                                                        {!isLastIndex &&
-                                                            <Divider className={globalStyles.formDivider}
-                                                                     style={{margin: '10px 0px'}}/>}
-                                                    </div>
-                                                )
-                                            })}
-                                        </Card>
-                                    </div>
-                                }
-
-                                <Divider className={globalStyles.formDivider}/>
-                            </>
-                        }
+                        
+                        <ReservationRegistrationMiscItems miscFeesQuantities={miscFeesQuantities} 
+                                                          setMiscFeesQuantities={setMiscFeesQuantities}/>
 
                         {(showResources && anyInList(resources)) &&
                             <FormSelect form={formik}
@@ -999,148 +883,10 @@ function ReservationRegistration() {
                             </>
                         }
 
-                        {!isNullOrEmpty(disclosure) &&
-                            <FormCheckbox label={disclosure?.Name}
-                                          formik={formik}
-                                          name={'DisclosureAgree'}
-                                          text={`I agree to the `}
-                                          description={'Terms and Conditions'}
-                                          descriptionClick={() => setShowTermAndCondition(true)}/>
-                        }
+                        <ReservationRegistrationTermsAndCondition disclosure={disclosure} formik={formik} />
                     </PaddingBlock>
 
-                    {/*//term drawer*/}
-                    <DrawerBottom
-                        showDrawer={showTermAndCondition}
-                        showButton={true}
-                        customFooter={<Flex gap={token.padding}>
-                            {!isNullOrEmpty(selectedWaiverToView) &&
-                                <>
-                                    {equalString(selectedWaiverToView?.ContentType, 2) &&
-                                        <Button type="primary" block icon={<DownloadOutlined/>} onClick={() => {
-                                            openPdfInNewTab(selectedWaiverToView?.FullPath)
-                                        }}>
-                                            {t('disclosure.downloadFile')}
-                                        </Button>
-                                    }
-                                </>
-                            }
 
-                            <Button type={'primary'} block onClick={() => {
-                                setShowTermAndCondition(false)
-                            }}>
-                                {t('close')}
-                            </Button>
-                        </Flex>}
-                        closeDrawer={() => setShowTermAndCondition(false)}
-                        label={'Terms and Conditions'}
-                        onConfirmButtonClick={() => setShowTermAndCondition(false)}
-                    >
-                        <PaddingBlock>
-                            {isNullOrEmpty(selectedWaiverToView) &&
-                                <Skeleton.Button active={true} block style={{height: `200px`}}/>
-                            }
-
-                            {!isNullOrEmpty(selectedWaiverToView) &&
-                                <>
-                                    {equalString(selectedWaiverToView?.ContentType, 2) &&
-                                        <>
-                                            {isFileType(selectedWaiverToView?.FullPath, 'pdf') &&
-                                                <>
-                                                    {(!isNullOrEmpty(selectedWaiverToView?.FullPath)) &&
-                                                        <>
-                                                            {isNullOrEmpty(pdfDataUrl) &&
-                                                                <Skeleton.Button active={true} block
-                                                                                 style={{height: `160px`}}/>
-                                                            }
-
-                                                            {!isNullOrEmpty(pdfDataUrl) &&
-                                                                <Document file={pdfDataUrl}/>
-                                                            }
-                                                        </>
-                                                    }
-                                                </>
-                                            }
-                                            {!isFileType(selectedWaiverToView?.FullPath, 'pdf') &&
-                                                <>
-                                                    <Text>{selectedWaiverToView?.FileName}</Text>
-                                                </>
-                                            }
-                                        </>
-                                    }
-                                    {!equalString(selectedWaiverToView?.ContentType, 2) &&
-                                        <>
-                                            {!isNullOrEmpty(selectedWaiverToView?.DisclosureText) &&
-                                                <IframeContent content={selectedWaiverToView?.DisclosureText}
-                                                               id={'modal-disclosure'}/>
-                                            }
-                                        </>
-                                    }
-                                </>
-                            }
-                        </PaddingBlock>
-                    </DrawerBottom>
-
-                    {/*Misc item*/}
-                    <DrawerBottom
-                        maxHeightVh={60}
-                        showDrawer={showMiscItems}
-                        closeDrawer={() => {
-                            setShowMiscItems(false)
-                        }}
-                        label={'Miscellaneous Items'}
-                        showButton={true}
-                        confirmButtonText={'Save'}
-                        onConfirmButtonClick={() => {
-                            setShowMiscItems(false)
-                        }}
-                    >
-                        <PaddingBlock>
-                            {anyInList(miscFeesQuantities) &&
-                                <Flex vertical>
-                                    {miscFeesQuantities.map((miscItem, index) => {
-                                        const isLastIndex = index === miscFeesQuantities.length - 1;
-
-                                        return (
-                                            <div key={index}>
-                                                <Flex justify={'space-between'} align={'center'}>
-                                                    <Title level={1}
-                                                           className={cx(globalStyles.noSpace)}>{miscItem.Text}</Title>
-
-                                                    <Flex gap={token.padding} align={'center'}>
-                                                        <div onClick={() => {
-                                                            handleMiscItemChange(false, index)
-                                                        }}
-                                                             style={{
-                                                                 opacity: miscItem.Quantity === 0 ? '0.4' : '1'
-                                                             }}
-                                                        >
-                                                            <SVG icon={'circle-minus'} size={30}
-                                                                 color={token.colorError}/>
-                                                        </div>
-
-                                                        <Title level={1} style={{minWidth: '26px', textAlign: 'center'}}
-                                                               className={cx(globalStyles.noSpace)}>{miscItem.Quantity}</Title>
-
-                                                        <div onClick={() => {
-                                                            handleMiscItemChange(true, index)
-                                                        }}>
-                                                            <SVG icon={'circle-plus'} size={30}
-                                                                 color={token.colorPrimary}/>
-                                                        </div>
-                                                    </Flex>
-                                                </Flex>
-
-                                                {!isLastIndex &&
-                                                    <Divider className={globalStyles.playersDivider}/>
-                                                }
-                                            </div>
-                                        )
-                                    })}
-                                </Flex>
-                            }
-                        </PaddingBlock>
-                    </DrawerBottom>
                 </>
             }
         </>
