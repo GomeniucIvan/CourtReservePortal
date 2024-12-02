@@ -50,6 +50,7 @@ import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {pNotify} from "../../../components/notification/PNotify.jsx";
 import {removeLastHistoryEntry} from "../../../toolkit/HistoryStack.js";
+import ReservationRegistrationPlayers from "./ReservationRegistration.Players.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -83,10 +84,7 @@ function ReservationRegistration() {
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
     const [showMatchMakerDrawer, setShowMatchMakerDrawer] = useState([]);
     const [matchMakerReceiptData, setMatchMakerReceiptData] = useState(null);
-    const [showSearchPlayers, setShowSearchPlayers] = useState(false);
-    const [isPlayersSearch, setIsPlayersSearch] = useState(false);
-    const [searchingPlayers, setSearchingPlayers] = useState([]);
-    const [searchPlayersText, setSearchPlayersText] = useState('');
+
     const [shouldRebindPlayers, setShouldRebindPlayers] = useState(false);
     const [showMiscItems, setShowMiscItems] = useState(false);
     const [miscItems, setMiscItems] = useState([]);
@@ -103,6 +101,7 @@ function ReservationRegistration() {
     const [resources, setResources] = useState([]);
     const [pdfDataUrl, setPdfDataUrl] = useState(null);
     const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
+    const [showSearchPlayers, setShowSearchPlayers] = useState(false);
 
     const [validationSchema, setValidationSchema] = useState(Yup.object({}));
 
@@ -636,61 +635,6 @@ function ReservationRegistration() {
         setMatchMakerReceiptData(validateReservationMatchMaker(t, formik, matchMaker, true, true));
     }
 
-    const addPlayers = () => {
-        setShowSearchPlayers(false);
-    }
-
-    const onPlayersSearch = (searchVal) => {
-        if (isMockData) {
-            setIsPlayersSearch(true);
-
-            setTimeout(function () {
-                setIsPlayersSearch(false);
-                setSearchPlayersText(searchVal);
-            }, 2000);
-        } else {
-            setSearchPlayersText(searchVal);
-        }
-    }
-
-    useEffect(() => {
-        if (showSearchPlayers) {
-
-            if (isMockData) {
-                let data = mockData;
-                if (isNullOrEmpty(searchPlayersText)) {
-                    setSearchingPlayers(data.favplayers);
-                } else {
-                    setSearchingPlayers(data.players);
-                }
-            } else {
-                setIsPlayersSearch(true);
-
-                if (!isNullOrEmpty(searchPlayersText) && searchingPlayers.length < 3) {
-                    setIsPlayersSearch(false);
-                    return;
-                }
-
-                let searchPlayersData = {
-                    costTypeId: reservation.MembershipId,
-                    IsMobileLayout: true,
-                    userId: reservation.MemberId,
-                    customSchedulerId: reservation.CustomSchedulerId,
-                    IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation) && toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker),
-                    filterValue: searchPlayersText,
-                    organizationMemberIdsString: reservationMembers.map(member => member.OrgMemberId).join(',')
-                }
-
-                appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/Api_Reservation_GetMembersToPlayWith?id=${orgId}&${encodeParamsObject(searchPlayersData)}`).then(rSearchPlayers => {
-                    setSearchingPlayers(rSearchPlayers);
-                    setIsPlayersSearch(false);
-                })
-            }
-        } else {
-
-        }
-    }, [showSearchPlayers, searchPlayersText, reservationMembers]);
-
     useEffect(() => {
         if (shouldRebindPlayers && !showSearchPlayers) {
             setShouldRebindPlayers(false);
@@ -974,10 +918,6 @@ function ReservationRegistration() {
                                         </Flex>
                                     </Flex>
 
-                                    {/*<Alert*/}
-                                    {/*    message={<div><strong>Reservation TypeName</strong> min number... 5 minutes note</div>}*/}
-                                    {/*    type="info"/>*/}
-
                                     {toBoolean(authData?.AllowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
                                         <div>
                                             <label className={globalStyles.globalLabel}>
@@ -998,98 +938,20 @@ function ReservationRegistration() {
                                         </div>
                                     }
 
-                                    <div>
-                                        <Text
-                                            style={{
-                                                marginBottom: `${token.Custom.buttonPadding}px`,
-                                                display: 'block'
-                                            }}>Player(s)</Text>
-                                        <Card className={cx(globalStyles.card, globalStyles.playersCard)}>
-                                            <Flex vertical>
-                                                {toBoolean(loadingState.SelectedReservationMembers) &&
-                                                    <>
-                                                        {emptyArray(anyInList(reservationMembers) ? reservationMembers.length : 1).map((item, index) => (
-                                                            <div key={index}>
-                                                                <Skeleton.Button block key={index} active={true}
-                                                                                 style={{height: `48px`}}/>
-                                                                <Divider className={globalStyles.playersDivider}/>
-                                                            </div>
-                                                        ))}
-                                                    </>
-                                                }
-
-                                                {!toBoolean(loadingState.SelectedReservationMembers) &&
-                                                    <>
-                                                        {reservationMembers.map((reservationMember, index) => {
-                                                            return (
-                                                                <div key={index}>
-                                                                    <Flex justify={'space-between'} align={'center'}>
-                                                                        <Flex gap={token.Custom.cardIconPadding}>
-                                                                            <Flex justify={'center'} align={'center'}
-                                                                                  style={{
-                                                                                      width: 48,
-                                                                                      height: 48,
-                                                                                      borderRadius: 50,
-                                                                                      backgroundColor: 'red'
-                                                                                  }}>
-                                                                                <Title level={1}
-                                                                                       className={cx(globalStyles.noSpace)}>{fullNameInitials(reservationMember.FullName)}</Title>
-                                                                            </Flex>
-
-                                                                            <Flex vertical
-                                                                                  gap={token.Custom.cardIconPadding / 2}>
-                                                                                <Text>
-                                                                                    <Ellipsis direction='end'
-                                                                                              content={reservationMember.FullName}/>
-                                                                                </Text>
-                                                                                <Text
-                                                                                    type="secondary">{costDisplay(reservationMember.PriceToPay)}</Text>
-                                                                            </Flex>
-                                                                        </Flex>
-
-                                                                        {(toBoolean(reservationMember.IsOwner) && anyInList(reservation.FamilyMembers)) &&
-                                                                            <div onClick={() => {
-                                                                                selectRegisteringMemberIdRef.current.open();
-                                                                            }}>
-                                                                                <SVG icon={'edit-user'} size={23}
-                                                                                     color={token.colorLink}/>
-                                                                            </div>
-                                                                        }
-                                                                        {(!toBoolean(reservationMember.IsOwner) && toBoolean(playersModelData?.IsAllowedToEditPlayers)) &&
-                                                                            <div onClick={() => {
-                                                                                setReservationMembers(reservationMembers.filter(
-                                                                                    member => member.OrgMemberId !== reservationMember.OrgMemberId
-                                                                                ));
-                                                                                setShouldRebindPlayers(true);
-                                                                            }}>
-                                                                                <SVG icon={'circle-minus'} size={23}
-                                                                                     color={token.colorError}/>
-                                                                            </div>
-                                                                        }
-                                                                    </Flex>
-
-                                                                    <Divider className={globalStyles.playersDivider}/>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </>
-                                                }
-
-
-                                                <Button type="primary"
-                                                        block
-                                                        ghost
-                                                        htmlType={'button'}
-                                                        disabled={toBoolean(loadingState.SelectedReservationMembers)}
-                                                    //style={{marginTop: `${token.padding}px`}}
-                                                        onClick={() => {
-                                                            setShowSearchPlayers(true)
-                                                        }}>
-                                                    Search Player(s)
-                                                </Button>
-                                            </Flex>
-                                        </Card>
-                                    </div>
+                                    <ReservationRegistrationPlayers
+                                        formik={formik}
+                                        reservation={reservation}
+                                        showSearchPlayers={showSearchPlayers}
+                                        setShowSearchPlayers={setShowSearchPlayers}
+                                        reservationMembers={reservationMembers}
+                                        selectedReservationType={selectedReservationType}
+                                        loadingState={loadingState}
+                                        selectRegisteringMemberIdRef={selectRegisteringMemberIdRef}
+                                        setReservationMembers={setReservationMembers}
+                                        setShouldRebindPlayers={setShouldRebindPlayers}
+                                        playersModelData={playersModelData}
+                                        searchPlayerDrawerBottomRef={searchPlayerDrawerBottomRef}
+                                    />
 
                                     {(toBoolean(selectedReservationType?.AllowGuestsOnMemberPortal) && isNullOrEmpty(reservation.InstructorId)) &&
                                         <RegistrationGuestBlock disableAddGuest={toBoolean(loadingState.SelectedReservationMembers)}
@@ -1462,104 +1324,7 @@ function ReservationRegistration() {
                         </PaddingBlock>
                     </DrawerBottom>
 
-                    {/*Search player*/}
-                    <DrawerBottom
-                        maxHeightVh={80}
-                        showDrawer={showSearchPlayers}
-                        closeDrawer={addPlayers}
-                        label={'Search Player(s)'}
-                        onSearch={onPlayersSearch}
-                        showButton={true}
-                        fullHeight={true}
-                        searchType={2}
-                        addSearch={true}
-                        isSearchLoading={isPlayersSearch}
-                        ref={searchPlayerDrawerBottomRef}
-                        confirmButtonText={'Close'}
-                        onConfirmButtonClick={addPlayers}
-                    >
-                        <PaddingBlock>
-                            {/*//todo iv change to dynamic calculation*/}
-                            <Flex vertical style={{minHeight: `calc(80vh - 98px - 72px)`}}>
-                                {isPlayersSearch &&
-                                    <Flex vertical={true} gap={token.padding}>
-                                        {emptyArray(anyInList(searchingPlayers) ? searchingPlayers.length : 8).map((item, index) => (
-                                            <div key={index}>
-                                                <Skeleton.Button block key={index} active={true}
-                                                                 style={{height: `48px`}}/>
-                                            </div>
-                                        ))}
-                                    </Flex>
-                                }
 
-                                {!isPlayersSearch &&
-                                    <>
-                                        {!anyInList(searchingPlayers) &&
-                                            <Text>No players meessage</Text>
-                                        }
-
-                                        {anyInList(searchingPlayers) &&
-                                            <Flex vertical gap={token.padding}>
-                                                {searchingPlayers.map((player, index) => (
-                                                    <div key={index}>
-                                                        <Flex justify={'space-between'} align={'center'}>
-                                                            <div onClick={() => {
-                                                                setReservationMembers((prevMembers) => [...prevMembers, {OrgMemberId: player.MemberOrgId}]);
-                                                                setSearchPlayersText('');
-                                                                searchPlayerDrawerBottomRef.current.setValue('');
-                                                                setShouldRebindPlayers(true);
-                                                            }} style={{width: '100%'}}>
-                                                                <Flex gap={token.Custom.cardIconPadding}
-                                                                      align={'center'}>
-                                                                    <Flex justify={'center'} align={'center'}
-                                                                          style={{
-                                                                              width: 48,
-                                                                              height: 48,
-                                                                              borderRadius: 50,
-                                                                              backgroundColor: 'red'
-                                                                          }}>
-                                                                        <Title level={1}
-                                                                               className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
-                                                                    </Flex>
-
-                                                                    <Text>
-                                                                        <Ellipsis direction='end'
-                                                                                  content={player.DisplayName}/>
-                                                                    </Text>
-                                                                </Flex>
-                                                            </div>
-
-                                                            <Flex gap={token.padding}>
-                                                                <div onClick={() => {
-                                                                    alert('todo')
-                                                                }}>
-                                                                    {toBoolean(player.IsFavoriteMember) ?
-                                                                        (<SVG icon={'hearth-filled'} size={24}
-                                                                              color={token.colorPrimary}/>) :
-                                                                        (<SVG icon={'hearth'} size={24}
-                                                                              color={token.colorPrimary}/>)}
-
-                                                                </div>
-
-                                                                <div onClick={() => {
-                                                                    alert('todo')
-                                                                }}>
-                                                                    <SVG icon={'circle-plus'} size={24}
-                                                                         color={token.colorPrimary}/>
-                                                                </div>
-                                                            </Flex>
-                                                        </Flex>
-                                                    </div>
-                                                ))}
-                                            </Flex>
-                                        }
-                                    </>
-                                }
-
-
-                            </Flex>
-                        </PaddingBlock>
-                    </DrawerBottom>
 
 
                     {/*Misc item*/}
