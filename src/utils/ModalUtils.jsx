@@ -122,6 +122,13 @@ export const ModalClose = (data) => {
     Modal.show({
         content: data.content,
         closeOnAction: true,
+        onAction: (e) => {
+            if (equalString(e?.key, 'close')) {
+                if (typeof data.onClose == "function"){
+                    data.onClose(e);
+                }
+            }
+        },
         actions: [
             {
                 key: 'close',

@@ -45,3 +45,9 @@ export const clearHistory = () => {
 export const getHistory = () => {
     return historyStack;
 };
+
+export const removeLastHistoryEntry = () => {
+    if (historyStack.length > 0) {
+        historyStack.pop(); 
+    }
+};

@@ -14,6 +14,7 @@ import ProfileBillingPayment from "../pages/profile/billing/payment/ProfileBilli
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
+    RESERVATION_EDIT: `/profile/reservation/edit/:id`,
     RESERVATION_CREATE: `/profile/reservation/create`,
     PROFILE_PERSONAL_INFO: `/profile/personalinfo`,
     PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,

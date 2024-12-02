@@ -797,8 +797,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     setFortisElements(newFortisElements);
                 } else {
                     ModalClose({
-                        title: 'Validation Error',
-                        text: data.error,
+                        content: data.error,
                         showIcon: false,
                         onOk: () => {
 

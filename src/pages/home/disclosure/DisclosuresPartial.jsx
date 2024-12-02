@@ -125,7 +125,6 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                     setIsLoading(false);
                     isFormSubmit(false);
                     ModalClose({
-                        title: '',
                         content: r.Message,
                         showIcon: false
                     });

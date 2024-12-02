@@ -5,7 +5,6 @@ import LeagueList from "../pages/league/list/LeagueList.jsx";
 import ExpandedScheduler from "../pages/scheduler/ExpandedScheduler.jsx";
 import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
 import Navigation from "../pages/navigation/Navigation.jsx";
-import {useTranslation} from "react-i18next";
 import DisclosurePending from "../pages/home/disclosure/DisclosurePending.jsx";
 import MemberGroupDetails from "../pages/membergroup/details/MemberGroupDetails.jsx";
 

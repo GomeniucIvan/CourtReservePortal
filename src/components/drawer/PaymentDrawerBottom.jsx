@@ -168,7 +168,6 @@ const PaymentDrawerBottom = forwardRef(({
                                        <Flex align={'center'} gap={4} onClick={() => {
                                            if (toBoolean(paymentData?.requireOnlinePayment)) {
                                                ModalClose({
-                                                   title: 'Payment Required',
                                                    content: `After registration you have ${isNullOrEmpty(paymentData?.holdTimeForReservation) ? '15' : paymentData?.holdTimeForReservation} minutes to pay before your registration will be canceled.`,
                                                    showIcon: false,
                                                    onOk: () => {

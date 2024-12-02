@@ -45,6 +45,11 @@ import RegistrationGuestBlock from "../../../components/registration/Registratio
 import FormCheckbox from "../../../form/formcheckbox/FomCheckbox.jsx";
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
 import {validateUdfs} from "../../../utils/ValidationUtils.jsx";
+import {ModalClose} from "../../../utils/ModalUtils.jsx";
+import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
+import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
+import {pNotify} from "../../../components/notification/PNotify.jsx";
+import {removeLastHistoryEntry} from "../../../toolkit/HistoryStack.js";
 
 const {Title, Text, Link} = Typography;
 
@@ -66,7 +71,8 @@ function ReservationRegistration() {
         globalStyles,
         token,
         setFooterContent,
-        isLoading
+        isLoading,
+        setDynamicPages
     } = useApp();
     const [reservation, setReservation] = useState(null);
     const [matchMaker, setMatchMaker] = useState(null);
@@ -187,10 +193,43 @@ function ReservationRegistration() {
 
             console.log(values)
 
-            //let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
-            //console.log(response);
+            let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
+            if (toBoolean(response?.IsValid)){
+                let data = response.Data;
+                
+                debugger;
+                //portal-details-payment-editreservation
+                let key = data.Key;
 
-            setIsLoading(false);
+                //remove current page
+                removeLastHistoryEntry();
+                
+                if (equalString(key, 'payment')){
+                    navigate(ProfileRouteNames.PROFILE_BILLING_PAYMENTS);
+                } else if (equalString(key, 'details') || equalString(key, 'portal')){
+                    let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', data.ReservationId);
+                    setPage(setDynamicPages, data.Name, route);
+                    navigate(route);
+                } else if (equalString(key, 'editreservation')){
+                    let route = toRoute(ProfileRouteNames.RESERVATION_EDIT, 'id', data.ReservationId);
+                    setPage(setDynamicPages, data.Name, route);
+                    navigate(route);
+                }
+                if (!isNullOrEmpty(data.Message)){
+                    pNotify(data.Message);
+                }
+                setIsLoading(false);
+            } else{
+                setIsLoading(false);
+                
+                ModalClose({
+                    content: response.Message,
+                    showIcon: false,
+                    onClose: () => {
+
+                    }
+                });
+            }
         },
     });
 

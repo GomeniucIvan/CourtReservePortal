@@ -1,4 +1,4 @@
-﻿import React, {useEffect, useState} from "react";
+﻿import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "../../../../context/AppProvider.jsx";
 import {equalString, randomNumber, toBoolean} from "../../../../utils/Utils.jsx";
 import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
@@ -14,15 +14,22 @@ import {costDisplay} from "../../../../utils/CostUtils.jsx";
 import FormInputDisplay from "../../../../form/input/FormInputDisplay.jsx";
 import {memberPaymentProfiles} from "../../../../utils/SelectUtils.jsx";
 import {emptyArray} from "../../../../utils/ListUtils.jsx";
+import {validatePaymentProfile} from "../../../../utils/ValidationUtils.jsx";
+import {useTranslation} from "react-i18next";
+import useCustomFormik from "../../../../components/formik/CustomFormik.jsx";
+import ReCAPTCHA from "react-google-recaptcha";
+import {getConfigValue} from "../../../../config/WebConfig.jsx";
 
 function ProfileBillingPayment({}) {
     const navigate = useNavigate();
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [paymentModel, setPaymentModel] = useState(null);
-    const {setIsLoading, isLoading} = useApp();
+    const {setIsLoading, isLoading, token} = useApp();
     const {orgId, authData} = useAuth();
-
+    const { t } = useTranslation('payment');
+    const recaptchaRef = useRef();
+    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
+    
     const initialValues = {
         card_firstName: '',
         card_lastName: '',
@@ -42,7 +49,6 @@ function ProfileBillingPayment({}) {
         card_country: orgCardCountryCode(authData?.UiCulture),
         
         paymentFrequency: '',
-        disclosureAgree: false,
         hiddenFortisTokenId: '',
     };
 
@@ -50,14 +56,27 @@ function ProfileBillingPayment({}) {
       
     });
 
-    const formik = useFormik({
+    const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
+        validate: () => {
+            let isValidPaymentProfile = validatePaymentProfile(t, formik, true);
+            return isValidPaymentProfile;
+        },
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-
+            
+           let postModel = values;
+           postModel.ReCaptchaToken = await recaptchaRef.current.executeAsync();
+           
+           let response = await appService.post(`/app/Online/ProcessPayment?id=${orgId}`, postModel);
+           if (toBoolean(response?.IsValid)){
+               
+           } else{
+               
+           }
            
         },
     });
@@ -78,15 +97,15 @@ function ProfileBillingPayment({}) {
             <Button type="primary"
                     block
                     disabled={isFetching}
-                    loading={isSubmitting}
+                    loading={isLoading}
                     htmlType="submit"
                     onClick={() => {
-
+                        formik.submitForm();
                     }}>
-                {isFetching ? 'Pay' : `Pay ${costDisplay(paymentModel.CalculateTotal)}`}
+                {isFetching ? 'Pay' : `Pay ${costDisplay(paymentModel?.CalculateTotal)}`}
             </Button>
         </PaddingBlock>)
-    }, [isFetching, isSubmitting]);
+    }, [isFetching, isLoading]);
 
     const loadData = async (refresh) => {
         setIsFetching(true);
@@ -99,8 +118,6 @@ function ProfileBillingPayment({}) {
                 let paymentsModel = paymentsResponse.Data;
                 setPaymentModel(paymentsModel);
                 setIsFetching(false);
-                
-                console.log(paymentsModel)
             }
         }
     }
@@ -143,6 +160,12 @@ function ProfileBillingPayment({}) {
                     
                     <FormInputDisplay label={'Subtotal'} value={costDisplay(paymentModel.CalculateTotal)}/>
                     <FormInputDisplay label={'Total Due'} value={costDisplay(paymentModel.CalculateTotal)}/>
+
+                    <ReCAPTCHA
+                        ref={recaptchaRef}
+                        size="invisible"
+                        sitekey={captchaKey}
+                    />
                 </>
             }
         </PaddingBlock>
