@@ -51,6 +51,7 @@ import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {pNotify} from "../../../components/notification/PNotify.jsx";
 import {removeLastHistoryEntry} from "../../../toolkit/HistoryStack.js";
 import ReservationRegistrationPlayers from "./ReservationRegistration.Players.jsx";
+import ReservationRegistrationMatchMaker from "./ReservationRegistration.MatchMaker.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -82,8 +83,7 @@ function ReservationRegistration() {
     const [durations, setDurations] = useState([]);
     const [courts, setCourts] = useState([]);
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
-    const [showMatchMakerDrawer, setShowMatchMakerDrawer] = useState([]);
-    const [matchMakerReceiptData, setMatchMakerReceiptData] = useState(null);
+
 
     const [shouldRebindPlayers, setShouldRebindPlayers] = useState(false);
     const [showMiscItems, setShowMiscItems] = useState(false);
@@ -154,7 +154,6 @@ function ReservationRegistration() {
 
     const fields = Object.keys(initialValues);
     const {loadingState, setLoading} = useLoadingState(fields);
-
 
     const getValidationSchema = () => {
         let schemaFields = {
@@ -629,12 +628,6 @@ function ReservationRegistration() {
         loadData();
     }, []);
 
-    const closeAndCheckMatchMakerData = async () => {
-        setShowMatchMakerDrawer(false);
-        console.log(validateReservationMatchMaker(t, formik, matchMaker, true, true))
-        setMatchMakerReceiptData(validateReservationMatchMaker(t, formik, matchMaker, true, true));
-    }
-
     useEffect(() => {
         if (shouldRebindPlayers && !showSearchPlayers) {
             setShouldRebindPlayers(false);
@@ -844,64 +837,14 @@ function ReservationRegistration() {
                                     propText='DisplayName'
                                     propValue='Id'/>
 
-                        {toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker) &&
-                            <>
-                                <FormSwitch label={'Allow Players to join this Reservation'}
-                                            form={formik}
-                                            name={'IsOpenReservation'}/>
-
-                                {toBoolean(formik?.values?.IsOpenReservation) &&
-                                    <>
-                                        {anyInList(matchMakerReceiptData) &&
-                                            <>
-                                                <div style={{marginBottom: token.Custom.buttonPadding}}>
-                                                    <Alert
-                                                        className={matchMakerReceiptData.some(v => isNullOrEmpty(v.Value)) ? 'ant-input-status-error' : ''}
-                                                        message={<div>
-                                                            {matchMakerReceiptData.map((item, index) => {
-                                                                const isLastItem = index === matchMakerReceiptData.length - 1;
-                                                                
-                                                                return (
-                                                                    <span key={index}>
-                                                                        <Flex align={'center'} justify={'space-between'}>
-                                                                            <Text>
-                                                                                <strong>{item.Text}</strong>
-                                                                            </Text>
-                                                                            <Text>
-                                                                                {item.Value}
-                                                                            </Text>
-                                                                        </Flex>
-                                                                        {!isLastItem && (
-                                                                            <Divider
-                                                                                variant="dashed"
-                                                                                className={globalStyles.alertDivider}
-                                                                            />
-                                                                        )}
-                                                                    </span>
-                                                                )
-                                                            })}
-                                                        </div>}
-                                                        type={matchMakerReceiptData.some(v => isNullOrEmpty(v.Value)) ? 'error' : 'info'} />
-                                                </div>
-                                            </>
-                                        }
-
-                                        <Button type="primary"
-                                                block
-                                                ghost
-                                                htmlType={'button'}
-                                                onClick={() => {
-                                                    setShowMatchMakerDrawer(true)
-                                                }}>
-                                            {!isNullOrEmpty(matchMakerReceiptData) ? (<>Edit Join
-                                                Criteria</>) : (<>Setup
-                                                Join
-                                                Criteria</>)}
-                                        </Button>
-                                    </>
-                                }
-                            </>
-                        }
+                        <ReservationRegistrationMatchMaker
+                            formik={formik}
+                            matchMaker={matchMaker}
+                            selectedReservationType={selectedReservationType}
+                            matchMakerShowSportTypes={matchMakerShowSportTypes}
+                            matchMakerMemberGroups={matchMakerMemberGroups}
+                            matchMakerRatingCategories={matchMakerRatingCategories}
+                        />
 
                         {!isNullOrEmpty(formik?.values?.ReservationTypeId) &&
                             <>
@@ -1137,195 +1080,6 @@ function ReservationRegistration() {
                             }
                         </PaddingBlock>
                     </DrawerBottom>
-
-                    {/*Match maker drawer*/}
-                    <DrawerBottom
-                        maxHeightVh={90}
-                        showDrawer={showMatchMakerDrawer}
-                        closeDrawer={closeAndCheckMatchMakerData}
-                        label={'Match Maker Criteria'}
-                        showButton={true}
-                        confirmButtonText={'Save'}
-                        onConfirmButtonClick={closeAndCheckMatchMakerData}
-                    >
-                        <PaddingBlock>
-                            {toBoolean(matchMakerShowSportTypes) &&
-                                <FormSelect form={formik}
-                                            name={`SportTypeId`}
-                                            label='Sport Type'
-                                            options={matchMaker?.ActiveSportTypes}
-                                            disabled={oneListItem(matchMaker?.ActiveSportTypes)}
-                                            required={true}
-                                            propText='Name'
-                                            propValue='Id'/>
-                            }
-
-                            {(anyInList(matchMaker?.MatchMakerTypes) && toBoolean(matchMaker?.IsMatchTypeEnabled)) &&
-                                <FormSelect form={formik}
-                                            name={`MatchMakerTypeId`}
-                                            label='Match Type'
-                                            options={matchMaker?.MatchMakerTypes}
-                                            required={true}
-                                            propText='Name'
-                                            propValue='Id'/>
-                            }
-
-                            {toBoolean(matchMaker?.IsGenderCriteriaMatch) &&
-                                <FormSelect form={formik}
-                                            name={`MatchMakerGender`}
-                                            label='Gender Restrictions'
-                                            options={matchmakerGenderList}
-                                            required={true}
-                                            propText='Text'
-                                            propValue='Value'/>
-                            }
-
-                            {(anyInList(matchMaker?.RatingCategoryIds) && anyInList(matchMakerRatingCategories)) &&
-                                <>
-                                    <FormSelect form={formik}
-                                                name={`MatchMakerRatingCategoryId`}
-                                                label='Rating Restriction'
-                                                options={matchMakerRatingCategories}
-                                                required={true}
-                                                propText='Name'
-                                                propValue='Id'/>
-
-                                    {(anyInList(matchMakerRatingCategories) ? matchMakerRatingCategories : []).map((matchMakerRatingCateg, index) => {
-                                        if (!equalString(matchMakerRatingCateg.Id, formik?.values?.MatchMakerRatingCategoryId)) {
-                                            return (<div key={index}></div>);
-                                        }
-
-                                        let selectedRatingCategory = matchMakerRatingCategories.find(v => equalString(v.Id, formik?.values?.MatchMakerRatingCategoryId));
-
-                                        return (
-                                            <div key={index}>
-                                                <FormSelect form={formik}
-                                                            multi={true}
-                                                            name={`MatchMakerRatingCategoryRatingIds`}
-                                                            label={`${selectedRatingCategory?.Name} Eligible Rating(s)`}
-                                                            options={matchMakerRatingCateg.Ratings}
-                                                            required={!oneListItem(matchMakerRatingCategories)}
-                                                            propText='Name'
-                                                            propValue='Id'/>
-                                            </div>
-                                        )
-                                    })}
-                                </>
-                            }
-
-                            {anyInList(matchMaker?.MemberGroupIds) &&
-                                <FormSelect form={formik}
-                                            name={`MatchMakerMemberGroupIds`}
-                                            label='Member Groups'
-                                            options={matchMakerMemberGroups}
-                                            required={true}
-                                            multi={true}
-                                            propText='NavigationName'
-                                            propValue='Id'/>
-                            }
-
-                            <InlineBlock>
-                                <FormSelect form={formik}
-                                            name={`MatchMakerMinNumberOfPlayers`}
-                                            label='Min. Players'
-                                            options={numberList((selectedReservationType?.MinimumNumberOfPlayers ?? 2), selectedReservationType?.MaximumNumberOfPlayers ?? 25)}
-                                            required={true}
-                                            onValueChange={(e) => {
-                                                let selectedMinValueInt = parseInt(e.Value);
-                                                let selectedMaxValue = formik?.values?.MatchMakerMaxNumberOfPlayers;
-                                                if (!isNullOrEmpty(selectedMaxValue)) {
-                                                    let selectedMaxValueInt = parseInt(selectedMaxValue);
-                                                    if (selectedMaxValueInt < selectedMinValueInt) {
-                                                        formik?.setFieldValue('MatchMakerMaxNumberOfPlayers', selectedMinValueInt);
-                                                    }
-                                                }
-                                            }}
-                                            propText='Text'
-                                            propValue='Value'/>
-
-                                <FormSelect form={formik}
-                                            name={`MatchMakerMaxNumberOfPlayers`}
-                                            label='Max. Players'
-                                            options={numberList((selectedReservationType?.MinimumNumberOfPlayers ?? 2), selectedReservationType?.MaximumNumberOfPlayers ?? 25)}
-                                            required={true}
-                                            onValueChange={(e) => {
-                                                let selectedMaxValueInt = parseInt(e.Value);
-                                                let selectedMinValue = formik?.values?.MatchMakerMinNumberOfPlayers;
-                                                if (!isNullOrEmpty(selectedMinValue)) {
-                                                    let selectedMinValueInt = parseInt(selectedMinValue);
-                                                    if (selectedMinValueInt > selectedMaxValueInt) {
-                                                        formik?.setFieldValue('MatchMakerMinNumberOfPlayers', selectedMaxValueInt);
-                                                    }
-                                                }
-                                            }}
-                                            propText='Text'
-                                            propValue='Value'/>
-                            </InlineBlock>
-
-                            {toBoolean(matchMaker?.IsAgeCriteriaMatch) &&
-                                <InlineBlock>
-                                    <FormSelect form={formik}
-                                                name={`MatchMakerMinAge`}
-                                                label='Min Age'
-                                                options={numberList(1, 99)}
-                                                onValueChange={(e) => {
-                                                    let selectedMinValueInt = parseInt(e.Value);
-                                                    let selectedMaxValue = formik?.values?.MatchMakerMaxAge;
-                                                    if (!isNullOrEmpty(selectedMaxValue)) {
-                                                        let selectedMaxValueInt = parseInt(selectedMaxValue);
-                                                        if (selectedMaxValueInt < selectedMinValueInt) {
-                                                            formik?.setFieldValue('MatchMakerMaxAge', selectedMinValueInt);
-                                                        }
-                                                    }
-                                                }}
-                                                required={true}
-                                                propText='Text'
-                                                propValue='Value'/>
-
-                                    <FormSelect form={formik}
-                                                name={`MatchMakerMaxAge`}
-                                                label='Max Age'
-                                                options={numberList(1, 99)}
-                                                onValueChange={(e) => {
-                                                    let selectedMaxValueInt = parseInt(e.Value);
-                                                    let selectedMinValue = formik?.values?.MatchMakerMinAge;
-                                                    if (!isNullOrEmpty(selectedMinValue)) {
-                                                        let selectedMinValueInt = parseInt(selectedMinValue);
-                                                        if (selectedMinValueInt > selectedMaxValueInt) {
-                                                            formik?.setFieldValue('MatchMakerMinAge', selectedMaxValueInt);
-                                                        }
-                                                    }
-                                                }}
-                                                required={true}
-                                                propText='Text'
-                                                propValue='Value'/>
-                                </InlineBlock>
-                            }
-
-                            <FormTextarea form={formik}
-                                          max={200}
-                                          label={'What to expect in this match'}
-                                          name={`Description`}/>
-
-                            {toBoolean(matchMaker?.AllowPrivateMatches) &&
-                                <>
-                                    <FormSwitch label={'Is this a private match'}
-                                                form={formik}
-                                                name={'MatchMakerIsPrivateMatch'}/>
-
-                                    {toBoolean(formik?.values?.MatchMakerIsPrivateMatch) &&
-                                        <FormInput form={formik}
-                                                   required={true}
-                                                   label={'Join Code'}
-                                                   name={`MatchMakerJoinCode`}/>
-                                    }
-                                </>
-                            }
-                        </PaddingBlock>
-                    </DrawerBottom>
-
-
-
 
                     {/*Misc item*/}
                     <DrawerBottom
