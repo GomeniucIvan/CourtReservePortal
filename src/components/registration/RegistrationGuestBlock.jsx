@@ -1,6 +1,13 @@
 ﻿import { useApp } from "../../context/AppProvider.jsx";
 import DrawerBottom from "../drawer/DrawerBottom.jsx";
-import {anyInList, equalString, fullNameInitials, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {
+    anyInList,
+    equalString,
+    fullNameInitials,
+    isNullOrEmpty,
+    moreThanOneInList,
+    toBoolean
+} from "../../utils/Utils.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import FormInput from "../../form/input/FormInput.jsx";
 import FormSelect from "../../form/formselect/FormSelect.jsx";
@@ -240,7 +247,7 @@ function RegistrationGuestBlock({formik,
                                            name={`ReservationGuests[${index}].PhoneNumber`}
                                 />
 
-                                {toBoolean(authData?.AllowMembersToChangeGuestOwnerOnMemberPortal) &&
+                                {(toBoolean(authData?.AllowMembersToChangeGuestOwnerOnMemberPortal) && moreThanOneInList(reservationMembers)) &&
                                     <FormSelect form={formik}
                                                 name={`ReservationGuests[${index}].GuestOwnerId`}
                                                 label='Owner'
@@ -254,7 +261,10 @@ function RegistrationGuestBlock({formik,
                                                 propValue={isNullOrEmpty(guestOrgMemberIdValue) ? 'OrgMemberId' : guestOrgMemberIdValue}/>
                                 }
 
-                                <FormCustomFields customFields={selectedGuest?.MemberUdfs} form={formik} index={index} name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>
+                                <FormCustomFields customFields={selectedGuest?.MemberUdfs}
+                                                  form={formik}
+                                                  index={index}
+                                                  name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>
                                 
                                 {hasGuestsWithPayment &&
                                     <>

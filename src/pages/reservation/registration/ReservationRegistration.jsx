@@ -44,7 +44,7 @@ import {Document} from "react-pdf";
 import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
 import FormCheckbox from "../../../form/formcheckbox/FomCheckbox.jsx";
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
-import {validateUdfs} from "../../../utils/ValidationUtils.jsx";
+import {validateReservationMatchMaker, validateUdfs} from "../../../utils/ValidationUtils.jsx";
 import {ModalClose} from "../../../utils/ModalUtils.jsx";
 import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
@@ -56,6 +56,7 @@ const {Title, Text, Link} = Typography;
 function ReservationRegistration() {
     const navigate = useNavigate();
     const {orgId, authData} = useAuth();
+    const [submitButtonText, setSubmitButtonText] = useState('Save');
     const [isFetching, setIsFetching] = useState(true);
     const location = useLocation();
     const {dataItem, start, end, customSchedulerId} = location.state || {};
@@ -81,7 +82,7 @@ function ReservationRegistration() {
     const [courts, setCourts] = useState([]);
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
     const [showMatchMakerDrawer, setShowMatchMakerDrawer] = useState([]);
-    const [isOpenMatchFilled, setIsOpenMatchFilled] = useState(false);
+    const [matchMakerReceiptData, setMatchMakerReceiptData] = useState(null);
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
     const [isPlayersSearch, setIsPlayersSearch] = useState(false);
     const [searchingPlayers, setSearchingPlayers] = useState([]);
@@ -121,7 +122,6 @@ function ReservationRegistration() {
         StartTime: '',
         EndTime: '12:30 pm',
         IsOpenReservation: false,
-        IsValidOpenMatch: false,
         InstructorName: '',
         SelectedReservationMembers: [],
         ReservationGuests: [],
@@ -159,12 +159,7 @@ function ReservationRegistration() {
 
     const getValidationSchema = () => {
         let schemaFields = {
-            ReservationTypeId: Yup.string().required('Reservation Type is require.'),
-            MatchMakerTypeId: Yup.string().when('IsOpenReservation', {
-                is: true,
-                then: (schema) => schema.required('Match Type is required.'),
-                otherwise: (schema) => schema.nullable(),
-            }),
+            ReservationTypeId: Yup.string().required('Reservation Type is require.')
         };
 
         if(!isNullOrEmpty(disclosure)){
@@ -341,6 +336,27 @@ function ReservationRegistration() {
         }
     }, [formik?.values?.ReservationTypeId]);
 
+    useEffect(() => {
+
+        let currentPlayersCount = ((reservationMembers?.length || 0));
+        if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
+            currentPlayersCount += formik?.values?.ReservationGuests?.length;
+        }
+        
+        //save button text
+        if (toBoolean(authData?.EnableQuickReservationLockOutPeriod)){
+            let buttonText = 'Save';
+            if (selectedReservationType) {
+                let currentReservationTypeMinVariable = selectedReservationType.MinimumNumberOfPlayers;
+                if (!isNullOrEmpty(currentReservationTypeMinVariable) && currentPlayersCount < currentReservationTypeMinVariable){
+                    buttonText = 'Save & Add Player(s)'
+                }
+            }
+
+            setSubmitButtonText(buttonText);
+        }
+    }, [formik?.values?.ReservationGuests, reservationMembers]);
+    
     const onReservationTypeChange = async () => {
         setLoading('Duration', true);
 
@@ -450,6 +466,30 @@ function ReservationRegistration() {
 
     }, [formik?.values?.EndTime]);
 
+    useEffect(() => {
+        if ((!isNullOrEmpty(formik?.values?.RegisteringMemberId) || !isNullOrEmpty(formik?.values?.Duration)) && !isNullOrEmpty(formik?.values?.ReservationTypeId)) {
+            reloadPlayers()
+        }
+    }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration, formik?.values?.FeeResponsibility]);
+
+    useEffect(() => {
+        if (!isNullOrEmpty(formik?.values?.ReservationTypeId)) {
+            setSelectedReservationType(null);
+
+            let currentReservationType = reservation?.ReservationTypes?.find(v => v.Id === formik?.values?.ReservationTypeId);
+            setSelectedReservationType(currentReservationType);
+            formik.setFieldValue('FeeResponsibility', selectedReservationType?.DefaultFeeResponsibility);
+        } else {
+            setSelectedReservationType(null);
+        }
+    }, [formik?.values?.ReservationTypeId]);
+
+    useEffect(() => {
+        if (shouldFetch) {
+            //(true);
+        }
+    }, [shouldFetch, resetFetch]);
+    
     //members guest table
     const reloadPlayers = async (orgMemberIdToRemove, incGuests) => {
         setLoading('SelectedReservationMembers', true);
@@ -531,24 +571,6 @@ function ReservationRegistration() {
         return null;
     }
 
-    useEffect(() => {
-        if ((!isNullOrEmpty(formik?.values?.RegisteringMemberId) || !isNullOrEmpty(formik?.values?.Duration)) && !isNullOrEmpty(formik?.values?.ReservationTypeId)) {
-            reloadPlayers()
-        }
-    }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration, formik?.values?.FeeResponsibility]);
-
-    useEffect(() => {
-        if (!isNullOrEmpty(formik?.values?.ReservationTypeId)) {
-            setSelectedReservationType(null);
-
-            let currentReservationType = reservation?.ReservationTypes?.find(v => v.Id === formik?.values?.ReservationTypeId);
-            setSelectedReservationType(currentReservationType);
-            formik.setFieldValue('FeeResponsibility', selectedReservationType?.DefaultFeeResponsibility);
-        } else {
-            setSelectedReservationType(null);
-        }
-    }, [formik?.values?.ReservationTypeId]);
-
     const reloadCourts = async (endTime) => {
         setLoading('CourtId', true);
 
@@ -590,12 +612,6 @@ function ReservationRegistration() {
     }
 
     useEffect(() => {
-        if (shouldFetch) {
-            //(true);
-        }
-    }, [shouldFetch, resetFetch]);
-
-    useEffect(() => {
         setFooterContent(<PaddingBlock topBottom={true}>
             <Button type="primary"
                     block
@@ -603,7 +619,7 @@ function ReservationRegistration() {
                     disabled={isFetching}
                     loading={isLoading}
                     onClick={formik.handleSubmit}>
-                Create Reservation
+                {submitButtonText}
             </Button>
         </PaddingBlock>)
     }, [isFetching, isLoading]);
@@ -614,33 +630,10 @@ function ReservationRegistration() {
         loadData();
     }, []);
 
-    const isValidMatchMakerData = async () => {
-        await formik.validateField('MatchMakerTypeId');
-        //await formik.validateField('MatchMakerGender');
-        // await formik.validateField('MatchMakerRatingCategoryId');
-        // await formik.validateField('MatchMakerMemberGroupIds');
-        // await formik.validateField('MatchMakerMinNumberOfPlayers');
-        // await formik.validateField('MatchMakerMaxNumberOfPlayers');
-        // await formik.validateField('MatchMakerJoinCode');
-
-        const matchMakerTypeIdError = formik.errors.MatchMakerTypeId;
-        const matchMakerGenderError = formik.errors.MatchMakerGender;
-        const matchMakerRatingCategoryIdError = formik.errors.MatchMakerRatingCategoryId;
-        const matchMakerMemberGroupIdsError = formik.errors.MatchMakerMemberGroupIds;
-        const matchMakerMinNumberOfPlayersError = formik.errors.MatchMakerMinNumberOfPlayers;
-        const matchMakerMaxNumberOfPlayersError = formik.errors.MatchMakerMaxNumberOfPlayers;
-        const matchMakerJoinCodeError = formik.errors.MatchMakerJoinCode;
-
-        return matchMakerTypeIdError || matchMakerGenderError || matchMakerRatingCategoryIdError ||
-            matchMakerMemberGroupIdsError || matchMakerMinNumberOfPlayersError ||
-            matchMakerMaxNumberOfPlayersError || matchMakerJoinCodeError;
-    }
-
     const closeAndCheckMatchMakerData = async () => {
         setShowMatchMakerDrawer(false);
-        setIsOpenMatchFilled(true);
-        let isInvalidMatchMakerInfo = await isValidMatchMakerData();
-        await formik.setFieldValue('IsValidOpenMatch', !isInvalidMatchMakerInfo);
+        console.log(validateReservationMatchMaker(t, formik, matchMaker, true, true))
+        setMatchMakerReceiptData(validateReservationMatchMaker(t, formik, matchMaker, true, true));
     }
 
     const addPlayers = () => {
@@ -915,43 +908,36 @@ function ReservationRegistration() {
 
                                 {toBoolean(formik?.values?.IsOpenReservation) &&
                                     <>
-                                        {isOpenMatchFilled &&
+                                        {anyInList(matchMakerReceiptData) &&
                                             <>
                                                 <div style={{marginBottom: token.Custom.buttonPadding}}>
-                                                    {toBoolean(formik?.values?.IsValidOpenMatch) ? (
-                                                            <>
-                                                                <Alert
-                                                                    message={<div>
+                                                    <Alert
+                                                        className={matchMakerReceiptData.some(v => isNullOrEmpty(v.Value)) ? 'ant-input-status-error' : ''}
+                                                        message={<div>
+                                                            {matchMakerReceiptData.map((item, index) => {
+                                                                const isLastItem = index === matchMakerReceiptData.length - 1;
+                                                                
+                                                                return (
+                                                                    <span key={index}>
                                                                         <Flex align={'center'} justify={'space-between'}>
                                                                             <Text>
-                                                                                <strong>Match Type</strong>
+                                                                                <strong>{item.Text}</strong>
                                                                             </Text>
                                                                             <Text>
-                                                                                {formik?.values?.MatchMakerTypeId}
+                                                                                {item.Value}
                                                                             </Text>
                                                                         </Flex>
-                                                                        <Divider variant="dashed" dashed
-                                                                                 className={globalStyles.alertDivider}/>
-
-                                                                        <Flex align={'center'} justify={'space-between'}>
-                                                                            <Text>
-                                                                                <strong>Gender Restriction</strong>
-                                                                            </Text>
-                                                                            <Text>
-                                                                                Male
-                                                                            </Text>
-                                                                        </Flex>
-                                                                    </div>}
-                                                                    type="info"/>
-                                                            </>
-                                                        ) :
-                                                        (
-                                                            <>
-                                                                <Alert
-                                                                    message="Ensure all required fields for the open match are filled before proceeding"
-                                                                    type="warning"/>
-                                                            </>
-                                                        )}
+                                                                        {!isLastItem && (
+                                                                            <Divider
+                                                                                variant="dashed"
+                                                                                className={globalStyles.alertDivider}
+                                                                            />
+                                                                        )}
+                                                                    </span>
+                                                                )
+                                                            })}
+                                                        </div>}
+                                                        type={matchMakerReceiptData.some(v => isNullOrEmpty(v.Value)) ? 'error' : 'info'} />
                                                 </div>
                                             </>
                                         }
@@ -963,7 +949,7 @@ function ReservationRegistration() {
                                                 onClick={() => {
                                                     setShowMatchMakerDrawer(true)
                                                 }}>
-                                            {toBoolean(formik?.values?.IsValidOpenMatch) ? (<>Edit Join
+                                            {!isNullOrEmpty(matchMakerReceiptData) ? (<>Edit Join
                                                 Criteria</>) : (<>Setup
                                                 Join
                                                 Criteria</>)}
@@ -1371,6 +1357,7 @@ function ReservationRegistration() {
                                             label='Member Groups'
                                             options={matchMakerMemberGroups}
                                             required={true}
+                                            multi={true}
                                             propText='NavigationName'
                                             propValue='Id'/>
                             }

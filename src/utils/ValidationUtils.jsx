@@ -2,6 +2,11 @@
 import {logError} from "./ConsoleUtils.jsx";
 import * as Yup from "yup";
 import {requiredMessage} from "./TranslateUtils.jsx";
+import {any} from "prop-types";
+import {matchmakerGenderList} from "./SelectUtils.jsx";
+import {countListItems} from "./ListUtils.jsx";
+import FormSelect from "../form/formselect/FormSelect.jsx";
+import React from "react";
 
 export const setFormikError = (t, formik, fieldName, errorKey, error) => {
     if (!isNullOrEmpty(errorKey)){
@@ -181,5 +186,151 @@ export const validatePaymentProfile = (t, formik, requireCard) => {
         }
     }
 
+    return isValid;
+}
+
+export const validateReservationMatchMaker = (t, formik, matchMakerData, returnListValues, preventTouch) => {
+    let isValid = true;
+    let items = [];
+    
+    if (toBoolean(formik?.values?.IsOpenReservation)) {
+        if (anyInList(matchMakerData?.ActiveSportTypes) && toBoolean(matchMakerData?.HasDifferentSportTypes)) {
+            if (isNullOrEmpty(formik?.values?.SportTypeId)){
+                if (!preventTouch){
+                    setFormikError(t, formik, 'SportTypeId', t('reservation:form.sportTypeId'));
+                }
+
+                isValid = false;
+                items.push({Text: t('reservation:form.sportTypeId'), Value: null})
+            } else{
+                let selectedSportType = matchMakerData.ActiveSportTypes.find(v => equalString(v.Id, formik?.values?.SportTypeId));
+                items.push({Text: t('reservation:form.sportTypeId'), Value: selectedSportType?.Name})
+            }
+        }
+
+        if (anyInList(matchMakerData?.MatchMakerTypes) && toBoolean(matchMakerData?.IsMatchTypeEnabled)) {
+            if (isNullOrEmpty(formik?.values?.MatchMakerTypeId)){
+                if (!preventTouch){
+                    setFormikError(t, formik, 'MatchMakerTypeId', t('reservation:form.matchMakerTypeId'));
+                }
+
+                isValid = false;
+                items.push({Text: t('reservation:form.matchMakerTypeId'), Value: null})
+            } else{
+                let selectedType = matchMakerData.MatchMakerTypes.find(v => equalString(v.Id, formik?.values?.MatchMakerTypeId));
+                items.push({Text: t('reservation:form.matchMakerTypeId'), Value: selectedType?.Name})
+            }
+        }
+        
+        if (toBoolean(matchMakerData.IsMatchTypeEnabled) && anyInList(matchMakerData?.MatchMakerTypes)) {
+            if (isNullOrEmpty(formik?.values?.MatchMakerTypeId)){
+                if (!preventTouch){
+                    setFormikError(t, formik, 'MatchMakerTypeId', t('reservation:form.matchMakerTypeId'));
+                }
+                isValid = false;
+                items.push({Text: t('reservation:form.matchMakerTypeId'), Value: null})
+            } else {
+                let matchMakerType = matchMakerData.MatchMakerTypes.find(v => equalString(v.Id, formik?.values?.MatchMakerTypeId));
+                items.push({Text: t('reservation:form.matchMakerTypeId'), Value: matchMakerType?.Name})
+            }
+        }
+
+        if (toBoolean(matchMakerData.IsGenderCriteriaMatch)) {
+            if (isNullOrEmpty(formik?.values?.MatchMakerGender)) {
+                if (!preventTouch) {
+                    setFormikError(t, formik, 'MatchMakerGender', t('reservation:form.matchMakerGender'));
+                }
+
+                isValid = false;
+                items.push({Text: t('reservation:form.matchMakerGender'), Value: null})
+            } else {
+                let selectedGender = matchmakerGenderList.find(v => equalString(v.Value, formik?.values?.MatchMakerGender));
+                items.push({Text: t('reservation:form.matchMakerGender'), Value: selectedGender?.Text})
+            }
+        }
+
+        if (anyInList(matchMakerData?.MatchMakerRatingCategoryRatingIds)) {
+
+        }
+
+        if (anyInList(matchMakerData?.MemberGroupIds)) {
+            if (!anyInList(formik?.values?.MatchMakerMemberGroupIds)){
+                if (!preventTouch) {
+                    setFormikError(t, formik, 'MemberGroupIds', t('reservation:form.matchMakerMemberGroupIds'));
+                }
+                
+                isValid = false;
+                items.push({Text: t('reservation:form.matchMakerMemberGroupIds'), Value: null})
+            } else {
+                items.push({Text: t('reservation:form.matchMakerMemberGroupIds'), Value: `${countListItems(formik?.values?.MatchMakerMemberGroupIds)} group(s)`})
+            }
+        }
+        
+        if (isNullOrEmpty(formik?.values?.MatchMakerMinNumberOfPlayers)) {
+            if (!preventTouch) {
+                setFormikError(t, formik, 'MatchMakerMinNumberOfPlayers', t('reservation:form.matchMakerMinNumberOfPlayers'));
+            }
+
+            isValid = false;
+            items.push({Text: t('reservation:form.matchMakerMinNumberOfPlayers'), Value: null})
+        } else {
+            items.push({Text: t('reservation:form.matchMakerMinNumberOfPlayers'), Value: formik?.values?.MatchMakerMinNumberOfPlayers})
+        }
+
+        if (isNullOrEmpty(formik?.values?.MatchMakerMaxNumberOfPlayers)){
+            if (!preventTouch) {
+                setFormikError(t, formik, 'MatchMakerMaxNumberOfPlayers', t('reservation:form.matchMakerMaxNumberOfPlayers'));
+            }
+
+            isValid = false;
+            items.push({Text: t('reservation:form.matchMakerMaxNumberOfPlayers'), Value: null})
+        } else {
+            items.push({Text: t('reservation:form.matchMakerMinNumberOfPlayers'), Value: formik?.values?.MatchMakerMaxNumberOfPlayers})
+        }
+        
+        if (toBoolean(matchMakerData?.IsAgeCriteriaMatch)) {
+            if (isNullOrEmpty(formik?.values?.MatchMakerMinAge)){
+                if (!preventTouch) {
+                    setFormikError(t, formik, 'MatchMakerMinAge', t('reservation:form.matchMakerMinAge'));
+                }
+
+                isValid = false;
+            }
+            if (isNullOrEmpty(formik?.values?.IsAgeCriteriaMatch)) {
+                if (!preventTouch) {
+                    setFormikError(t, formik, 'MatchMakerMaxAge', t('reservation:form.matchMakerMaxAge'));
+                }
+
+                isValid = false;
+            }
+            
+            if (!isNullOrEmpty(formik?.values?.MatchMakerMinAge) && !isNullOrEmpty(formik?.values?.MatchMakerMaxAge)){
+                items.push({Text: t('reservation:form.matchMakerMinMaxAgeLabel'), Value: `Min ${formik?.values?.MatchMakerMinAge}/Max ${formik?.values?.MatchMakerMaxAge}`})
+            } else if (!isNullOrEmpty(formik?.values?.MatchMakerMinAge)){
+                items.push({Text: t('reservation:form.matchMakerMinAge'), Value: `Min ${formik?.values?.MatchMakerMinAge}`})
+            } else if (!isNullOrEmpty(formik?.values?.MatchMakerMaxAge)){
+                items.push({Text: t('reservation:form.MatchMakerMaxAge'), Value: `Max ${formik?.values?.MatchMakerMaxAge}`})
+            } else{
+                items.push({Text: t('reservation:form.matchMakerMinMaxAgeLabel'), Value: null})  
+            }
+        }
+        
+        if (toBoolean(formik?.values?.MatchMakerIsPrivateMatch)){
+            if (isNullOrEmpty(formik?.values?.MatchMakerJoinCode)) {
+                if (!preventTouch) {
+                    setFormikError(t, formik, 'MatchMakerJoinCode', t('reservation:form.matchMakerJoinCode'));
+                }
+
+                isValid = false;
+                items.push({Text: t('reservation:form.matchMakerJoinCode'), Value: null})
+            } else {
+                items.push({Text: t('reservation:form.matchMakerJoinCode'), Value: formik?.values?.MatchMakerJoinCode})
+            }
+        }
+    }
+    
+    if (returnListValues){
+        return items;
+    }
     return isValid;
 }
