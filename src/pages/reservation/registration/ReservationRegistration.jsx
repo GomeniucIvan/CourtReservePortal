@@ -644,43 +644,6 @@ function ReservationRegistration() {
         return toBoolean(reserv.IsAllowedToPickStartAndEndTime) && !isFromWaitlisting || isFromWaitlisting && equalString(reserv.DurationType, 1);
     }
 
-    const displayPlayersInformation = () => {
-        let currentPlayersCount = ((reservationMembers?.length || 0));
-        if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
-            currentPlayersCount += formik?.values?.ReservationGuests?.length;
-        }
-
-        if (selectedReservationType){
-            let currentReservationTypeMinVariable = selectedReservationType.MinimumNumberOfPlayers;
-            let currentReservationTypeMaxVariable = selectedReservationType.MaximumNumberOfPlayers;
-            const applyNumberOfPlayersBasedOnNumberOfCourtsVariable = selectedReservationType.ApplyNumberOfPlayersBasedOnNumberOfCourts;
-
-            if (toBoolean(applyNumberOfPlayersBasedOnNumberOfCourtsVariable)){
-                const currentCourtIdsCount = formik?.values?.CourtId?.length || 1;
-
-                if (!isNullOrEmpty(currentReservationTypeMinVariable)){
-                    currentReservationTypeMinVariable =  parseInt(currentReservationTypeMinVariable) * currentCourtIdsCount;
-                }
-
-                if (!isNullOrEmpty(currentReservationTypeMaxVariable)){
-                    currentReservationTypeMaxVariable =  parseInt(currentReservationTypeMaxVariable) * currentCourtIdsCount;
-                }
-            }
-
-            if (!isNullOrEmpty(currentReservationTypeMinVariable) && !isNullOrEmpty(currentReservationTypeMaxVariable)){
-                return `(${currentPlayersCount}/Max ${currentReservationTypeMaxVariable})`;
-            } else if(!isNullOrEmpty(currentReservationTypeMinVariable)){
-                return `(Min ${currentReservationTypeMinVariable}/${currentPlayersCount})`;
-            } else if(!isNullOrEmpty(currentReservationTypeMaxVariable)){
-                return `(${currentPlayersCount}/Max ${currentReservationTypeMaxVariable})`;
-            } else{
-                return `(${currentPlayersCount})`;
-            }
-        } else{
-            return `(${currentPlayersCount})`;
-        }
-    }
-
     return (
         <>
             {isFetching &&
@@ -806,68 +769,22 @@ function ReservationRegistration() {
                             matchMakerRatingCategories={matchMakerRatingCategories}
                         />
 
-                        {!isNullOrEmpty(formik?.values?.ReservationTypeId) &&
-                            <>
-                                <Divider className={globalStyles.formDivider}/>
-
-                                <Flex vertical gap={token.padding}>
-                                    <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                                        <Flex justify={'space-between'} align={'center'}>
-                                            <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                                <Title level={1} className={cx(globalStyles.noSpace)}>Players Information</Title>
-                                            </Flex>
-
-                                            <Text type="secondary">{displayPlayersInformation()}</Text>
-                                        </Flex>
-                                    </Flex>
-
-                                    {toBoolean(authData?.AllowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
-                                        <div>
-                                            <label className={globalStyles.globalLabel}>
-                                                Fee Responsibility
-                                            </label>
-
-                                            <Segmented
-                                                value={formik?.values?.FeeResponsibility}
-                                                block={true}
-                                                onChange={(e) => {
-                                                    formik.setFieldValue('FeeResponsibility', e)
-                                                }}
-                                                options={[
-                                                    {value: '1', label: 'Reservation Owner'},
-                                                    {value: '2', label: 'Each Player Equally'},
-                                                ]}
-                                            />
-                                        </div>
-                                    }
-
-                                    <ReservationRegistrationPlayers
-                                        formik={formik}
-                                        reservation={reservation}
-                                        showSearchPlayers={showSearchPlayers}
-                                        setShowSearchPlayers={setShowSearchPlayers}
-                                        reservationMembers={reservationMembers}
-                                        selectedReservationType={selectedReservationType}
-                                        loadingState={loadingState}
-                                        selectRegisteringMemberIdRef={selectRegisteringMemberIdRef}
-                                        setReservationMembers={setReservationMembers}
-                                        setShouldRebindPlayers={setShouldRebindPlayers}
-                                        playersModelData={playersModelData}
-                                        searchPlayerDrawerBottomRef={searchPlayerDrawerBottomRef}
-                                    />
-
-                                    {(toBoolean(selectedReservationType?.AllowGuestsOnMemberPortal) && isNullOrEmpty(reservation.InstructorId)) &&
-                                        <RegistrationGuestBlock disableAddGuest={toBoolean(loadingState.SelectedReservationMembers)}
-                                                                reservationMembers={reservationMembers}
-                                                                reloadPlayers={reloadPlayers}
-                                                                loadingState={loadingState}
-                                                                setLoading={setLoading}
-                                                                formik={formik}
-                                                                showAllCosts={(!isNullOrEmpty(playersModelData?.ReservationId) && playersModelData?.ReservationId > 0)}/>
-                                    }
-                                </Flex>
-                            </>
-                        }
+                        <ReservationRegistrationPlayers
+                            formik={formik}
+                            reservation={reservation}
+                            showSearchPlayers={showSearchPlayers}
+                            setShowSearchPlayers={setShowSearchPlayers}
+                            reservationMembers={reservationMembers}
+                            selectedReservationType={selectedReservationType}
+                            loadingState={loadingState}
+                            selectRegisteringMemberIdRef={selectRegisteringMemberIdRef}
+                            setReservationMembers={setReservationMembers}
+                            setShouldRebindPlayers={setShouldRebindPlayers}
+                            reloadPlayers={reloadPlayers}
+                            setLoading={setLoading}
+                            playersModelData={playersModelData}
+                            searchPlayerDrawerBottomRef={searchPlayerDrawerBottomRef}
+                        />
 
                         <Divider className={globalStyles.formDivider}/>
                         
