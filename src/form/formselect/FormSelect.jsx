@@ -207,6 +207,7 @@ const FormSelect = forwardRef(({
                         }}
                         disabled={disabled}
                         className={styles.select}
+                        showSearch={false}
                         status={hasError ? 'error' : ''}
                     >
                         {options.map((option, index) => {
