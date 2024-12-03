@@ -1,12 +1,10 @@
-﻿import {useStyles} from "./../styles.jsx";
+﻿
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
-import {Alert, Button, Card, Checkbox, Divider, Flex, Segmented, Skeleton, Typography} from "antd";
+import {Alert, Button, Divider, Flex, Segmented, Skeleton, Typography} from "antd";
 import mockData from "../../../mocks/reservation-data.json";
 import * as Yup from "yup";
-import {useFormik} from "formik";
 import {cx} from "antd-style";
-import {Ellipsis} from "antd-mobile";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {useLoadingState} from "../../../utils/LoadingUtils.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
@@ -21,10 +19,6 @@ import {
 import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
 import FormSelect from "../../../form/formselect/FormSelect.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
-import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
-import SVG from "../../../components/svg/SVG.jsx";
-import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
 import appService, {apiRoutes} from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
@@ -33,16 +27,9 @@ import {
     dateToTimeString,
     fromAspDateToString
 } from "../../../utils/DateUtils.jsx";
-import {costDisplay} from "../../../utils/CostUtils.jsx";
-import {matchmakerGenderList, numberList} from "../../../utils/SelectUtils.jsx";
-import {DownloadOutlined} from "@ant-design/icons";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
-import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
-import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
 import {useTranslation} from "react-i18next";
-import {Document} from "react-pdf";
 import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
-import FormCheckbox from "../../../form/formcheckbox/FomCheckbox.jsx";
 import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
 import {
     validateReservationGuests,
@@ -58,6 +45,7 @@ import ReservationRegistrationPlayers from "./ReservationRegistration.Players.js
 import ReservationRegistrationMatchMaker from "./ReservationRegistration.MatchMaker.jsx";
 import ReservationRegistrationMiscItems from "./ReservationRegistration.MiscItems.jsx";
 import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.TermsAndCondition.jsx";
+import PaymentDrawerBottom from "../../../components/drawer/PaymentDrawerBottom.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -103,6 +91,7 @@ function ReservationRegistration() {
     const [resources, setResources] = useState([]);
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
     const [validationSchema, setValidationSchema] = useState(Yup.object({}));
+    const [totalPriceToPay, setTotalPriceToPay] = useState(0);
 
     let selectRegisteringMemberIdRef = useRef();
     let selectReservationTypeIdRef = useRef();
@@ -548,6 +537,7 @@ function ReservationRegistration() {
         let responseReservationGuests = [];
         let r = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData);
         if (r.IsValid) {
+            setTotalPriceToPay(r.Data.totalCost)
             setReservationMembers(r.Data.MemberData.SelectedMembers);
             responseReservationGuests = r.Data.MemberData.ReservationGuests || [];
 
@@ -613,18 +603,28 @@ function ReservationRegistration() {
         })
     }
 
+    
+    
     useEffect(() => {
-        setFooterContent(<PaddingBlock topBottom={true}>
+        let paymentData = {
+            list: [],
+            totalDue: totalPriceToPay,
+            requireOnlinePayment: toBoolean(reservation?.RequirePaymentWhenBookingCourtsOnline),
+            show: totalPriceToPay > 0,
+            holdTimeForReservation: reservation?.HoldTimeForReservation
+        };
+
+        setFooterContent(<PaymentDrawerBottom paymentData={paymentData}>
             <Button type="primary"
                     block
                     htmlType="submit"
-                    disabled={isFetching}
                     loading={isLoading}
+                    disabled={isFetching}
                     onClick={formik.handleSubmit}>
                 {submitButtonText}
             </Button>
-        </PaddingBlock>)
-    }, [isFetching, isLoading]);
+        </PaymentDrawerBottom>)
+    }, [isFetching, isLoading, submitButtonText, totalPriceToPay]);
 
     useEffect(() => {
         setIsFooterVisible(true);
