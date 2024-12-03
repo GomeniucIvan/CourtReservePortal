@@ -147,13 +147,13 @@ export const cultureStartingWithDay = (uiCulture) => {
 
 export const fromAspDate = (dateString) => {
     if (!dateString) return null;
-    return moment(dateString).toDate();
+    return moment.utc(dateString).toDate();
 }
 
 
 export const fromAspDateToString = (dateString) => {
     if (!dateString) return null;
-    return moment(dateString).format(`${dateFormatByUiCulture()} HH:mm:ss`);
+    return moment.utc(dateString).format(`${dateFormatByUiCulture()} HH:mm:ss`);
 }
 
 export const fixDate = (dateString) =>{
@@ -175,7 +175,7 @@ export const dateToString = (incDate) => {
         return '';
     }
 
-    return moment(incDate).format(dateFormatByUiCulture());
+    return moment.utc(incDate).format(dateFormatByUiCulture());
 }
 
 export const dateToTimeString = (incDate, twentyFourHourFormat) => {
@@ -184,10 +184,10 @@ export const dateToTimeString = (incDate, twentyFourHourFormat) => {
     }
 
     if (twentyFourHourFormat){
-        return moment(incDate).format('HH:mm');
+        return moment.utc(incDate).format('HH:mm');
     }
-    
-    return moment(incDate).format('H:mm'); 
+
+    return moment.utc(incDate).format('H:mm');
 }
 
 export const isNonUsCulture = () => {
@@ -203,7 +203,7 @@ export const dateTimeToFormat = (incDate, format) => {
         return '';
     }
 
-    return moment(incDate).format(format);
+    return moment.utc(incDate).format(format);
 }
 
 export const dateTimeToTimes = (incStartDate, incEndDate, format) => {
@@ -212,8 +212,8 @@ export const dateTimeToTimes = (incStartDate, incEndDate, format) => {
     }
 
     if (equalString(format, 'friendly')){
-        return `${moment(incStartDate).format('ha').toLowerCase()} - ${moment(incEndDate).format('ha').toLowerCase()}`;
+        return `${moment.utc(incStartDate).format('ha').toLowerCase()} - ${moment.utc(incEndDate).format('ha').toLowerCase()}`;
     }
     
-    return `${moment(incStartDate).format('ha').toLowerCase()} - ${moment(incEndDate).format('ha').toLowerCase()}`;
+    return `${moment.utc(incStartDate).format('ha').toLowerCase()} - ${moment.utc(incEndDate).format('ha').toLowerCase()}`;
 }

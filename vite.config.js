@@ -13,16 +13,35 @@ if (!isProduction){
 }
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+
+        // Custom plugin to modify asset paths in index.html
+        {
+            name: 'modify-html-assets-path',
+            enforce: 'post',
+            apply: 'build',
+            transformIndexHtml: {
+                enforce: 'post',
+                transform(html) {
+                    // Replace asset paths in the HTML
+                    return html.replace(
+                        /(src|href)="\/assets\//g,
+                        '$1="../ClientApp/dist/assets/'
+                    );
+                },
+            },
+        },
+    ],
     build: {
         sourcemap: !isProduction,
         minify: 'terser',
         terserOptions: {
             compress: {
-                drop_console: false, // true, //prod true !! Set to true in production to remove console logs
+                drop_console: isProduction, // true, //prod true !! Set to true in production to remove console logs
             },
             output: {
-                comments: true, //false, //prod false !!// Include comments in development for debugging
+                comments: !isProduction, //false, //prod false !!// Include comments in development for debugging
             },
         },
     },
