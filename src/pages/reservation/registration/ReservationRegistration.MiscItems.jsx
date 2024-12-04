@@ -1,33 +1,17 @@
 ﻿import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {Button, Card, Divider, Flex, Skeleton, Typography} from "antd";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {
-    anyInList,
-    encodeParamsObject,
-    equalString,
-    fullNameInitials,
-    isNullOrEmpty,
-    toBoolean
-} from "../../../utils/Utils.jsx";
+import {Card, Divider, Flex, Typography} from "antd";
+import { anyInList } from "../../../utils/Utils.jsx";
 import {cx} from "antd-style";
-import {Ellipsis} from "antd-mobile";
 import SVG from "../../../components/svg/SVG.jsx";
-import React, {useEffect, useState} from "react";
-import mockData from "../../../mocks/reservation-data.json";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {costDisplay} from "../../../utils/CostUtils.jsx";
+import React, {useState} from "react";
 import {useApp} from "../../../context/AppProvider.jsx";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
-import {ModalRemove} from "../../../utils/ModalUtils.jsx";
 
-const {Title, Text} = Typography;
+const {Title, Text, Link} = Typography;
 
 function ReservationRegistrationMiscItems({miscFeesQuantities, setMiscFeesQuantities }) {
     const [showMiscItems, setShowMiscItems] = useState(false);
-    
-    const {orgId} = useAuth();
     const { globalStyles, token} = useApp();
 
     const handleMiscItemChange = (increment, index) => {
@@ -52,24 +36,20 @@ function ReservationRegistrationMiscItems({miscFeesQuantities, setMiscFeesQuanti
         <>
 
             {anyInList(miscFeesQuantities) &&
-                <>
+                <Flex vertical={true} gap={token.padding}>
                     <Flex vertical gap={token.Custom.cardIconPadding / 2}>
                         <Flex justify={'space-between'} align={'center'}>
                             <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                <Title level={1} className={cx(globalStyles.noSpace)}>Miscellaneous
-                                    Items</Title>
-                                <Text
-                                    type="secondary">({miscFeesQuantities.length})</Text>
+                                <Title level={1} className={cx(globalStyles.noSpace)}>Miscellaneous Items</Title>
+                                <Text type="secondary">({miscFeesQuantities.length})</Text>
                             </Flex>
 
-                            <Link onClick={() => {
-                                setShowMiscItems(true)
-                            }}>
+                            <Link onClick={() => { setShowMiscItems(true) }}>
                                 <Flex gap={token.Custom.cardIconPadding} align={'center'}>
                                     {anyInList(miscFeesQuantities.filter(item => item.Quantity > 0)) &&
                                         <>
                                             <SVG icon={'circle-plus'} size={20} color={token.colorLink}/>
-                                            <strong>chnageicon Edit Items</strong>
+                                            <strong>Edit Items</strong>
                                         </>
                                     }
 
@@ -115,7 +95,7 @@ function ReservationRegistrationMiscItems({miscFeesQuantities, setMiscFeesQuanti
                     }
 
                     <Divider className={globalStyles.formDivider}/>
-                </>
+                </Flex>
             }
             
             {/*Misc item*/}
@@ -152,8 +132,7 @@ function ReservationRegistrationMiscItems({miscFeesQuantities, setMiscFeesQuanti
                                                          opacity: miscItem.Quantity === 0 ? '0.4' : '1'
                                                      }}
                                                 >
-                                                    <SVG icon={'circle-minus'} size={30}
-                                                         color={token.colorError}/>
+                                                    <SVG icon={'circle-minus'} size={30} preventFill={true} />
                                                 </div>
 
                                                 <Title level={1} style={{minWidth: '26px', textAlign: 'center'}}

@@ -215,103 +215,97 @@ function ReservationRegistration() {
         },
     });
 
-    const loadData = (refresh) => {
-        if (isMockData) {
-            const resv = mockData.create;
-            setReservation(resv);
-            setReservationTypes(resv.ReservationTypes);
-            //setMatchTypes(resv.MatchTypes);
-            setMiscFeesQuantities(reservation?.MiscFeesSelectListItems.map(() => 0));
-            setIsFetching(false);
-        } else {
+    const loadData = async (refresh) => {
+        let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}&customSchedulerId=${customSchedulerId}`);
 
-            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}&customSchedulerId=${customSchedulerId}`).then(r => {
-                if (toBoolean(r?.IsValid)) {
-                    console.log(r.Data)
-                    let incResData = r.Data.ReservationModel;
-                    let matchMakerData = r.Data.MatchMakerData;
-                    let matchMakerShowSportTypes = toBoolean(r.Data.MatchMakerShowSportTypes);
+        if (toBoolean(r?.IsValid)) {
+            let incResData = r.Data.ReservationModel;
+            let matchMakerData = r.Data.MatchMakerData;
+            let matchMakerShowSportTypes = toBoolean(r.Data.MatchMakerShowSportTypes);
+            setReservation(incResData);
+            
+            if (isNullOrEmpty(incResData.InstructorId)){
+                setMiscFeesQuantities(anyInList(incResData?.MiscFeesSelectListItems) ? incResData?.MiscFeesSelectListItems.map((item) => ({
+                    Text: item.Text,
+                    Value: item.Value,
+                    Quantity: 0,
+                })) : []);
+            }
 
-                    setReservation(incResData);
-                    setMiscFeesQuantities(anyInList(reservation?.MiscFeesSelectListItems) ? reservation?.MiscFeesSelectListItems.map((item) => ({
-                        Text: item.Text,
-                        Value: item.Value,
-                        Quantity: 0,
-                    })) : []);
-                    setMatchMaker(matchMakerData);
-                    setMatchMakerShowSportTypes(matchMakerShowSportTypes);
-                    setMatchMakerMemberGroups(r.Data.MatchMakerMemberGroups);
-                    setMatchMakerRatingCategories(r.Data.MatchMakerRatingCategories);
-                    setShowResources(r.Data.ShowResources && toBoolean(authData?.AllowMembersToBookResources));
-                    setCustomFields(incResData.Udf || []);
-                    formik.setFieldValue('Udfs', incResData.Udf || []);
+            setMatchMaker(matchMakerData);
+            setMatchMakerShowSportTypes(matchMakerShowSportTypes);
+            setMatchMakerMemberGroups(r.Data.MatchMakerMemberGroups);
+            setMatchMakerRatingCategories(r.Data.MatchMakerRatingCategories);
+            setShowResources(r.Data.ShowResources && toBoolean(authData?.AllowMembersToBookResources));
+            setCustomFields(incResData.Udf || []);
 
-                    if (toBoolean(r.Data.Disclosure?.Show)) {
-                        setDisclosure(r.Data.Disclosure);
-                    }
+            if (toBoolean(r.Data.Disclosure?.Show)) {
+                setDisclosure(r.Data.Disclosure);
+            }
 
-                    if (matchMakerShowSportTypes) {
-                        if (!isNullOrEmpty(matchMakerData) && oneListItem(matchMakerData.ActiveSportTypes)) {
-                            let firstActiveSportTypeId = matchMakerData.ActiveSportTypes.first()?.Id;
-                            formik.setFieldValue('SportTypeId', firstActiveSportTypeId);
-                        }
-                    }
+            let selectedSportTypeId = null;
 
-                    formik.setValues({
-                        ...initialValues,
-                        MemberId: incResData.MemberId,
-                        CustomSchedulerId: incResData.CustomSchedulerId,
-                        IsConsolidatedScheduler: incResData.IsConsolidatedScheduler,
-                        IsFromDynamicSlots: incResData.IsFromDynamicSlots,
-                        InstructorId: incResData.InstructorId,
-                        ReservationQueueId: incResData.ReservationQueueId,
-                        ReservationQueueSlotId: incResData.ReservationQueueSlotId,
-                        OrgId: incResData.OrgId,
-                        ReservationId: incResData.ReservationId,
-                        Duration: incResData.Duration,
-                        CourtId: incResData.CourtId,
-                        RegisteringMemberId: incResData.RegisteringMemberId,
-                        SelectedResourceName: incResData.SelectedResourceName,
-                        StartTime: dateToTimeString(start, true),
-                        EndTime: dateToTimeString(end, true),
-                        Date: fromAspDateToString(incResData.Date),
-                    });
-
-                    setIsFetching(false);
-
-                    if (!toBoolean(r.Data.IsResourceReservation)) {
-                        setLoading('ReservationTypeId', true);
-
-                        if (!isNullOrEmpty(dataItem?.Value)) {
-                            setCourts([{
-                                DisplayName: `${dataItem.CourtTypeName} - ${dataItem.DisplayMobilSchedulerHeaderName}`,
-                                Id: dataItem.Value
-                            }]);
-                            formik.setFieldValue('CourtId', dataItem.Value);
-                        }
-
-                        let reservationTypeData = {
-                            customSchedulerId: r.Data.CustomSchedulerId,
-                            userId: r.Data.RegisteringMemberId,
-                            startTime: start,
-                            date: start,
-                            courtId: dataItem.Id,
-                            courtType: r.Data.CourtTypeEnum,
-                            endTime: end,
-                            isDynamicSlot: r.Data.IsFromDynamicSlots,
-                            instructorId: r.Data.InstructorId
-                        }
-
-                        appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxReservation/GetAvailableReservationTypes?id=${orgId}&${encodeParamsObject(reservationTypeData)}`).then(rTypes => {
-                            setReservationTypes(rTypes);
-                            setLoading('ReservationTypeId', false);
-                            if (!isNullOrEmpty(selectReservationTypeIdRef?.current) && isNullOrEmpty(formik?.values?.ReservationTypeId)){
-                                selectReservationTypeIdRef.current.open();
-                            }
-                        })
-                    }
+            if (matchMakerShowSportTypes) {
+                if (!isNullOrEmpty(matchMakerData) && oneListItem(matchMakerData.ActiveSportTypes)) {
+                    selectedSportTypeId = matchMakerData.ActiveSportTypes.first()?.Id;
                 }
-            })
+            }
+
+            await formik.setValues({
+                ...initialValues,
+                SportTypeId: selectedSportTypeId,
+                Udfs: incResData.Udf || [],
+                MemberId: incResData.MemberId,
+                CustomSchedulerId: incResData.CustomSchedulerId,
+                IsConsolidatedScheduler: incResData.IsConsolidatedScheduler,
+                IsFromDynamicSlots: incResData.IsFromDynamicSlots,
+                InstructorId: incResData.InstructorId,
+                ReservationQueueId: incResData.ReservationQueueId,
+                ReservationQueueSlotId: incResData.ReservationQueueSlotId,
+                OrgId: incResData.OrgId,
+                ReservationId: incResData.ReservationId,
+                Duration: incResData.Duration,
+                CourtId: incResData.CourtId,
+                RegisteringMemberId: incResData.RegisteringMemberId,
+                SelectedResourceName: incResData.SelectedResourceName,
+                StartTime: dateToTimeString(start, true),
+                EndTime: dateToTimeString(end, true),
+                Date: fromAspDateToString(incResData.Date),
+            });
+
+            setIsFetching(false);
+
+            if (!toBoolean(r.Data.IsResourceReservation)) {
+                setLoading('ReservationTypeId', true);
+
+                if (!isNullOrEmpty(dataItem?.Value)) {
+                    setCourts([{
+                        DisplayName: `${dataItem.CourtTypeName} - ${dataItem.DisplayMobilSchedulerHeaderName}`,
+                        Id: dataItem.Value
+                    }]);
+                    await formik.setFieldValue('CourtId', dataItem.Value);
+                }
+
+                let reservationTypeData = {
+                    customSchedulerId: r.Data.CustomSchedulerId,
+                    userId: r.Data.RegisteringMemberId,
+                    startTime: start,
+                    date: start,
+                    courtId: dataItem.Id,
+                    courtType: r.Data.CourtTypeEnum,
+                    endTime: end,
+                    isDynamicSlot: r.Data.IsFromDynamicSlots,
+                    instructorId: r.Data.InstructorId
+                }
+
+                let rTypes = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxReservation/GetAvailableReservationTypes?id=${orgId}&${encodeParamsObject(reservationTypeData)}`);
+                setReservationTypes(rTypes);
+                setLoading('ReservationTypeId', false);
+
+                if (!isNullOrEmpty(selectReservationTypeIdRef?.current) && isNullOrEmpty(formik?.values?.ReservationTypeId)) {
+                    selectReservationTypeIdRef.current.open();
+                }
+            }
         }
 
         resetFetch();
@@ -390,7 +384,7 @@ function ReservationRegistration() {
             if (toBoolean(rUdf?.IsValid)) {
                 setCustomFields(rUdf.Data);
 
-                formik.setFieldValue('Udfs', rUdf.Data.map(udf => {
+                await formik.setFieldValue('Udfs', rUdf.Data.map(udf => {
                     return {
                         ...udf,
                         Value: ''
@@ -401,55 +395,62 @@ function ReservationRegistration() {
     }
 
     useEffect(() => {
-        if (!isNullOrEmpty(formik?.values?.Duration)) {
-            let entTimeData = {
-                reservationTypeId: formik?.values?.ReservationTypeId,
-                startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
-                selectedDate: dateTimeToFormat(start, 'MM/DD/YYYY'),
-                uiCulture: authData?.UiCulture,
-                duration: formik?.values?.Duration
-            }
-
-            appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/CalculateReservationEndTime?id=${orgId}&${encodeParamsObject(entTimeData)}`).then(rEndTime => {
-                if (rEndTime?.IsValid) {
-                    formik.setFieldValue('EndTime', rEndTime.data);
-                    reloadCourts(rEndTime.data);
+        
+        const loadEndTime = async () => {
+            if (!isNullOrEmpty(formik?.values?.Duration)) {
+                let entTimeData = {
+                    reservationTypeId: formik?.values?.ReservationTypeId,
+                    startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
+                    selectedDate: dateTimeToFormat(start, 'MM/DD/YYYY'),
+                    uiCulture: authData?.UiCulture,
+                    duration: formik?.values?.Duration
                 }
-            })
+
+                let rEndTime = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/CalculateReservationEndTime?id=${orgId}&${encodeParamsObject(entTimeData)}`);
+
+                if (rEndTime?.IsValid) {
+                    await formik.setFieldValue('EndTime', rEndTime.data);
+                    await reloadCourts(rEndTime.data);
+                }
+            }
         }
+
+        loadEndTime();
 
     }, [formik?.values?.Duration])
 
     useEffect(() => {
-        if (showResources) {
-            setLoading('ResourceIds', true);
+        const loadResources = async () => {
+            if (showResources) {
+                setLoading('ResourceIds', true);
 
-            let resourcesData = {
-                Date: dateTimeToFormat(start, 'MM/DD/YYYY'),
-                startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
-                endTime: formik?.values?.EndTime,
-                courtTypes: reservation?.CourtTypeEnum,
-                selectedCourts: courts,
-                MembershipId: reservation?.MembershipId,
-                ReservationTypeId: formik?.values?.ReservationTypeId,
-                customSchedulerId: reservation?.CustomSchedulerId,
-                uiCulture: authData?.UiCulture,
-                duration: formik?.values?.Duration
-            }
+                let resourcesData = {
+                    Date: dateTimeToFormat(start, 'MM/DD/YYYY'),
+                    startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
+                    endTime: formik?.values?.EndTime,
+                    courtTypes: reservation?.CourtTypeEnum,
+                    selectedCourts: courts,
+                    MembershipId: reservation?.MembershipId,
+                    ReservationTypeId: formik?.values?.ReservationTypeId,
+                    customSchedulerId: reservation?.CustomSchedulerId,
+                    uiCulture: authData?.UiCulture,
+                    duration: formik?.values?.Duration
+                }
 
-            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/api/v1/portalreservationsapi/Api_Reservation_GetAvailableResourcesOnReservationCreate?id=${orgId}&${encodeParamsObject(resourcesData)}`).then(rResources => {
-                console.log(rResources);
+                let rResources = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/api/v1/portalreservationsapi/Api_Reservation_GetAvailableResourcesOnReservationCreate?id=${orgId}&${encodeParamsObject(resourcesData)}`);
                 let responseResources = rResources || [];
                 setResources(responseResources);
 
                 const selectedResourceIds = responseResources
                     .filter(resource => resource.AutoSelect)
                     .map(resource => resource.Id);
-                formik.setFieldValue('ResourceIds', selectedResourceIds)
+                
+                await formik.setFieldValue('ResourceIds', selectedResourceIds)
                 setLoading('ResourceIds', false);
-            })
+            }
         }
-
+        
+        loadResources();
     }, [formik?.values?.EndTime]);
 
     useEffect(() => {
@@ -786,9 +787,11 @@ function ReservationRegistration() {
                         />
 
                         <Divider className={globalStyles.formDivider}/>
-                        
-                        <ReservationRegistrationMiscItems miscFeesQuantities={miscFeesQuantities} 
-                                                          setMiscFeesQuantities={setMiscFeesQuantities}/>
+
+                        {!toBoolean(formik?.values?.IsOpenReservation) &&
+                            <ReservationRegistrationMiscItems miscFeesQuantities={miscFeesQuantities}
+                                                              setMiscFeesQuantities={setMiscFeesQuantities}/>
+                        }
 
                         {(showResources && anyInList(resources)) &&
                             <FormSelect form={formik}
