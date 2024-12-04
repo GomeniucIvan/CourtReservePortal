@@ -293,7 +293,7 @@ function Layout() {
                 </div>
             }
 
-            <div style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
+            <div id={'page-body'} style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <>
                         <LayoutExtra/>

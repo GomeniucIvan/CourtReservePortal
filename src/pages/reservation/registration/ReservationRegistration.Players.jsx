@@ -22,6 +22,7 @@ import {pNotify} from "../../../components/notification/PNotify.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {ModalRemove} from "../../../utils/ModalUtils.jsx";
 import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
+import Sticky from "../../../components/sticky/Sticky.jsx";
 
 const {Title, Text} = Typography;
 
@@ -128,7 +129,8 @@ function ReservationRegistrationPlayers({formik,
         if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
             currentPlayersCount += formik?.values?.ReservationGuests?.length;
         }
-
+        let minMaxLabel = '';
+        
         if (selectedReservationType){
             let currentReservationTypeMinVariable = selectedReservationType.MinimumNumberOfPlayers;
             let currentReservationTypeMaxVariable = selectedReservationType.MaximumNumberOfPlayers;
@@ -147,17 +149,26 @@ function ReservationRegistrationPlayers({formik,
             }
 
             if (!isNullOrEmpty(currentReservationTypeMinVariable) && !isNullOrEmpty(currentReservationTypeMaxVariable)){
-                return `(${currentPlayersCount}/Max ${currentReservationTypeMaxVariable})`;
+                minMaxLabel = `Min ${currentReservationTypeMinVariable} / Max ${currentReservationTypeMaxVariable}`;
             } else if(!isNullOrEmpty(currentReservationTypeMinVariable)){
-                return `(Min ${currentReservationTypeMinVariable}/${currentPlayersCount})`;
+                minMaxLabel = `Min ${currentReservationTypeMinVariable}`;
             } else if(!isNullOrEmpty(currentReservationTypeMaxVariable)){
-                return `(${currentPlayersCount}/Max ${currentReservationTypeMaxVariable})`;
-            } else{
-                return `(${currentPlayersCount})`;
+                minMaxLabel = `Max ${currentReservationTypeMaxVariable}`;
             }
-        } else{
-            return `(${currentPlayersCount})`;
         }
+        
+        return (
+            <>
+                <Flex gap={token.Custom.cardIconPadding} align={'center'}>
+                    <Title level={1} className={cx(globalStyles.noSpace)} id={'players-information'}>
+                        Players Information</Title>
+                    <Text type="secondary">({currentPlayersCount})</Text>
+                </Flex>
+                <Text type="secondary">
+                    {minMaxLabel}
+                </Text>
+            </>
+        )
     }
     // PLAYERS FUNCTIONS END
 
@@ -172,15 +183,13 @@ function ReservationRegistrationPlayers({formik,
                     <Divider className={globalStyles.formDivider}/>
 
                     <Flex vertical gap={token.padding}>
-                        <Flex vertical gap={token.Custom.cardIconPadding / 2}>
-                            <Flex justify={'space-between'} align={'center'}>
-                                <Flex gap={token.Custom.cardIconPadding} align={'center'}>
-                                    <Title level={1} className={cx(globalStyles.noSpace)}>Players Information</Title>
+                        <Sticky disable={isNullOrEmpty(selectedReservationType?.MinimumNumberOfPlayers) && isNullOrEmpty(selectedReservationType?.MaximumNumberOfPlayers)}>
+                            <Flex vertical gap={token.Custom.cardIconPadding / 2}>
+                                <Flex justify={'space-between'} align={'center'}>
+                                    {displayPlayersInformation()}
                                 </Flex>
-
-                                <Text type="secondary">{displayPlayersInformation()}</Text>
                             </Flex>
-                        </Flex>
+                        </Sticky>
 
                         {toBoolean(authData?.AllowAbilityToSplitFeeAcrossReservationPlayers) && equalString(selectedReservationType?.CalculationType, 4) &&
                             <div>

@@ -46,6 +46,7 @@ import ReservationRegistrationMatchMaker from "./ReservationRegistration.MatchMa
 import ReservationRegistrationMiscItems from "./ReservationRegistration.MiscItems.jsx";
 import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.TermsAndCondition.jsx";
 import PaymentDrawerBottom from "../../../components/drawer/PaymentDrawerBottom.jsx";
+import Sticky from "../../../components/sticky/Sticky.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -602,8 +603,6 @@ function ReservationRegistration() {
             setLoading('CourtId', false);
         })
     }
-
-    
     
     useEffect(() => {
         let paymentData = {
