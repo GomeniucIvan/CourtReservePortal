@@ -10,7 +10,7 @@ import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 import {logFormikErrors} from "../../utils/ConsoleUtils.jsx";
 
 const FormInput = ({ label,
-                       form,
+                       formik,
                        name,
                        isSearch,
                        required,
@@ -44,10 +44,9 @@ const FormInput = ({ label,
     const timeoutRef = useRef(null);
     const {t} = useTranslation('');
 
-    
-    if (form && typeof form.getFieldProps === 'function') {
-        field = form.getFieldProps(name);
-        meta = form.getFieldMeta(name);
+    if (formik && typeof formik.getFieldProps === 'function') {
+        field = formik.getFieldProps(name);
+        meta = formik.getFieldMeta(name);
 
         if (field.value === null) {
             field = { ...field, value: '' };
@@ -121,8 +120,8 @@ const FormInput = ({ label,
                 onInput(event.target.value);
             }
 
-            if (form) {
-                form.setFieldValue(name, value, false);
+            if (formik) {
+                formik.setFieldValue(name, value, false);
             }
         }, onInputTimeout);
     };
@@ -133,11 +132,10 @@ const FormInput = ({ label,
 
     const handleInputBlur = (e) => {
         setIsFocused(false);
-        if (form){
-            form.handleBlur(e); 
+        if (formik){
+            formik.handleBlur(e); 
         }
     }
-
     
     if (toBoolean(loading)){
         return (
@@ -207,10 +205,10 @@ const FormInput = ({ label,
                     {meta.error}
                 </Paragraph>
             ) : (
-                form && form.status && form.status[name] && (
+                formik && formik.status && formik.status[name] && (
                     <Paragraph
                         style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
-                        {form.status[name]}
+                        {formik.status[name]}
                     </Paragraph>
                 )
             )}

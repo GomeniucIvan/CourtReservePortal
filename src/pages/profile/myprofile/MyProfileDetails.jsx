@@ -236,32 +236,32 @@ function MyProfileDetails({selectedTab}) {
     return (
         <PaddingBlock topBottom={true}>
             <FormInput label={t('profile.firstName')}
-                       form={formik}
+                       formik={formik}
                        loading={isFetching}
                        required={true}
                        name='firstName'
             />
             <FormInput label={t('profile.lastName')}
-                       form={formik}
+                       formik={formik}
                        loading={isFetching}
                        required={true}
                        name='lastName'
             />
             <FormInput label={t('profile.email')}
-                       form={formik}
+                       formik={formik}
                        loading={isFetching}
                        required={!toBoolean(profileData?.EmailIsNotRequired)}
                        name='email'
             />
             <FormInput label={t('profile.username')}
-                       form={formik}
+                       formik={formik}
                        loading={isFetching}
                        required={true}
                        name='username'
             />
 
             {!toBoolean(profileData?.IsGenderDisabled) && toBoolean(profileData?.IncludeGender) &&
-                <FormSelect form={formik}
+                <FormSelect formik={formik}
                             name={`gender`}
                             label={t('profile.gender')}
                             fetching={isFetching}
@@ -270,32 +270,32 @@ function MyProfileDetails({selectedTab}) {
             }
 
             <FormInput label={t('profile.currentPassword')}
-                       form={formik}
+                       formik={formik}
                        loading={isFetching}
                        type={'password'}
                        name='currentPassword'
             />
 
             <FormInput label={t('profile.password')}
-                       form={formik}
+                       formik={formik}
                        loading={isFetching}
                        required={toBoolean(!isNullOrEmpty(formik?.values?.currentPassword))}
                        type={'password'}
                        name='password'
             />
             <FormInput label={t('profile.confirmPassword')}
-                       form={formik}
+                       formik={formik}
                        loading={isFetching}
                        required={toBoolean(!isNullOrEmpty(formik?.values?.currentPassword))}
                        type={'password'}
                        name='confirmPassword'
             />
 
-            <FormRatingCategories ratingCategories={profileData?.RatingCategories} form={formik} loading={isFetching}/>
+            <FormRatingCategories ratingCategories={profileData?.RatingCategories} formik={formik} loading={isFetching}/>
             
             {toBoolean(profileData?.PhoneNumber?.Include) &&
                 <FormInput label={t('profile.phoneNumber')}
-                           form={formik}
+                           formik={formik}
                            loading={isFetching}
                            required={toBoolean(profileData?.PhoneNumber?.IsRequired)}
                            name='phoneNumber'
@@ -304,7 +304,7 @@ function MyProfileDetails({selectedTab}) {
 
             {toBoolean(profileData?.Membership?.Include) &&
                 <FormInput label={t('profile.membershipNumber')}
-                           form={formik}
+                           formik={formik}
                            loading={isFetching}
                            required={toBoolean(profileData?.Membership?.IsRequired)}
                            name='membershipNumber'
@@ -313,7 +313,7 @@ function MyProfileDetails({selectedTab}) {
 
             {toBoolean(profileData?.DateOfBirth?.Include) &&
                 <FormDateOfBirth label={t('profile.dateOfBirth')}
-                                 form={formik}
+                                 formik={formik}
                                  loading={isFetching}
                                  required={toBoolean(profileData?.DateOfBirth?.IsRequired)}
                                  displayAge={true}
@@ -324,20 +324,20 @@ function MyProfileDetails({selectedTab}) {
             {toBoolean(profileData?.Address?.Include) &&
                 <>
                     <FormInput label={t('profile.address')}
-                               form={formik}
+                               formik={formik}
                                loading={isFetching}
                                required={toBoolean(profileData?.Address?.IsRequired)}
                                name='address'
                     />
                     
                     <FormInput label={t('profile.city')}
-                               form={formik}
+                               formik={formik}
                                loading={isFetching}
                                required={toBoolean(profileData?.Address?.IsRequired)}
                                name='city'
                     />
 
-                    <FormStateProvince form={formik}
+                    <FormStateProvince formik={formik}
                                        loading={isFetching}
                                        dropdown={true}
                                        name={`state`}
@@ -345,7 +345,7 @@ function MyProfileDetails({selectedTab}) {
                     />
                     
                     <FormInput label={isNonUsCulture() ? t('profile.postalCode') : t('profile.zipCode')}
-                               form={formik}
+                               formik={formik}
                                loading={isFetching}
                                required={toBoolean(profileData?.Address?.IsRequired)}
                                name='zipCode'
@@ -353,23 +353,23 @@ function MyProfileDetails({selectedTab}) {
                 </>
             }
 
-            <FormCustomFields customFields={profileData?.CustomFields} form={formik} loading={isFetching} name={`CustomFields[{udfIndex}].Value`} />
+            <FormCustomFields customFields={profileData?.CustomFields} formik={formik} loading={isFetching} name={`CustomFields[{udfIndex}].Value`} />
             
             <FormSwitch label={t('profile.excludeAccountInformationFromPublicGroups')}
-                        form={formik}
+                        formik={formik}
                         loading={isFetching}
                         rows={2}
                         name={'excludeAccountInformationFromPublicGroups'}/>
 
             <FormSwitch label={t('profile.unsubscribeFromMarketingEmails')}
-                        form={formik}
+                        formik={formik}
                         loading={isFetching}
                         rows={2}
                         name={'unsubscribeFromMarketingEmails'}/>
 
             {toBoolean(authData?.UseOrganizedPlay) &&
                 <FormSwitch label={t('profile.doNotAllowOtherPlayersToLinkMyProfile')}
-                            form={formik}
+                            formik={formik}
                             loading={isFetching}
                             rows={2}
                             name={'doNotAllowOtherPlayersToLinkMyProfile'}/>
@@ -377,7 +377,7 @@ function MyProfileDetails({selectedTab}) {
 
             {toBoolean(authData?.IsUsingPushNotifications) &&
                 <FormSwitch label={t('profile.unsubscribeFromMarketingPushNotifications')}
-                            form={formik}
+                            formik={formik}
                             loading={isFetching}
                             rows={2}
                             name={'unsubscribeFromMarketingPushNotifications'}/>

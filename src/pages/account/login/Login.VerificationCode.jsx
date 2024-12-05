@@ -131,7 +131,7 @@ function LoginVerificationCode() {
                     autoComplete="off"
                     initialValues={{layout: 'vertical'}}
                 >
-                    <PasscodeInput seperated length={6} name={'passcode'} form={formik}/>
+                    <PasscodeInput seperated length={6} name={'passcode'} formik={formik}/>
 
                     <Row justify={'space-between'} className={globalStyles.inputBottomLink}>
                         <Col span={12}><Text type="secondary">{t('verificationCode.didntGetCode')}</Text></Col>

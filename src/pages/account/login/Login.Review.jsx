@@ -161,7 +161,7 @@ function LoginReview() {
         }
     }, [formik?.values]);
     
-    const checkToShowRecipient = () => {
+    useEffect(() => {
         const selectedPaymentFrequency = formik?.values?.paymentFrequency;
         const selectedAccountType = formik?.values?.card_accountNumber;
         let innerShowRecipient = false;
@@ -171,9 +171,7 @@ function LoginReview() {
                 innerShowRecipient = true;
             }
         }
-
-        //setShowReciept(innerShowRecipient);
-    }
+    }, [formik?.values?.paymentFrequency])
     
     return (
         <>
@@ -202,7 +200,7 @@ function LoginReview() {
 
                                 {anyInList(selectedMembership?.DetailedPaymentOptions) &&
                                     <FormSelect
-                                        form={formik}
+                                        formik={formik}
                                         name='paymentFrequency'
                                         label={t(`review.form.paymentFrequency`)}
                                         options={selectedMembership?.DetailedPaymentOptions}
@@ -210,9 +208,6 @@ function LoginReview() {
                                         disabled={oneListItem(selectedMembership?.DetailedPaymentOptions)}
                                         propText='Text'
                                         propValue='Value'
-                                        onValueChange={e => {
-                                            checkToShowRecipient();
-                                        }}
                                     />
                                 }
                             </PaddingBlock>
@@ -231,7 +226,7 @@ function LoginReview() {
                                 {t(`review.paymentProfileBillingDescription`)}
                             </Paragraph>
                             
-                            <FormPaymentProfile form={formik}
+                            <FormPaymentProfile formik={formik}
                                                 isPaymentProfile={false}
                                                 includeCustomerDetails={true}
                                                 allowToSavePaymentProfile={false}

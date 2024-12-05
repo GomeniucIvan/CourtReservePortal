@@ -100,7 +100,7 @@ function LoginGetStarted() {
                 <PageForm
                     formik={startFormik}>
                     <FormInput label={t(`getStarted.form.email`)}
-                               form={startFormik}
+                               formik={startFormik}
                                name='email'
                                placeholder={t(`getStarted.form.emailPlaceholder`)}
                                required='true'

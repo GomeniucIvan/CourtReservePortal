@@ -242,46 +242,42 @@ function RegistrationGuestBlock({formik,
                         return (
                             <div key={index}>
                                 <FormInput label="First Name"
-                                           form={formik}
+                                           formik={formik}
                                            required={true}
                                            name={`ReservationGuests[${index}].FirstName`}
                                 />
 
                                 <FormInput label="Last Name"
-                                           form={formik}
+                                           formik={formik}
                                            required={true}
                                            name={`ReservationGuests[${index}].LastName`}
                                 />
 
                                 <FormInput label="Phone Number"
-                                           form={formik}
+                                           formik={formik}
                                            required={true}
                                            name={`ReservationGuests[${index}].PhoneNumber`}
                                 />
 
                                 {(toBoolean(authData?.AllowMembersToChangeGuestOwnerOnMemberPortal) && moreThanOneInList(reservationMembers)) &&
-                                    <FormSelect form={formik}
+                                    <FormSelect formik={formik}
                                                 name={`ReservationGuests[${index}].GuestOwnerId`}
                                                 label='Owner'
                                                 options={reservationMembers}
                                                 required={true}
-                                                onValueChange={() => {
-
-                                                    //reloadPlayers();
-                                                }}
                                                 propText='FullName'
                                                 propValue={isNullOrEmpty(guestOrgMemberIdValue) ? 'OrgMemberId' : guestOrgMemberIdValue}/>
                                 }
 
                                 <FormCustomFields customFields={selectedGuest?.MemberUdfs}
-                                                  form={formik}
+                                                  formik={formik}
                                                   index={index}
                                                   name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>
                                 
                                 {hasGuestsWithPayment &&
                                     <>
                                         <FormInput label={isOverriden ? "Daily Cost" : "Cost"}
-                                                   form={formik}
+                                                   formik={formik}
                                                    disabled={true}
                                                    name={isOverriden ? `ReservationGuests[${index}].OverriddenPrice` : `ReservationGuests[${index}].PriceToPay`}
                                         />
@@ -289,19 +285,19 @@ function RegistrationGuestBlock({formik,
                                         {showAllCosts &&
                                             <>
                                                 <FormInput label="Subtotal"
-                                                           form={formik}
+                                                           formik={formik}
                                                            disabled={true}
                                                            name={`ReservationGuests[${index}].Subtotal`}
                                                 />
 
                                                 <FormInput label="Paid"
-                                                           form={formik}
+                                                           formik={formik}
                                                            disabled={true}
                                                            name={`ReservationGuests[${index}].PaidAmt`}
                                                 />
 
                                                 <FormInput label="Due"
-                                                           form={formik}
+                                                           formik={formik}
                                                            disabled={true}
                                                            name={`ReservationGuests[${index}].TotalDue`}
                                                 />

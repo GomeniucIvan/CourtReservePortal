@@ -87,7 +87,7 @@ function LoginForgotPassword() {
 
                 <PageForm formik={formik}>
                     <FormInput label={t('forgotPassword.email')}
-                               form={formik}
+                               formik={formik}
                                name='email'
                                required={true}
                     />

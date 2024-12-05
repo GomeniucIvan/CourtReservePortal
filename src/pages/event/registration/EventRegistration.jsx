@@ -280,7 +280,7 @@ function EventRegistration({fullRegistration}) {
 
                                                     {toBoolean(member.IsChecked) &&
                                                         <>
-                                                            <FormCustomFields customFields={member.MemberUdfs} form={formik} index={index} name={'members[{index}].MemberUdfs[{udfIndex}].Value'}/>
+                                                            <FormCustomFields customFields={member.MemberUdfs} formik={formik} index={index} name={'members[{index}].MemberUdfs[{udfIndex}].Value'}/>
                                                         </>
                                                     }
 

@@ -1,6 +1,5 @@
-import React, { useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { useEffect } from 'react';
-import {Flex, Input, Skeleton, Typography} from 'antd';
+import React, {useRef, useState, forwardRef, useImperativeHandle, useEffect} from 'react';
+import {Flex, Skeleton, Typography} from 'antd';
 import { FortisPaymentType_Ach, FortisPaymentType_CreditCard, PAYMENT_FORTIS_SOURCE_CreateMember, PAYMENT_FORTIS_SOURCE_CreatePaymentProfileAdmin, PAYMENT_FORTIS_SOURCE_CreatePaymentProfilePortal, PAYMENT_FORTIS_SOURCE_POS, PAYMENT_FORTIS_SOURCE_PayTransactionAdmin, PAYMENT_FORTIS_SOURCE_PortalPayment, PAYMENT_FORTIS_SOURCE_PortalRequestAccess, PaymentProfileAccountType_Card, TransactionPaymentTypeEnum_CreditCardSwipe } from './FormPaymentProfile_Contants.jsx';
 import {isNullOrEmpty, equalString, toBoolean, focus, anyInList} from "../../utils/Utils.jsx";
 import {getConfigValue} from "../../config/WebConfig.jsx";
@@ -18,7 +17,7 @@ const { Paragraph } = Typography;
 
 let resolvePaymentRequest, rejectPaymentRequest;
 
-const FormPaymentProfile = React.forwardRef(({ form,
+const FormPaymentProfile = React.forwardRef(({ formik,
                                                  paymentTypes,
                                                  convenienceFeeObj,
                                                  paymentFrequencyCost,
@@ -77,9 +76,9 @@ const FormPaymentProfile = React.forwardRef(({ form,
     let cardNumberField = null;
 
     if (equalString(paymentProvider, 1)) {
-        if (form && typeof form.getFieldProps === 'function') {
-            cardNumberField = form.getFieldProps('card_number');
-            metaCardConnectCard = form.getFieldMeta('card_number');
+        if (formik && typeof formik.getFieldProps === 'function') {
+            cardNumberField = formik.getFieldProps('card_number');
+            metaCardConnectCard = formik.getFieldMeta('card_number');
         }
     }
     let cardConnectCardHasError = metaCardConnectCard && metaCardConnectCard.error && metaCardConnectCard.touched;
@@ -99,7 +98,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                             errorMessage = result.error.message;
                         } else {
                             isValid = true;
-                            form.setFieldValue("card_number", result.token.id);
+                            formik.setFieldValue("card_number", result.token.id);
                         }
                     } catch (error) {
                         // Handle any other errors
@@ -241,7 +240,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                             errorMessage = result.error.message;
                         } else {
                             isValid = true;
-                            form.setFieldValue("card_number", result.token.id);
+                            formik.setFieldValue("card_number", result.token.id);
                         }
                     } catch (error) {
                         // Handle any other errors
@@ -282,7 +281,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     }
 
                     if (token) {
-                        form.setFieldValue("card_number", token.message);
+                        formik.setFieldValue("card_number", token.message);
                         const validationMsg = token.validationError;
                         setValidationMessage(validationMsg);
                     }
@@ -443,7 +442,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     'callback': function (response) {
                         if (response.token) {
                             //return result to promise function
-                            form.setFieldValue("card_number", response.token);
+                            formik.setFieldValue("card_number", response.token);
                             resolvePaymentRequest(response);
                         } else {
                             //timeout
@@ -542,12 +541,12 @@ const FormPaymentProfile = React.forwardRef(({ form,
 
     //conv fee
     useEffect(() => {
-        checkConvinienceFeeDisplay(form?.values?.card_accountType);
-    }, [paymentFrequencyCost, form?.values?.card_accountType])
+        checkConvinienceFeeDisplay(formik?.values?.card_accountType);
+    }, [paymentFrequencyCost, formik?.values?.card_accountType])
 
     useEffect(() => {
-        if (!isNullOrEmpty(form?.values?.card_accountType)){
-            accountTypeChange(form?.values?.card_accountType, true);
+        if (!isNullOrEmpty(formik?.values?.card_accountType)){
+            accountTypeChange(formik?.values?.card_accountType, true);
         }
     }, [])
 
@@ -774,8 +773,8 @@ const FormPaymentProfile = React.forwardRef(({ form,
                             }
                         }
 
-                        form.setFieldValue("hiddenFortisTokenId", tokenId);
-                        form.setFieldValue("card_number", tokenId);
+                        formik.setFieldValue("hiddenFortisTokenId", tokenId);
+                        formik.setFieldValue("card_number", tokenId);
 
                         if (newFortisElements.promiseResolve) {
                             newFortisElements.promiseResolve({
@@ -813,19 +812,21 @@ const FormPaymentProfile = React.forwardRef(({ form,
         });
     };
 
+    useEffect(() => {
+        let accType = formik?.values?.card_accountType;
+        accountTypeChange(accType);
+    }, [formik?.values?.card_accountType]);
+    
     return (
         <>
             <FormSelect
-                form={form}
+                formik={form}
                 name='card_accountType'
                 label='Account Type'
                 options={paymentTypes}
                 required={true}
                 propText='Text'
-                propValue='Value'
-                onValueChange={e => {
-                    accountTypeChange(e.Value);
-                }} />
+                propValue='Value' />
 
             {(showCardDetails && !isNullOrEmpty(convinienceFeeText)) &&
                 <div className='form-invalid' style={{ marginTop: '-16px', paddingBottom: '16px' }}>{convinienceFeeText}</div>
@@ -888,14 +889,14 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     {!toBoolean(isUsingCollectJs) &&
                         <>
                             <FormInput label='Routing Number'
-                                       form={form}
+                                       formik={formik}
                                        name='card_routingNumber'
                                        placeholder='Routing Number'
                                        required={true}
                             />
 
                             <FormInput label='Account Number'
-                                       form={form}
+                                       formik={formik}
                                        name='card_accountNumber'
                                        placeholder='Account Number'
                                        required={true}
@@ -908,12 +909,12 @@ const FormPaymentProfile = React.forwardRef(({ form,
             {(showCardDetails && toBoolean(includeCustomerDetails)) &&
                 <>
                     <FormInput label="First Name"
-                               form={form}
+                               formik={formik}
                                required={true}
                                name='card_firstName'
                     />
                     <FormInput label="Last Name"
-                               form={form}
+                               formik={formik}
                                required={true}
                                name='card_lastName'
                     />
@@ -964,7 +965,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
 
                     <Flex gap={token.padding}>
                         <FormInput label='Expiry Date'
-                                   form={form}
+                                   formik={formik}
                                    name='card_expiryDate'
                                    placeholder='MM/YY'
                                    mask={'XX/XX'}
@@ -975,7 +976,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                         />
 
                         <FormInput label='Security Code'
-                                   form={form}
+                                   formik={formik}
                                    name='card_securityCode'
                                    placeholder='Security Code'
                                    required={true}
@@ -985,7 +986,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     </Flex>
 
                     <FormSelect
-                        form={form}
+                        formik={formik}
                         name='card_country'
                         label='Country'
                         options={getAllCountries()}
@@ -1077,7 +1078,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                     {!toBoolean(isUsingCollectJs) &&
                         <>
                             <FormInput label="Card Number"
-                                       form={form}
+                                       formik={formik}
                                        name='card_number'
                                        placeholder='Card Number'
                                        required={true}
@@ -1085,7 +1086,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
 
                             <Flex gap={token.padding}>
                                 <FormInput label='Expiry Date'
-                                           form={form}
+                                           formik={formik}
                                            name='card_expiryDate'
                                            placeholder='MM/YY'
                                            maxLength={5}
@@ -1094,7 +1095,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
                                 />
 
                                 <FormInput label='Security Code'
-                                           form={form}
+                                           formik={formik}
                                            name='card_securityCode'
                                            placeholder='Security Code (CVV)'
                                            maxLength={4}
@@ -1128,34 +1129,34 @@ const FormPaymentProfile = React.forwardRef(({ form,
             {(showCardDetails && toBoolean(includeCustomerDetails)) &&
                 <>
                     <FormInput label="Street Address"
-                               form={form}
+                               formik={formik}
                                name='card_streetAddress' />
 
                     {!toBoolean(hideFields?.address2) &&
                         <FormInput label="Street Address2"
-                                   form={form}
+                                   formik={formik}
                                    name='card_streetAddress2' />
                     }
 
                     <FormInput label="City"
-                               form={form}
+                               formik={formik}
                                name='card_city' />
 
                     <Flex gap={token.padding}>
-                        <FormStateProvince form={form}
+                        <FormStateProvince formik={formik}
                                            dropdown={toBoolean(showStatesDropdown)}
                                            uiCulture={uiCulture}
                                            name='card_state'
                         />
 
                         <FormInput label={isNonUsCulture() ? 'Postal Code' : 'Zip Code'}
-                                   form={form}
+                                   formik={formik}
                                    name='card_zipCode' />
                     </Flex>
 
                     {!toBoolean(hideFields?.phoneNumber) &&
                         <FormInput label={'Phone Number'}
-                                   form={form}
+                                   formik={formik}
                                    name='card_phoneNumber' />
                     }
                 </>
@@ -1163,7 +1164,7 @@ const FormPaymentProfile = React.forwardRef(({ form,
 
             {(showCardDetails && allowToSavePaymentProfile) &&
                 <FormSwitch label={'Save Payment Profile'}
-                            form={form}
+                            formik={formik}
                             name={'card_savePaymentProfile'}/>
             }
         </>

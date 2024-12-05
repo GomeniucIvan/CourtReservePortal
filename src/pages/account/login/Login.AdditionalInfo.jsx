@@ -241,13 +241,13 @@ function LoginAdditionalInfo() {
                     <PageForm
                         formik={formik}>
                         <FormInput label={t(`additionalInfo.form.firstName`)}
-                                   form={formik}
+                                   formik={formik}
                                    name='firstName'
                                    placeholder={t(`additionalInfo.form.firstNamePlaceholder`)}
                                    required='true'
                         />
                         <FormInput label={t(`additionalInfo.form.lastName`)}
-                                   form={formik}
+                                   formik={formik}
                                    name='lastName'
                                    placeholder={t(`additionalInfo.form.lastNamePlaceholder`)}
                                    required='true'
@@ -255,7 +255,7 @@ function LoginAdditionalInfo() {
 
                         {additionInfoData.IncludeGender &&
                             <FormSelect
-                                form={formik}
+                                formik={formik}
                                 name='gender'
                                 label={t(`additionalInfo.form.gender`)}
                                 options={genderList}
@@ -265,7 +265,7 @@ function LoginAdditionalInfo() {
 
                         {additionInfoData.IncludePhoneNumberBlock &&
                             <FormInput label={t(`additionalInfo.form.phoneNumber`)}
-                                       form={formik}
+                                       formik={formik}
                                        name='phoneNumber'
                                        required={additionInfoData.IsPhoneNumberRequired}
                             />
@@ -273,7 +273,7 @@ function LoginAdditionalInfo() {
 
                         {additionInfoData.IncludeMembershipNumber &&
                             <FormInput label={t(`additionalInfo.form.membershipNumber`)}
-                                       form={formik}
+                                       formik={formik}
                                        name='membershipNumber'
                                        required={additionInfoData.IsMembershipNumberRequired}
                             />
@@ -281,7 +281,7 @@ function LoginAdditionalInfo() {
 
                         {additionInfoData.IncludeDateOfBirthBlock &&
                             <FormDateOfBirth label={t(`additionalInfo.form.dateOfBirth`)}
-                                             form={formik}
+                                             formik={formik}
                                              uiCulture={additionInfoData.UiCulture}
                                              required={additionInfoData.IsDateOfBirthRequired}
                                              name='dateOfBirthString'
@@ -291,27 +291,27 @@ function LoginAdditionalInfo() {
                         {additionInfoData.IncludeAddressBlock &&
                             <>
                                 <FormInput label={t(`additionalInfo.form.streetAddress`)}
-                                           form={formik}
+                                           formik={formik}
                                            name='streetAddress'
                                            required={additionInfoData.IsAddressBlockRequired}
                                 />
 
                                 <FormInput label={t(`additionalInfo.form.city`)}
-                                           form={formik}
+                                           formik={formik}
                                            name='city'
                                            required={additionInfoData.IsAddressBlockRequired}
                                 />
 
                                 <Flex gap={token.padding}>
-                                    <FormStateProvince form={formik}
+                                    <FormStateProvince formik={formik}
                                                        dropdown={toBoolean(additionInfoData?.ShowStatesDropdown)}
                                                        uiCulture={additionInfoData.UiCulture}
-                                                       nameKey={`state`}
+                                                       name={`state`}
                                                        required={additionInfoData.IsAddressBlockRequired}
                                     />
 
                                     <FormInput label={isNonUsCulture(additionInfoData.UiCulture) ? t(`additionalInfo.form.postalCode`) : t(`additionalInfo.form.zipCode`)}
-                                               form={formik}
+                                               formik={formik}
                                                name='zipCode'
                                                required={additionInfoData.IsAddressBlockRequired}
                                     />
@@ -320,7 +320,7 @@ function LoginAdditionalInfo() {
                         }
 
                         <FormCustomFields customFields={formik?.values?.Udfs}
-                                          form={formik}
+                                          formik={formik}
                                           name={`Udfs[{udfIndex}].Value`} />
                         
                         {anyInList(formik?.values?.RatingCategories) &&
@@ -336,7 +336,7 @@ function LoginAdditionalInfo() {
                                             multi={ratingCategory.AllowMultipleRatingValues}
                                             options={ratingCategory.Ratings}
                                             required={ratingCategory.IsRequired}
-                                            form={formik}
+                                            formik={formik}
                                         />
                                     )
                                 })}

@@ -62,11 +62,11 @@ const PasscodeInput = forwardRef((props, ref) => {
 
     let field = '';
     let meta = null;
-    const { name, form } = props;
+    const { name, formik } = props;
     
-    if (form && typeof form.getFieldProps === 'function') {
-        field = form.getFieldProps(name);
-        meta = form.getFieldMeta(name);
+    if (formik && typeof formik.getFieldProps === 'function') {
+        field = formik.getFieldProps(name);
+        meta = formik.getFieldMeta(name);
 
         if (field.value === null) {
             field = { ...field, value: '' };
@@ -175,8 +175,8 @@ const PasscodeInput = forwardRef((props, ref) => {
                     onChange={(e) => {
                         const digitsOnly = e.target.value.replace(/\D/g, '');
                         setValue(digitsOnly.slice(0, mergedProps.length));
-                        if (form && typeof form.setFieldValue === 'function') {
-                            form.setFieldValue(name, digitsOnly.slice(0, mergedProps.length));
+                        if (formik && typeof formik.setFieldValue === 'function') {
+                            formik.setFieldValue(name, digitsOnly.slice(0, mergedProps.length));
                         }
                     }}
                 />

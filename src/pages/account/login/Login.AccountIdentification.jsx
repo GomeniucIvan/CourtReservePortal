@@ -51,7 +51,7 @@ function LoginAccountIdentification() {
 
                <PageForm formik={formik}>
                    <FormInput label="Email"
-                              form={formik}
+                              formik={formik}
                               name='email'
                               disabled={true}
                               placeholder='Enter your email'

@@ -264,7 +264,7 @@ function ProfileBookingDetails() {
                             }
                         </div>
                     }
-                    <FormTextarea form={cancelFormik}
+                    <FormTextarea formik={cancelFormik}
                                   max={200}
                                   isRequired={true}
                                   label={t('reservation.cancellationReason')}

@@ -15,7 +15,7 @@ const {Paragraph} = Typography;
 const FormDateOfBirth = React.forwardRef(({
                                               uiCulture,
                                               name,
-                                              form,
+                                              formik,
                                               required,
                                               dateOfBirthValue,
                                               disabled,
@@ -40,6 +40,13 @@ const FormDateOfBirth = React.forwardRef(({
     const {globalStyles, token} = useApp();
     const styles = useStyles();
     const [isInitialized, setIsInitialized] = useState(false);
+
+
+    const [showDayClear, setShowDayClear] = useState(false);
+    const [showMonthClear, setShowMonthClear] = useState(false);
+    const [showYearClear, setShowYearClear] = useState(false);
+    
+    
     
     const minYear = 1950;
     const maxYear = new Date().getFullYear();
@@ -111,8 +118,8 @@ const FormDateOfBirth = React.forwardRef(({
             const monthsOptions = months();
             const yearOptions = years();
             
-            if (!isNullOrEmpty(form?.values?.[name]) && isNullOrEmpty(dateOfBirthValue)) {
-                const date = new Date(form.values?.[name]);
+            if (!isNullOrEmpty(formik?.values?.[name]) && isNullOrEmpty(dateOfBirthValue)) {
+                const date = new Date(formik.values?.[name]);
                 const day = date.getDate();
                 const month = date.getMonth() + 1;
                 const year = date.getFullYear();
@@ -127,7 +134,7 @@ const FormDateOfBirth = React.forwardRef(({
                 setSelectedYear(yearOption?.Value);
                 calculateAge(day, month, year);
             }
-            if (!isNullOrEmpty(dateOfBirthValue) && isNullOrEmpty(form?.values?.[name])) {
+            if (!isNullOrEmpty(dateOfBirthValue) && isNullOrEmpty(formik?.values?.[name])) {
                 const date = new Date(dateOfBirthValue);
                 const day = date.getDate();
                 const month = date.getMonth() + 1;
@@ -149,7 +156,7 @@ const FormDateOfBirth = React.forwardRef(({
 
     const formatDateOfBirthByUiCulture = (day, month, year) => {
         if (isNullOrEmpty(day) && isNullOrEmpty(month) && isNullOrEmpty(year)) {
-            form.setFieldValue(name, null);
+            formik.setFieldValue(name, null);
             return;
         }
 
@@ -169,11 +176,11 @@ const FormDateOfBirth = React.forwardRef(({
             equalString(regionCode, "en-KE") ||
             equalString(regionCode, "es-MX") ||
             equalString(regionCode, "en-KY")) {
-            form.setFieldValue(name, `${day}/${month}/${year}`);
+            formik.setFieldValue(name, `${day}/${month}/${year}`);
         } else if (equalString(regionCode, "tr-TR")) {
-            form.setFieldValue(name, `${day}.${month}.${year}`);
+            formik.setFieldValue(name, `${day}.${month}.${year}`);
         } else {
-            form.setFieldValue(name, `${month}/${day}/${year}`);
+            formik.setFieldValue(name, `${month}/${day}/${year}`);
         }
     }
 
@@ -190,7 +197,7 @@ const FormDateOfBirth = React.forwardRef(({
 
         if (selectedDay && selectedDay > daysInMonth) {
             setSelectedDay(null);
-            form.setFieldValue(name, null);
+            formik.setFieldValue(name, null);
         }
     }, [selectedMonth, selectedYear]);
 
@@ -203,18 +210,25 @@ const FormDateOfBirth = React.forwardRef(({
                 formatDateOfBirthByUiCulture(selectedDay, selectedMonth, selectedYear);
                 calculateAge(selectedDay, selectedMonth, selectedYear);
             } else {
-                form.setFieldValue(name, null);
+                formik.setFieldValue(name, null);
                 setAge('');
             }
         }
+        
+        setTimeout(() =>{
+            setShowDayClear(!isNullOrEmpty(selectedDay))
+            setShowMonthClear(!isNullOrEmpty(selectedMonth))
+            setShowYearClear(!isNullOrEmpty(selectedYear))  
+        }, 500);
+        
     }, [selectedDay, selectedMonth, selectedYear]);
 
     let field = '';
     let meta = null;
 
-    if (form && typeof form.getFieldProps === 'function') {
-        field = form.getFieldProps(name);
-        meta = form.getFieldMeta(name);
+    if (formik && typeof formik.getFieldProps === 'function') {
+        field = formik.getFieldProps(name);
+        meta = formik.getFieldMeta(name);
     }
 
     let hasError = meta && meta.error && meta.touched;
@@ -375,9 +389,13 @@ const FormDateOfBirth = React.forwardRef(({
                 showDrawer={isDayDrawerOpen}
                 closeDrawer={() => setIsDayDrawerOpen(false)}
                 label={'Day'}
-                showButton={!isRequired}
+                showButton={!isRequired && toBoolean(showDayClear)}
                 confirmButtonText={'Clear'}
-                onConfirmButtonClick={() => setSelectedDay(null)}
+                onConfirmButtonClick={() => {
+                    setShowDayClear(false);
+                    setSelectedDay(null);     
+                    setIsDayDrawerOpen(false);
+                }}
             >
                 <FormDrawerRadio
                     options={daysOptions}
@@ -394,9 +412,13 @@ const FormDateOfBirth = React.forwardRef(({
                 showDrawer={isMonthDrawerOpen}
                 closeDrawer={() => setIsMonthDrawerOpen(false)}
                 label={'Month'}
-                showButton={!isRequired}
+                showButton={!isRequired && toBoolean(showMonthClear)}
                 confirmButtonText={'Clear'}
-                onConfirmButtonClick={() => setSelectedMonth(null)}
+                onConfirmButtonClick={() => {
+                    setShowMonthClear(false);
+                    setSelectedMonth(null);
+                    setIsMonthDrawerOpen(false);
+                }}
             >
                 <FormDrawerRadio
                     options={monthsOptions}
@@ -412,9 +434,13 @@ const FormDateOfBirth = React.forwardRef(({
                 showDrawer={isYearDrawerOpen}
                 closeDrawer={() => setIsYearDrawerOpen(false)}
                 label={'Year'}
-                showButton={!isRequired}
+                showButton={!isRequired && showYearClear}
                 confirmButtonText={'Clear'}
-                onConfirmButtonClick={() => setSelectedYear(null)}
+                onConfirmButtonClick={() => {
+                    setShowYearClear(false);
+                    setSelectedYear(null);
+                    setIsYearDrawerOpen(false);
+                }}
             >
                 <FormDrawerRadio
                     options={yearOptions}

@@ -150,7 +150,7 @@ function ProfileBillingPayment({}) {
             
             {!isFetching &&
                 <>
-                    <FormPaymentProfile form={formik}
+                    <FormPaymentProfile formik={formik}
                                         includeCustomerDetails={true}
                                         allowToSavePaymentProfile={true}
                                         paymentTypes={memberPaymentProfiles(paymentModel.Profiles, true)}

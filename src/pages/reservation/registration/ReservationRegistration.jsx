@@ -668,7 +668,7 @@ function ReservationRegistration() {
                         <Title level={1} className={globalStyles.noTopPadding}>Reservation Details</Title>
 
                         {!isNullOrEmpty(reservation?.InstructorId) &&
-                            <FormInput form={formik}
+                            <FormInput formik={formik}
                                        disabled={true}
                                        label={'Instructor'}
                                        name={`InstructorName`}/>
@@ -676,20 +676,19 @@ function ReservationRegistration() {
 
                         {anyInList(reservation?.FamilyMembers) &&
                             <div style={{display: 'none'}}>
-                                <FormSelect form={formik}
+                                <FormSelect formik={formik}
                                             ref={selectRegisteringMemberIdRef}
                                             name={`RegisteringMemberId`}
                                             label='Reserve For'
                                             options={reservation?.FamilyMembers}
                                             required={true}
-                                    //onValueChange={onReservationTypeChange}
                                             propText='FullName'
                                             propValue='Id'/>
                             </div>
                         }
 
                         {toBoolean(reservation?.IsResourceReservation) ? (
-                            <FormSelect form={formik}
+                            <FormSelect formik={formik}
                                         name={`ReservationTypeId`}
                                         label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
                                         options={reservation?.ReservationTypesSelectListItem}
@@ -697,7 +696,7 @@ function ReservationRegistration() {
                                         propText='Text'
                                         propValue='Value'/>
                         ) : (
-                            <FormSelect form={formik}
+                            <FormSelect formik={formik}
                                         name={`ReservationTypeId`}
                                         label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
                                         options={reservationTypes}
@@ -709,7 +708,7 @@ function ReservationRegistration() {
                         )}
 
                         {toBoolean(reservation?.IsResourceReservation) &&
-                            <FormInput form={formik}
+                            <FormInput formik={formik}
                                        disabled={true}
                                        label={'Resource'}
                                        name={`SelectedResourceName`}/>
@@ -719,13 +718,13 @@ function ReservationRegistration() {
                             {toBoolean(allowToSelectedStartTime(reservation)) &&
                                 <>
                                     <FormInput label="Start Time"
-                                               form={formik}
+                                               formik={formik}
                                                required={true}
                                                name='StartTime'
                                     />
 
                                     <FormInput label="End Time"
-                                               form={formik}
+                                               formik={formik}
                                                required={true}
                                                name='EndTime'
                                     />
@@ -735,7 +734,7 @@ function ReservationRegistration() {
                             {!toBoolean(allowToSelectedStartTime(reservation)) &&
                                 <>
                                     <FormSelect label="Duration"
-                                                form={formik}
+                                                formik={formik}
                                                 name='Duration'
                                                 options={durations}
                                                 required={true}
@@ -743,7 +742,7 @@ function ReservationRegistration() {
                                     />
 
                                     <FormInput label="End Time"
-                                               form={formik}
+                                               formik={formik}
                                                required={true}
                                                disabled={true}
                                                name='EndTime'
@@ -752,7 +751,7 @@ function ReservationRegistration() {
                             }
                         </InlineBlock>
 
-                        <FormSelect form={formik}
+                        <FormSelect formik={formik}
                                     name={`CourtId`}
                                     label='Court(s)'
                                     options={courts}
@@ -795,7 +794,7 @@ function ReservationRegistration() {
                         }
 
                         {(showResources && anyInList(resources)) &&
-                            <FormSelect form={formik}
+                            <FormSelect formik={formik}
                                         name={`ResourceIds`}
                                         multi={true}
                                         loading={toBoolean(loadingState.ResourceIds)}
@@ -809,7 +808,7 @@ function ReservationRegistration() {
                             <>
                                 <Title level={1} className={globalStyles.noTopPadding}>Additional Information</Title>
 
-                                <FormCustomFields customFields={formik?.values?.Udfs} form={formik} loading={isFetching} name={`Udfs[{udfIndex}].Value`}/>
+                                <FormCustomFields customFields={formik?.values?.Udfs} formik={formik} loading={isFetching} name={`Udfs[{udfIndex}].Value`}/>
                                 <Divider className={globalStyles.formDivider}/>
                             </>
                         }

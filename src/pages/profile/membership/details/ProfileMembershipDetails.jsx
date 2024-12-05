@@ -112,12 +112,12 @@ function ProfileMembershipDetails() {
                           }}>
                 <PaddingBlock topBottom={true}>
                     <FormInput label="Membership"
-                               form={cancelFormik}
+                               formik={cancelFormik}
                                disabled={true}
                                name='membershipName'
                     />
 
-                    <FormTextarea form={cancelFormik}
+                    <FormTextarea formik={cancelFormik}
                                   max={200}
                                   isRequired={true}
                                   label={'Cancellation Reason'}

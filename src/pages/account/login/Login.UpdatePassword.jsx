@@ -136,14 +136,14 @@ function LoginUpdatePassword() {
 
                 <PageForm formik={formik}>
                     <FormInput label={t(`updatePassword.form.password`)}
-                               form={formik}
+                               formik={formik}
                                addIconToSeePassword={true}
                                name='password'
                                required='true'
                     />
 
                     <FormInput label={t(`updatePassword.form.confirmPassword`)}
-                               form={formik}
+                               formik={formik}
                                addIconToSeePassword={true}
                                name='confirmPassword'
                                required='true'

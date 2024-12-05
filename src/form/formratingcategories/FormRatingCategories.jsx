@@ -5,7 +5,7 @@ import {Skeleton} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
 import React from "react";
 
-const FormRatingCategories = ({form, ratingCategories, keyPrefix, loading}) => {
+const FormRatingCategories = ({formik, ratingCategories, keyPrefix, loading}) => {
     const {globalStyles} = useApp();
 
     if (isNullOrEmpty(ratingCategories)) {
@@ -41,7 +41,7 @@ const FormRatingCategories = ({form, ratingCategories, keyPrefix, loading}) => {
                 multi={AllowMultipleRatingValues}
                 options={Ratings}
                 required={IsRequired}
-                form={form}
+                formik={formik}
             />
         );
     });

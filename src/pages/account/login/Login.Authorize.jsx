@@ -139,7 +139,7 @@ function LoginAuthorize() {
 
                 <PageForm formik={formik}>
                     <FormInput label={t('authorize.form.email')}
-                               form={formik}
+                               formik={formik}
                                disabled={isFromGetStarted}
                                required={!isFromGetStarted}
                                name='email'
@@ -147,7 +147,7 @@ function LoginAuthorize() {
                     />
 
                     <FormInput label={t('authorize.form.password')}
-                               form={formik}
+                               formik={formik}
                                className={globalStyles.formNoBottomPadding}
                                name='password'
                                placeholder={t('authorize.form.passwordPlaceholder')}

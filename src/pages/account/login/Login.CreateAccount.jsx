@@ -75,14 +75,14 @@ function LoginCreateAccount() {
 
                 <PageForm formik={formik}>
                     <FormInput label={t(`getStarted.form.email`)}
-                               form={formik}
+                               formik={formik}
                                name='email'
                                disabled={true}
                                placeholder={t(`getStarted.form.emailPlaceholder`)}
                     />
 
                     <FormInput label={t(`createAccount.form.password`)}
-                               form={formik}
+                               formik={formik}
                                name='password'
                                required={true}
                                addIconToSeePassword={true}
@@ -90,7 +90,7 @@ function LoginCreateAccount() {
                     />
 
                     <FormInput label={t(`createAccount.form.confirmPassword`)}
-                               form={formik}
+                               formik={formik}
                                name='confirmPassword'
                                required={true}
                                addIconToSeePassword={true}

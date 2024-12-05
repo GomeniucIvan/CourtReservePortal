@@ -106,14 +106,14 @@ function LoginAccountVerification() {
 
                <PageForm formik={formik}>
                    <FormInput label="Email"
-                              form={formik}
+                              formik={formik}
                               name='email'
                               disabled={true}
                               placeholder='Enter your email'
                    />
 
                    <FormInput label="Password"
-                              form={formik}
+                              formik={formik}
                               className={globalStyles.formNoBottomPadding}
                               name='password'
                               placeholder='Enter your password'

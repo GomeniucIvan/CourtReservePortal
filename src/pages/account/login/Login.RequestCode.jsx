@@ -94,7 +94,7 @@ function LoginRequestCode() {
             <PageForm
                 formik={formik}>
                 <FormInput label={t(`requestCode.form.email`)}
-                           form={formik}
+                           formik={formik}
                            name='email'
                            placeholder={t(`requestCode.form.emailPlaceholder`)}
                            required='true'

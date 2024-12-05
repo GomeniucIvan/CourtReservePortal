@@ -8,7 +8,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import React from "react";
 const {Title} = Typography;
 
-const FormCustomFields = ({ customFields, form, loading, index, name }) => {
+const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
     const {globalStyles} = useApp();
 
     if (isNullOrEmpty(customFields)) {
@@ -51,7 +51,7 @@ const FormCustomFields = ({ customFields, form, loading, index, name }) => {
                                         loading={loading}
                                         //placeholder={Label}
                                         required={IsRequired}
-                                        form={form}
+                                        formik={formik}
                                     />
                                 );
 
@@ -65,7 +65,7 @@ const FormCustomFields = ({ customFields, form, loading, index, name }) => {
                                         max={250}
                                         //placeholder={Label}
                                         required={IsRequired}
-                                        form={form}
+                                        formik={formik}
                                     />
                                 );
 
@@ -83,7 +83,7 @@ const FormCustomFields = ({ customFields, form, loading, index, name }) => {
                                         propValue='Value'
                                         fetching={loading}
                                         required={IsRequired}
-                                        form={form}
+                                        formik={formik}
                                     />
                                 );
                         }

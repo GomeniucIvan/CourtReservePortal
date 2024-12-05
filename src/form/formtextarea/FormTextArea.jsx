@@ -5,7 +5,7 @@ import {toBoolean} from "../../utils/Utils.jsx";
 const { TextArea } = Input;
 const { Paragraph } = Typography;
 
-const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isRequired, label }) => {
+const FormTextarea = ({ formik, name, rows = 3, max = null, placeholder = '',isRequired, label }) => {
     const {token, globalStyles} = useApp();
     
     const height = rows * token.Input.controlHeight;
@@ -13,9 +13,9 @@ const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isReq
     let field = '';
     let meta = null;
 
-    if (form && typeof form.getFieldProps === 'function') {
-        field = form.getFieldProps(name);
-        meta = form.getFieldMeta(name);
+    if (formik && typeof formik.getFieldProps === 'function') {
+        field = formik.getFieldProps(name);
+        meta = formik.getFieldMeta(name);
 
         if (field.value === null) {
             field = { ...field, value: '' };
@@ -24,7 +24,7 @@ const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isReq
     let hasError = meta && meta.error && meta.touched;
     
     const onChange = (e) => {
-        form.setFieldValue(name, e.target.value);
+        formik.setFieldValue(name, e.target.value);
     }
     
     return (
@@ -39,7 +39,7 @@ const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isReq
                 showCount
                 maxLength={max}
                 onChange={onChange}
-                onBlur={() => form.setFieldTouched(name, true)}
+                onBlur={() => formik.setFieldTouched(name, true)}
                 placeholder={placeholder}
                 status={toBoolean(hasError) ? 'error' : ''}
                 style={{height: height, resize: 'none'}}
@@ -50,10 +50,10 @@ const FormTextarea = ({ form, name, rows = 3, max = null, placeholder = '',isReq
                     {meta.error}
                 </Paragraph>
             ) : (
-                form.status && form.status[name] && (
+                formik.status && formik.status[name] && (
                     <Paragraph
                         style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
-                        {form.status[name]}
+                        {formik.status[name]}
                     </Paragraph>
                 )
             )}

@@ -12,17 +12,14 @@ const {Paragraph} = Typography;
 
 const FormSelect = forwardRef(({
                         label,
-                        form,
+                        formik,
                         propText = "Text",
                         propValue = "Value",
                         options,
                         name,
                         required,
                         disabled,
-                        onValueChange,
                         placeholder,
-                        sLoading,
-                        menu,
                         type,
                         loading,
                         fetching,
@@ -30,23 +27,20 @@ const FormSelect = forwardRef(({
                         ...props
                     }, ref) => {
 
-    const [selectedOption, setSelectedOption] = useState(null);
+    const isRequired = toBoolean(required);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [showClearButton, setShowClearButton] = useState(false);
-    const [initialValueInitialized, setInitialValueInitialized] = useState(false);
     const [innerPlaceholder, setInnerPlaceholder] = useState('');
-    const isRequired = toBoolean(required);
     const {token, globalStyles} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('');
-    const [multiSelectedValues, setMultiSelectedValues] = useState([]);
 
     let field = '';
     let meta = null;
 
-    if (form && typeof form.getFieldProps === 'function') {
-        field = form.getFieldProps(name);
-        meta = form.getFieldMeta(name);
+    if (formik && typeof formik.getFieldProps === 'function') {
+        field = formik.getFieldProps(name);
+        meta = formik.getFieldMeta(name);
     }
 
     let hasError = meta && meta.error && meta.touched;
@@ -57,45 +51,19 @@ const FormSelect = forwardRef(({
 
     const selectRef = useRef(null);
 
-    const isNotEqualSelectValue = () => {
-       let isNotEqualValue = (isNullOrEmpty(selectedOption) && !isNullOrEmpty(field?.value) ||
-            (!isNullOrEmpty(selectedOption) && !isNullOrEmpty(selectedOption[propValue]) && isNullOrEmpty(field?.value)) ||
-            (!isNullOrEmpty(selectedOption) && !isNullOrEmpty(selectedOption[propValue]) && !equalString(selectedOption[propValue], field?.value)));
-        
-        return isNotEqualValue;
-    }
-    
-    useEffect(() => {
-        if (!fetching) {
-            if (form && typeof form.getFieldProps === 'function' && !initialValueInitialized) {
-                field = form.getFieldProps(name);
-
-                if (field && !isNullOrEmpty(field.value)){
-                    setInitialValueInitialized(true);
-
-                    if (toBoolean(multi)) {
-                        setMultiSelectedValues(field.value);
-                    } else {
-                        if (isNotEqualSelectValue()){
-                            const selectedOptionInList = options.find(option => equalString(option[propValue], field.value));
-                            if (selectedOptionInList) {
-                                if (isNullOrEmpty(selectedOption) || !equalString(selectedOptionInList[propValue], selectedOption[propValue])){
-                                    onValueSelect(selectedOptionInList, true)
-                                }
-                            }
-                        }
-                    }
-                } else{
-                    setInitialValueInitialized(true); 
-                }
-            }
-        }
-    }, [fetching, initialValueInitialized, multi, name, options]);
-
     const closeDrawer = () => {
         setIsDrawerOpen(false);
     }
 
+    const clearAndCloseDrawer = () => {
+        formik.setFieldValue(name, null);
+        closeDrawer();
+
+        setTimeout(function () {
+            setShowClearButton(false);
+        }, 500);
+    }
+    
     useImperativeHandle(ref, () => ({
         open: () => {
             setIsDrawerOpen(true);
@@ -103,50 +71,7 @@ const FormSelect = forwardRef(({
     }));
     
     useEffect(() => {
-        if (!multi){
-            if (isNotEqualSelectValue()){
-                
-                let selectedOptionInList = options.find(option => equalString(option[propValue], field?.value));
-
-                if (selectedOptionInList) {
-                    setSelectedOption(selectedOptionInList);
-                }
-            }
-        }
-    }, [field?.value]);
-    
-    const onValueSelect = (selectedOption) => {
-        let selectedDropdownValue = null;
-        
-        if (!equalString(selectedOption[propValue], field?.value)){
-            if (isNullOrEmpty(selectedOption)) {
-                selectedDropdownValue = null;
-                form.setFieldValue(name, null);
-            } else {
-                let selectedOptionInList = options.find(option => equalString(option[propValue], selectedOption[propValue]));
-                if (selectedOptionInList) {
-                    selectedDropdownValue = selectedOptionInList;
-                    form.setFieldValue(name, selectedOption[propValue]);
-                } else {
-                    selectedDropdownValue = null;
-                    form.setFieldValue(name, null);
-                }
-            }
-
-            setSelectedOption(selectedDropdownValue);
-            if (onValueChange && typeof onValueChange === 'function') {
-                onValueChange(selectedDropdownValue);
-            }
-        }
-        
-        setIsDrawerOpen(false);
-        setTimeout(function () {
-            setShowClearButton(!isNullOrEmpty(selectedOption) && toBoolean(!isRequired));
-        }, 500);
-    }
-
-    useEffect(() => {
-        if (!fetching){
+        if (!toBoolean(fetching)){
             if (isNullOrEmpty(placeholder)) {
                 setInnerPlaceholder(t('selectPlaceholder', {label: label}))
             } else {
@@ -155,17 +80,21 @@ const FormSelect = forwardRef(({
         }
     }, [fetching, label, placeholder, t])
 
-    useEffect(() => {
-        if (toBoolean(multi) && form && !fetching){
-            const currentValue = field?.value;
+    const onDrawerOptionSelect = (selectedOption) => {
+        let selectedDropdownValue = selectedOption[propValue];
+        formik.setFieldValue(name, selectedDropdownValue);
 
-            if (initialValueInitialized){
-                if (JSON.stringify(currentValue) !== JSON.stringify(multiSelectedValues)) {
-                    form.setFieldValue(name, multiSelectedValues);
-                }
-            }
+        setIsDrawerOpen(false);
+        setTimeout(function () {
+            setShowClearButton(!isNullOrEmpty(selectedOption) && toBoolean(!isRequired));
+        }, 500);
+    }
+    
+    useEffect(() => {
+        if (!isNullOrEmpty(field.value) && !toBoolean(isRequired)){
+            setShowClearButton(true);
         }
-    }, [multiSelectedValues, fetching, field, form, initialValueInitialized, multi, name]);
+    }, [])
     
     return (
         <>
@@ -192,19 +121,11 @@ const FormSelect = forwardRef(({
                         {...props}
                         ref={selectRef}
                         placeholder={innerPlaceholder}
-                        value={toBoolean(multi) ? multiSelectedValues : selectedOption?.[propValue]}
+                        value={isNullOrEmpty(field.value) ? undefined : field.value}
                         open={false}
                         mode={toBoolean(multi) ? 'multiple' : undefined}
                         loading={toBoolean(loading)}
                         onDropdownVisibleChange={() => !toBoolean(disabled) && setIsDrawerOpen(true)}
-                        onChange={(value) => {
-                            if (multi) {
-                                //nothing
-                            } else {
-                                const selectedOptionInList = options.find(option => equalString(option[propValue], value));
-                                onValueSelect(selectedOptionInList);
-                            }
-                        }}
                         disabled={disabled}
                         className={styles.select}
                         showSearch={false}
@@ -238,16 +159,17 @@ const FormSelect = forwardRef(({
                     label={label}
                     showButton={showClearButton}
                     confirmButtonText={'Clear'}
-                    onConfirmButtonClick={() => setSelectedOption(null)}
-                    selectedValue={selectedOption}
+                    onConfirmButtonClick={clearAndCloseDrawer}
                 >
                     <FormDrawerRadio
                         options={options}
                         multi={toBoolean(multi)}
-                        selectedCurrentValue={selectedOption?.[propValue]}
-                        multiSelectedValues={multiSelectedValues}
-                        onValueSelect={onValueSelect}
-                        setMultiSelectedValues={setMultiSelectedValues}
+                        selectedCurrentValue={field.value}
+                        multiSelectedValues={field.value}
+                        onValueSelect={onDrawerOptionSelect}
+                        setMultiSelectedValues={(e) => {
+                            formik.setFieldValue(name, e)
+                        }}
                         propText={propText}
                         propValue={propValue}
                         name={name}
