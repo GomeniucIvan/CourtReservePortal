@@ -498,7 +498,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
         }
 
         if (equalString(paymentProvider, 3) && toBoolean(isUsingCollectJs)) {
-            if (equalString(form?.values?.card_accountType, 1)) {
+            if (equalString(formik?.values?.card_accountType, 1)) {
                 setFieldValidity(prev => ({
                     ...prev,
 
@@ -513,7 +513,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
 
                 loadAndInitializeCollectSafeSave();
 
-            } else if (equalString(form?.values?.card_accountType, 2)) {
+            } else if (equalString(formik?.values?.card_accountType, 2)) {
 
                 setFieldValidity(prev => ({
                     ...prev,
@@ -530,7 +530,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                 loadAndInitializeCollectSafeSave(true);
             }
         }
-    }, [form?.values?.card_accountType]);
+    }, [formik?.values?.card_accountType]);
 
     //Fortis Only!
     useEffect(() => {
@@ -820,7 +820,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     return (
         <>
             <FormSelect
-                formik={form}
+                formik={formik}
                 name='card_accountType'
                 label='Account Type'
                 options={paymentTypes}
