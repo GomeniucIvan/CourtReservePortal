@@ -72,7 +72,7 @@ function ProfileCalendarFeed() {
                                 if (toBoolean(r.IsValid)){
                                     pNotify(t('profile.calendar.successfullyEmailed'))
                                 }else{
-                                    pNotify(t?.Message, '', 'error')
+                                    pNotify(t?.Message, 'error')
                                 }
 
                                 setIsLoading(false);

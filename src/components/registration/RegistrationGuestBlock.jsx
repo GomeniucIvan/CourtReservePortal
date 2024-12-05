@@ -51,8 +51,6 @@ function RegistrationGuestBlock({formik,
         
         let updatedReservationGuests = [...currentReservationGuests, guestObject];
         await formik.setFieldValue('ReservationGuests', updatedReservationGuests);
-
-        console.log(updatedReservationGuests);
         
         setLoading('ReservationGuests', true);
         setLoading('SelectedReservationMembers', true);
@@ -81,14 +79,28 @@ function RegistrationGuestBlock({formik,
         return reservationGuests.findIndex(guest => equalString(guest.Guid, incPlayer?.Guid)) + 1;
     }
     
+    const removeGuest = async () => {
+        let currentReservationGuests = formik.values.ReservationGuests || [];
+
+        const updatedGuests = currentReservationGuests.filter(g => !equalString(g.Guid, selectedGuest.Guid));
+
+        setLoading('SelectedReservationMembers', true);
+        setLoading('ReservationGuests', true);
+
+        console.log(updatedGuests)
+        setSelectedGuest(null);
+
+        if (typeof reloadPlayers == 'function') {
+            let newGuests = await reloadPlayers(null, updatedGuests, true);
+        }
+    }
+    
     return (
         <>
             <div>
-                <Text
-                    style={{
-                        marginBottom: `${token.Custom.buttonPadding}px`,
-                        display: 'block'
-                    }}>Guest(s)</Text>
+                <Text style={{ marginBottom: `${token.Custom.buttonPadding}px`, display: 'block' }}>
+                    Guest(s)
+                </Text>
                 <Card
                     className={cx(globalStyles.card, anyInList(formik?.values?.ReservationGuests) ? globalStyles.playersCard : globalStyles.noPlayersCard)}>
                     <Flex vertical>
@@ -313,13 +325,7 @@ function RegistrationGuestBlock({formik,
                                             content: 'Are you sure you want to remove Guest?',
                                             showIcon: false,
                                             onRemove: (e) => {
-                                                let currentReservationGuests = formik.values.ReservationGuests || [];
-                                                
-                                                const updatedGuests = currentReservationGuests
-                                                    .filter(g => !equalString(g.Guid, selectedGuest.Guid));
-                                                
-                                                formik.setFieldValue('ReservationGuests', updatedGuests);
-                                                setSelectedGuest(null);
+                                                removeGuest();
                                             }
                                         });
                                     }}>

@@ -454,10 +454,14 @@ function ReservationRegistration() {
     }, [formik?.values?.EndTime]);
 
     useEffect(() => {
-        if ((!isNullOrEmpty(formik?.values?.RegisteringMemberId) || !isNullOrEmpty(formik?.values?.Duration)) && !isNullOrEmpty(formik?.values?.ReservationTypeId)) {
-            reloadPlayers()
+        if ((!isNullOrEmpty(formik?.values?.RegisteringMemberId) &&
+            !isNullOrEmpty(formik?.values?.Duration)) && 
+            !isNullOrEmpty(formik?.values?.ReservationTypeId) &&
+            !isNullOrEmpty(formik?.values?.EndTime) &&
+            !isNullOrEmpty(formik?.values?.CourtId)) {
+            reloadPlayers();
         }
-    }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration, formik?.values?.FeeResponsibility]);
+    }, [formik?.values?.RegisteringMemberId, formik?.values?.Duration, formik?.values?.FeeResponsibility, formik?.values?.CourtId, formik?.values?.EndTime]);
 
     useEffect(() => {
         if (!isNullOrEmpty(formik?.values?.ReservationTypeId)) {
@@ -478,7 +482,7 @@ function ReservationRegistration() {
     }, [shouldFetch, resetFetch]);
     
     //members guest table
-    const reloadPlayers = async (orgMemberIdToRemove, incGuests) => {
+    const reloadPlayers = async (orgMemberIdToRemove, incGuests, isGuestRemove) => {
         setLoading('SelectedReservationMembers', true);
 
         let registeringOrganizationMemberId = null;
@@ -486,7 +490,7 @@ function ReservationRegistration() {
         let refillDisclosureMemberIds = [];
 
         let resGuests = formik?.values?.ReservationGuests || [];
-        let numberOfGuests = resGuests.length;
+        let numberOfGuests = resGuests.length - (isGuestRemove ? 1 : 0);
         let selectedNumberOfGuests = isNullOrEmpty(incGuests) ? numberOfGuests : incGuests.length;
 
         const firstOwnerMemberId = reservationMembers.find(member => toBoolean(member.IsOwner));
@@ -539,24 +543,21 @@ function ReservationRegistration() {
         let responseReservationGuests = [];
         let r = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData);
         if (r.IsValid) {
-            setTotalPriceToPay(r.Data.totalCost)
+            setTotalPriceToPay(r.Data.TotalCost)
             setReservationMembers(r.Data.MemberData.SelectedMembers);
             responseReservationGuests = r.Data.MemberData.ReservationGuests || [];
 
-            if (anyInList(responseReservationGuests)){
-                await formik.setFieldValue(
-                    'ReservationGuests',
-                    responseReservationGuests.map(resGuest => ({
-                        ...resGuest,
-                        Status: '' 
-                    }))
-                );
-            }
+            await formik.setFieldValue('ReservationGuests', responseReservationGuests.map(resGuest => ({
+                    ...resGuest,
+                    Status: ''
+                }))
+            );
 
             setPlayersModelData(r.Data.MemberData);
         }
 
         setLoading('SelectedReservationMembers', false);
+        setLoading('ReservationGuests', false);
 
         if (!isNullOrEmpty(incGuests)){
             return responseReservationGuests;

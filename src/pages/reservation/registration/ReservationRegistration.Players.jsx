@@ -94,13 +94,15 @@ function ReservationRegistrationPlayers({formik,
                 setSearchPlayersText('');
                 searchPlayerDrawerBottomRef.current.setValue('');
                 setShouldRebindPlayers(true);
+                pNotify(`${player.FirstName} ${player.LastName} added to favourite list.`);
             } else{
                 setSearchingPlayers((prevMembers) =>
                     prevMembers.filter((member) => !equalString(member.MemberOrgId, player.MemberOrgId))
                 );
+                pNotify(`${player.FirstName} ${player.LastName} successfully removed from favourite list.`);
             }
         } else {
-            pNotify(response.Message, '', 'error');
+            pNotify(response.Message, 'error');
         }
     }
 
@@ -109,6 +111,7 @@ function ReservationRegistrationPlayers({formik,
         setSearchPlayersText('');
         searchPlayerDrawerBottomRef.current.setValue('');
         setShouldRebindPlayers(true);
+        pNotify(`${player.FirstName} ${player.LastName} successfully added.`);
     }
 
     const removePlayer = (player) => {
@@ -272,8 +275,7 @@ function ReservationRegistrationPlayers({formik,
                                                                 <div onClick={() => {
                                                                     removePlayer(reservationMember)
                                                                 }}>
-                                                                    <SVG icon={'circle-minus'} size={23}
-                                                                         preventFill={true}/>
+                                                                    <SVG icon={'circle-minus'} size={23} preventFill={true}/>
                                                                 </div>
                                                             }
                                                         </Flex>
@@ -355,8 +357,7 @@ function ReservationRegistrationPlayers({formik,
                                         {searchingPlayers.map((player, index) => (
                                             <div key={index}>
                                                 <Flex justify={'space-between'} align={'center'}>
-                                                    <div onClick={() => {
-                                                        addPlayerToReservation(player);
+                                                    <div onClick={() => { addPlayerToReservation(player);
                                                     }} style={{width: '100%'}}>
 
                                                         <Flex gap={token.Custom.cardIconPadding}
@@ -368,8 +369,7 @@ function ReservationRegistrationPlayers({formik,
                                                                       borderRadius: 50,
                                                                       backgroundColor: 'red'
                                                                   }}>
-                                                                <Title level={1}
-                                                                       className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
+                                                                <Title level={1} className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
                                                             </Flex>
 
                                                             <Text>

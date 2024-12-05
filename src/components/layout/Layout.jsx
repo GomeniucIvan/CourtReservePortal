@@ -23,6 +23,7 @@ import apiService, {setRequestData} from "../../api/api.jsx";
 import {useSafeArea} from "../../context/SafeAreaContext.jsx";
 import {match} from "path-to-regexp";
 import {ErrorBoundary} from "react-error-boundary";
+import {Toaster} from "react-hot-toast";
 
 function Layout() {
     const location = useLocation();
@@ -298,6 +299,8 @@ function Layout() {
                     <>
                         <LayoutExtra/>
 
+                        <Toaster />
+                        
                         {toBoolean(isFetching) ? (
                             <>
                                 <div className={'safe-area-top'}></div>

@@ -123,7 +123,7 @@ function ProfileBookingDetails() {
                         pNotify(t('reservation.successfullyCancelledMessage', {entity: toBoolean(booking.IsLesson) ? t('lesson') : t('reservation.title')}))
                         loadData();
                     } else{
-                        pNotify(r.Message, '', 'error');
+                        pNotify(r.Message, 'error');
                     }
                     
                     setIsLoading(false);

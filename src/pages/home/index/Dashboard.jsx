@@ -24,6 +24,7 @@ import {useSafeArea} from "../../../context/SafeAreaContext.jsx";
 import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
 import DrawerBarcode from "../../../components/drawer/DrawerBarcode.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import {pNotify} from "../../../components/notification/PNotify.jsx";
 
 function Dashboard() {
     const { styles } = useStyles();
