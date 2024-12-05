@@ -117,7 +117,7 @@ function EventRegistration({fullRegistration}) {
             holdTimeForReservation: event?.HoldTimeForReservation
         };
 
-        setFooterContent(<PaymentDrawerBottom paymentData={paymentData}>
+        setFooterContent(<PaymentDrawerBottom paymentData={paymentData} group={true}>
             <Button type="primary"
                     block
                     htmlType="submit"

@@ -46,7 +46,6 @@ import ReservationRegistrationMatchMaker from "./ReservationRegistration.MatchMa
 import ReservationRegistrationMiscItems from "./ReservationRegistration.MiscItems.jsx";
 import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.TermsAndCondition.jsx";
 import PaymentDrawerBottom from "../../../components/drawer/PaymentDrawerBottom.jsx";
-import Sticky from "../../../components/sticky/Sticky.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -93,6 +92,7 @@ function ReservationRegistration() {
     const [showSearchPlayers, setShowSearchPlayers] = useState(false);
     const [validationSchema, setValidationSchema] = useState(Yup.object({}));
     const [totalPriceToPay, setTotalPriceToPay] = useState(0);
+    const [paymentList, setPaymentList] = useState([]);
 
     let selectRegisteringMemberIdRef = useRef();
     let selectReservationTypeIdRef = useRef();
@@ -543,6 +543,7 @@ function ReservationRegistration() {
         let responseReservationGuests = [];
         let r = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxController/Api_CalculateReservationCostMemberPortal?id=${orgId}&authUserId=${reservation.MemberId}&uiCulture=${authData?.uiCulture}&isMobileLayout=true`, postData);
         if (r.IsValid) {
+            setPaymentList(r.Data.PaymentList)
             setTotalPriceToPay(r.Data.TotalCost)
             setReservationMembers(r.Data.MemberData.SelectedMembers);
             responseReservationGuests = r.Data.MemberData.ReservationGuests || [];
@@ -607,8 +608,13 @@ function ReservationRegistration() {
     }
     
     useEffect(() => {
+        console.log(paymentList);
+        
         let paymentData = {
-            list: [],
+            list: anyInList(paymentList) ? paymentList.map(paymentItem =>({
+                label: paymentItem.Text,
+                value: paymentItem.Value
+            })) : [],
             totalDue: totalPriceToPay,
             requireOnlinePayment: toBoolean(reservation?.RequirePaymentWhenBookingCourtsOnline),
             show: totalPriceToPay > 0,
@@ -625,7 +631,7 @@ function ReservationRegistration() {
                 {submitButtonText}
             </Button>
         </PaymentDrawerBottom>)
-    }, [isFetching, isLoading, submitButtonText, totalPriceToPay]);
+    }, [isFetching, isLoading, submitButtonText, totalPriceToPay, reservation]);
 
     useEffect(() => {
         setIsFooterVisible(true);
