@@ -28,18 +28,18 @@ const FormInput = ({ label,
                        className,
                        loading,
                        isExpiryDate,
-                        placeholder,
-                        description,
+                       placeholder,
+                       description,
                        ...props }) => {
     const { token, globalStyles } = useApp();
-    
+
     let field = '';
     let meta = null;
     const isRequired = toBoolean(required);
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const {styles} = useStyles();
-    
+
     const inputRef = useRef(null);
     const timeoutRef = useRef(null);
     const {t} = useTranslation('');
@@ -54,28 +54,28 @@ const FormInput = ({ label,
     }
 
     let hasError = meta && meta.error && meta.touched;
-    
+
     addIconToSeePassword = addIconToSeePassword || equalString(name, 'password');
 
     const applyMask = (value, pattern) => {
         if (!pattern) return value;
 
-        
+
         const cleanValue = value.replace(/\D+/g, '');
         let maskedValue = '';
         let maskIndex = 0, valueIndex = 0;
 
         while (valueIndex < cleanValue.length) {
-            if (maskIndex >= pattern.length) break; 
+            if (maskIndex >= pattern.length) break;
 
             const currentMaskChar = pattern[maskIndex];
             const currentValueChar = cleanValue[valueIndex];
 
             if (currentMaskChar === "X") {
                 maskedValue += currentValueChar;
-                valueIndex++; 
+                valueIndex++;
             } else {
-                maskedValue += currentMaskChar; 
+                maskedValue += currentMaskChar;
                 if (cleanValue.length > valueIndex) {
                     maskIndex++;
                     continue;
@@ -87,8 +87,8 @@ const FormInput = ({ label,
 
         return maskedValue;
     };
-    
-    
+
+
     const handleInputChange = (event) => {
         let { value } = event.target;
 
@@ -110,7 +110,7 @@ const FormInput = ({ label,
                 inputRef.current.value = value;
             }
         }
-        
+
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
@@ -133,25 +133,10 @@ const FormInput = ({ label,
     const handleInputBlur = (e) => {
         setIsFocused(false);
         if (formik){
-            formik.handleBlur(e); 
+            formik.handleBlur(e);
         }
     }
-    
-    if (toBoolean(loading)){
-        return (
-           <div className={cx(globalStyles.formBlock) }>
-               <Skeleton.Input block
-                               active={true}
-                               className={cx(globalStyles.skeletonLabel)}
-                               style={{
-                                   width: `${calculateSkeletonLabelWidth(label)}`,
-                                   minWidth: `${calculateSkeletonLabelWidth(label)}`
-                               }}/>
-               <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput) }/>
-           </div>
-        )
-    }
-    
+
     return (
         <div className={cx(globalStyles.formBlock, className, styles.input)}>
             <label htmlFor={name} className={globalStyles.globalLabel}>
@@ -159,7 +144,7 @@ const FormInput = ({ label,
                 {isRequired &&
                     <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
-            {toBoolean(addIconToSeePassword) ? 
+            {toBoolean(addIconToSeePassword) ?
                 (<Input.Password
                         {...props}
                         {...field}
@@ -199,7 +184,7 @@ const FormInput = ({ label,
                         type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
                         className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
                 )}
-            
+
             {hasError && meta && typeof meta.error === 'string' ? (
                 <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
                     {meta.error}

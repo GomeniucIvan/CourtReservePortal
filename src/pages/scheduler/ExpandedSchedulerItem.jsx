@@ -304,7 +304,7 @@ const ExpandedSchedulerItem = (props) => {
                                             {dataItem.IsRecurring && <span className="fa fa-repeat">&nbsp;</span>}
                                         </div>
                                     </a>
-                                    {showNotesOnSchedulers && (
+                                    {toBoolean(authData?.ShowNotesOnSchedulers) && (
                                         <>
                                             {dataItem.Note && (
                                                 <div style={{display: 'block'}}>{dataItem.Note}</div>
@@ -489,7 +489,7 @@ const ExpandedSchedulerItem = (props) => {
                                         <div
                                             dangerouslySetInnerHTML={{__html: displayReservationUdfs(dataItem, isLightVersionEventSlot)}}/>
 
-                                        {showNotesOnSchedulers && (
+                                        {toBoolean(authData?.ShowNotesOnSchedulers) && (
                                             <>
                                                 {dataItem.Note && (
                                                     <div style={{display: 'block'}}>{dataItem.Note}</div>
