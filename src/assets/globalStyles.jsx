@@ -153,7 +153,6 @@ export const useStyles = createStyles(({ css, token }) => ({
         top: 12px;
     `,
    formBlock: css`
-       margin-bottom: ${token.Form.itemMarginBottom}px;
        width: 100%;
    `,
    skeletonInput: css`
