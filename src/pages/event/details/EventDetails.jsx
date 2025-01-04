@@ -184,7 +184,6 @@ function EventDetails() {
             )
         }
         
-        
         return (
             <PaddingBlock onlyBottom={true}>
                 {key}

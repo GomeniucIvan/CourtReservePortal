@@ -33,6 +33,8 @@ import toast from "react-hot-toast";
 import Modal from "../../../components/modal/Modal.jsx";
 import Barcode from "react-barcode";
 import FormInputDisplay from "../../../form/input/FormInputDisplay.jsx";
+import {AccountRouteNames} from "../../../routes/AccountRoutes.jsx";
+import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
 
 const {Text} = Typography;
 
@@ -159,7 +161,10 @@ function ProfileFamilyList() {
                                         if (toBoolean(familyMember.IsNotRegisteredToOrg)){
                                             actions = [
                                                 <PlusCircleOutlined key="request-access" onClick={() => {
-                                                    
+                                                    let route = toRoute(AccountRouteNames.REQUEST_ORGANIZATION, 'orgId', orgId);
+                                                    route = toRoute(route, 'memberId', familyMember.MemberId);
+                                                    setPage(setDynamicPages, familyMember.FullName, route);
+                                                    navigate(route);
                                                 }}/>
                                             ]
                                         } else {

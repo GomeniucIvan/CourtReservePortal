@@ -36,5 +36,7 @@
   "stringingDetails": "Stringing Details",
   "paymentProfiles": "Payment Profiles",
   "waivers": "Waivers",
-  "memberGroup": "Member Group"
+  "memberGroup": "Member Group",
+  
+  "requestAccess": "Request Access"
 }
