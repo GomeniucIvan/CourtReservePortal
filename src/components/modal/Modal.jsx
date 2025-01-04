@@ -12,18 +12,21 @@ const {Title} = Typography;
 function Modal({ children,
                    show,
                    title,
+                   full = true,
                    onClose,
                    onConfirm,
                    loading,
+                   hideFooter,
                    dangerConfirm = false,
                    showConfirmButton = false,
+                   rootClass,
                    confirmButtonText = 'Confirm'}) {
     const { token } = useApp();
     const {styles} = useStyles();
 
     return (
         <AntModal
-            wrapClassName={cx(styles.wrapperContainer, 'safe-area-top')}
+            wrapClassName={cx(styles.wrapperContainer, 'safe-area-top', rootClass)}
             className={styles.modalContainer}
             title={null}
             open={toBoolean(show)}
@@ -37,19 +40,21 @@ function Modal({ children,
                         <Title level={1}>{title}</Title>
                     </Flex>
                 }
-                <div className={styles.body}>
+                <div className={cx(styles.body)}>
                     {children}
                 </div>
 
-                <PaddingBlock topBottom={true}>
-                    <Flex align={'center'} justify={'space-between'} gap={token.padding}>
-                        <Button type={showConfirmButton ? 'default' : 'primary'} disabled={loading} block onClick={onClose}>Close</Button>
+                {!hideFooter &&
+                    <PaddingBlock topBottom={true}>
+                        <Flex align={'center'} justify={'space-between'} gap={token.padding}>
+                            <Button type={showConfirmButton ? 'default' : 'primary'} disabled={loading} block onClick={onClose}>Close</Button>
 
-                        {showConfirmButton &&
-                            <Button type={'primary'} danger={dangerConfirm} loading={loading} block onClick={onConfirm}>{confirmButtonText}</Button>
-                        }
-                    </Flex>
-                </PaddingBlock>
+                            {showConfirmButton &&
+                                <Button type={'primary'} danger={dangerConfirm} loading={loading} block onClick={onConfirm}>{confirmButtonText}</Button>
+                            }
+                        </Flex>
+                    </PaddingBlock>
+                }
             </>
         </AntModal>
     )

@@ -52,7 +52,8 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
         AdjustmentsStartDate: '',
         AdjustmentsEndDate: '',
         AllStartDate: '',
-        AllEndDate: ''
+        AllEndDate: '',
+        CurrentDate: '',
     }
 
     const formik = useCustomFormik({
@@ -81,6 +82,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                         AdjustmentsEndDate: respData.CurrentDateString,
                         AllStartDate: subtractDateDays(respData.CurrentDateString, 30),
                         AllEndDate: respData.CurrentDateString,
+                        CurrentDate: respData.CurrentDateString,
                     })
                     
                     let balance = toBoolean(respData.MemberFamilyId) ?
@@ -371,24 +373,32 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                 }}
             >
                 <PaddingBlock>
-                    {(!isNullOrEmpty(paidFees) && equalString(selectedSegmentTab, 'paid')) &&
-                        <FormInputsDateInterval formik={formik} labelStart={'Start Date'} labelEnd={'End Date'} nameStart={'PaidStartDate'} nameEnd={'PaidEndDate'} />
-                    }
-                    {(!isNullOrEmpty(paymentsFees) && equalString(selectedSegmentTab, 'payments')) &&
-                        <>
-                           
-                        </>
-                    }
-                    {(!isNullOrEmpty(adjustmentsFees) && equalString(selectedSegmentTab, 'adjustments')) &&
-                        <>
-                          
-                        </>
-                    }
-                    {(!isNullOrEmpty(allFees) && equalString(selectedSegmentTab, 'all')) &&
-                        <>
-                           
-                        </>
-                    }
+                    <Flex vertical={true} gap={token.padding}>
+                        {(!isNullOrEmpty(paidFees) && equalString(selectedSegmentTab, 'paid')) &&
+                            <FormInputsDateInterval formik={formik}
+                                                    labelStart={'Start Date'}
+                                                    labelEnd={'End Date'}
+                                                    nameStart={'PaidStartDate'}
+                                                    nameEnd={'PaidEndDate'}
+                                                    maxDate={formik?.values?.CurrentDate}
+                            />
+                        }
+                        {(!isNullOrEmpty(paymentsFees) && equalString(selectedSegmentTab, 'payments')) &&
+                            <>
+
+                            </>
+                        }
+                        {(!isNullOrEmpty(adjustmentsFees) && equalString(selectedSegmentTab, 'adjustments')) &&
+                            <>
+
+                            </>
+                        }
+                        {(!isNullOrEmpty(allFees) && equalString(selectedSegmentTab, 'all')) &&
+                            <>
+
+                            </>
+                        }
+                    </Flex>
                     
 
                 </PaddingBlock>

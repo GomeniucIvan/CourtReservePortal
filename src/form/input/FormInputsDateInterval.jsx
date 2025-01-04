@@ -18,11 +18,16 @@ const FormInputsDateInterval = ({ labelStart,
                                     nameEnd,
                                     className,
                                     interval = 90,
+                                    minDate,
+                                    maxDate,
                                     ...props }) => {
     const { token, globalStyles } = useApp();
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
     const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-    
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+
+
     let fieldStart = '';
     let fieldEnd = '';
 
@@ -35,43 +40,60 @@ const FormInputsDateInterval = ({ labelStart,
 
         if (fieldStart.value === null) {
             fieldStart = { ...fieldStart, value: '' };
+            setStartDate(fieldStart);
         }
         if (fieldEnd.value === null) {
             fieldEnd = { ...fieldEnd, value: '' };
+            setEndDate(fieldEnd);
         }
     }
 
-    const onStartChange = (e) => {
-        console.log(e)
+    const onStartChange = (date, dateString) => {
+        setStartDate(dateString);
     }
-    
+
     const onStartConfirm = (e) => {
-        console.log(e)
+        if (!equalString(fieldStart, startDate)) {
+            formik.setFieldValue(nameStart, startDate);
+        }
+        setShowStartDatePicker(false)
     }
 
     const onStartClose = (e) => {
-        console.log(e)
+
     }
-    
-    
-    
+
+    const onEndChange = (date, dateString) => {
+        setEndDate(dateString);
+    }
+
+    const onEndConfirm = (e) => {
+        if (!equalString(fieldEnd, endDate)) {
+            formik.setFieldValue(nameEnd, endDate);
+        }
+        setShowEndDatePicker(false)
+    }
+
+    const onEndClose = (e) => {
+
+    }
+
     return (
         <>
             <div>
                 <div onClick={() => setShowStartDatePicker(true)}>
-                    <FormInput formik={formik} name={nameStart} label={labelStart} />
+                    <FormInput formik={formik} name={nameStart} label={labelStart} disabled={true} />
                 </div>
-                
-                <ModalDatePicker show={showStartDatePicker} onChange={onStartChange} onConfirm={onStartConfirm} onClose={onStartClose} />
+
+                <ModalDatePicker selectedDate={startDate} show={showStartDatePicker} onChange={onStartChange} onConfirm={onStartConfirm} onClose={onStartClose} minDate={minDate} maxDate={maxDate} />
             </div>
 
             <div>
                 <div onClick={() => setShowEndDatePicker(true)}>
-                    <FormInput formik={formik} name={nameEnd} label={labelEnd}/>
+                    <FormInput formik={formik} name={nameEnd} label={labelEnd} disabled={true} />
                 </div>
 
-                <ModalDatePicker show={showEndDatePicker} onChange={onStartChange} onConfirm={onStartConfirm}
-                                 onClose={onStartClose}/>
+                <ModalDatePicker selectedDate={endDate} show={showEndDatePicker} onChange={onEndChange} onConfirm={onEndConfirm} onClose={onEndClose} minDate={minDate} maxDate={maxDate} />
             </div>
         </>
     )

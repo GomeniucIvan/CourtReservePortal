@@ -144,46 +144,53 @@ const FormInput = ({ label,
                 {isRequired &&
                     <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>}
             </label>
-            {toBoolean(addIconToSeePassword) ?
-                (<Input.Password
-                        {...props}
-                        {...field}
-                        onInput={handleInputChange}
-                        disabled={disabled}
-                        onFocus={handeInputFocus}
-                        onBlur={handleInputBlur}
-                        name={name}
-                        autoCapitalize={toBoolean(disableAutoCapitalize) || equalString(props.type, 'password') ? "off" : "words"}
-                        autoCorrect="off"
-                        autoComplete="off"
-                        spellCheck="false"
-                        ref={inputRef}
-                        iconRender={(visible) =>
-                            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                        }
-                        placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
-                        status={toBoolean(hasError) ? 'error' : ''}
-                        type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
-                        className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
-                ) :
-                (<Input
-                        {...props}
-                        {...field}
-                        onInput={handleInputChange}
-                        disabled={disabled}
-                        onFocus={handeInputFocus}
-                        onBlur={handleInputBlur}
-                        name={name}
-                        autoCapitalize={toBoolean(disableAutoCapitalize) || equalString(props.type, 'password') ? "off" : "words"}
-                        autoCorrect="off"
-                        autoComplete="off"
-                        spellCheck="false"
-                        ref={inputRef}
-                        placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
-                        status={toBoolean(hasError) ? 'error' : ''}
-                        type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
-                        className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
-                )}
+            <div className={cx(disabled && styles.disabledInput)}>
+                {disabled &&
+                    <div className={cx(disabled && styles.disabledFakeInput)}>
+                        
+                    </div>
+                }
+                {toBoolean(addIconToSeePassword) ?
+                    (<Input.Password
+                            {...props}
+                            {...field}
+                            onInput={handleInputChange}
+                            disabled={disabled}
+                            onFocus={handeInputFocus}
+                            onBlur={handleInputBlur}
+                            name={name}
+                            autoCapitalize={toBoolean(disableAutoCapitalize) || equalString(props.type, 'password') ? "off" : "words"}
+                            autoCorrect="off"
+                            autoComplete="off"
+                            spellCheck="false"
+                            ref={inputRef}
+                            iconRender={(visible) =>
+                                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                            }
+                            placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
+                            status={toBoolean(hasError) ? 'error' : ''}
+                            type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
+                            className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
+                    ) :
+                    (<Input
+                            {...props}
+                            {...field}
+                            onInput={handleInputChange}
+                            disabled={disabled}
+                            onFocus={handeInputFocus}
+                            onBlur={handleInputBlur}
+                            name={name}
+                            autoCapitalize={toBoolean(disableAutoCapitalize) || equalString(props.type, 'password') ? "off" : "words"}
+                            autoCorrect="off"
+                            autoComplete="off"
+                            spellCheck="false"
+                            ref={inputRef}
+                            placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
+                            status={toBoolean(hasError) ? 'error' : ''}
+                            type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
+                            className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
+                    )}
+            </div>
 
             {hasError && meta && typeof meta.error === 'string' ? (
                 <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
