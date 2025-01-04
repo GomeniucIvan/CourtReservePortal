@@ -133,8 +133,6 @@ function MyProfileDetails({selectedTab}) {
     const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: getValidationSchema(profileData),
-        validateOnBlur: true,
-        validateOnChange: true,
         validation: () => {
             let isValidForm = validatePersonalInformation(t, formik, null, profileData);
             return isValidForm;

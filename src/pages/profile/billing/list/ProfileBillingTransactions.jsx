@@ -19,6 +19,12 @@ import {parseSafeInt} from "../../../../utils/NumberUtils.jsx";
 import {costDisplay} from "../../../../utils/CostUtils.jsx";
 import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
+import SGV from "../../../../components/svg/SVG.jsx";
+import FormInputsDateInterval from "../../../../form/input/FormInputsDateInterval.jsx";
+import useCustomFormik from "../../../../components/formik/CustomFormik.jsx";
+import {validatePersonalInformation} from "../../../../utils/ValidationUtils.jsx";
+import {pNotify} from "../../../../components/notification/PNotify.jsx";
+import {subtractDateDays} from "../../../../utils/DateUtils.jsx";
 
 function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     const {token, globalStyles, availableHeight, isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent} = useApp();
@@ -38,13 +44,45 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     const [isFilterOpened, setIsFilterOpened] = useState(false);
     const [transactionHeaderData, setTransactionHeaderData] = useState(null);
 
+    const initialValues = {
+        PaidStartDate: '',
+        PaidEndDate: '',
+        PaymentsStartDate: '',
+        PaymentsEndDate: '',
+        AdjustmentsStartDate: '',
+        AdjustmentsEndDate: '',
+        AllStartDate: '',
+        AllEndDate: ''
+    }
+
+    const formik = useCustomFormik({
+        initialValues: initialValues,
+        onSubmit: async (values, {setStatus, setSubmitting}) => {
+
+        },
+    });
+    
+    console.log(formik?.values);
+    
     useEffect(() => {
         const loadTransactionData = async () => {
             if (isNullOrEmpty(transactionHeaderData)){
-                let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/Details?id=${orgId}`);
+                let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalance/Details?id=${orgId}`);
+                
                 if (toBoolean(response?.IsValid)){
                     let respData = response.Data;
 
+                    formik.setValues({
+                        PaidStartDate: subtractDateDays(respData.CurrentDateString, 30),
+                        PaidEndDate: respData.CurrentDateString,
+                        PaymentsStartDate: subtractDateDays(respData.CurrentDateString, 30),
+                        PaymentsEndDate: respData.CurrentDateString,
+                        AdjustmentsStartDate: subtractDateDays(respData.CurrentDateString, 30),
+                        AdjustmentsEndDate: respData.CurrentDateString,
+                        AllStartDate: subtractDateDays(respData.CurrentDateString, 30),
+                        AllEndDate: respData.CurrentDateString,
+                    })
+                    
                     let balance = toBoolean(respData.MemberFamilyId) ?
                         parseSafeInt(respData.FamilyBalance)  :
                         parseSafeInt(respData.MemberBalance);
@@ -88,39 +126,45 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     }
 
     const loadData = async () => {
-        if (isMockData){
-            const fees = mockData.profile_transactions_unpaid;
-            setUnpaidFees(fees);
-        } else{
-            if (isNullOrEmpty(unpaidFees) && equalString(selectedSegmentTab, 'Unpaid')){
-                let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetUnPaidTransactions?id=${orgId}`);
-                if (isNullOrEmpty(response?.Errors)){
-                    setUnpaidFees(response.Data);
-                }
+        if (isNullOrEmpty(unpaidFees) && equalString(selectedSegmentTab, 'Unpaid')){
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetUnPaidTransactions?id=${orgId}`);
+
+            if (toBoolean(response?.IsValid)) {
+                setUnpaidFees(response.Data);
+            } else{
+                setUnpaidFees([]);
             }
-            if (isNullOrEmpty(paidFees) && equalString(selectedSegmentTab, 'Paid')){
-                let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPaidTransactions?id=${orgId}`);
-                if (isNullOrEmpty(response?.Errors)){
-                    setPaidFees(response.Data);
-                }
+        }
+        if (isNullOrEmpty(paidFees) && equalString(selectedSegmentTab, 'Paid')){
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPaidTransactions?id=${orgId}`);
+            if (toBoolean(response?.IsValid)) {
+                setPaidFees(response.Data);
+            } else{
+                setPaidFees([]);
             }
-            if (isNullOrEmpty(paymentsFees) && equalString(selectedSegmentTab, 'Payments')){
-                let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPayments?id=${orgId}`);
-                if (isNullOrEmpty(response?.Errors)){
-                    setPaymentsFees(response.Data);
-                }
+        }
+        if (isNullOrEmpty(paymentsFees) && equalString(selectedSegmentTab, 'Payments')){
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPayments?id=${orgId}`);
+            if (toBoolean(response?.IsValid)) {
+                setPaymentsFees(response.Data);
+            } else{
+                setPaymentsFees([]);
             }
-            if (isNullOrEmpty(adjustmentsFees) && equalString(selectedSegmentTab, 'Adjustments')){
-                let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetBalanceAdjustments?id=${orgId}`);
-                if (isNullOrEmpty(response?.Errors)){
-                    setAdjustmentsFees(response.Data);
-                }
+        }
+        if (isNullOrEmpty(adjustmentsFees) && equalString(selectedSegmentTab, 'Adjustments')){
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetBalanceAdjustments?id=${orgId}`);
+            if (toBoolean(response?.IsValid)) {
+                setAdjustmentsFees(response.Data);
+            } else{
+                setAdjustmentsFees([]);
             }
-            if (isNullOrEmpty(allFees) && equalString(selectedSegmentTab, 'All')){
-                let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetAllTransactions?id=${orgId}`);
-                if (isNullOrEmpty(response?.Errors)){
-                    setAllFees(response.Data);
-                }
+        }
+        if (isNullOrEmpty(allFees) && equalString(selectedSegmentTab, 'All')){
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetAllTransactions?id=${orgId}`);
+            if (toBoolean(response?.IsValid)) {
+                setAllFees(response.Data);
+            } else{
+                setAllFees([]);
             }
         }
     }
@@ -132,17 +176,25 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     useEffect(() => {
         if (equalString(selectedTab, 'transactions')){
             setIsFooterVisible(true);
-            setHeaderRightIcons(
-                <Space className={globalStyles.headerRightActions}>
-                    <Button type="default"
-                            icon={<FilterOutlined/>}
-                            size={'medium'}
-                            onClick={() => setIsFilterOpened(true)}/>
-                </Space>
-            )
+            if (equalString(selectedSegmentTab, 'paid') ||
+                equalString(selectedSegmentTab, 'payments') ||
+                equalString(selectedSegmentTab, 'adjustments') ||
+                equalString(selectedSegmentTab, 'all')) {
+                setHeaderRightIcons(
+                    <Space className={globalStyles.headerRightActions}>
+                        <Button type="default"
+                                icon={<FilterOutlined/>}
+                                size={'medium'}
+                                onClick={() => setIsFilterOpened(true)}/>
+                    </Space>
+                )
+            } else{
+                setHeaderRightIcons('')
+            }
+            
             setFooterContent('')
         }
-    }, [selectedTab]);
+    }, [selectedTab, selectedSegmentTab]);
 
     useEffect(() => {
         fixHeaderItems();
@@ -151,18 +203,18 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     let isDataLoading = () => {
         if (equalString(selectedSegmentTab, 'unpaid') && isNullOrEmpty(unpaidFees))
             return true;
-        if (equalString(selectedSegmentTab, 'Paid') && isNullOrEmpty(paidFees))
+        else if (equalString(selectedSegmentTab, 'Paid') && isNullOrEmpty(paidFees))
             return true;
-        if (equalString(selectedSegmentTab, 'Payments') && isNullOrEmpty(paymentsFees))
+        else if (equalString(selectedSegmentTab, 'Payments') && isNullOrEmpty(paymentsFees))
             return true;
-        if (equalString(selectedSegmentTab, 'Adjustments') && isNullOrEmpty(adjustmentsFees))
+        else if (equalString(selectedSegmentTab, 'Adjustments') && isNullOrEmpty(adjustmentsFees))
             return true;
-        if (equalString(selectedSegmentTab, 'All') && isNullOrEmpty(allFees))
+        else if (equalString(selectedSegmentTab, 'All') && isNullOrEmpty(allFees))
             return true;
 
         return false;
     }
-
+    
     const displayItems = (items, selectedSegmentTab) => {
         if (!anyInList(items)){
             return (
@@ -213,25 +265,27 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                     ) :
                     (<PaddingBlock onlyBottom={true}>
                         <Flex justify={'space-between'} align={'center'}>
-                            {isNullOrEmpty(transactionHeaderData?.Credit) ?
-                                (
-                                <Flex vertical={true}>
-                                    <Title level={1} className={cx(globalStyles.noSpace)}>{transactionHeaderData.PaymentTitle}</Title>
-                                    <Text>{costDisplay(transactionHeaderData.Balance, true)}</Text>
+                            <Flex vertical={true} gap={token.paddingXS}>
+                                <Flex gap={token.paddingSM} align={'center'}>
+                                    <SGV icon={'bank-note'} preventFill={true} size={'20'}/>
+                                    <Text className={cx(globalStyles.noSpace)}
+                                          style={{fontSize: `${token.fontSizeLG}px`}}>
+                                        Balance: <strong style={{
+                                        color: transactionHeaderData.Balance > 0 ? token.colorError : token.colorTextTertiary
+                                    }}>{costDisplay(transactionHeaderData.Balance, true)}</strong>
+                                    </Text>
                                 </Flex>
-                            ) : (
-                                    <Flex vertical={true}>
-                                        <Flex gap={token.paddingSM}>
-                                            <Title level={1} className={cx(globalStyles.noSpace)}>Balance</Title>
-                                            <Text>{costDisplay(transactionHeaderData.Balance, true)}</Text>
-                                        </Flex>
-                                        <Flex gap={token.paddingSM}>
-                                            <Title level={1} className={cx(globalStyles.noSpace)}>Credit</Title>
-                                            <Text>{costDisplay(transactionHeaderData.Credit, true)}</Text>
-                                        </Flex>
-                                    </Flex>
-                                )
-                            }
+                                <Flex gap={token.paddingSM} align={'center'}>
+                                    <SGV icon={'account-wallet'} preventFill={true} size={'20'} />
+                                    <Text className={cx(globalStyles.noSpace)}
+                                          style={{fontSize: `${token.fontSizeLG}px`}}>
+                                        Account Credit: <strong style={{
+                                        color: (transactionHeaderData.Credit * -1) ? token.colorInfoText : token.colorTextTertiary
+                                    }}>{costDisplay((transactionHeaderData.Credit * -1), true)}</strong>
+                                    </Text>
+                                </Flex>
+                            </Flex> 
+                            
                             {toBoolean(transactionHeaderData.ShowPay) &&
                                 <Button size={'small'} type={'primary'}
                                         className={globalStyles.stickyButton}
@@ -303,7 +357,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
 
                 }}
             >
-                <Text>Fee details</Text>
+                <PaddingBlock>Fee details</PaddingBlock>
             </DrawerBottom>
 
             <DrawerBottom
@@ -316,7 +370,28 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                     setIsFilterOpened(false);
                 }}
             >
-                <Text>Transaction filter</Text>
+                <PaddingBlock>
+                    {(!isNullOrEmpty(paidFees) && equalString(selectedSegmentTab, 'paid')) &&
+                        <FormInputsDateInterval formik={formik} labelStart={'Start Date'} labelEnd={'End Date'} nameStart={'PaidStartDate'} nameEnd={'PaidEndDate'} />
+                    }
+                    {(!isNullOrEmpty(paymentsFees) && equalString(selectedSegmentTab, 'payments')) &&
+                        <>
+                           
+                        </>
+                    }
+                    {(!isNullOrEmpty(adjustmentsFees) && equalString(selectedSegmentTab, 'adjustments')) &&
+                        <>
+                          
+                        </>
+                    }
+                    {(!isNullOrEmpty(allFees) && equalString(selectedSegmentTab, 'all')) &&
+                        <>
+                           
+                        </>
+                    }
+                    
+
+                </PaddingBlock>
             </DrawerBottom>
         </>
     )

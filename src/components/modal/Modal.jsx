@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { useApp } from "../../context/AppProvider.jsx";
 import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useStyles} from "./styles.jsx";
-import {Button, Flex, Typography} from "antd";
+import {Button, Flex, Typography, Modal as AntModal} from "antd";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {cx} from "antd-style";
 
@@ -21,13 +21,17 @@ function Modal({ children,
     const { token } = useApp();
     const {styles} = useStyles();
 
-    if (!toBoolean(show)) {
-        return null;
-    }
-
-    const modalContent = (
-        <div className={styles.overlay}>
-            <div className={cx(styles.container, 'safe-area-top')} onClick={(e) => e.stopPropagation()}>
+    return (
+        <AntModal
+            wrapClassName={cx(styles.wrapperContainer, 'safe-area-top')}
+            className={styles.modalContainer}
+            title={null}
+            open={toBoolean(show)}
+            footer={null}
+            centered={true}
+            onCancel={onClose}
+        >
+            <>
                 {!isNullOrEmpty(title) &&
                     <Flex align={'center'} justify={'center'} className={styles.title}>
                         <Title level={1}>{title}</Title>
@@ -36,20 +40,19 @@ function Modal({ children,
                 <div className={styles.body}>
                     {children}
                 </div>
+
                 <PaddingBlock topBottom={true}>
                     <Flex align={'center'} justify={'space-between'} gap={token.padding}>
                         <Button type={showConfirmButton ? 'default' : 'primary'} disabled={loading} block onClick={onClose}>Close</Button>
 
                         {showConfirmButton &&
-                            <Button type={'primary'} danger={dangerConfirm} loading={loading} block onClick={onConfirm}>{confirmButtonText}</Button>                    
+                            <Button type={'primary'} danger={dangerConfirm} loading={loading} block onClick={onConfirm}>{confirmButtonText}</Button>
                         }
                     </Flex>
                 </PaddingBlock>
-            </div>
-        </div>
-    );
-
-    return ReactDOM.createPortal(modalContent, document.body);
+            </>
+        </AntModal>
+    )
 }
 
 export default Modal;

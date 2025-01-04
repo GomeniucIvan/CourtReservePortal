@@ -254,3 +254,67 @@ export const dateOfBirthStringToArray = (dateOfBirthString) => {
         year: year
     }
 }
+
+export const subtractDateDays = (dateString, days) => {
+    let culture = getClientUiCulture();
+    culture = culture.replace('-', '');
+
+    let day, month, year;
+
+    console.log(dateString)
+    
+    if (!isNullOrEmpty(dateString)) {
+        if (equalString(culture, "enGB") ||
+            equalString(culture, "enIE") ||
+            equalString(culture, "enAU") ||
+            equalString(culture, "idID") ||
+            equalString(culture, "esGT") ||
+            equalString(culture, "nlAW") ||
+            equalString(culture, "enSG") ||
+            equalString(culture, "enKE") ||
+            equalString(culture, "esMX") ||
+            equalString(culture, "enNZ") ||
+            equalString(culture, "enKY")) {
+            [day, month, year] = dateString.split('/').map(Number);
+        }
+        else if (equalString(culture, "trTR")) {
+            [day, month, year] = dateString.split('.').map(Number);
+        }
+        else {
+            [month, day, year] = dateString.split('/').map(Number);
+        }
+    } else {
+        throw new Error("Invalid date string");
+    }
+
+    // Convert to a JavaScript Date object
+    const date = new Date(year, month - 1, day); // Month is 0-indexed in JavaScript
+
+    // Subtract days
+    date.setDate(date.getDate() - days);
+
+    // Format and return the updated date
+    const updatedDay = date.getDate().toString().padStart(2, '0');
+    const updatedMonth = (date.getMonth() + 1).toString().padStart(2, '0');
+    const updatedYear = date.getFullYear();
+
+    // Return the updated date as a string in the same format
+    if (equalString(culture, "enGB") ||
+        equalString(culture, "enIE") ||
+        equalString(culture, "enAU") ||
+        equalString(culture, "idID") ||
+        equalString(culture, "esGT") ||
+        equalString(culture, "nlAW") ||
+        equalString(culture, "enSG") ||
+        equalString(culture, "enKE") ||
+        equalString(culture, "esMX") ||
+        equalString(culture, "enNZ") ||
+        equalString(culture, "enKY")) {
+        return `${updatedDay}/${updatedMonth}/${updatedYear}`;
+    }
+    else if (equalString(culture, "trTR")) {
+        return `${updatedDay}.${updatedMonth}.${updatedYear}`;
+    } else {
+        return `${updatedMonth}/${updatedDay}/${updatedYear}`;
+    }
+};

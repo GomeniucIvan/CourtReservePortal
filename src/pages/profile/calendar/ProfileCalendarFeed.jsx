@@ -2,7 +2,7 @@
 import {useApp} from "../../../context/AppProvider.jsx";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {e} from "../../../utils/TranslateUtils.jsx";
-import {Button, Skeleton, Typography} from "antd";
+import {Button, Flex, Skeleton, Typography} from "antd";
 import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
 import appService from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
@@ -46,43 +46,45 @@ function ProfileCalendarFeed() {
     }
     
     return (
-        <PaddingBlock topBottom={false}>
-            <Title level={3}>{e(t('profile.calendar.feedTitle'))}</Title>
+        <PaddingBlock topBottom={true}>
+            <Flex vertical={true} gap={token.padding}>
+                <Title level={3}>{e(t('profile.calendar.feedTitle'))}</Title>
 
-            <Link href={calendarUrl} target="_blank" style={{paddingBottom: token.padding, display: 'block'}}>
-                <Title level={1} type={'link'} style={{color: token.colorLink}}> {calendarUrl}</Title>
-            </Link>
+                <Link href={calendarUrl} target="_blank" style={{display: 'block'}}>
+                    <Title level={2} type={'link'} style={{color: token.colorLink}}> {calendarUrl}</Title>
+                </Link>
 
-            <InlineBlock>
-                <Button block type={'primary'} ghost onClick={() => {copyToClipboard(calendarUrl)}}>
-                    {t('profile.calendar.copyLink')}
-                </Button>
+                <InlineBlock>
+                    <Button block type={'primary'} ghost onClick={() => {copyToClipboard(calendarUrl)}}>
+                        {t('profile.calendar.copyLink')}
+                    </Button>
 
-                <Button block type={'primary'} ghost href={`${calendarUrl}?openbrowser=true`}>
-                    {t('profile.calendar.getFile')}
-                </Button>
+                    <Button block type={'primary'} ghost href={`${calendarUrl}?openbrowser=true`}>
+                        {t('profile.calendar.getFile')}
+                    </Button>
 
-                <Button block type={'primary'} ghost loading={isLoading} onClick={() => {
-                    ModalConfirm({
-                        content: t('profile.calendar.emailLinkDescription'),
-                        showIcon: false,
-                        onConfirm: (e) => {
-                            setIsLoading(true);
-                            appService.post(`/app/Online/MyProfile/SendEmailWithIcalLink?id=${orgId}&iCalLink=${calendarUrl}`).then(r => {
-                                if (toBoolean(r.IsValid)){
-                                    pNotify(t('profile.calendar.successfullyEmailed'))
-                                }else{
-                                    pNotify(t?.Message, 'error')
-                                }
+                    <Button block type={'primary'} ghost loading={isLoading} onClick={() => {
+                        ModalConfirm({
+                            content: t('profile.calendar.emailLinkDescription'),
+                            showIcon: false,
+                            onConfirm: (e) => {
+                                setIsLoading(true);
+                                appService.post(`/app/Online/MyProfile/SendEmailWithIcalLink?id=${orgId}&iCalLink=${calendarUrl}`).then(r => {
+                                    if (toBoolean(r.IsValid)){
+                                        pNotify(t('profile.calendar.successfullyEmailed'))
+                                    }else{
+                                        pNotify(t?.Message, 'error')
+                                    }
 
-                                setIsLoading(false);
-                            })
-                        }
-                    })
-                }}>
-                    {t('profile.calendar.emailLink')}
-                </Button>
-            </InlineBlock>
+                                    setIsLoading(false);
+                                })
+                            }
+                        })
+                    }}>
+                        {t('profile.calendar.emailLink')}
+                    </Button>
+                </InlineBlock>
+            </Flex>
         </PaddingBlock>
     )
 }

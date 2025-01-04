@@ -6,6 +6,11 @@ export const isNullOrEmpty = (data) => {
         return true;
     }
 
+    if ((Array.isArray(data) && data.length === 0)) {
+        //empty array is not nullable data
+        return false;
+    }
+    
     let stringData = data.toString();
 
     try {

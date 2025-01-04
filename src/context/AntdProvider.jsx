@@ -49,8 +49,6 @@ export const AntdProvider = ({ children }) => {
                             boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px',
                             headerActionHeight: 32,
                             borderRadiusSM: 8,
-                            paddingXS: 4,
-                            paddingSM: 8,
                             inputLeftPadding: 12,
                             fontSizeIcon: 14,
                             fontSizeXS: 10,
@@ -62,7 +60,15 @@ export const AntdProvider = ({ children }) => {
                             colorError: '#D32F2F',
                             colorTextDisabled: toBoolean(isDarkMode) ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
                             checkboxBorderRadius: 4,
-                            ribonBorderRadius: 4
+                            ribonBorderRadius: 4,
+                            paddingXL: 14,
+                            paddingLG: 12,
+                            paddingMD: 10,
+                            paddingSM: 8,
+                            paddingXS: 4,
+                            paddingXXS: 2,
+                            colorTextTertiary: 'rgba(0, 0, 0, 0.45)',
+                            colorInfoText: '#1677ff'
                         },
                         components: {
                             Custom: {

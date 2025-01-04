@@ -1,26 +1,34 @@
 ﻿import { createStyles } from 'antd-style';
 
 export const useStyles = createStyles(({ css, token }) => ({
-    overlay: css `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5); 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    `,
-    container: css`
-        background-color: ${token.colorBgBase};
+    wrapperContainer: css`
+        //background-color: ${token.colorBgBase};
         border-radius: ${token.borderRadius}px;
         width: calc(100vw - ${token.padding*2}px);
         height: calc(100vh - ${token.padding*2}px);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+        margin: auto;
+
+        .ant-modal {
+            width: 100% !important;
+            margin: 0px auto !important;
+            height: 100%;
+            
+            div[tabindex="0"] {
+                height: 100%;     
+            }
+        }
+        
+        .ant-modal-content {
+            height: 100%;
+            box-shadow: none;
+            padding: 0px !important;
+        }
+        
+        .ant-modal-body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
     `,
     title: css`
         padding: ${token.padding}px 0;
