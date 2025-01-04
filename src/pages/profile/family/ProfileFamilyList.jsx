@@ -1,15 +1,23 @@
 ﻿import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {Avatar, Button, Card, Flex, Typography} from "antd";
+import React, {useEffect, useState} from "react";
+import {Avatar, Button, Card, Flex, QRCode, Typography} from "antd";
 import {
+    AppstoreAddOutlined,
     DeleteOutlined,
-    EditOutlined, InfoOutlined,
+    EditOutlined, InfoOutlined, PlusCircleOutlined,
     SettingOutlined
 } from "@ant-design/icons";
 import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useApp} from "../../../context/AppProvider.jsx";
 import mockData from "../../../mocks/personal-data.json";
-import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {
+    anyInList,
+    equalString,
+    fullNameInitials,
+    isNullOrEmpty,
+    oneListItem,
+    toBoolean
+} from "../../../utils/Utils.jsx";
 import {Ellipsis} from "antd-mobile";
 import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
@@ -20,6 +28,11 @@ import {useAuth} from "../../../context/AuthProvider.jsx";
 import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
 import {removeTabStorage, selectedTabStorage, setTabStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
 import {useTranslation} from "react-i18next";
+import {pNotify, pNotifyClose, pNotifyLoading} from "../../../components/notification/PNotify.jsx";
+import toast from "react-hot-toast";
+import Modal from "../../../components/modal/Modal.jsx";
+import Barcode from "react-barcode";
+import FormInputDisplay from "../../../form/input/FormInputDisplay.jsx";
 
 const {Text} = Typography;
 
@@ -32,17 +45,22 @@ function ProfileFamilyList() {
         shouldFetch,
         resetFetch,
         isMockData,
-        isLoading,
+        globalStyles,
         token,
-        setDynamicPages
+        setDynamicPages,
+        setIsLoading
     } = useApp();
+    
     const {orgId} = useAuth();
     const [familyMembers, setFamilyMembers] = useState([]);
     const [selectedDrawerMember, setSelectedDrawerMember] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
+    const [deleteMember, setDeleteMember] = useState(null);
+    
     const {t} = useTranslation('');
     
     const loadData = (refresh) => {
+        setIsLoading(true);
         if (isMockData) {
             const list = mockData.family_list;
             setFamilyMembers(list)
@@ -59,6 +77,7 @@ function ProfileFamilyList() {
         }
 
         resetFetch();
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -81,6 +100,48 @@ function ProfileFamilyList() {
         loadData();
     }, []);
 
+    const deleteFamilyMember = async (incMember) => {
+        setIsLoading(true);
+        
+        const response = await toast.promise(
+            appService.get(navigate, `/app/Online/MyFamily/DeleteFamilyMember/${orgId}?memberId=${incMember.MemberId}`),
+            {
+                position: 'top-center',
+                loading: 'Loading...',
+                error: () => {},
+                success: () => {}
+            }
+        );
+
+        setIsLoading(false);
+        
+        if (toBoolean(response?.IsValid)) {
+            setDeleteMember(incMember)
+        } else {
+            pNotify(response?.Message, 'error');
+        }
+    }
+    
+    const deleteMemberPost = async () => {
+        setIsLoading(true);
+        
+        let postModel = {
+            MemberId: deleteMember.MemberId,
+            OrganizationId: deleteMember.OrganizationId,
+        }
+        
+        let response = await appService.post(`/app/Online/MyFamily/DeleteFamilyMember/${orgId}`, postModel);
+        setIsLoading(false);
+        if (response.IsValid) {
+            setDeleteMember(null);
+            loadData(true);
+            pNotify('Member Successfully Deleted.');
+            setDeleteMember(null);
+        } else{
+            pNotify(response?.Message, 'error');
+        }
+    }
+    
     return (
         <>
             <PaddingBlock topBottom={true}>
@@ -93,39 +154,49 @@ function ProfileFamilyList() {
                             {anyInList(familyMembers) &&
                                 <>
                                     {familyMembers.map((familyMember, index) => {
-                                        const actions = [
-                                            <EditOutlined key="edit" onClick={(e) => {
-                                                setTabStorage('myprofile', 'pers');
-                                                let route = toRoute(ProfileRouteNames.PROFILE_FAMILY_INFO_EDIT, 'id', familyMember.MemberId);
-                                                setPage(setDynamicPages, familyMember.FullName, route);
-                                                navigate(route);
-                                            }}/>,
+                                        let actions = [];
+                                        
+                                        if (toBoolean(familyMember.IsNotRegisteredToOrg)){
+                                            actions = [
+                                                <PlusCircleOutlined key="request-access" onClick={() => {
+                                                    
+                                                }}/>
+                                            ]
+                                        } else {
+                                            actions = [
+                                                <EditOutlined key="edit" onClick={(e) => {
+                                                    setTabStorage('myprofile', 'pers');
+                                                    let route = toRoute(ProfileRouteNames.PROFILE_FAMILY_INFO_EDIT, 'id', familyMember.MemberId);
+                                                    setPage(setDynamicPages, familyMember.FullName, route);
+                                                    navigate(route);
+                                                }}/>,
 
-                                            <InfoOutlined key="info" onClick={() => {
-                                                setSelectedDrawerMember(familyMember)
-                                            }}/>,
+                                                <InfoOutlined key="info" onClick={() => {
+                                                    setSelectedDrawerMember(familyMember)
+                                                }}/>,
 
-                                            <DeleteOutlined key="delete"
-                                                            style={{opacity: (toBoolean(familyMember.IsCurrentLoggedMember) ? '0.4' : '1')}}
-                                                            onClick={() => {
-                                                                if (!toBoolean(familyMember.IsCurrentLoggedMember)) {
-                                                                    ModalDelete({
-                                                                        content: `Are you sure you want to delete <b>${familyMember.FullName}</b>?`,
-                                                                        showIcon: false,
-                                                                        onDelete: (e) => {
-                                                                            console.log(e)
-
-                                                                        }
-                                                                    })
-                                                                }
-                                                            }}/>,
-                                        ];
+                                                <DeleteOutlined key="delete"
+                                                                style={{opacity: (toBoolean(familyMember.IsCurrentLoggedMember) ? '0.4' : '1')}}
+                                                                onClick={() => {
+                                                                    if (!toBoolean(familyMember.IsCurrentLoggedMember)) {
+                                                                        ModalDelete({
+                                                                            content: `Are you sure you want to delete <b>${familyMember.FullName}</b>?`,
+                                                                            showIcon: false,
+                                                                            onDelete: (e) => {
+                                                                                deleteFamilyMember(familyMember);
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                }}/>,
+                                            ];
+                                        }
+                                        
+                                       
 
                                         return (
                                             <Card actions={actions} key={index} size="small">
                                                 <Card.Meta
-                                                    avatar={<Avatar
-                                                        src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"/>}
+                                                    avatar={<div className={globalStyles.orgCircleMember}>{fullNameInitials(familyMember.FullName)}</div>}
                                                     title={familyMember.FullName}
                                                     description={
                                                         <>
@@ -164,10 +235,48 @@ function ProfileFamilyList() {
                           onConfirmButtonClick={() => {
                               setSelectedDrawerMember(null);
                           }}>
-                <div>test</div>
-            </DrawerBottom>
-            
+                <PaddingBlock>
+                    <Flex vertical gap={token.padding}>
+                        <FormInputDisplay value={selectedDrawerMember?.Email} label={'Email'}/>
+                        <FormInputDisplay value={selectedDrawerMember?.SignedUpOn} label={'Signed On'}/>
 
+                        {!isNullOrEmpty(selectedDrawerMember?.Username) &&
+                            <>
+                                <FormInputDisplay value={selectedDrawerMember?.Username} label={'Username'}/>
+                            </>
+                        }
+                        
+                        {!isNullOrEmpty(selectedDrawerMember?.FamilyName) &&
+                            <>
+                                <FormInputDisplay value={selectedDrawerMember?.FamilyName} label={'Family'}/> 
+                                <FormInputDisplay value={selectedDrawerMember?.FamilyMemberTypeDisplay} label={'Family Role'}/> 
+                            </>
+                        }
+                        {!isNullOrEmpty(selectedDrawerMember?.Gender) &&
+                            <>
+                                <FormInputDisplay value={selectedDrawerMember?.Gender} label={'Gender'}/>
+                            </>
+                        }
+
+                    </Flex>
+                </PaddingBlock>
+            </DrawerBottom>
+
+            <Modal show={!isNullOrEmpty(deleteMember)}
+                   onClose={() => {setDeleteMember(null)}}
+                   onConfirm={deleteMemberPost}
+                   showConfirmButton={true}
+                   dangerConfirm={true}
+                   confirmButtonText={'Delete'}
+                   title={`Delete ${deleteMember?.FullName}`}>
+                <PaddingBlock>
+                    <Flex vertical gap={token.padding}>
+                        <FormInputDisplay value={deleteMember?.FullName} label={'Member'}/>
+                        <FormInputDisplay value={deleteMember?.OrganizationName} label={'Organization'}/>
+                        
+                    </Flex>
+                </PaddingBlock>
+            </Modal>
         </>
     )
 }

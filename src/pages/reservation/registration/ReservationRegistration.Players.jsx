@@ -241,15 +241,8 @@ function ReservationRegistrationPlayers({formik,
                                                     <div key={index}>
                                                         <Flex justify={'space-between'} align={'center'}>
                                                             <Flex gap={token.Custom.cardIconPadding}>
-                                                                <Flex justify={'center'} align={'center'}
-                                                                      style={{
-                                                                          width: 48,
-                                                                          height: 48,
-                                                                          borderRadius: 50,
-                                                                          backgroundColor: 'red'
-                                                                      }}>
-                                                                    <Title level={1}
-                                                                           className={cx(globalStyles.noSpace)}>{fullNameInitials(reservationMember.FullName)}</Title>
+                                                                <Flex justify={'center'} align={'center'} className={globalStyles.orgCircleMember}>
+                                                                    <Title level={1} className={cx(globalStyles.noSpace)}>{fullNameInitials(reservationMember.FullName)}</Title>
                                                                 </Flex>
 
                                                                 <Flex vertical

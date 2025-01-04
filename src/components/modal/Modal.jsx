@@ -15,6 +15,7 @@ function Modal({ children,
                    onClose,
                    onConfirm,
                    loading,
+                   dangerConfirm = false,
                    showConfirmButton = false,
                    confirmButtonText = 'Confirm'}) {
     const { token } = useApp();
@@ -40,7 +41,7 @@ function Modal({ children,
                         <Button type={showConfirmButton ? 'default' : 'primary'} disabled={loading} block onClick={onClose}>Close</Button>
 
                         {showConfirmButton &&
-                            <Button type={'primary'} loading={loading} block onClick={onConfirm}>{confirmButtonText}</Button>                    
+                            <Button type={'primary'} danger={dangerConfirm} loading={loading} block onClick={onConfirm}>{confirmButtonText}</Button>                    
                         }
                     </Flex>
                 </PaddingBlock>

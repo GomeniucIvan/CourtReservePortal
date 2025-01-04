@@ -45,6 +45,7 @@ export const AntdProvider = ({ children }) => {
                         token: {
                             colorCourtReserve: '#34495E',
                             colorPrimary: primaryColor,
+                            colorOrgText: '#ffffff',
                             boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px',
                             headerActionHeight: 32,
                             borderRadiusSM: 8,

@@ -396,5 +396,16 @@ export const useStyles = createStyles(({ css, token }) => ({
       min-height: 64px;
       display: flex;
       align-items: center;
+   `,
+   orgCircleMember: css`
+      width: 48px;
+      height: 48px;
+      border-radius: 50px;
+      background-color: ${token.colorPrimary};
+      color: ${token.colorOrgText};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 48px;
    `
 }));

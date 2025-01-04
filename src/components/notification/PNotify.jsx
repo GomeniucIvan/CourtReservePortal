@@ -19,3 +19,16 @@ export const pNotify = (description, type = 'success', duration = '') => {
         });
     }
 };
+
+export const pNotifyLoading = (t) => {
+    toast.promise('', {
+        position: 'top-center',
+        loading: 'Loading...',
+        error: () => {},
+        success: () => {}
+    });
+};
+
+export const pNotifyClose = () => {
+    toast.dismiss();
+}
