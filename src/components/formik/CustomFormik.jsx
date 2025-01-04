@@ -1,5 +1,4 @@
-﻿import {useEffect} from "react";
-import {useFormik} from "formik";
+﻿import {useFormik} from "formik";
 import {logFormikErrors} from "../../utils/ConsoleUtils.jsx";
 
 const useCustomFormik = (config) => {
@@ -13,12 +12,17 @@ const useCustomFormik = (config) => {
             let allErrors = {};
             let isValidForm = true;
 
-            try {
-                await validationSchema.validate(values, { abortEarly: false });
-            } catch (yupValidationErrors) {
-                yupValidationErrors.inner.forEach((error) => {
-                    allErrors[error.path] = error.message;
-                });
+            // Check if validationSchema and validate function exist
+            if (validationSchema && typeof validationSchema.validate === "function") {
+                try {
+                    await validationSchema.validate(values, { abortEarly: false });
+                } catch (yupValidationErrors) {
+                    // Process Yup validation errors
+                    yupValidationErrors.inner.forEach((error) => {
+                        allErrors[error.path] = error.message;
+                    });
+                    isValidForm = false;
+                }
             }
             
             if (Object.keys(allErrors).length > 0) {

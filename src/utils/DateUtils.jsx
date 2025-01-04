@@ -4,7 +4,9 @@ import moment from "moment";
 let clientUiCulture = 'en-US';
 
 export const setClientUiCulture = (uiCulture) => {
-    clientUiCulture = uiCulture;
+    if (uiCulture) {
+        clientUiCulture = uiCulture;
+    }
 }
 
 export const getClientUiCulture = () => {
@@ -216,4 +218,39 @@ export const dateTimeToTimes = (incStartDate, incEndDate, format) => {
     }
     
     return `${moment.utc(incStartDate).format('ha').toLowerCase()} - ${moment.utc(incEndDate).format('ha').toLowerCase()}`;
+}
+
+export const dateOfBirthStringToArray = (dateOfBirthString) => {
+    let culture = getClientUiCulture();
+
+    culture = culture.replace('-', '');
+    let day, month, year;
+
+    if (!isNullOrEmpty(dateOfBirthString)) {
+        if (equalString(culture, "enGB") ||
+            equalString(culture, "enIE") ||
+            equalString(culture, "enAU") ||
+            equalString(culture, "idID") ||
+            equalString(culture, "esGT") ||
+            equalString(culture, "nlAW") ||
+            equalString(culture, "enSG") ||
+            equalString(culture, "enKE") ||
+            equalString(culture, "esMX") ||
+            equalString(culture, "enNZ") ||
+            equalString(culture, "enKY")) {
+            [day, month, year] = dateOfBirthString.split('/').map(Number);
+        }
+        else if (equalString(culture, "trTR")) {
+            [day, month, year] = dateOfBirthString.split('.').map(Number);
+        }
+        else {
+            [month, day, year] = dateOfBirthString.split('/').map(Number);
+        }
+    }
+
+    return {
+        day: day,
+        month: month,
+        year: year
+    }
 }

@@ -58,6 +58,7 @@ export const AntdProvider = ({ children }) => {
                             fontSizeLG: 16,
                             fontSizeXL: 20,
                             colorSecondary: '#a1a1a1',
+                            colorError: '#D32F2F',
                             colorTextDisabled: toBoolean(isDarkMode) ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
                             checkboxBorderRadius: 4,
                             ribonBorderRadius: 4

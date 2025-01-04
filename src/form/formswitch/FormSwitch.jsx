@@ -1,12 +1,13 @@
-import {calculateSkeletonLabelWidth, equalString, toBoolean} from "../../utils/Utils.jsx";
+import {calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Flex, Skeleton, Switch, Typography} from 'antd';
 import {useApp} from "../../context/AppProvider.jsx";
 import {Ellipsis} from "antd-mobile";
 import React, {useEffect, useState} from "react";
 import {cx} from "antd-style";
+import {pNotify} from "../../components/notification/PNotify.jsx";
 const {Text} = Typography;
 
-const FormSwitch = ({ formik, name, label, disabled, rows = 1 }) => {
+const FormSwitch = ({ formik, name, label, disabled, rows = 1, tooltip }) => {
     const {token, globalStyles} = useApp();
 
     let field = '';
@@ -16,16 +17,29 @@ const FormSwitch = ({ formik, name, label, disabled, rows = 1 }) => {
         field = formik.getFieldProps(name);
         meta = formik.getFieldMeta(name);
     }
+
+    const onRowClick = () => {
+        console.log(2)
+        if (toBoolean(disabled) && !isNullOrEmpty(tooltip)) {
+            pNotify(tooltip, 'info');
+        }
+    }
+
+    const onCheckboxChangeClick = (checked) => {
+        if (!toBoolean(disabled)) {
+            formik.setFieldValue(name, checked);
+        }
+    }
     
     return (
-        <Flex justify={"space-between"} align={"center"} style={{height: 44, paddingBottom: (rows > 1 ? `${token.padding}px` : 0)}}>
-            <Text onClick={() => {formik.setFieldValue(name, !toBoolean(field?.value))}}>
-                <Ellipsis direction='end' rows={rows} content={label}/>
+        <Flex justify={"space-between"} align={"center"} style={{height: 44}} onClick={onRowClick}>
+            <Text onClick={() => {onCheckboxChangeClick(!toBoolean(field?.value))}}>
+                <Ellipsis direction='end' rows={rows} content={label} style={{opacity: (toBoolean(disabled) ? "0.6" : "1")}}/>
             </Text>
-            
-            <Switch {...field} disabled={disabled} checked={toBoolean(field?.value)} onChange={(e) =>{
-                formik.setFieldValue(name, e.target.checked);
-            }} />
+
+            <Switch {...field} disabled={disabled}
+                    checked={toBoolean(field?.value)}
+                    onChange={onCheckboxChangeClick} />
         </Flex>
     )
 };

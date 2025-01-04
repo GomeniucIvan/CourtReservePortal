@@ -3,34 +3,39 @@ import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import FormInput from "../../../form/input/FormInput.jsx";
 import FormSelect from "../../../form/formselect/FormSelect.jsx";
 import {genderList} from "../../../utils/SelectUtils.jsx";
-import {useFormik} from "formik";
 import {useApp} from "../../../context/AppProvider.jsx";
 import * as Yup from "yup";
 import FormDateOfBirth from "../../../form/formdateofbirth/FormDateOfBirth.jsx";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Button, Flex, Skeleton} from "antd";
 import FormStateProvince from "../../../form/formstateprovince/FormStateProvince.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
-import {anyInList, equalString, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
 import appService from "../../../api/app.jsx";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
 import {isNonUsCulture, toReactDate} from "../../../utils/DateUtils.jsx";
 import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
 import FormRatingCategories from "../../../form/formratingcategories/FormRatingCategories.jsx";
-import {emptyArray, getRatingCategoriesList, getUserDefinedFieldsList} from "../../../utils/ListUtils.jsx";
+import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {pNotify} from "../../../components/notification/PNotify.jsx";
 import * as React from "react";
+import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
+import {validatePersonalInformation} from "../../../utils/ValidationUtils.jsx";
+import ReCAPTCHA from 'react-google-recaptcha';
+import {getConfigValue} from "../../../config/WebConfig.jsx";
 
 function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();
     const [profileData, setProfileData] = useState(null);
     const {t} = useTranslation('');
     const [isFetching, setIsFetching] = useState(true);
-
-    const {isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent, isLoading, setIsLoading} = useApp();
+    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
+    
+    const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, isLoading, setIsLoading} = useApp();
     const {orgId, authData} = useAuth();
     const {token} = useApp();
+    const recaptchaRef = useRef(null);
 
     const loadData = () => {
         setIsFetching(true);
@@ -66,7 +71,7 @@ function MyProfileDetails({selectedTab}) {
             CustomFields: data.CustomFields || [],
             RatingCategories: data.RatingCategories || [],
         };
-
+        
         formik.setValues(valuesToSet);
     };
 
@@ -94,10 +99,8 @@ function MyProfileDetails({selectedTab}) {
         RatingCategories: [],
     };
 
-    const getValidationSchema = (profileData) => {
+    const getValidationSchema = () => {
         let schemaFields = {
-            FirstName: Yup.string().required(t('profile.firstNameRequired')),
-            LastName: Yup.string().required(t('profile.lastNameRequired')),
             Username: Yup.string().required(t('profile.usernameRequired')),
             Email: Yup.string().email(t('profile.emailInvalid')).required(t('profile.emailRequired')),
         };
@@ -123,74 +126,53 @@ function MyProfileDetails({selectedTab}) {
                 then: (schema) => schema.required(t('profile.confirmPasswordRequired')),
                 otherwise: (schema) => schema.nullable(),
             });
-        
-        if (profileData){
-            if (!toBoolean(profileData?.IsGenderDisabled) && toBoolean(profileData?.IncludeGender) && toBoolean(profileData?.IsGenderRequired)) {
-                schemaFields.Gender = Yup.string().required(t('profile.genderRequired'))
-            }
 
-            if (profileData.RatingCategories) {
-                profileData.RatingCategories.forEach(category => {
-                    if (category.IsRequired) {
-                        if (category.AllowMultipleRatingValues) {
-                            schemaFields[`rat_${category.Id}`] = Yup.array().min(1, t('form.labelRequired', {label: category.Name})).required(t('form.labelRequired', {label: category.Name}))
-                        } else {
-                            schemaFields[`rat_${category.Id}`] = Yup.string().required(t('form.labelRequired', {label: category.Name}));
-                        }
-                    }
-                });
-            }
-            
-            if (toBoolean(profileData.PhoneNumber?.Include) && toBoolean(profileData.PhoneNumber?.IsRequired)){
-                schemaFields.PhoneNumber = Yup.string().required(t('profile.phoneNumberRequired'));
-            }
-
-            if (toBoolean(profileData.DateOfBirth?.Include) && toBoolean(profileData.DateOfBirth?.IsRequired)){
-                schemaFields.MembershipNumber = Yup.string().required(t('profile.membershipNumberRequired'));
-            }
-
-            if (toBoolean(profileData.Membership?.Include) && toBoolean(profileData.Membership?.IsRequired)){
-                schemaFields.MembershipNumber = Yup.string().required(t('profile.membershipNumberRequired'));
-            }
-
-            if (toBoolean(profileData.DateOfBirth?.Include) && toBoolean(profileData.DateOfBirth?.IsRequired)){
-                schemaFields.DateOfBirthString = Yup.string().required(t('date.dateOfBirthRequired'));
-            }
-
-            if (toBoolean(profileData.Address?.Include) && toBoolean(profileData.Address?.IsRequired)){
-                schemaFields.Address = Yup.string().required(t('profile.addressRequired'));
-                schemaFields.City = Yup.string().required(t('profile.cityRequired'));
-                schemaFields.State = Yup.string().required(t('profile.stateRequired'));
-                schemaFields.ZipCode = Yup.string().required(isNonUsCulture() ? t('profile.postalCodeRequired') : t('profile.zipCodeRequired'));
-            }
-            
-            if (profileData.CustomFields) {
-                profileData.CustomFields.forEach(udf => {
-                    if (udf.IsRequired) {
-                        schemaFields[`udf_${udf.Id}`] = Yup.string().required(t('form.labelRequired', {label: udf.Label}));
-                    }
-                });
-            }
-        }
         return Yup.object(schemaFields);
     }
     
-    const formik = useFormik({
+    const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: getValidationSchema(profileData),
         validateOnBlur: true,
         validateOnChange: true,
+        validation: () => {
+            let isValidForm = validatePersonalInformation(t, formik, null, profileData);
+            return isValidForm;
+        },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            const ratings = getRatingCategoriesList(values);   
-            const udfs = getUserDefinedFieldsList(values);  
             
-            if (isMockData) {
+            let postModel = profileData;
+            postModel.FirstName = values.FirstName;
+            postModel.LastName = values.LastName;
+            postModel.Email = values.Email;
+            postModel.Username = values.Username;
+            postModel.Password = values.Password;
+            postModel.ConfirmPassword = values.ConfirmPassword;
+            postModel.CurrentPassword = values.CurrentPassword;
+            postModel.Gender = values.Gender;
+            postModel.DateOfBirth.DateOfBirthString = values.DateOfBirthString;
+            postModel.Membership.MembershipNumber = values.MembershipNumber;
+            postModel.PhoneNumber.PhoneNumber = values.PhoneNumber;
+            postModel.Address.Address = values.Address;
+            postModel.Address.City = values.City;
+            postModel.Address.State = values.State;
+            postModel.Address.ZipCode = values.ZipCode;
+            postModel.ExcludeAccountInformationFromPublicGroups = values.ExcludeAccountInformationFromPublicGroups;
+            postModel.UnsubscribeFromMarketingEmails = values.UnsubscribeFromMarketingEmails;
+            postModel.DoNotAllowOtherPlayersToLinkMyProfile = values.DoNotAllowOtherPlayersToLinkMyProfile;
+            postModel.UnsubscribeFromMarketingPushNotifications = values.UnsubscribeFromMarketingPushNotifications;
+            postModel.RatingCategories = values.RatingCategories;
+            postModel.CustomFields = values.CustomFields;
+            postModel.Token = await recaptchaRef.current.executeAsync();
+            
+            let response = await appService.post(`/app/Online/MyProfile/MyProfilePost?id=${orgId}`, postModel);
+            if (toBoolean(response?.IsValid)) {
                 pNotify(t('profile.successfullyUpdate'))
                 setIsLoading(false);
             } else {
-                //todo
-                alert('todo verification')
+                pNotify(response.Message, 'error')
+                setIsLoading(false);
             }
         },
     });
@@ -211,16 +193,16 @@ function MyProfileDetails({selectedTab}) {
                 </Button>
             </PaddingBlock>);
         }
-    }, [selectedTab, isFetching]);
+    }, [selectedTab, isFetching, isLoading]);
     
     useEffect(() => {
-        if (equalString(selectedTab, 'pers')) {
+        if (equalString(selectedTab, 'pers') && isNullOrEmpty(profileData)) {
             loadData();
         }
     }, [selectedTab]);
 
     return (
-        <PaddingBlock topBottom={true}>
+        <PaddingBlock onlyBottom={true}>
             <Flex vertical={true} gap={token.padding}>
                 {isFetching &&
                     <>
@@ -290,7 +272,7 @@ function MyProfileDetails({selectedTab}) {
                                name='ConfirmPassword'
                     />
 
-                    <FormRatingCategories ratingCategories={profileData?.RatingCategories} formik={formik} loading={isFetching}/>
+                    <FormRatingCategories ratingCategories={profileData?.RatingCategories} formik={formik} loading={isFetching} name={'RatingCategories[{ratingIndex}].{keyValue}'} />
 
                     {toBoolean(profileData?.PhoneNumber?.Include) &&
                         <FormInput label={t('profile.phoneNumber')}
@@ -383,6 +365,11 @@ function MyProfileDetails({selectedTab}) {
                     }
                 </>)}
             </Flex>
+            <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey={captchaKey}
+            />
         </PaddingBlock>
     )
 }

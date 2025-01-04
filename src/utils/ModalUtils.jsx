@@ -1,15 +1,10 @@
+
 import { Modal } from 'antd-mobile'
 import {equalString} from "./Utils.jsx";
 
 export const ModalDelete = (data) => {
     Modal.show({
-        content: (
-            <div
-                dangerouslySetInnerHTML={{
-                    __html: data.content
-                }}
-            />
-        ),
+        content: data.content,
         closeOnAction: true,
         onAction: (e) => {
             if (equalString(e?.key, 'delete')) {
@@ -33,13 +28,7 @@ export const ModalDelete = (data) => {
 
 export const ModalConfirm = (data) => {
     Modal.show({
-        content: (
-            <div
-                dangerouslySetInnerHTML={{
-                    __html: data.content
-                }}
-            />
-        ),
+        content: data.content,
         closeOnAction: true,
         onAction: (e) => {
             if (equalString(e?.key, 'confirm')) {
@@ -62,13 +51,7 @@ export const ModalConfirm = (data) => {
 
 export const ModalRemove = (data) => {
     Modal.show({
-        content: (
-            <div
-                dangerouslySetInnerHTML={{
-                    __html: data.content
-                }}
-            />
-        ),
+        content: data.content,
         closeOnAction: true,
         onAction: (e) => {
             if (equalString(e?.key, 'remove')) {

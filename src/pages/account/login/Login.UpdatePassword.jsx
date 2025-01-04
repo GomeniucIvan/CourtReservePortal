@@ -75,7 +75,6 @@ function LoginUpdatePassword() {
 
     const frictLogin = async (isUpdatePassword) => {
 
-        debugger;
         setIsLoading(isUpdatePassword);
         setIsLogin(!isUpdatePassword);
 

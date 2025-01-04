@@ -42,6 +42,12 @@ export const useStyles = createStyles(({css, token}) => ({
         .ant-ribbon{
             border-radius: ${token.ribonBorderRadius}px;
         }
+        
+        .ant-select-multiple {
+            .ant-select-selection-item {
+                border-radius: ${token.ribonBorderRadius}px;
+            }
+        }
     `,
     layoutExtra: css`
         position: absolute;

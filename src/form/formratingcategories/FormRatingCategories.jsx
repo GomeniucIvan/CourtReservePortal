@@ -5,7 +5,8 @@ import {Skeleton} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
 import React from "react";
 
-const FormRatingCategories = ({formik, ratingCategories, keyPrefix, loading}) => {
+const FormRatingCategories = ({formik, ratingCategories, loading, index = '',
+                                  name}) => {
     const {globalStyles} = useApp();
 
     if (isNullOrEmpty(ratingCategories)) {
@@ -27,21 +28,29 @@ const FormRatingCategories = ({formik, ratingCategories, keyPrefix, loading}) =>
         )
     }
 
-    return ratingCategories.map(({AllowMultipleRatingValues, Ratings, Name, Id, IsRequired}) => {
-        const name = isNullOrEmpty(keyPrefix) ? `rat_${Id}` : `${keyPrefix}.rat_${Id}`;
+    return ratingCategories.map(({ AllowMultipleRatingValues,
+                                     Ratings,
+                                     Name,
+                                     Id,
+                                     IsRequired }, ratingIndex) => {
+        
+        const fieldName = name
+            .replace('{index}', index)
+            .replace('{ratingIndex}', ratingIndex)
+            .replace('{keyValue}', (toBoolean(AllowMultipleRatingValues) ? 'SelectedRatingsIds' : 'SelectedRatingsIds'));
 
         return (
             <FormSelect
-                key={`${name}_top`}
+                key={Id}
                 label={Name}
-                name={name}
+                formik={formik}
+                name={fieldName}
                 propText='Name'
                 propValue='RatingId'
                 fetching={loading}
                 multi={AllowMultipleRatingValues}
                 options={Ratings}
                 required={IsRequired}
-                formik={formik}
             />
         );
     });

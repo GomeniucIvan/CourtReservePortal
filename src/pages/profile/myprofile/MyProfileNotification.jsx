@@ -1,7 +1,7 @@
 ﻿import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
 import {useApp} from "../../../context/AppProvider.jsx";
 import {useEffect, useState} from "react";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
 import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
 import {Table, Typography, Checkbox, Flex, Skeleton} from "antd";
 import {useStyles} from "./styles.jsx";
@@ -11,6 +11,8 @@ import {useTranslation} from "react-i18next";
 import {useAuth} from "../../../context/AuthProvider.jsx";
 import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {useNavigate} from "react-router-dom";
+import * as React from "react";
+import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
 
 const {Column} = Table;
 const {Text} = Typography;
@@ -41,94 +43,124 @@ function MyProfileNotification({selectedTab}) {
 
     const {orgId} = useAuth();
 
+    const initialValues = {
+        UnsubscribeFromMarketingTextAlerts: false,
+        UnsubscribeFromOrganizationTextAlerts: false,
+        IsUsingSmsAlerts: false,
+        MemberId: null,
+        OrgMemberId: null,
+        IsTwilioAlertsStopped: false,
+        RefreshKey: '' //not fire for initial call
+    };
+
+    const formik = useCustomFormik({
+        initialValues: initialValues,
+        onSubmit: async (values, {setStatus, setSubmitting}) => {
+            setIsLoading(true);
+
+            let newKey = `${values.UnsubscribeFromMarketingTextAlerts}_${values.UnsubscribeFromOrganizationTextAlerts}`;
+
+
+            if (!equalString(values?.RefreshKey, newKey)) {
+                formik.setFieldValue("RefreshKey", newKey);
+
+                let postModel = {
+                    isSubscribeTextAlertMarketing: toBoolean(values?.UnsubscribeFromMarketingTextAlerts) == false,
+                    isSubscribeToOrganizationTextAlerts: toBoolean(values?.UnsubscribeFromOrganizationTextAlerts) == false,
+                    MemberId: values?.MemberId,
+                    OrgMemberId: values?.OrgMemberId,
+                };
+                
+                let response = await appService.post(`/app/Online/MyProfile/SetTextAlertOptInData?id=${orgId}`, postModel);
+            }
+
+            setIsLoading(false);
+        },
+    });
+    
+    const loadData = async () => {
+        if (isNullOrEmpty(notifications)) {
+            let notificationItems = [];
+
+            let response = await appService.get(navigate, `/app/Online/MyProfile/NotificationTab?id=${orgId}`);
+
+            if (toBoolean(response?.IsValid)) {
+                const data = response.Data;
+                const categoryData = data.DistinctNotificationCategories;
+                const notificationData = data.Notifications;
+
+                setShowText(data.IsUsingSmsAlerts);
+                setShowPush(data.IsUsingPushNotifications);
+                
+                formik.setValues({
+                    UnsubscribeFromMarketingTextAlerts: data.UnsubscribeFromMarketingTextAlerts,
+                    UnsubscribeFromOrganizationTextAlerts: data.UnsubscribeFromOrganizationTextAlerts,
+                    MemberId: data.MemberId,
+                    OrgMemberId: data.OrgMemberId,
+                    IsUsingSmsAlerts: data.IsUsingSmsAlerts,
+                    RefreshKey: `${data.UnsubscribeFromMarketingTextAlerts}_${data.UnsubscribeFromOrganizationTextAlerts}`,
+                    IsTwilioAlertsStopped: data.IsTwilioAlertsStopped
+                });
+                
+                categoryData.forEach((category, index) => {
+                    const relatedNotifications = notificationData.filter(notification =>
+                        equalString(notification.NotificationCategory, category.NotificationCategory)
+                    );
+
+                    if (anyInList(relatedNotifications)) {
+                        const allEmailChecked = relatedNotifications.every(n => n.IsSubscribed);
+                        const allTextChecked = relatedNotifications.every(n => n.IsTextSubscribed);
+                        const allPushChecked = relatedNotifications.every(n => n.IsPushNotificationSubscribed);
+
+                        notificationItems.push({
+                            key: `${category.Id}${index}_${category.NotificationCategory}`,
+                            notification: [category.NotificationCategoryName, '', ''],
+                            categoryId: `${category.NotificationCategory}`,
+                            email: toBoolean(allEmailChecked),
+                            text: toBoolean(allTextChecked),
+                            push: toBoolean(allPushChecked),
+                        });
+
+                        relatedNotifications.forEach(notification => {
+                            notificationItems.push({
+                                key: `${notification.Id}`,
+                                notification: ['', notification.Name, notification.Description],
+                                email: notification.IsSubscribed,
+                                itemCategoryId: `${category.NotificationCategory}`,
+                                text: notification.IsTextSubscribed,
+                                push: notification.IsPushNotificationSubscribed,
+                                id: notification.Id
+                            });
+                        });
+                    }
+                });
+
+                updateIndeterminateStates(notificationItems);
+                setNotifications(notificationItems);
+                setIsFetching(false);
+            }
+        }
+    }
+    
     useEffect(() => {
         if (equalString(selectedTab, 'notifications')) {
             setIsFooterVisible(false);
             setHeaderRightIcons(null);
             setFooterContent('');
-
-            if (isNullOrEmpty(notifications)) {
-                let notificationItems = [];
-
-                if (isMockData) {
-                    const categoryData = mockData.notificationDistinctCategoriesTable;
-                    const notificationData = mockData.notificationsTable;
-
-                    categoryData.forEach((category, index) => {
-                        const relatedNotifications = notificationData.filter(notification =>
-                            equalString(notification.NotificationCategory, category.NotificationCategory)
-                        );
-
-                        if (anyInList(relatedNotifications)) {
-                            notificationItems.push({
-                                key: `${category.Id}${index}`,
-                                notification: [category.NotificationCategory, '', ''],
-                                email: false, //todo
-                                text: false,
-                                push: false,
-                            });
-
-                            relatedNotifications.forEach(notification => {
-                                notificationItems.push({
-                                    key: `${notification.Id}`,
-                                    notification: ['', notification.Name, notification.Description],
-                                    email: notification.IsSubscribed,
-                                    text: notification.IsTextSubscribed,
-                                    push: notification.IsPushNotificationSubscribed,
-                                });
-                            });
-                        }
-                    });
-                    setNotifications(notificationItems);
-                    setIsFetching(false);
-                } else {
-                    appService.get(navigate, `/app/Online/MyProfile/NotificationTab?id=${orgId}`).then(r => {
-                        if (toBoolean(r?.IsValid)) {
-                            const categoryData = r.Data.DistinctNotificationCategories;
-                            const notificationData = r.Data.Notifications;
-
-                            categoryData.forEach((category, index) => {
-                                const relatedNotifications = notificationData.filter(notification =>
-                                    equalString(notification.NotificationCategory, category.NotificationCategory)
-                                );
-
-                                if (anyInList(relatedNotifications)) {
-                                    const allEmailChecked = relatedNotifications.every(n => n.IsSubscribed);
-                                    const allTextChecked = relatedNotifications.every(n => n.IsTextSubscribed);
-                                    const allPushChecked = relatedNotifications.every(n => n.IsPushNotificationSubscribed);
-
-                                    notificationItems.push({
-                                        key: `${category.Id}${index}_${category.NotificationCategory}`,
-                                        notification: [category.NotificationCategoryName, '', ''],
-                                        categoryId: `${category.NotificationCategory}`,
-                                        email: toBoolean(allEmailChecked),
-                                        text: toBoolean(allTextChecked),
-                                        push: toBoolean(allPushChecked),
-                                    });
-
-                                    relatedNotifications.forEach(notification => {
-                                        notificationItems.push({
-                                            key: `${notification.Id}`,
-                                            notification: ['', notification.Name, notification.Description],
-                                            email: notification.IsSubscribed,
-                                            itemCategoryId: `${category.NotificationCategory}`,
-                                            text: notification.IsTextSubscribed,
-                                            push: notification.IsPushNotificationSubscribed,
-                                        });
-                                    });
-                                }
-                            });
-
-                            updateIndeterminateStates(notificationItems);
-                            setNotifications(notificationItems);
-                            setIsFetching(false);
-                        }
-                    })
-                }
-            }
+            loadData();
         }
     }, [selectedTab]);
 
+    useEffect(() => {
+        if (!isNullOrEmpty(formik.values?.RefreshKey)){
+            const submitOnChange = async () => {
+                await formik.submitForm();
+            };
+
+            submitOnChange(); 
+        }
+    }, [formik.values]);
+    
     const updateIndeterminateStates = (notificationData) => {
         const allEmailChecked = notificationData.every(n => n.email);
         const allEmailUnchecked = notificationData.every(n => !n.email);
@@ -193,7 +225,7 @@ function MyProfileNotification({selectedTab}) {
         });
     };
 
-    const handleSelectAllChange = (type, isChecked) => {
+    const handleSelectAllChange = async (type, isChecked) => {
         setNotifications((prevNotifications) => {
             const newNotifications = prevNotifications.map((notification) => ({
                 ...notification,
@@ -202,9 +234,51 @@ function MyProfileNotification({selectedTab}) {
             updateIndeterminateStates(newNotifications);
             return newNotifications;
         });
+        
+        //types push, email, text
+        let postModel = {
+            
+        };
+
+        if (equalString(type, 'email')) {
+            postModel = {
+                IsSubscribed: isChecked,
+                OrganizationId: orgId,
+                CheckboxType: 2,
+                NotificationIdsString: notifications
+                    .filter(v => !isNullOrEmpty(v.id)) // Filter out items with null id
+                    .map(v => v.id) // Map to extract the id
+                    .join(',')
+            };
+        } else if (equalString(type, 'push')) {
+            postModel = {
+                IsPushNotificationSubscribed: isChecked,
+                OrganizationId: orgId,
+                CheckboxType: 2,
+                IsPushNotification: true,
+                NotificationIdsString: notifications
+                    .filter(v => !isNullOrEmpty(v.id)) // Filter out items with null id
+                    .map(v => v.id) // Map to extract the id
+                    .join(',')
+            };
+        } else if (equalString(type, 'text')) {
+            postModel = {
+                IsTextSubscribed: isChecked,
+                OrganizationId: orgId,
+                CheckboxType: 2,
+                IsTextMessage: true,
+                NotificationIdsString: notifications
+                    .filter(v => !isNullOrEmpty(v.id)) // Filter out items with null id
+                    .map(v => v.id) // Map to extract the id
+                    .join(',')
+            };
+        }
+        
+        let response = await appService.post(`/app/Online/MyProfile/AjaxUpdateNotificationSetting?id=${orgId}`, postModel);
+        
     };
 
-    const handleSelectionChange = (type, record, isChecked) => {
+    const handleSelectionChange = async (type, record, isChecked) => {
         if (!isNullOrEmpty(record.categoryId)) {
             setNotifications((prevNotifications) => {
                 const updatedNotifications = prevNotifications.map((notification) => {
@@ -219,7 +293,31 @@ function MyProfileNotification({selectedTab}) {
                 updateIndeterminateStates(updatedNotifications);
                 return updatedNotifications;
             });
+
+            const categoryNotifications = notifications.filter(
+                (notification) =>
+                    equalString(notification.itemCategoryId, record.categoryId)
+            );
+            
+            let postModel = {
+                IsSubscribed:  isChecked,
+                OrganizationId: orgId,
+                CheckboxType: 2,
+                IsTextSubscribed: equalString(type, 'text') ? isChecked : false,
+                IsTextMessage: equalString(type, 'text'),
+                IsPushNotificationSubscribed: equalString(type, 'push') ? isChecked : false,
+                IsPushNotification: equalString(type, 'push'),
+                NotificationIdsString: categoryNotifications
+                    .filter(v => !isNullOrEmpty(v.id)) // Filter out items with null id
+                    .map(v => v.id) // Map to extract the id
+                    .join(',')
+            };
+
+            console.log(postModel)
+            
+            let response = await appService.post(`/app/Online/MyProfile/AjaxUpdateNotificationSetting?id=${orgId}`, postModel);
         } else {
+            //single update
             const selectedKeyId = record.key;
             setNotifications((prevNotifications) => {
                 const updatedNotifications = prevNotifications.map((notification) => {
@@ -236,28 +334,56 @@ function MyProfileNotification({selectedTab}) {
                 updateIndeterminateStates(updatedNotifications);
                 return updatedNotifications;
             });
+
+            let postModel = {
+                NotificationId: record.id,
+                IsSubscribed: isChecked,
+                OrganizationId: orgId,
+                IsTextSubscribed: equalString(type, 'text') ? isChecked : false,
+                IsTextMessage: equalString(type, 'text'),
+                IsPushNotificationSubscribed: equalString(type, 'push') ? isChecked : false,
+                IsPushNotification: equalString(type, 'push'),
+            };
+
+            let response = await appService.post(`/app/Online/MyProfile/AjaxUpdateNotificationSetting?id=${orgId}`, postModel);
         }
     };
-
+    
     return (
         <>
-            <PaddingBlock>
-                <FormSwitch label={'Unsubscribe From Organizations Marketing Text Alerts'}
-                            onChange={(e) => {
-                                console.log(e)
-                            }}
-                            loading={isFetching}
-                            rows={2}
-                            name={'UnsubscribeFromMarketingTextAlerts'}/>
+            {toBoolean(formik?.values?.IsUsingSmsAlerts) &&
+                <PaddingBlock onlyBottom={true}>
+                    <Flex vertical={true} gap={token.padding}>
+                        {isFetching &&
+                            <>
+                                {emptyArray(2).map((item, index) => (
+                                    <div key={index}>
+                                        <Skeleton.Button active={true} block style={{height: `44px`}}/>
+                                    </div>
+                                ))}
+                            </>
+                        }
 
-                <FormSwitch label={'Unsubscribe From Organization Text Alerts (Confirmations, Cancellations, etc)'}
-                            onChange={(e) => {
-                                console.log(e)
-                            }}
-                            loading={isFetching}
-                            rows={2}
-                            name={'UnsubscribeFromOrganizationTextAlerts'}/>
-            </PaddingBlock>
+                        {!isFetching && (
+                            <>
+                                <FormSwitch label={'Unsubscribe From Organizations Marketing Text Alerts'}
+                                            rows={2}
+                                            disabled={toBoolean(formik.values?.IsTwilioAlertsStopped)}
+                                            formik={formik}
+                                            tooltip={toBoolean(formik.values?.IsTwilioAlertsStopped) ? 'Text alerts are stopped' : ''}
+                                            name={'UnsubscribeFromMarketingTextAlerts'}/>
+
+                                <FormSwitch label={'Unsubscribe From Organization Text Alerts (Confirmations, Cancellations, etc)'}
+                                            rows={2}
+                                            formik={formik}
+                                            tooltip={toBoolean(formik.values?.IsTwilioAlertsStopped) ? 'Text alerts are stopped' : ''}
+                                            disabled={toBoolean(formik.values?.IsTwilioAlertsStopped)}
+                                            name={'UnsubscribeFromOrganizationTextAlerts'}/>
+                            </>
+                        )}
+                    </Flex>
+                </PaddingBlock>
+            }
 
             {toBoolean(isFetching) &&
                 <PaddingBlock>
@@ -321,7 +447,7 @@ function MyProfileNotification({selectedTab}) {
                     {showEmail &&
                         <Column className={styles.columnEmail}
                                 title={
-                                    <Checkbox indeterminate={indeterminateEmail}
+                                    <Checkbox indeterminate={indeterminateEmail} checked={notifications.every(v => toBoolean(v.email))}
                                               onClick={(e) => {
                                                   handleSelectAllChange('email', e.target.checked)
                                               }}>
@@ -342,7 +468,8 @@ function MyProfileNotification({selectedTab}) {
                     {showPush &&
                         <Column dataIndex="push"
                                 title={
-                                    <Checkbox indeterminate={indeterminatePush} onClick={(e) => {
+                                    <Checkbox indeterminate={indeterminatePush} checked={notifications.every(v => toBoolean(v.push))}
+                                              onClick={(e) => {
                                         handleSelectAllChange('push', e.target.checked)
                                     }}>
                                         {t('profile.notification.push')}
@@ -361,7 +488,9 @@ function MyProfileNotification({selectedTab}) {
                     {showText &&
                         <Column key="text"
                                 title={
-                                    <Checkbox indeterminate={indeterminateText} onClick={(e) => {
+                                    <Checkbox indeterminate={indeterminateText} checked={notifications.every(v => toBoolean(v.text))}
+                                              
+                                              onClick={(e) => {
                                         handleSelectAllChange('text', e.target.checked)
                                     }}>
                                         {t('profile.notification.text')}

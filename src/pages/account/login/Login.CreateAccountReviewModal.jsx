@@ -38,7 +38,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
     let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
     let selectedFrequencyValue = '';
     const navigate = useNavigate();
-    const recaptchaRef = useRef();
+    const recaptchaRef = useRef(null);
     
     const createAccount = async () => {
         setIsLoading(true);

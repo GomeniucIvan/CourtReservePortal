@@ -12,5 +12,10 @@ export const pNotify = (description, type = 'success', duration = '') => {
         toast.error(description, {
             position: 'top-center',
         });
+    } else if (equalString(type, 'info')) {
+        toast(description, {
+            position: 'top-center',
+            icon: 'ℹ️'
+        });
     }
 };

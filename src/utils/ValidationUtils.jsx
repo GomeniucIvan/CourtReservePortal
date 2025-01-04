@@ -7,6 +7,8 @@ import {matchmakerGenderList} from "./SelectUtils.jsx";
 import {countListItems} from "./ListUtils.jsx";
 import FormSelect from "../form/formselect/FormSelect.jsx";
 import React from "react";
+import {dateOfBirthStringToArray, isNonUsCulture} from "./DateUtils.jsx";
+import {isCanadaCulture} from "./OrganizationUtils.jsx";
 
 export const setFormikError = (t, formik, fieldName, errorKey, error) => {
     if (!isNullOrEmpty(errorKey)){
@@ -21,8 +23,14 @@ export const setFormikError = (t, formik, fieldName, errorKey, error) => {
 }
 
 export const validateUdfs = (t, formik) => {
+    let customFieldKey = false;
     let formikUdfs = formik?.values?.Udfs;
 
+    if (anyInList(formik?.values?.CustomFields)){
+        customFieldKey = true;
+        formikUdfs = formik?.values?.CustomFields;
+    }
+    
     if (!anyInList(formikUdfs)) {
         return true;
     }
@@ -33,7 +41,7 @@ export const validateUdfs = (t, formik) => {
         let currentUdf = formikUdfs[i];
 
         if (toBoolean(currentUdf?.IsRequired) && !currentUdf?.Value?.trim()) {
-            let fieldName = `Udfs[${i}].Value`;
+            let fieldName = customFieldKey ? `CustomFields[${i}].Value` : `Udfs[${i}].Value`;
             setFormikError(t, formik, fieldName, currentUdf.Label);
             isValid = false; 
         }
@@ -372,4 +380,157 @@ export const validateReservationGuests = (t, formik, reservationMembers, org) =>
     }
 
     return isValid;
+}
+
+export const validatePersonalInformation = (t, formik, form, orgSignup) => {
+    let isValidForm = true;
+
+    if (isNullOrEmpty(formik?.values?.FirstName)) {
+        setFormikError(t, formik, 'FirstName', t('profile.firstName'));
+        isValidForm = false;
+    }
+
+    if (isNullOrEmpty(formik?.values?.LastName)) {
+        setFormikError(t, formik, 'LastName', t('profile.lastName'));
+        isValidForm = false;
+    }
+
+    //model org fields type
+    if (orgSignup) {
+        if (!toBoolean(orgSignup?.IsGenderDisabled) && toBoolean(orgSignup?.IncludeGender) && toBoolean(orgSignup?.IsGenderRequired)) {
+            if (isNullOrEmpty(formik?.values?.Gender)) {
+                setFormikError(t, formik, 'Gender', t('profile.gender'));
+                isValidForm = false;
+            }
+        }
+
+        if (toBoolean(orgSignup.PhoneNumber?.Include) && toBoolean(orgSignup.PhoneNumber?.IsRequired)){
+            if (isNullOrEmpty(formik?.values?.PhoneNumber)) {
+                setFormikError(t, formik, 'PhoneNumber', t('profile.phoneNumber'));
+                isValidForm = false;
+            }
+        }
+
+        if (toBoolean(orgSignup.Membership?.Include) && toBoolean(orgSignup.Membership?.IsRequired)){
+            if (isNullOrEmpty(formik?.values?.MembershipNumber)) {
+                setFormikError(t, formik, 'MembershipNumber', t('profile.membershipNumber'));
+                isValidForm = false;
+            }
+        }
+
+        if (toBoolean(orgSignup.DateOfBirth?.Include) && toBoolean(orgSignup.DateOfBirth?.IsRequired)){
+            if (isNullOrEmpty(formik?.values?.DateOfBirthString)) {
+                setFormikError(t, formik, 'DateOfBirthString', t('profile.dateOfBirth'));
+                isValidForm = false;
+            }
+        }
+
+        if (toBoolean(orgSignup.Address?.Include) && toBoolean(orgSignup.Address?.IsRequired)){
+            if (isNullOrEmpty(formik?.values?.Address)) {
+                setFormikError(t, formik, 'Address', t('profile.address'));
+                isValidForm = false;
+            }
+
+            if (isNullOrEmpty(formik?.values?.City)) {
+                setFormikError(t, formik, 'City', t('profile.city'));
+                isValidForm = false;
+            }
+
+            if (isNullOrEmpty(formik?.values?.State)) {
+                setFormikError(t, formik, 'State', t('profile.state'));
+                isValidForm = false;
+            }
+            if (isNullOrEmpty(formik?.values?.ZipCode)) {
+                setFormikError(t, formik, 'ZipCode', isNonUsCulture() ? t('profile.postalCode') : t('profile.zipCode'));
+                isValidForm = false;
+            }
+        }
+
+        let isValidRatings = validateRatingCategories(t, formik);
+        let isValidUdfs = validateUdfs(t, formik);
+
+        //if any item is selected and not fully filled is not valid date of birth
+        let isDateOfBirthValid = validateDateOfBirth(t, formik)
+        return isValidForm && isValidRatings && isValidUdfs && isDateOfBirthValid;
+    }
+    
+    //include form
+    if (form) {
+        if (form.IncludeAddressBlock && form.IsAddressBlockRequired) {
+            if (isNullOrEmpty(formik?.values?.StreetAddress)) {
+                setFormikError(t, formik, 'StreetAddress', t('profile.address'));
+                isValidForm = false;
+            }
+
+            if (isNullOrEmpty(formik?.values?.City)) {
+                setFormikError(t, formik, 'City', t('profile.city'));
+                isValidForm = false;
+            }
+
+            if (isNullOrEmpty(formik?.values?.State)) {
+                setFormikError(t, formik, 'State', isCanadaCulture(form.UiCulture) ? t('profile.province') : t('profile.state'));
+                isValidForm = false;
+            }
+
+            if (isNullOrEmpty(formik?.values?.ZipCode)) {
+                setFormikError(t, formik, 'ZipCode', isCanadaCulture(form.UiCulture) ? t('profile.postalCode') : t('profile.zipCode'));
+                isValidForm = false;
+            }
+        }
+
+        if (form.IncludePhoneNumberBlock && form.IsPhoneNumberRequired) {
+            if (isNullOrEmpty(formik?.values?.PhoneNumber)) {
+                setFormikError(t, formik, 'PhoneNumber', t('profile.phoneNumber'));
+                isValidForm = false;
+            }
+        }
+
+        if (form.IncludeDateOfBirthBlock && form.IsDateOfBirthRequired) {
+            if (isNullOrEmpty(formik?.values?.DateOfBirthString)) {
+                setFormikError(t, formik, 'DateOfBirthString', t('profile.dateOfBirth'));
+                isValidForm = false;
+            }
+        }
+
+        if (form.IncludeMembershipNumber && form.IsMembershipNumberRequired) {
+            if (isNullOrEmpty(formik?.values?.MembershipNumber)) {
+                setFormikError(t, formik, 'MembershipNumber', t('profile.membershipNumber'));
+                isValidForm = false;
+            }
+        }
+
+        if (form.IncludeGender && form.IsGenderRequired) {
+            if (isNullOrEmpty(formik?.values?.Gender)) {
+                setFormikError(t, formik, 'Gender', t('profile.gender'));
+                isValidForm = false;
+            }
+        }
+
+        let isValidRatings = validateRatingCategories(t, formik);
+        let isValidUdfs = validateUdfs(t, formik);
+
+        //if any item is selected and not fully filled is not valid date of birth
+        let isDateOfBirthValid = validateDateOfBirth(t, formik)
+        return isValidForm && isValidRatings && isValidUdfs && isDateOfBirthValid;
+    }
+
+    return true;
+}
+
+export const validateDateOfBirth = (t, formik) => {
+    let enteredDateOfBirth = formik?.values?.DateOfBirthString;
+    if (isNullOrEmpty(enteredDateOfBirth)) {
+        return true;
+    }
+
+    let dateOfBirthObject = dateOfBirthStringToArray(enteredDateOfBirth);
+    if (isNullOrEmpty(dateOfBirthObject?.day) || isNullOrEmpty(dateOfBirthObject?.month) || isNullOrEmpty(dateOfBirthObject?.year)) {
+        //custom message, we don't use setFormikError here
+        formik.setFieldError("DateOfBirthString", t('common:requiredMessage', {label: t('profile.date.invalidDateOfBirth')}));
+        formik.setFieldTouched("DateOfBirthString", true, false);
+        logError(t('common:requiredMessage', {label: t('profile.date.invalidDateOfBirth')}));
+        return false;
+    }
+
+    return true;
 }

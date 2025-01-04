@@ -6,6 +6,7 @@ import {selectedTabStorage, setTabStorage} from "../../../storage/AppStorage.jsx
 import MyProfileNotification from "./MyProfileNotification.jsx";
 import MyProfileDetails from "./MyProfileDetails.jsx";
 import {useTranslation} from "react-i18next";
+import MyProfileSettings from "./MyProfileSettings.jsx";
 
 function MyProfile() {
     const {globalStyles} = useApp();
@@ -31,7 +32,7 @@ function MyProfile() {
                 {
                     key: 'settings',
                     label: t('profile.settings'),
-                    children: 'Content of Tab Pane 3',
+                    children: <MyProfileSettings />,
                 },
             ]}
         />
