@@ -10,6 +10,8 @@ import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 import {logFormikErrors} from "../../utils/ConsoleUtils.jsx";
 import FormInput from "./FormInput.jsx";
 import ModalDatePicker from "../../components/modal/ModalDatePicker.jsx";
+import dayjs from "dayjs";
+import {dateFormatByUiCulture} from "../../utils/DateUtils.jsx";
 
 const FormInputsDateInterval = ({ labelStart,
                                     labelEnd,
@@ -17,7 +19,7 @@ const FormInputsDateInterval = ({ labelStart,
                                     nameStart,
                                     nameEnd,
                                     className,
-                                    interval = 90,
+                                    interval = 30,
                                     minDate,
                                     maxDate,
                                     ...props }) => {
@@ -52,13 +54,44 @@ const FormInputsDateInterval = ({ labelStart,
         setStartDate(fieldStart.value);
         setEndDate(fieldEnd.value);
     }, [])
-    
+
+    const updateDates = (start, end) => {
+        
+        const startDateObj = dayjs(start);
+        const endDateObj = dayjs(end);
+
+        let updatedEndDate = endDateObj;
+
+        if (startDateObj.isAfter(endDateObj)) {
+            updatedEndDate = startDateObj;
+        } else if (startDateObj.add(interval, 'day').isBefore(endDateObj)) {
+            updatedEndDate = startDateObj.add(interval, 'day');
+        }
+
+        setStartDate(startDateObj.format(dateFormat));
+        setEndDate(updatedEndDate.format(dateFormat));
+        formik.setFieldValue(nameStart, startDateObj.format(dateFormat));
+        formik.setFieldValue(nameEnd, updatedEndDate.format(dateFormat));
+    };
+
     const onStartChange = (date, dateString) => {
         setStartDate(dateString);
     }
 
     const onStartConfirm = (e) => {
+        const start = dayjs(startDate);
+        const end = dayjs(endDate);
+        let dateFormat = dateFormatByUiCulture();
+        
         if (!equalString(fieldStart, startDate)) {
+            if (end.diff(start, 'day') > interval) {
+                setEndDate(start.add(interval, 'day').format(dateFormat));
+                formik.setFieldValue(nameEnd, start.add(interval, 'day').format(dateFormat));
+            } else if (start > end){
+                setEndDate(startDate);
+                formik.setFieldValue(nameEnd, startDate);
+            }
+            
             formik.setFieldValue(nameStart, startDate);
         }
         setShowStartDatePicker(false)
@@ -73,7 +106,19 @@ const FormInputsDateInterval = ({ labelStart,
     }
 
     const onEndConfirm = (e) => {
+        const start = dayjs(startDate);
+        const end = dayjs(endDate);
+        let dateFormat = dateFormatByUiCulture();
+        
         if (!equalString(fieldEnd, endDate)) {
+            if (start.diff(end, 'day') > interval) {
+                setStartDate(end.subtract(interval, 'day').format(dateFormat));
+                formik.setFieldValue(nameStart, end.subtract(interval, 'day').format(dateFormat));
+            } else if (end < start){
+                setStartDate(endDate);
+                formik.setFieldValue(nameStart, endDate);
+            }
+            
             formik.setFieldValue(nameEnd, endDate);
         }
         setShowEndDatePicker(false)
