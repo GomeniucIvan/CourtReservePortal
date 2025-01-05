@@ -6,6 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import ProfileBillingTransactions from "./ProfileBillingTransactions.jsx";
 import ProfileBillingPackages from "./ProfileBillingPackages.jsx";
 import {useApp} from "../../../../context/AppProvider.jsx";
+import ProfileBillingInvoiceList from "../invoice/ProfileBillingInvoiceList.jsx";
 
 function ProfileBilling() {
     const navigate = useNavigate();
@@ -47,7 +48,7 @@ function ProfileBilling() {
                     {
                         key: 'invoices',
                         label: 'Invoices',
-                        children: 'Content of Tab Pane 3',
+                        children: <ProfileBillingInvoiceList selectedTab={selectedTab} tabsHeight={tabsHeight} />
                     },
                 ]}
             />
