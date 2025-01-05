@@ -261,8 +261,6 @@ export const subtractDateDays = (dateString, days) => {
 
     let day, month, year;
 
-    console.log(dateString)
-    
     if (!isNullOrEmpty(dateString)) {
         if (equalString(culture, "enGB") ||
             equalString(culture, "enIE") ||

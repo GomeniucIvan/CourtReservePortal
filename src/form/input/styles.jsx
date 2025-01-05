@@ -22,5 +22,10 @@ export const useStyles = createStyles(({ css, token }) => ({
         width: 100%;
         height: 100%;
         z-index: 1;
+    `,
+    activeBgInput: css`
+        input {
+            background-color: ${token.colorBgBase} !important;
+        }
     `
 }));

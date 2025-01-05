@@ -152,6 +152,9 @@ export const useStyles = createStyles(({ css, token }) => ({
    urgentRibbon: css `
         top: 12px;
     `,
+   hideRibbon: css`
+    display: none;
+   `,
    formBlock: css`
        width: 100%;
    `,

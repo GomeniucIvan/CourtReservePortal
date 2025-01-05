@@ -40,7 +40,7 @@ const FormInputsDateInterval = ({ labelStart,
 
         if (fieldStart.value === null) {
             fieldStart = { ...fieldStart, value: '' };
-            setStartDate(fieldStart);
+
         }
         if (fieldEnd.value === null) {
             fieldEnd = { ...fieldEnd, value: '' };
@@ -48,6 +48,11 @@ const FormInputsDateInterval = ({ labelStart,
         }
     }
 
+    useEffect(() => {
+        setStartDate(fieldStart.value);
+        setEndDate(fieldEnd.value);
+    }, [])
+    
     const onStartChange = (date, dateString) => {
         setStartDate(dateString);
     }
@@ -82,18 +87,18 @@ const FormInputsDateInterval = ({ labelStart,
         <>
             <div>
                 <div onClick={() => setShowStartDatePicker(true)}>
-                    <FormInput formik={formik} name={nameStart} label={labelStart} disabled={true} />
+                    <FormInput formik={formik} name={nameStart} label={labelStart} disabled={true} className={styles.activeBgInput} />
                 </div>
 
-                <ModalDatePicker selectedDate={startDate} show={showStartDatePicker} onChange={onStartChange} onConfirm={onStartConfirm} onClose={onStartClose} minDate={minDate} maxDate={maxDate} />
+                <ModalDatePicker selectedDate={startDate} show={showStartDatePicker} onChange={onStartChange} onConfirm={onStartConfirm} onClose={onStartClose} minDate={minDate} maxDate={maxDate}  />
             </div>
 
             <div>
                 <div onClick={() => setShowEndDatePicker(true)}>
-                    <FormInput formik={formik} name={nameEnd} label={labelEnd} disabled={true} />
+                    <FormInput formik={formik} name={nameEnd} label={labelEnd} disabled={true} className={styles.activeBgInput} />
                 </div>
 
-                <ModalDatePicker selectedDate={endDate} show={showEndDatePicker} onChange={onEndChange} onConfirm={onEndConfirm} onClose={onEndClose} minDate={minDate} maxDate={maxDate} />
+                <ModalDatePicker selectedDate={endDate} show={showEndDatePicker} onChange={onEndChange} onConfirm={onEndConfirm} onClose={onEndClose} minDate={minDate} maxDate={maxDate} className={styles.activeBgInput} />
             </div>
         </>
     )
