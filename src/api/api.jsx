@@ -90,6 +90,9 @@ const apiService = {
                 } else if (responseData.Message) {
                     responseData.message = true;
                 }
+                if (isNullOrEmpty(responseData.Data) && !isNullOrEmpty(responseData.data)) {
+                    responseData.Data = responseData.data;
+                }
             }
             return responseData;
 
