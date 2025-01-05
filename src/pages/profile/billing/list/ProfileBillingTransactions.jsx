@@ -25,6 +25,7 @@ import useCustomFormik from "../../../../components/formik/CustomFormik.jsx";
 import {validatePersonalInformation} from "../../../../utils/ValidationUtils.jsx";
 import {pNotify} from "../../../../components/notification/PNotify.jsx";
 import {subtractDateDays} from "../../../../utils/DateUtils.jsx";
+import FormInputDisplay from "../../../../form/input/FormInputDisplay.jsx";
 
 function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     const {token, globalStyles, availableHeight, isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent} = useApp();
@@ -365,13 +366,32 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                 showDrawer={!isNullOrEmpty(selectedDrawerFee)}
                 closeDrawer={() => {setSelectedDrawerFee(null)}}
                 label={selectedDrawerFee?.ReservationType}
-                showButton={true}
-                confirmButtonText={'Pay'}
+                showButton={!toBoolean(selectedDrawerFee?.IsPaid) ? true : false}
+                confirmButtonText={!toBoolean(selectedDrawerFee?.IsPaid) ? 'Pay' : ''}
                 onConfirmButtonClick={() => {
 
                 }}
             >
-                <PaddingBlock>Fee details</PaddingBlock>
+                <PaddingBlock onlyBottom={true}>
+                   <Flex vertical={true} gap={token.padding}>
+                       {!isNullOrEmpty(selectedDrawerFee?.MemberFullName) &&
+                           <FormInputDisplay value={selectedDrawerFee?.MemberFullName} label={'Member'} />
+                       }
+                       {!isNullOrEmpty(selectedDrawerFee?.ShowTrAmount) &&
+                           <FormInputDisplay value={selectedDrawerFee?.ShowTrAmount} label={'Amount'} />
+                       }
+                       {!isNullOrEmpty(selectedDrawerFee?.PaidDateTimeDisplay) &&
+                           <FormInputDisplay value={selectedDrawerFee?.PaidDateTimeDisplay} label={'Paid On'} />
+                       }
+                       {!isNullOrEmpty(selectedDrawerFee?.PaymentTypeDisplayGrid) &&
+                           <FormInputDisplay value={selectedDrawerFee?.PaymentTypeDisplayGrid} label={'Payment Type'} />
+                       }
+                       {!isNullOrEmpty(selectedDrawerFee?.TransactionItemName) &&
+                           <FormInputDisplay value={selectedDrawerFee?.TransactionItemName} label={'Item'} />
+                       }
+                   </Flex>
+                    
+                </PaddingBlock>
             </DrawerBottom>
 
             <DrawerBottom
