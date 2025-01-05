@@ -51,7 +51,9 @@ const SafeArea = ({children}) => {
             .safe-area-top {
                 padding-top: ${top}px;
             }
-            
+            .safe-area-top-margin {
+                padding-top: ${top}px;
+            }
             .safe-area-glass {
                 height: ${top}px;
             }

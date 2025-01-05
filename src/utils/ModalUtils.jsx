@@ -4,7 +4,13 @@ import {equalString} from "./Utils.jsx";
 
 export const ModalDelete = (data) => {
     Modal.show({
-        content: data.content,
+        content: (
+            <div
+                dangerouslySetInnerHTML={{
+                    __html: data.content
+                }}
+            />
+        ),
         closeOnAction: true,
         onAction: (e) => {
             if (equalString(e?.key, 'delete')) {
@@ -28,7 +34,13 @@ export const ModalDelete = (data) => {
 
 export const ModalConfirm = (data) => {
     Modal.show({
-        content: data.content,
+        content: (
+            <div
+                dangerouslySetInnerHTML={{
+                    __html: data.content
+                }}
+            />
+        ),
         closeOnAction: true,
         onAction: (e) => {
             if (equalString(e?.key, 'confirm')) {
@@ -51,7 +63,13 @@ export const ModalConfirm = (data) => {
 
 export const ModalRemove = (data) => {
     Modal.show({
-        content: data.content,
+        content: (
+            <div
+                dangerouslySetInnerHTML={{
+                    __html: data.content
+                }}
+            />
+        ),
         closeOnAction: true,
         onAction: (e) => {
             if (equalString(e?.key, 'remove')) {
@@ -103,7 +121,13 @@ export const ModalLogout = (data) => {
 
 export const ModalClose = (data) => {
     Modal.show({
-        content: data.content,
+        content: (
+            <div
+                dangerouslySetInnerHTML={{
+                    __html: data.content
+                }}
+            />
+        ),
         closeOnAction: true,
         onAction: (e) => {
             if (equalString(e?.key, 'close')) {
@@ -120,16 +144,5 @@ export const ModalClose = (data) => {
             }
         ],
     })
-    
-    // Modal.confirm({
-    //     title: data.title,
-    //     content: data.content,
-    //     centered: true,
-    //     okText: 'Close',
-    //     cancelButtonProps: { style: { display: 'none' } },
-    //     okType: 'primary',
-    //     icon: data.showIcon ? undefined : null,
-    //     onOk: data.onOk,
-    // });
 }
 

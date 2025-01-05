@@ -139,7 +139,7 @@ function MyProfileDetails({selectedTab}) {
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            
+
             let postModel = profileData;
             postModel.FirstName = values.FirstName;
             postModel.LastName = values.LastName;
@@ -162,6 +162,7 @@ function MyProfileDetails({selectedTab}) {
             postModel.UnsubscribeFromMarketingPushNotifications = values.UnsubscribeFromMarketingPushNotifications;
             postModel.RatingCategories = values.RatingCategories;
             postModel.CustomFields = values.CustomFields;
+
             postModel.Token = await recaptchaRef.current.executeAsync();
             
             let response = await appService.post(`/app/Online/MyProfile/MyProfilePost?id=${orgId}`, postModel);

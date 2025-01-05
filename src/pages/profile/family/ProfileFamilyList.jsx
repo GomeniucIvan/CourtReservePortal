@@ -110,6 +110,7 @@ function ProfileFamilyList() {
             {
                 position: 'top-center',
                 loading: 'Loading...',
+                className: 'safe-area-top-margin',
                 error: () => {},
                 success: () => {}
             }

@@ -12,6 +12,10 @@ if (!isProduction){
     backendUrl = 'https://localhost:7130/';
 }
 
+let enableDebug = !isProduction;
+
+//enableDebug = true;
+
 export default defineConfig({
     plugins: [
         react(),
@@ -34,14 +38,27 @@ export default defineConfig({
         },
     ],
     build: {
-        sourcemap: !isProduction,
+        sourcemap: enableDebug,
         minify: 'terser',
         terserOptions: {
             compress: {
-                drop_console: isProduction, // true, //prod true !! Set to true in production to remove console logs
+                drop_console: !enableDebug, // true, //prod true !! Set to true in production to remove console logs
             },
             output: {
-                comments: !isProduction, //false, //prod false !!// Include comments in development for debugging
+                comments: enableDebug, //false, //prod false !!// Include comments in development for debugging
+            },
+        },
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        return id
+                            .toString()
+                            .split('node_modules/')[1]
+                            .split('/')[0]
+                            .toString();
+                    }
+                },
             },
         },
     },
