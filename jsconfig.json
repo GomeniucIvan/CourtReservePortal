@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./", 
+    "paths": {
+      "@/*": [ "src/*" ],
+      "@portal/*": [ "src/pages/portal/*" ]
+    }
+  },
+  "include": [ "src/**/*" ], 
+  "exclude": [ "node_modules" ]
+}

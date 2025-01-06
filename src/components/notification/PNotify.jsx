@@ -12,7 +12,8 @@ export const pNotify = (description, type = 'success', duration = '') => {
     } else if (equalString(type, 'error')) {
         toast.error(description, {
             position: 'top-center',
-            className: 'safe-area-top-margin'
+            className: 'safe-area-top-margin',
+            duration: 30000
         });
     } else if (equalString(type, 'info')) {
         toast(description, {
