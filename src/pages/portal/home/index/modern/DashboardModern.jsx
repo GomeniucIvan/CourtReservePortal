@@ -13,63 +13,18 @@ import DashboardReservations from "@portal/home/index/modules/Dashboard.Reservat
 import DashboardOpenMatches from "@portal/home/index/modules/Dashboard.OpenMatches.jsx";
 import DashboardEvents from "@portal/home/index/modules/Dashboard.Events.jsx";
 import DashboardLeagues from "@portal/home/index/modules/Dashboard.Leagues.jsx";
+import {useNavigate} from "react-router-dom";
+import {useRef} from "react";
 
-function Dashboard() {
+function DashboardModern() {
     const { styles } = useStyles();
-    const { isMockData, setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,globalStyles  } = useApp();
+    const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,globalStyles  } = useApp();
     const {orgId, setAuthorizationData} = useAuth();
-    
-    const [selectedOrganization, setSelectedOrganization] = useState(null);
-    const [isFetching, setIsFetching] = useState(false);
-    const [dashboardData, setDashboardData] = useState(null);
-    const [organizations, setOrganizations] = useState([]);
     const navigate = useNavigate();
-    const drawerBarcodeRef = useRef();
-    
-    const loadData = async (refresh) => {
-        const cachedData = fromLocalStorage('dashboardData');
-
-        if (refresh){
-            setIsFetching(true);
-        } else{
-            if (!isNullOrEmpty(cachedData)){
-                setDashboardData(cachedData);
-                setIsFetching(false);
-            }
-        }
-
-        let authResponse = await apiService.authData(orgId,{loadWeatherData:true,includeDashboardData:true});
-
-        if (toBoolean(authResponse?.IsValid)) {
-            setAuthorizationData(authResponse.Data);
-            setDashboardData(authResponse.Data);
-            toLocalStorage('dashboardData', authResponse.Data);
-            setIsFetching(false);
-        }
-        
-        setIsLoading(false);
-    }
-    
-    useEffect(() => {
-        if (shouldFetch) {
-            const fetchData = () => {
-                loadData(true);
-                resetFetch();
-            };
-            fetchData();
-        }
-    }, [shouldFetch, resetFetch]);
-    
-    useEffect(() => {
-        setIsFooterVisible(true);
-        setFooterContent('');
-        loadData();
-    }, []);
+    const drawerBarcodeRef = useRef(null);
     
     return (
         <>
-            {/*<div className={globalStyles.safeAreaGlass}></div>*/}
-            
             <div className={cx(styles.orgArea, 'safe-area-top')}>
                <PaddingBlock topBottom={true}>
                    <Flex vertical={true} gap={token.paddingSM} >
@@ -113,4 +68,4 @@ function Dashboard() {
     )
 }
 
-export default Dashboard
+export default DashboardModern
