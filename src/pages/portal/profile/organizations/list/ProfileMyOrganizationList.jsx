@@ -1,5 +1,4 @@
-﻿import styles from './ProfileMyOrganizationList.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 
 function ProfileMyOrganizationList() {
     const navigate = useNavigate();

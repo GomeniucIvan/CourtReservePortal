@@ -1,8 +1,8 @@
-﻿import CardLinks from "../../components/cardlinks/CardLinks.jsx";
-import PaddingBlock from "../../components/paddingblock/PaddingBlock.jsx";
+﻿import CardLinks from "@/components/cardlinks/CardLinks.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {useEffect, useState} from "react";
-import {useApp} from "../../context/AppProvider.jsx";
-import mockData from "../../mocks/navigation-data.json";
+import {useApp} from "@/context/AppProvider.jsx";
+import mockData from "@/mocks/navigation-data.json";
 
 function Navigation(props) {
     const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, isMockData, navigationLinks} = useApp();

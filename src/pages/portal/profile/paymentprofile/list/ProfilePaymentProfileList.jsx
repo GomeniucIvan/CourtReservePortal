@@ -1,16 +1,16 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Badge, Button, Card, Divider, Flex, Skeleton, Tag, Typography} from "antd";
-import appService from "../../../../api/app.jsx";
-import {useAuth} from "../../../../context/AuthProvider.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import {emptyArray} from "../../../../utils/ListUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
-import {isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
-import FooterBlock from "../../../../components/footer/FooterBlock.jsx";
+import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
 const {Title, Text} = Typography;
 
 function ProfilePaymentProfileList() {

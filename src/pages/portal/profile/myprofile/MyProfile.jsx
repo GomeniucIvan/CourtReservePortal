@@ -1,8 +1,8 @@
 ﻿import {Tabs} from "antd";
 import {cx} from "antd-style";
-import {useApp} from "../../../context/AppProvider.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 import {useEffect, useState} from "react";
-import {selectedTabStorage, setTabStorage} from "../../../storage/AppStorage.jsx";
+import {selectedTabStorage, setTabStorage} from "@/storage/AppStorage.jsx";
 import MyProfileNotification from "./MyProfileNotification.jsx";
 import MyProfileDetails from "./MyProfileDetails.jsx";
 import {useTranslation} from "react-i18next";

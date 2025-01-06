@@ -1,7 +1,6 @@
-﻿import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+﻿import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Card, Divider, Flex, Skeleton, Typography} from "antd";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {
     anyInList,
     encodeParamsObject,
@@ -9,23 +8,16 @@ import {
     fullNameInitials,
     isNullOrEmpty,
     toBoolean
-} from "../../../utils/Utils.jsx";
-import {cx} from "antd-style";
-import {Ellipsis} from "antd-mobile";
-import SVG from "../../../components/svg/SVG.jsx";
+} from "@/utils/Utils.jsx";
 import React, {useEffect, useState} from "react";
-import mockData from "../../../mocks/reservation-data.json";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {costDisplay} from "../../../utils/CostUtils.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {ModalRemove} from "../../../utils/ModalUtils.jsx";
-import FormCheckbox from "../../../form/formcheckbox/FomCheckbox.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import FormCheckbox from "@/form/formcheckbox/FomCheckbox.jsx";
 import {DownloadOutlined} from "@ant-design/icons";
-import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
+import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "@/utils/FileUtils.jsx";
 import {Document} from "react-pdf";
-import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
+import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 

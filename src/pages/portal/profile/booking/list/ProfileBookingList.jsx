@@ -2,30 +2,30 @@
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
-import {anyInList, containsString, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
+import {anyInList, containsString, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {cx} from "antd-style";
-import {e} from "../../../../utils/TranslateUtils.jsx";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import mockData from "../../../../mocks/reservation-data.json";
+import {e} from "@/utils/TranslateUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import mockData from "@/mocks/reservation-data.json";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";
-import DrawerBottom from "../../../../components/drawer/DrawerBottom.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import {Card, Ellipsis, List, Selector} from "antd-mobile";
-import {setPage, toRoute} from "../../../../utils/RouteUtils.jsx";
-import {ProfileRouteNames} from "../../../../routes/ProfileRoutes.jsx";
-import CardIconLabel from "../../../../components/cardiconlabel/CardIconLabel.jsx";
-import {fromLocalStorage, toLocalStorage} from "../../../../storage/AppStorage.jsx";
-import {EventRouteNames} from "../../../../routes/EventRoutes.jsx";
-import InfiniteScroll from "../../../../components/infinitescroll/InfiniteScroll.jsx";
-import appService, {apiRoutes} from "../../../../api/app.jsx";
-import {useAuth} from "../../../../context/AuthProvider.jsx";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
+import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
+import InfiniteScroll from "@/components/infinitescroll/InfiniteScroll.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Collapse} from 'antd-mobile'
 import {useTranslation} from "react-i18next";
 import * as React from "react";
-import FormRangePicker from "../../../../form/formrangepicker/FormRangePicker.jsx";
-import {bookingTypes, filterDates} from "../../../../utils/SelectUtils.jsx";
-import HeaderSearch from "../../../../components/header/HeaderSearch.jsx";
-import CardSkeleton, {SkeletonEnum} from "../../../../components/skeleton/CardSkeleton.jsx";
+import FormRangePicker from "@/form/formrangepicker/FormRangePicker.jsx";
+import {bookingTypes, filterDates} from "@/utils/SelectUtils.jsx";
+import HeaderSearch from "@/components/header/HeaderSearch.jsx";
+import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
 
 const {Title, Text} = Typography;
 

@@ -1,18 +1,17 @@
-﻿import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
+﻿import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 import {useEffect, useState} from "react";
-import {anyInList, equalString, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
-import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
+import {anyInList, equalString, isNullOrEmpty, randomNumber, toBoolean} from "@/utils/Utils.jsx";
+import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import {Table, Typography, Checkbox, Flex, Skeleton} from "antd";
 import {useStyles} from "./styles.jsx";
-import mockData from "../../../mocks/personal-data.json";
-import appService from "../../../api/app.jsx";
+import appService from "@/api/app.jsx";
 import {useTranslation} from "react-i18next";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useNavigate} from "react-router-dom";
 import * as React from "react";
-import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
+import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 
 const {Column} = Table;
 const {Text} = Typography;

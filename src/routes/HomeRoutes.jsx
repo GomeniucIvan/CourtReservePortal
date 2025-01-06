@@ -1,12 +1,12 @@
-import Dashboard from "../pages/home/index/Dashboard.jsx";
-import AnnouncementDetails from "../pages/announcement/details/AnnouncementDetails.jsx";
-import AnnouncementList from "../pages/announcement/list/AnnouncementList.jsx";
-import LeagueList from "../pages/league/list/LeagueList.jsx";
-import ExpandedScheduler from "../pages/scheduler/ExpandedScheduler.jsx";
-import EventCalendar from "../pages/event/calendar/EventCalendar.jsx";
-import Navigation from "../pages/navigation/Navigation.jsx";
-import DisclosurePending from "../pages/home/disclosure/DisclosurePending.jsx";
-import MemberGroupDetails from "../pages/membergroup/details/MemberGroupDetails.jsx";
+import Dashboard from "@portal/home/index/Dashboard.jsx";
+import AnnouncementDetails from "@portal/announcement/details/AnnouncementDetails.jsx";
+import AnnouncementList from "@portal/announcement/list/AnnouncementList.jsx";
+import LeagueList from "@portal/league/list/LeagueList.jsx";
+import ExpandedScheduler from "@portal/scheduler/ExpandedScheduler.jsx";
+import EventCalendar from "@portal/event/calendar/EventCalendar.jsx";
+import Navigation from "@portal/navigation/Navigation.jsx";
+import DisclosurePending from "@portal/home/disclosure/DisclosurePending.jsx";
+import MemberGroupDetails from "@portal/membergroup/details/MemberGroupDetails.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,

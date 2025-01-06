@@ -1,15 +1,15 @@
 ﻿import {useStyles} from "./../styles.jsx";
 import {useNavigate, useParams} from "react-router-dom";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Flex, List, Tag} from "antd";
 import {useEffect, useState, useRef} from "react";
-import {useApp} from "../../../context/AppProvider.jsx";
-import mockData from "../../../mocks/home-data.json";
-import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
-import {isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
-import appService from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import mockData from "@/mocks/home-data.json";
+import IframeContent from "@/components/iframecontent/IframeContent.jsx";
+import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
 
 function AnnouncementList() {
     const navigate = useNavigate();

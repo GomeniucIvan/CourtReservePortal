@@ -1,14 +1,13 @@
 import React, {useState} from 'react';
-import {SchedulerItem} from "../../../components/scheduler/partial/items/SchedulerItemDisplay.jsx";
 import {useNavigate} from "react-router-dom";
-import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
-import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 import {cx} from "antd-style";
-import {toBoolean} from "../../../utils/Utils.jsx";
+import {toBoolean} from "@/utils/Utils.jsx";
 import {
     SchedulerProportionalViewItem
-} from "../../../components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
+} from "@/components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
 
 const EventCalendarItem = (props) => {
     const dataItem = props.dataItem;

@@ -1,22 +1,22 @@
-﻿import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+﻿import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import React, {useEffect, useState, useRef, forwardRef, useImperativeHandle} from "react";
-import {useApp} from "../../../context/AppProvider.jsx";
-import appService from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {anyInList, equalString, focus, isNullOrEmpty, randomNumber, toBoolean} from "../../../utils/Utils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {anyInList, equalString, focus, isNullOrEmpty, randomNumber, toBoolean} from "@/utils/Utils.jsx";
 import {Alert, Button, Card, Checkbox, Divider, Flex, Skeleton, Typography, Upload} from "antd";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useFormik} from "formik";
 import {useTranslation} from "react-i18next";
-import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
-import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
+import IframeContent from "@/components/iframecontent/IframeContent.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import SignatureCanvas from 'react-signature-canvas'
-import {pNotify} from "../../../components/notification/PNotify.jsx";
-import {ModalClose} from "../../../utils/ModalUtils.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
+import {ModalClose} from "@/utils/ModalUtils.jsx";
 import { Document,pdfjs } from 'react-pdf';
 import {DownloadOutlined} from "@ant-design/icons";
-import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "../../../utils/FileUtils.jsx";
-import EmptyBlock, {emptyBlockTypes} from "../../../components/emptyblock/EmptyBlock.jsx";
+import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "@/utils/FileUtils.jsx";
+import EmptyBlock, {emptyBlockTypes} from "@/components/emptyblock/EmptyBlock.jsx";
 const {Title, Text} = Typography;
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 

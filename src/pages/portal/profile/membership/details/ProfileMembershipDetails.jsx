@@ -1,16 +1,16 @@
 ﻿import {useNavigate} from "react-router-dom";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Tabs, Typography} from "antd";
 const {Text} = Typography
-import mockData from "../../../../mocks/personal-data.json";
+import mockData from "@/mocks/personal-data.json";
 import {useEffect, useState} from "react";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import CardIconLabel from "../../../../components/cardiconlabel/CardIconLabel.jsx";
-import InlineBlock from "../../../../components/inlineblock/InlineBlock.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
+import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
 import {cx} from "antd-style";
-import DrawerBottom from "../../../../components/drawer/DrawerBottom.jsx";
-import FormInput from "../../../../form/input/FormInput.jsx";
-import FormTextarea from "../../../../form/formtextarea/FormTextArea.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import FormInput from "@/form/input/FormInput.jsx";
+import FormTextarea from "@/form/formtextarea/FormTextArea.jsx";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 const {Title} = Typography;

@@ -1,19 +1,18 @@
 ﻿import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Segmented, Space, Tag, Typography} from "antd";
-import HeaderSearch from "../../../../components/header/HeaderSearch.jsx";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
-import {toLocalStorage} from "../../../../storage/AppStorage.jsx";
+import HeaderSearch from "@/components/header/HeaderSearch.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";
 import * as React from "react";
 import {useNavigate} from "react-router-dom";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import {useAuth} from "../../../../context/AuthProvider.jsx";
-import appService  from "../../../../api/app.jsx";
-import {dateToString} from "../../../../utils/DateUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import appService  from "@/api/app.jsx";
+import {dateToString} from "@/utils/DateUtils.jsx";
 import {Card, List} from "antd-mobile";
 import {cx} from "antd-style";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
-import CardSkeleton, {SkeletonEnum} from "../../../../components/skeleton/CardSkeleton.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
 
 const {Title, Text} = Typography;
 

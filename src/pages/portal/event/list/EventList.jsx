@@ -1,26 +1,26 @@
 ﻿import * as React from "react";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import mockData from "../../../mocks/event-data.json";
-import {useApp} from "../../../context/AppProvider.jsx";
+import mockData from "@/mocks/event-data.json";
+import {useApp} from "@/context/AppProvider.jsx";
 import {Card, Ellipsis, List} from 'antd-mobile'
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
-import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
-import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {Segmented, Space, Flex, Typography, Progress} from "antd";
 import {BarsOutlined, AppstoreOutlined} from "@ant-design/icons";
 import {cx} from "antd-style";
-import {fromLocalStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
-import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
-import SVG from "../../../components/svg/SVG.jsx";
-import InfiniteScroll from "../../../components/infinitescroll/InfiniteScroll.jsx";
-import HeaderSearch from "../../../components/header/HeaderSearch.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import ListFilter from "../../../components/filter/ListFilter.jsx";
-import HeaderFilter from "../../../components/header/HeaderFilter.jsx";
+import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
+import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
+import SVG from "@/components/svg/SVG.jsx";
+import InfiniteScroll from "@/components/infinitescroll/InfiniteScroll.jsx";
+import HeaderSearch from "@/components/header/HeaderSearch.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import ListFilter from "@/components/filter/ListFilter.jsx";
+import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 
 const {Title, Text} = Typography;
 

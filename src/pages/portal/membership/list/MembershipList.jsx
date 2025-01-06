@@ -1,5 +1,4 @@
-﻿import styles from './MembershipList.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 
 function MembershipList() {
     const navigate = useNavigate();

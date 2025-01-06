@@ -7,9 +7,9 @@ import {
     EditOutlined, InfoOutlined, PlusCircleOutlined,
     SettingOutlined
 } from "@ant-design/icons";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
-import mockData from "../../../mocks/personal-data.json";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import mockData from "@/mocks/personal-data.json";
 import {
     anyInList,
     equalString,
@@ -17,25 +17,24 @@ import {
     isNullOrEmpty,
     oneListItem,
     toBoolean
-} from "../../../utils/Utils.jsx";
+} from "@/utils/Utils.jsx";
 import {Ellipsis} from "antd-mobile";
-import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
-import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
-import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import {ModalDelete} from "../../../utils/ModalUtils.jsx";
-import appService from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
-import {removeTabStorage, selectedTabStorage, setTabStorage, toLocalStorage} from "../../../storage/AppStorage.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import {ModalDelete} from "@/utils/ModalUtils.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import {removeTabStorage, selectedTabStorage, setTabStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
 import {useTranslation} from "react-i18next";
-import {pNotify, pNotifyClose, pNotifyLoading} from "../../../components/notification/PNotify.jsx";
+import {pNotify, pNotifyClose, pNotifyLoading} from "@/components/notification/PNotify.jsx";
 import toast from "react-hot-toast";
-import Modal from "../../../components/modal/Modal.jsx";
+import Modal from "@/components/modal/Modal.jsx";
 import Barcode from "react-barcode";
-import FormInputDisplay from "../../../form/input/FormInputDisplay.jsx";
-import {AccountRouteNames} from "../../../routes/AccountRoutes.jsx";
-import {EventRouteNames} from "../../../routes/EventRoutes.jsx";
-import FooterBlock from "../../../components/footer/FooterBlock.jsx";
+import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
+import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
 
 const {Text} = Typography;
 

@@ -1,15 +1,15 @@
-import ProfileBookingList from "../pages/profile/booking/list/ProfileBookingList.jsx";
-import ProfileBookingDetails from "../pages/reservation/details/ReservationDetails.jsx";
-import ReservationRegistration from "../pages/reservation/registration/ReservationRegistration.jsx";
-import ProfileFamilyList from "../pages/profile/family/ProfileFamilyList.jsx";
-import ProfileCalendarFeed from "../pages/profile/calendar/ProfileCalendarFeed.jsx";
-import ProfileMembershipDetails from "../pages/profile/membership/details/ProfileMembershipDetails.jsx";
-import ProfileBilling from "../pages/profile/billing/list/ProfileBilling.jsx";
-import MyProfile from "../pages/profile/myprofile/MyProfile.jsx";
-import ProfileStringingList from "../pages/profile/stringing/list/ProfileStringingList.jsx";
-import ProfileStringingDetails from "../pages/profile/stringing/details/ProfileStringingDetails.jsx";
-import ProfilePaymentProfileList from "../pages/profile/paymentprofile/list/ProfilePaymentProfileList.jsx";
-import ProfileBillingPayment from "../pages/profile/billing/payment/ProfileBillingPayment.jsx";
+import ProfileBookingList from "@portal/profile/booking/list/ProfileBookingList.jsx";
+import ProfileBookingDetails from "@portal/reservation/details/ReservationDetails.jsx";
+import ReservationRegistration from "@portal/reservation/registration/ReservationRegistration.jsx";
+import ProfileFamilyList from "@portal/profile/family/ProfileFamilyList.jsx";
+import ProfileCalendarFeed from "@portal/profile/calendar/ProfileCalendarFeed.jsx";
+import ProfileMembershipDetails from "@portal/profile/membership/details/ProfileMembershipDetails.jsx";
+import ProfileBilling from "@portal/profile/billing/list/ProfileBilling.jsx";
+import MyProfile from "@portal/profile/myprofile/MyProfile.jsx";
+import ProfileStringingList from ".@portal/profile/stringing/list/ProfileStringingList.jsx";
+import ProfileStringingDetails from "@portal/profile/stringing/details/ProfileStringingDetails.jsx";
+import ProfilePaymentProfileList from "@portal/profile/paymentprofile/list/ProfilePaymentProfileList.jsx";
+import ProfileBillingPayment from "@portal/profile/billing/payment/ProfileBillingPayment.jsx";
 
 export const ProfileRouteNames = {
     RESERVATION_LIST: `/profile/reservation/list`, //navigation-data

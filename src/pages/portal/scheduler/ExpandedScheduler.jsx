@@ -1,27 +1,26 @@
-﻿import mockData from "../../mocks/scheduler-data.json";
-import {useApp} from "../../context/AppProvider.jsx";
+﻿import {useApp} from "@/context/AppProvider.jsx";
 import React, {useCallback, useEffect, useState} from "react";
-import {DayView} from "../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
-import {InnerScheduler} from "../../components/scheduler/partial/InnerScheduler.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {DayView} from "@/components/scheduler/partial/views/day/DayViewDisplay.jsx";
+import {InnerScheduler} from "@/components/scheduler/partial/InnerScheduler.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {Flex, Skeleton, Spin, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
-import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import moment from "moment";
 const {Text} = Typography
 import '@progress/kendo-date-math/tz/all.js';
 import {
     SchedulerProportionalViewItem
-} from "../../components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
-import {SchedulerViewSlot} from "../../components/scheduler/partial/slots/SchedulerViewSlotDisplay.jsx";
+} from "@/components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
+import {SchedulerViewSlot} from "@/components/scheduler/partial/slots/SchedulerViewSlotDisplay.jsx";
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
-import appService, {apiRoutes} from "../../api/app.jsx";
-import {useAuth} from "../../context/AuthProvider.jsx";
-import {dateFormatByUiCulture, dateTimeToFormat, dateToTimeString, toReactDate} from "../../utils/DateUtils.jsx";
-import {emptyArray} from "../../utils/ListUtils.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {dateFormatByUiCulture, dateTimeToFormat, dateToTimeString, toReactDate} from "@/utils/DateUtils.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import dayjs from "dayjs";
-import apiService from "../../api/api.jsx";
-import {saveCookie} from "../../utils/CookieUtils.jsx";
+import apiService from "@/api/api.jsx";
+import {saveCookie} from "@/utils/CookieUtils.jsx";
 
 function ExpandedScheduler() {
     const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData, token, globalStyles} = useApp();

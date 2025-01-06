@@ -1,12 +1,11 @@
-﻿import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+﻿import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Card, Divider, Flex, Typography} from "antd";
-import { anyInList } from "../../../utils/Utils.jsx";
+import { anyInList } from "@/utils/Utils.jsx";
 import {cx} from "antd-style";
-import SVG from "../../../components/svg/SVG.jsx";
+import SVG from "@/components/svg/SVG.jsx";
 import React, {useState} from "react";
-import {useApp} from "../../../context/AppProvider.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 
 const {Title, Text, Link} = Typography;
 

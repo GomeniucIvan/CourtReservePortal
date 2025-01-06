@@ -1,25 +1,24 @@
 ﻿import React, {useEffect, useRef, useState} from "react";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import {equalString, randomNumber, toBoolean} from "../../../../utils/Utils.jsx";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {equalString, randomNumber, toBoolean} from "@/utils/Utils.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Divider, Flex, Skeleton} from "antd";
-import appService from "../../../../api/app.jsx";
-import {useAuth} from "../../../../context/AuthProvider.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 import {useNavigate} from "react-router-dom";
-import {orgCardCountryCode} from "../../../../utils/OrganizationUtils.jsx";
+import {orgCardCountryCode} from "@/utils/OrganizationUtils.jsx";
 import * as Yup from "yup";
-import {useFormik} from "formik";
-import FormPaymentProfile from "../../../../form/formpaymentprofile/FormPaymentProfile.jsx";
-import {costDisplay} from "../../../../utils/CostUtils.jsx";
-import FormInputDisplay from "../../../../form/input/FormInputDisplay.jsx";
-import {memberPaymentProfiles} from "../../../../utils/SelectUtils.jsx";
-import {emptyArray} from "../../../../utils/ListUtils.jsx";
-import {validatePaymentProfile} from "../../../../utils/ValidationUtils.jsx";
+import FormPaymentProfile from "@/form/formpaymentprofile/FormPaymentProfile.jsx";
+import {costDisplay} from "@/utils/CostUtils.jsx";
+import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
+import {memberPaymentProfiles} from "@/utils/SelectUtils.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import {validatePaymentProfile} from "@/utils/ValidationUtils.jsx";
 import {useTranslation} from "react-i18next";
-import useCustomFormik from "../../../../components/formik/CustomFormik.jsx";
+import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import ReCAPTCHA from "react-google-recaptcha";
-import {getConfigValue} from "../../../../config/WebConfig.jsx";
-import FooterBlock from "../../../../components/footer/FooterBlock.jsx";
+import {getConfigValue} from "@/config/WebConfig.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
 
 function ProfileBillingPayment({}) {
     const navigate = useNavigate();
@@ -28,7 +27,7 @@ function ProfileBillingPayment({}) {
     const {setIsLoading, isLoading, token} = useApp();
     const {orgId, authData} = useAuth();
     const { t } = useTranslation('payment');
-    const recaptchaRef = useRef();
+    const recaptchaRef = useRef(null);
     let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
     
     const initialValues = {

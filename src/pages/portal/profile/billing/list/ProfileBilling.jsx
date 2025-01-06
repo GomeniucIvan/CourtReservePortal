@@ -1,11 +1,11 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 import {cx} from "antd-style";
-import {selectedTabStorage, setTabStorage} from "../../../../storage/AppStorage.jsx";
+import {selectedTabStorage, setTabStorage} from "@/storage/AppStorage.jsx";
 import {Tabs} from "antd";
 import {useEffect, useRef, useState} from "react";
 import ProfileBillingTransactions from "./ProfileBillingTransactions.jsx";
 import ProfileBillingPackages from "./ProfileBillingPackages.jsx";
-import {useApp} from "../../../../context/AppProvider.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 import ProfileBillingInvoiceList from "../invoice/ProfileBillingInvoiceList.jsx";
 
 function ProfileBilling() {

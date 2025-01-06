@@ -1,14 +1,14 @@
 ﻿import * as React from "react";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Flex, Skeleton} from "antd";
-import FormInputDisplay from "../../../form/input/FormInputDisplay.jsx";
-import {ModalDelete} from "../../../utils/ModalUtils.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
+import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
+import {ModalDelete} from "@/utils/ModalUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 import {useState} from "react";
-import appService from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
-import {AuthRouteNames} from "../../../routes/AuthRoutes.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
+import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 
 function MyProfileSettings({}) {

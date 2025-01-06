@@ -1,15 +1,15 @@
 import React, {useState} from 'react';
-import {SchedulerItem} from "../../components/scheduler/partial/items/SchedulerItemDisplay.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
-import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
-import {useApp} from "../../context/AppProvider.jsx";
-import {EventRouteNames} from "../../routes/EventRoutes.jsx";
+import {SchedulerItem} from "@/components/scheduler/partial/items/SchedulerItemDisplay.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {EventRouteNames} from ".@/routes/EventRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 import {theme} from "antd";
-import {isMemberSignUp} from "../../utils/SchedulerUtils.jsx";
-import {useAuth} from "../../context/AuthProvider.jsx";
-import {stringToJson} from "../../utils/ListUtils.jsx";
+import {isMemberSignUp} from "@/utils/SchedulerUtils.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {stringToJson} from "@/utils/ListUtils.jsx";
 const { useToken } = theme;
 
 const ExpandedSchedulerItem = (props) => {

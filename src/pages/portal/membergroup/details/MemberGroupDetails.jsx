@@ -1,11 +1,11 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 import { IndexBar, List } from 'antd-mobile';
 import {useEffect, useState} from "react";
-import {useApp} from "../../../context/AppProvider.jsx";
-import {equalString, toBoolean} from "../../../utils/Utils.jsx";
-import appService from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {equalString, toBoolean} from "@/utils/Utils.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import {Flex, Skeleton, Typography} from "antd";
 const {Text} = Typography;
 

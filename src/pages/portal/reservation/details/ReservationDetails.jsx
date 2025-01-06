@@ -1,23 +1,22 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Tabs, Typography} from "antd";
-import {useApp} from "../../../context/AppProvider.jsx";
-import mockData from "../../../mocks/reservation-data.json";
-import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import mockData from "@/mocks/reservation-data.json";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
 import {cx} from "antd-style";
-import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {anyInList, equalString, isNullOrEmpty, textFromHTML, toBoolean} from "../../../utils/Utils.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
+import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {anyInList, equalString, isNullOrEmpty, textFromHTML, toBoolean} from "@/utils/Utils.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
 import {Card, Ellipsis} from "antd-mobile";
-import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import FormTextarea from "@/form/formtextarea/FormTextArea.jsx";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
 
 const {Title, Text} = Typography;
 

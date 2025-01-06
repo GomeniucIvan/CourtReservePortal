@@ -1,16 +1,16 @@
 ﻿import {useStyles} from "./../styles.jsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {useApp} from "../../../context/AppProvider.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 import {useEffect, useState} from "react";
-import mockData from "../../../mocks/home-data.json";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import mockData from "@/mocks/home-data.json";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {List, Tag, Typography} from "antd";
-import {anyInList, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
-import IframeContent from "../../../components/iframecontent/IframeContent.jsx";
-import appService from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
+import {anyInList, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import IframeContent from "@/components/iframecontent/IframeContent.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
-import CardSkeleton, {SkeletonEnum} from "../../../components/skeleton/CardSkeleton.jsx";
+import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
 const {Title} = Typography;
 
 function AnnouncementDetails() {

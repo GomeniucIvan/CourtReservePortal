@@ -2,12 +2,12 @@
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import {Alert, Button, Divider, Flex, Segmented, Skeleton, Typography} from "antd";
-import mockData from "../../../mocks/reservation-data.json";
+import mockData from "@/mocks/reservation-data.json";
 import * as Yup from "yup";
 import {cx} from "antd-style";
-import {useApp} from "../../../context/AppProvider.jsx";
-import {useLoadingState} from "../../../utils/LoadingUtils.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {useLoadingState} from "@/utils/LoadingUtils.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {
     anyInList,
     encodeParam,
@@ -15,37 +15,37 @@ import {
     equalString, fullNameInitials,
     isNullOrEmpty, oneListItem, randomNumber,
     toBoolean
-} from "../../../utils/Utils.jsx";
-import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
-import FormSelect from "../../../form/formselect/FormSelect.jsx";
-import FormInput from "../../../form/input/FormInput.jsx";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
+} from "@/utils/Utils.jsx";
+import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
+import FormSelect from "@/form/formselect/FormSelect.jsx";
+import FormInput from "@/form/input/FormInput.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import {
     dateTimeToFormat,
     dateToTimeString,
     fromAspDateToString
-} from "../../../utils/DateUtils.jsx";
-import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
+} from "@/utils/DateUtils.jsx";
+import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {useTranslation} from "react-i18next";
-import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
-import useCustomFormik from "../../../components/formik/CustomFormik.jsx";
+import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
+import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {
     validateReservationGuests,
     validateReservationMatchMaker,
     validateUdfs
-} from "../../../utils/ValidationUtils.jsx";
-import {ModalClose} from "../../../utils/ModalUtils.jsx";
-import {ProfileRouteNames} from "../../../routes/ProfileRoutes.jsx";
-import {setPage, toRoute} from "../../../utils/RouteUtils.jsx";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
-import {removeLastHistoryEntry} from "../../../toolkit/HistoryStack.js";
+} from "@/utils/ValidationUtils.jsx";
+import {ModalClose} from "@/utils/ModalUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
+import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
 import ReservationRegistrationPlayers from "./ReservationRegistration.Players.jsx";
 import ReservationRegistrationMatchMaker from "./ReservationRegistration.MatchMaker.jsx";
 import ReservationRegistrationMiscItems from "./ReservationRegistration.MiscItems.jsx";
 import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.TermsAndCondition.jsx";
-import PaymentDrawerBottom from "../../../components/drawer/PaymentDrawerBottom.jsx";
+import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
 
 const {Title, Text, Link} = Typography;
 

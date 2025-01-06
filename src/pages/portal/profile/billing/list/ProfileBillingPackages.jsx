@@ -1,20 +1,18 @@
 ﻿import React, {useEffect, useRef, useState} from "react";
-import {selectedTabStorage, setTabStorage} from "../../../../storage/AppStorage.jsx";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import mockData from "../../../../mocks/personal-data.json";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
+import {selectedTabStorage, setTabStorage} from "@/storage/AppStorage.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {Button, Flex, Segmented, Skeleton, Typography, Badge} from "antd";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {useStyles} from "../styles.jsx";
 import {cx} from "antd-style";
 import {Card, Ellipsis} from "antd-mobile";
-import {emptyArray} from "../../../../utils/ListUtils.jsx";
-import apiService from "../../../../api/api.jsx";
-import {useAuth} from "../../../../context/AuthProvider.jsx";
-import CardIconLabel from "../../../../components/cardiconlabel/CardIconLabel.jsx";
-import {dateTimeToFormat} from "../../../../utils/DateUtils.jsx";
-import {costDisplay} from "../../../../utils/CostUtils.jsx";
-import FooterBlock from "../../../../components/footer/FooterBlock.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import apiService from "@/api/api.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
+import {costDisplay} from "@/utils/CostUtils.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
 
 const {Title} = Typography
 

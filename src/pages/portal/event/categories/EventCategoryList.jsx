@@ -1,5 +1,4 @@
-﻿import styles from './EventCategoryList.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 
 function EventCategoryList() {
     const navigate = useNavigate();

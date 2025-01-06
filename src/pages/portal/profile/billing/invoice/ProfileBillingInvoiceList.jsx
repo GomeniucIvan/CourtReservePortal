@@ -1,16 +1,14 @@
-﻿import styles from './ProfileBillingInvoiceList.module.less'
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {useAuth} from "../../../../context/AuthProvider.jsx";
-import {useApp} from "../../../../context/AppProvider.jsx";
-import apiService from "../../../../api/api.jsx";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../../../utils/Utils.jsx";
-import appService from "../../../../api/app.jsx";
-import PaddingBlock from "../../../../components/paddingblock/PaddingBlock.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import appService from "@/api/app.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Flex, Segmented, Skeleton, Typography, Badge, Card} from "antd";
-import {emptyArray} from "../../../../utils/ListUtils.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import * as React from "react";
-import CardIconLabel from "../../../../components/cardiconlabel/CardIconLabel.jsx";
+import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {cx} from "antd-style";
 const {Title} = Typography;
 

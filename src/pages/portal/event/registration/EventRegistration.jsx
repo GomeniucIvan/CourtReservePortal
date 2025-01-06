@@ -1,14 +1,14 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
-import {AppProvider, useApp} from "../../../context/AppProvider.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+import {AppProvider, useApp} from "@/context/AppProvider.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Flex, List, Typography, Switch, Skeleton } from "antd";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import mockData from "../../../mocks/event-data.json";
-import CardIconLabel from "../../../components/cardiconlabel/CardIconLabel.jsx";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {AuthProvider, useAuth} from "../../../context/AuthProvider.jsx";
+import mockData from "@/mocks/event-data.json";
+import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {AuthProvider, useAuth} from "@/context/AuthProvider.jsx";
 
 import {
     anyInList,
@@ -17,15 +17,15 @@ import {
     moreThanOneInList,
     randomNumber,
     toBoolean
-} from "../../../utils/Utils.jsx";
-import {dateTimeToFormat, dateTimeToTimes} from "../../../utils/DateUtils.jsx";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
-import PaymentDrawerBottom from "../../../components/drawer/PaymentDrawerBottom.jsx";
-import FormCustomFields from "../../../form/formcustomfields/FormCustomFields.jsx";
+} from "@/utils/Utils.jsx";
+import {dateTimeToFormat, dateTimeToTimes} from "@/utils/DateUtils.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
+import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {Toast} from "antd-mobile";
-import DisclosuresPartial from "../../home/disclosure/DisclosuresPartial.jsx";
-import Modal from "../../../components/modal/Modal.jsx";
-import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
+import Modal from "@/components/modal/Modal.jsx";
+import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
+import DisclosuresPartial from "@portal/home/disclosure/DisclosuresPartial.jsx";
 
 const {Title, Text} = Typography;
 

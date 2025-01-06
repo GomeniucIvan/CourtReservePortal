@@ -1,7 +1,7 @@
-﻿import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+﻿import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Card, Divider, Flex, Segmented, Skeleton, Typography} from "antd";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
 import {
     anyInList,
     encodeParamsObject,
@@ -9,20 +9,19 @@ import {
     fullNameInitials,
     isNullOrEmpty,
     toBoolean
-} from "../../../utils/Utils.jsx";
+} from "@/utils/Utils.jsx";
 import {cx} from "antd-style";
 import {Ellipsis} from "antd-mobile";
-import SVG from "../../../components/svg/SVG.jsx";
+import SVG from "@/components/svg/SVG.jsx";
 import React, {useEffect, useState} from "react";
-import mockData from "../../../mocks/reservation-data.json";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {costDisplay} from "../../../utils/CostUtils.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {ModalRemove} from "../../../utils/ModalUtils.jsx";
-import RegistrationGuestBlock from "../../../components/registration/RegistrationGuestBlock.jsx";
-import Sticky from "../../../components/sticky/Sticky.jsx";
+import appService, {apiRoutes} from "@/api/app.jsx";
+import {costDisplay} from "@/utils/CostUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {ModalRemove} from "@/utils/ModalUtils.jsx";
+import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
+import Sticky from "@/components/sticky/Sticky.jsx";
 
 const {Title, Text} = Typography;
 

@@ -1,10 +1,9 @@
 ﻿import React, {useEffect, useState, useRef} from "react";
 import DisclosuresPartial from "./DisclosuresPartial.jsx";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
-import {HomeRouteNames} from "../../../routes/HomeRoutes.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
 
 function DisclosurePending({scope}) {
     const navigate = useNavigate();

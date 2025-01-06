@@ -1,7 +1,6 @@
-﻿import DrawerBottom from "../../../components/drawer/DrawerBottom.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
+﻿import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Alert, Button, Card, Divider, Flex, Skeleton, Typography} from "antd";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
 import {
     anyInList,
     encodeParamsObject,
@@ -9,25 +8,16 @@ import {
     fullNameInitials,
     isNullOrEmpty, oneListItem,
     toBoolean
-} from "../../../utils/Utils.jsx";
-import {cx} from "antd-style";
-import {Ellipsis} from "antd-mobile";
-import SVG from "../../../components/svg/SVG.jsx";
+} from "@/utils/Utils.jsx";
 import React, {useEffect, useState} from "react";
-import mockData from "../../../mocks/reservation-data.json";
-import appService, {apiRoutes} from "../../../api/app.jsx";
-import {costDisplay} from "../../../utils/CostUtils.jsx";
-import {useApp} from "../../../context/AppProvider.jsx";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {ModalRemove} from "../../../utils/ModalUtils.jsx";
-import FormSwitch from "../../../form/formswitch/FormSwitch.jsx";
-import FormSelect from "../../../form/formselect/FormSelect.jsx";
-import {matchmakerGenderList, numberList} from "../../../utils/SelectUtils.jsx";
-import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
-import FormTextarea from "../../../form/formtextarea/FormTextArea.jsx";
-import FormInput from "../../../form/input/FormInput.jsx";
-import {validateReservationMatchMaker} from "../../../utils/ValidationUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
+import FormSelect from "@/form/formselect/FormSelect.jsx";
+import {matchmakerGenderList, numberList} from "@/utils/SelectUtils.jsx";
+import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
+import FormTextarea from "@/form/formtextarea/FormTextArea.jsx";
+import FormInput from "@/form/input/FormInput.jsx";
+import {validateReservationMatchMaker} from "@/utils/ValidationUtils.jsx";
 import {useTranslation} from "react-i18next";
 
 const {Title, Text} = Typography;

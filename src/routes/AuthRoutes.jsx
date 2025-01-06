@@ -1,16 +1,16 @@
-import Login from "../pages/account/login/Login.jsx";
-import LoginGetStarted from "../pages/account/login/Login.GetStarted.jsx";
+import Login from "@portal/account/login/Login.jsx";
+import LoginGetStarted from "@portal/account/login/Login.GetStarted.jsx";
 // import LoginAccountVerification from "../pages/account/login/Login.AccountVerification.jsx";
-import LoginVerificationCode from "../pages/account/login/Login.VerificationCode.jsx";
-import LoginAuthorize from "../pages/account/login/Login.Authorize.jsx";
-import LoginCreateAccount from "../pages/account/login/Login.CreateAccount.jsx";
-import LoginSearchOrganization from "../pages/account/login/Login.SearchOrganization.jsx";
-import LoginAdditionalInfo from "../pages/account/login/Login.AdditionalInfo.jsx";
-import LoginMemberships from "../pages/account/login/Login.Memberships.jsx";
-import LoginReview from "../pages/account/login/Login.Review.jsx";
-import LoginRequestCode from "../pages/account/login/Login.RequestCode.jsx";
-import LoginUpdatePassword from "../pages/account/login/Login.UpdatePassword.jsx";
-import LoginForgotPassword from "../pages/account/login/Login.ForgotPassword.jsx";
+import LoginVerificationCode from "@portal/account/login/Login.VerificationCode.jsx";
+import LoginAuthorize from "@portal/account/login/Login.Authorize.jsx";
+import LoginCreateAccount from "@portal/account/login/Login.CreateAccount.jsx";
+import LoginSearchOrganization from "@portal/account/login/Login.SearchOrganization.jsx";
+import LoginAdditionalInfo from "@portal/account/login/Login.AdditionalInfo.jsx";
+import LoginMemberships from "@portal/account/login/Login.Memberships.jsx";
+import LoginReview from "@portal/account/login/Login.Review.jsx";
+import LoginRequestCode from "@portal/account/login/Login.RequestCode.jsx";
+import LoginUpdatePassword from "@portal/account/login/Login.UpdatePassword.jsx";
+import LoginForgotPassword from "@portal/account/login/Login.ForgotPassword.jsx";
 
 export const AuthRouteNames = {
     LOGIN: '/login',

@@ -1,30 +1,29 @@
 ﻿import React, {useEffect, useState} from "react";
 import {Button, Flex, Segmented, Skeleton, Space, Spin} from "antd";
-import {useApp} from "../../../context/AppProvider.jsx";
-import {InnerScheduler} from "../../../components/scheduler/partial/InnerScheduler.jsx";
-import {DayView} from "../../../components/scheduler/partial/views/day/DayViewDisplay.jsx";
-import {WeekView} from "../../../components/scheduler/partial/views/week/WeekView.mjs";
-import {MonthView} from "../../../components/scheduler/partial/views/month/MonthView.jsx";
-import {AgendaView} from "../../../components/scheduler/partial/views/agenda/AgendaView.jsx";
-import {Typography} from "antd";
-import mockData from "../../../mocks/scheduler-data.json";
+import {useApp} from "@/context/AppProvider.jsx";
+import {InnerScheduler} from "@/components/scheduler/partial/InnerScheduler.jsx";
+import {DayView} from "@/components/scheduler/partial/views/day/DayViewDisplay.jsx";
+import {WeekView} from "@/components/scheduler/partial/views/week/WeekView.mjs";
+import {MonthView} from "@/components/scheduler/partial/views/month/MonthView.jsx";
+import {AgendaView} from "@/components/scheduler/partial/views/agenda/AgendaView.jsx";
+import mockData from "@/mocks/scheduler-data.json";
 import EventCalendarItem from "./EventCalendarItem.jsx";
 import '@progress/kendo-date-math/tz/America/New_York';
 import {useNavigate} from "react-router-dom";
-import appService from "../../../api/app.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
+import appService from "@/api/app.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {
     dateFormatByUiCulture,
     dateTimeToFormat,
     dateToTimeString, fromAspDateToString,
     toReactDate
-} from "../../../utils/DateUtils.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
+} from "@/utils/DateUtils.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 import dayjs from "dayjs";
-import {emptyArray} from "../../../utils/ListUtils.jsx";
-import {saveCookie} from "../../../utils/CookieUtils.jsx";
-import HeaderFilter from "../../../components/header/HeaderFilter.jsx";
-import ListFilter from "../../../components/filter/ListFilter.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import {saveCookie} from "@/utils/CookieUtils.jsx";
+import HeaderFilter from "@/components/header/HeaderFilter.jsx";
+import ListFilter from "@/components/filter/ListFilter.jsx";
 
 function EventCalendar() {
     const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent, token} = useApp();

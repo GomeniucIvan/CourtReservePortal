@@ -1,4 +1,4 @@
-import LeagueList from "../pages/league/list/LeagueList.jsx";
+import LeagueList from "@portal/league/list/LeagueList.jsx";
 
 export const LeagueRouteNames = {
     LEAGUE_LIST: '/event/list'

@@ -1,15 +1,15 @@
 ﻿import {useEffect, useState} from "react";
-import {useApp} from "../../../context/AppProvider.jsx";
-import PaddingBlock from "../../../components/paddingblock/PaddingBlock.jsx";
-import {e} from "../../../utils/TranslateUtils.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import {e} from "@/utils/TranslateUtils.jsx";
 import {Button, Flex, Skeleton, Typography} from "antd";
-import InlineBlock from "../../../components/inlineblock/InlineBlock.jsx";
-import appService from "../../../api/app.jsx";
-import {useAuth} from "../../../context/AuthProvider.jsx";
-import {copyToClipboard, toBoolean} from "../../../utils/Utils.jsx";
-import {ModalClose, ModalConfirm, ModalDelete} from "../../../utils/ModalUtils.jsx";
+import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
+import appService from "@/api/app.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
+import {copyToClipboard, toBoolean} from "@/utils/Utils.jsx";
+import {ModalClose, ModalConfirm, ModalDelete} from "@/utils/ModalUtils.jsx";
 import {useTranslation} from "react-i18next";
-import {pNotify} from "../../../components/notification/PNotify.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useNavigate} from "react-router-dom";
 
 const {Title, Link} = Typography;
