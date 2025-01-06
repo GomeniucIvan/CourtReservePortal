@@ -2,9 +2,7 @@
 
 export const useStyles = createStyles(({ css, token }) => ({
     orgArea: css`
-        height: 40vh;
-        background-color: blue;
-        border-radius: 0 0 50% 50% / 18px;
+
     `,
 
     organizationContainer: css`
@@ -81,5 +79,14 @@ export const useStyles = createStyles(({ css, token }) => ({
         left: 10px;
         background: ${token.colorBgBase};
         padding: 0px 6px;
-    `
+    `,
+    weatherHeaderIcon: css`
+        width: 16px;
+        height: 16px;
+    `,
+    weatherHeaderText: css`
+        font-size: ${token.fontSize}px;
+        font-weight: 400;
+        line-height: 22px;
+    `,
 }));

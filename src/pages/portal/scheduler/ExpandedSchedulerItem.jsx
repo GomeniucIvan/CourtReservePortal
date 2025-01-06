@@ -4,7 +4,7 @@ import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
-import {EventRouteNames} from ".@/routes/EventRoutes.jsx";
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 import {theme} from "antd";
 import {isMemberSignUp} from "@/utils/SchedulerUtils.jsx";

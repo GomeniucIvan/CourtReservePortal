@@ -174,10 +174,10 @@ function RegistrationGuestBlock({formik,
                                                               width: 48,
                                                               height: 48,
                                                               borderRadius: 50,
-                                                              backgroundColor: 'red'
+                                                              backgroundColor: token.colorPrimary,
+                                                              color: token.colorOrgText,
                                                           }}>
-                                                        <Title level={1}
-                                                               className={cx(globalStyles.noSpace)}>{fullNameInitials(fullName)}</Title>
+                                                        <Title level={1} className={cx(globalStyles.noSpace)}>{fullNameInitials(fullName)}</Title>
                                                     </Flex>
 
                                                     <Flex vertical

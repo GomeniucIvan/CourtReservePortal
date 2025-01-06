@@ -18,7 +18,7 @@ import {isNonUsCulture, toReactDate} from "@/utils/DateUtils.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import FormRatingCategories from "@/form/formratingcategories/FormRatingCategories.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import {pNotify} from ".@/components/notification/PNotify.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
 import * as React from "react";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {validatePersonalInformation} from "@/utils/ValidationUtils.jsx";

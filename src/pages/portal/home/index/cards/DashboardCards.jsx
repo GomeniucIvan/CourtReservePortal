@@ -84,20 +84,6 @@ function DashboardCards() {
                        <Button block onClick={() => navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
                        <Button block onClick={() => navigate(EventRouteNames.EVENT_LIST)}>Event List</Button>
                        <Button block onClick={() => navigate('/membergroup/21072')}>Member Group</Button>
-
-                       {toBoolean(dashboardData?.OrgShowBarcode) &&
-                           <>
-                               <Button block onClick={() => {
-                                   if (drawerBarcodeRef.current) {
-                                       drawerBarcodeRef.current.open();
-                                   }
-                               }}>
-                                   Barcode
-                               </Button>
-
-                               <DrawerBarcode ref={drawerBarcodeRef} format={dashboardData?.OrgBarcodeFormat} familyList={stringToJson(dashboardData?.FamilyMembesJson)}/>
-                           </>
-                       }
                    </Flex>
                </PaddingBlock>
             </div>

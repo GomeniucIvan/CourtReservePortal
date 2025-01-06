@@ -2,7 +2,7 @@
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 
-const SGV = ({ icon, color = 'black', size = '24', style= '', preventFill = false, preventStroke = true, replaceColor = false }) => {
+const SGV = ({ icon, color = 'black', size = 24, style= '', preventFill = false, preventStroke = true, replaceColor = false }) => {
     const {token} = useApp();
     
     return (

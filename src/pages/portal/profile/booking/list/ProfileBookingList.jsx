@@ -1,5 +1,4 @@
-﻿import lessStyles from './ProfileBookingList.module.less'
-import {useNavigate} from "react-router-dom";
+﻿import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
 import {anyInList, containsString, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";

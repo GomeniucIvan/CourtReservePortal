@@ -1,6 +1,7 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import * as dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 let appUrl = process.env.VITE_APP_URL;
@@ -37,6 +38,12 @@ export default defineConfig({
             },
         },
     ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+            '@portal': path.resolve(__dirname, './src/pages/portal'),
+        },
+    },
     build: {
         sourcemap: enableDebug,
         minify: 'terser',

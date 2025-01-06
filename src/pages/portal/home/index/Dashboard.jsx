@@ -3,30 +3,24 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import apiService from "@/api/api.jsx";
-import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import {EventRouteNames} from "@/routes/EventRoutes.jsx";
-import DrawerBarcode from "@/components/drawer/DrawerBarcode.jsx";
 const { Title } = Typography;
-import DashboardAnnouncements from "@portal/home/index/modules/Dashboard.Announcements.jsx";
-import DashboardReservations from "@portal/home/index/modules/Dashboard.Reservations.jsx";
-import DashboardOpenMatches from "@portal/home/index/modules/Dashboard.OpenMatches.jsx";
-import DashboardEvents from "@portal/home/index/modules/Dashboard.Events.jsx";
-import DashboardLeagues from "@portal/home/index/modules/Dashboard.Leagues.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import DashboardModern from "@portal/home/index/modern/DashboardModern.jsx";
-import DashboardClassic from "@portal/home/index/classic/DashboardClassic.js";
+import DashboardClassic from "@portal/home/index/classic/DashboardClassic.jsx";
 import DashboardCards from "@portal/home/index/cards/DashboardCards.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {cx} from "antd-style";
+import {useStyles} from "./styles.jsx";
 
 function Dashboard() {
-    const { styles } = useStyles();
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading } = useApp();
     const {orgId, setAuthorizationData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const navigate = useNavigate();
     const drawerBarcodeRef = useRef();
+    const { styles } = useStyles();
     
     const loadData = async (refresh) => {
         const cachedData = fromLocalStorage('dashboardData');
@@ -73,18 +67,18 @@ function Dashboard() {
             {/*<div className={globalStyles.safeAreaGlass}></div>*/}
 
             {/*Modern Dashboard*/}
-            {(equalString(dashboardData?.MobileDashboardView, 3) || isNullOrEmpty(dashboardData?.MobileDashboardView)) &&
-                <DashboardModern dashboardData />
+            {(equalString(dashboardData?.MobileDashboardView, 3)) &&
+                <DashboardModern dashboardData={dashboardData} />
             }
 
             {/*Classic*/}
-            {equalString(dashboardData?.MobileDashboardView, 2) &&
-                <DashboardClassic dashboardData/>
+            {(equalString(dashboardData?.MobileDashboardView, 2) || isNullOrEmpty(dashboardData?.MobileDashboardView)) &&
+                <DashboardClassic dashboardData={dashboardData}/>
             }
 
             {/*Cards*/}
             {equalString(dashboardData?.MobileDashboardView, 4) &&
-                <DashboardCards dashboardData/>
+                <DashboardCards dashboardData={dashboardData}/>
             }
         </div>
     )
