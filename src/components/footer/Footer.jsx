@@ -1,7 +1,7 @@
 ﻿import {useStyles} from "./styles.jsx";
 import {useNavigate} from 'react-router-dom';
 import {Skeleton} from "antd-mobile";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {Flex, Typography} from "antd";
@@ -11,16 +11,23 @@ import { cx } from 'antd-style';
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
+import {ModalClose} from "@/utils/ModalUtils.jsx";
+import FormDrawerRadio from "@/form/formradio/FormDrawerRadio.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
+import {getNavigationStorage} from "@/storage/AppStorage.jsx";
 
 const {Text} = Typography;
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {styles} = useStyles();
     const navigate = useNavigate();
     const {token} = useApp();
-    const {orgId} = useAuth();
+    const {orgId, authData} = useAuth();
     const [activeKey, setActiveKey] = useState('home');
     const footerRef = useRef();
     const [footerHeight, setFooterHeight] = useState();
+    const [showReserveDrawer, setShowReserveDrawer] = useState(false);
+    const [drawerLInks, setDrawerLinks] = useState([]);
     
     useEffect(() => {
         if (footerRef.current){
@@ -28,12 +35,21 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         }
     }, [footerRef]);
 
+    useEffect(() => {
+        let cacheLinks = getNavigationStorage(orgId);
+        console.log(cacheLinks)
+    },[showReserveDrawer])
+    
     const onTabBarChange = (key) => {
         if (isFetching){
             return;
         }
         
-        if (!equalString(key, 'reserve')) {
+        let hideEventsCalendar = toBoolean(authData?.HideEventsCalendar);
+        
+        if (hideEventsCalendar && equalString(key, 'calendar')){
+            //skip set for active key
+        } else if (!equalString(key, 'reserve')) {
             setActiveKey(key);
         }
         
@@ -42,11 +58,23 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         } else if(equalString(key, 'more')){
             navigate(HomeRouteNames.MORE_NAVIGATION);
         } else if(equalString(key, 'calendar')){
-            let route = toRoute(EventRouteNames.EVENT_CALENDAR, 'id', orgId);
-            navigate(route);
-        } else if(equalString(key, 'alerts')){
+            if (hideEventsCalendar) {
+                ModalClose({
+                    content: 'The organization does not provide access to this feature.',
+                    showIcon: false,
+                    onClose: () => {
+
+                    }
+                });
+            } else {
+                let route = toRoute(EventRouteNames.EVENT_CALENDAR, 'id', orgId);
+                navigate(route);
+            }
+        } else if(equalString(key, 'alerts')) {
             let route = toRoute(HomeRouteNames.NOTIFICATION_LIST, 'id', orgId);
             navigate(route);
+        } else if (equalString(key, 'reserve')) {
+            setShowReserveDrawer(true);
         }
     }
     
@@ -88,7 +116,9 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
                     {tabs.map((tab, index) => {
                         if (equalString(tab.key, 'reserve')){
                             return (
-                                <Flex key={tab.key} align="center" className={cx(styles.plusIconWrapper, styles.minWidth)}>
+                                <Flex key={tab.key} align="center"
+                                      
+                                      className={cx(styles.plusIconWrapper, styles.minWidth)}>
                                     <div className={styles.plusIcon}>
                                         <SVG icon={`navigation/portal/footer/footer-${tab.key}`}
                                              size={56}
@@ -141,7 +171,20 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     }
 
     return (
-        footerComponent()
+       <>
+           {footerComponent()}
+
+           <DrawerBottom
+               showDrawer={showReserveDrawer}
+               closeDrawer={() => {setShowReserveDrawer(false)}}
+               label={'Select Action'}
+               showButton={true}
+               confirmButtonText={'Close'}
+               onConfirmButtonClick={() => {setShowReserveDrawer(false)}}
+           >
+               <ListLinks links={drawerLInks} />
+           </DrawerBottom>
+       </>
     )
 }
 

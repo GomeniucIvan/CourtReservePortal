@@ -21,7 +21,7 @@ const DashboardHeader = ({ dashboardData }) => {
     const [windMeasurements, setWindMeasurements] = useState('');
     const { styles } = useStyles();
     const {token} = useApp();
-    const {spGuideId, orgId} = useAuth();
+    const {spGuideId, orgId, authData} = useAuth();
 
     const loadData = async () => {
         let response = await apiService.get(`/api/dashboard/weather?id=${orgId}`);
@@ -96,7 +96,7 @@ const DashboardHeader = ({ dashboardData }) => {
             <Flex vertical={true} gap={token.paddingLG}>
                 <Flex justify={'space-between'} align={'center'} onClick={() => setShowOrganizationDrawer(true)}>
                     <Flex gap={token.paddingLG} flex={1} align={'center'}>
-                        <img src={orgLogoSrc(dashboardData?.LogoUrl, dashboardData?.OrgId)} alt={dashboardData?.OrgName}
+                        <img src={orgLogoSrc(authData?.LogoUrl, authData?.OrgId)} alt={authData?.OrgName}
                              style={{
                                  maxHeight: '44px',
                                  maxWidth: '72px',
@@ -106,8 +106,8 @@ const DashboardHeader = ({ dashboardData }) => {
                              }}/>
 
                         <Flex vertical={true}>
-                            <Title level={3}> <Ellipsis direction='end' content={dashboardData?.OrgName}/></Title>
-                            {(toBoolean(dashboardData?.ShowLocation) && !isNullOrEmpty(dashboardData?.OrgLocation)) && <Ellipsis direction='end' content={dashboardData?.OrgLocation} />}
+                            <Title level={3}> <Ellipsis direction='end' content={authData?.OrgName}/></Title>
+                            {(toBoolean(authData?.ShowLocation) && !isNullOrEmpty(authData?.OrgLocation)) && <Ellipsis direction='end' content={authData?.OrgLocation} />}
                         </Flex>
                     </Flex>
 
@@ -127,7 +127,7 @@ const DashboardHeader = ({ dashboardData }) => {
                 showDrawer={showOrganizationDrawer}
                 closeDrawer={() => setShowOrganizationDrawer(false)}
                 label={!spGuideId || equalString(spGuideId, 'courtreserve') ? "My Organization(s)" : "My Location(s)"}
-                showButton={(isNullOrEmpty(spGuideId) || !toBoolean(dashboardData?.HideJoinOrganization))}
+                showButton={(isNullOrEmpty(spGuideId) || !toBoolean(authData?.HideJoinOrganization))}
                 confirmButtonText={!spGuideId ? "Add Organization" : "Add Location"}
                 onConfirmButtonClick={() => {
                     //window.location.href = `/Online/MyProfile/JoinClub/${orgId}`

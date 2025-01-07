@@ -17,6 +17,7 @@ const { Title, Text } = Typography;
 
 const DashboardMembershipBar = ({ dashboardData }) => {
     const{ token, globalStyles } = useApp();
+    const{ authData } = useAuth();
     const drawerBarcodeRef = useRef(null);
     const navigate = useNavigate();
     
@@ -35,29 +36,29 @@ const DashboardMembershipBar = ({ dashboardData }) => {
                                   backgroundColor: token.colorPrimary,
                                   color: token.colorOrgText,
                               }}>
-                            <Title level={1} className={cx(globalStyles.noSpace)}>{fullNameInitials(dashboardData?.MemberFullName)}</Title>
+                            <Title level={1} className={cx(globalStyles.noSpace)}>{fullNameInitials(authData?.MemberFullName)}</Title>
                         </Flex>
                         
                         <Flex vertical gap={token.paddingXXS} justify={'center'}>
-                            {!isNullOrEmpty(dashboardData?.MemberFullName) &&
+                            {!isNullOrEmpty(authData?.MemberFullName) &&
                                 <Title level={3}>
-                                    <Ellipsis direction='end' content={dashboardData?.MemberFullName}/>
+                                    <Ellipsis direction='end' content={authData?.MemberFullName}/>
                                 </Title>
                             }
-                            {dashboardData?.MembershipName &&
-                                <Text style={{color: token.colorSecondary}}><Ellipsis direction='end' content={dashboardData?.MembershipName}/></Text>
+                            {authData?.MembershipName &&
+                                <Text style={{color: token.colorSecondary}}><Ellipsis direction='end' content={authData?.MembershipName}/></Text>
                             }
                         </Flex>
                     </Flex>
 
-                    {toBoolean(dashboardData?.OrgShowBarcode) && (
+                    {toBoolean(authData?.OrgShowBarcode) && (
                         <>
                             <Button shape="circle" icon={<SVG icon={'barcode'} onClick={() => {
                                 if (drawerBarcodeRef.current) {
                                     drawerBarcodeRef.current.open();
                                 }
                             }} size={20} color={token.colorPrimary} />} />
-                            <DrawerBarcode ref={drawerBarcodeRef} format={dashboardData?.OrgBarcodeFormat} familyList={stringToJson(dashboardData?.FamilyMembesJson)}/>
+                            <DrawerBarcode ref={drawerBarcodeRef} format={authData?.OrgBarcodeFormat} familyList={stringToJson(authData?.FamilyMembesJson)}/>
                         </>
                     )}
                 </Flex>
