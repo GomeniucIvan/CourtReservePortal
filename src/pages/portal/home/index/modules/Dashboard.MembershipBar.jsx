@@ -15,7 +15,7 @@ import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 const { Title, Text } = Typography;
 
-const DashboardMembershipBar = ({ dashboardData }) => {
+const DashboardMembershipBar = () => {
     const{ token, globalStyles } = useApp();
     const{ authData } = useAuth();
     const drawerBarcodeRef = useRef(null);
@@ -53,11 +53,11 @@ const DashboardMembershipBar = ({ dashboardData }) => {
 
                     {toBoolean(authData?.OrgShowBarcode) && (
                         <>
-                            <Button shape="circle" icon={<SVG icon={'barcode'} onClick={() => {
+                            <Button shape="circle" icon={<SVG icon={'barcode'} size={20} color={token.colorPrimary} />} onClick={() => {
                                 if (drawerBarcodeRef.current) {
                                     drawerBarcodeRef.current.open();
                                 }
-                            }} size={20} color={token.colorPrimary} />} />
+                            }} />
                             <DrawerBarcode ref={drawerBarcodeRef} format={authData?.OrgBarcodeFormat} familyList={stringToJson(authData?.FamilyMembesJson)}/>
                         </>
                     )}

@@ -2,7 +2,7 @@
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import React, {useEffect, useState} from "react";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {equalString, isNullOrEmpty, organizationLogoSrc, toBoolean} from "@/utils/Utils.jsx";
+import {equalString, isNullOrEmpty, organizationLogoSrc, setCookie, toBoolean} from "@/utils/Utils.jsx";
 import {useStyles} from ".././styles.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {Ellipsis} from "antd-mobile";
@@ -10,6 +10,7 @@ import apiService from "@/api/api.jsx";
 import {orgLogoSrc} from "@/utils/ImageUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {DownOutlined} from "@ant-design/icons";
+import {getCookie} from "@/utils/CookieUtils.jsx";
 const {Text, Title} = Typography;
 
 const DashboardHeader = ({ dashboardData }) => {
@@ -23,11 +24,15 @@ const DashboardHeader = ({ dashboardData }) => {
     const {token} = useApp();
     const {spGuideId, orgId, authData} = useAuth();
 
+    let cookieWeatherKey = `Dashboard_Weather_${orgId}`;
+    
     const loadData = async () => {
-        let response = await apiService.get(`/api/dashboard/weather?id=${orgId}`);
+        let currentDateTimeString = dashboardData?.currentDateTimeString;
+        let response = await apiService.get(`/api/dashboard/weather?id=${orgId}&currentDateTime=${currentDateTimeString}`);
 
         if (toBoolean(response?.IsValid)) {
             let data = response.Data;
+            setCookie(cookieWeatherKey, data, 30);
             
             if (toBoolean(data?.displayWeather)) {
                 setWeather(data.weatherInfo);  
@@ -40,10 +45,21 @@ const DashboardHeader = ({ dashboardData }) => {
     }
     
     useEffect(() => {
-        loadData();
+        const weatherCookieData = getCookie(cookieWeatherKey);
+        if (!isNullOrEmpty(weatherCookieData)) {
+            if (toBoolean(weatherCookieData?.displayWeather)) {
+                setWeather(weatherCookieData.weatherInfo);
+            }
+            setShowInCelsius(weatherCookieData?.showInCelsius);
+            setWindMeasurements(weatherCookieData?.windMeasurements);
+            setIsFetching(false);
+        }
     }, [])
     
     useEffect(() => {
+        if (!isNullOrEmpty(dashboardData)){
+            loadData();
+        }
         setOrgList(dashboardData?.listOrg || []);
     }, [dashboardData]);
     

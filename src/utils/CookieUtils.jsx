@@ -11,3 +11,7 @@ export const saveCookie = (cookieName, value, minutes) => {
         Cookies.set(cookieName, value, { expires: expiresInDays, path: '' });
     }
 }
+
+export const getCookie = (cookieName) => {
+    return Cookies.get(cookieName);
+}
