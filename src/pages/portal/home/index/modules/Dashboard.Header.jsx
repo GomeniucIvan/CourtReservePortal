@@ -111,7 +111,7 @@ const DashboardHeader = ({ dashboardData }) => {
                         </Flex>
                     </Flex>
 
-                    <DownOutlined />
+                    <SVG icon={'chevron-down-regular'} size={14} />
                 </Flex>
 
                 {weather &&
