@@ -17,6 +17,7 @@ export const HomeRouteNames = {
     ANNOUNCEMENT_LIST: `/announcement/list`,
     LEAGUES_LIST: `/leagues/list`,
     MORE_NAVIGATION: `/more`,
+    NAVIGATE: `/online/portal/navigate/:id/:nodeId`,
     DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
     MY_CLUBS: `/myclubs`,
     MEMBER_GROUP: `/membergroup/:id`,
@@ -64,6 +65,12 @@ const HomeRoutes = [
         path: HomeRouteNames.MORE_NAVIGATION,
         element: <Navigation key={'more'}/>,
         title: 'more',
+        disablePullDown: true
+    },
+    {
+        path: HomeRouteNames.NAVIGATE,
+        element: <Navigation />,
+        header: true,
         disablePullDown: true
     },
     {

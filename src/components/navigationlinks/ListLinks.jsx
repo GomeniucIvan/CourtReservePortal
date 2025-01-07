@@ -7,7 +7,7 @@ import {Card} from "antd";
 import {e} from "../../utils/TranslateUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {ModalDelete, ModalLogout} from "../../utils/ModalUtils.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
@@ -16,8 +16,8 @@ import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 
 function ListLinks({links}) {
-    const {token, setDynamicPages, globalStyles} = useApp();
-    const {logout} = useAuth();
+    const {token, setDynamicPages, globalStyles, } = useApp();
+    const {logout, orgId} = useAuth();
     const { styles } = useStyles();
     const navigate = useNavigate();
     
@@ -26,16 +26,29 @@ function ListLinks({links}) {
             {anyInList(links) &&
                 <Flex vertical={true}>
                     {links.map((link, index) => (
-                        <Flex justify={'space-between'} key={index} style={{minHeight: '52px'}} align={'center'}>
+                        <Flex justify={'space-between'}
+                              key={index}
+                              onClick={() => {
+                                  if (anyInList(link.Childrens)) {
+                                      let route = toRoute(HomeRouteNames.NAVIGATE, 'id', orgId);
+                                      route = toRoute(route, 'nodeId', link.Item);
+                                      setPage(setDynamicPages, link.Text, route);
+                                      navigate(route);
+                                  } else {
+                                      navigate(link.Url);
+                                  }
+                              }}
+                              style={{minHeight: '52px'}} 
+                              align={'center'}>
                             <Flex gap={token.paddingLG} flex={1}>
                                 <SVG icon={`/navigation/portal/${link.IconClass}`} size={24}/>
 
                                 <Text style={{fontSize: `${token.fontSizeLG}px`}}>
-                                    <Ellipsis direction='end' rows={2} content={link.Text}/>
+                                    <Ellipsis direction='end' rows={1} content={link.Text}/>
                                 </Text>
                             </Flex>
 
-                            {!anyInList(link.Childrens) &&
+                            {anyInList(link.Childrens) &&
                                 <SVG icon={'chevron-right'} size={token.fontSizeLG} />
                             }
                         </Flex>

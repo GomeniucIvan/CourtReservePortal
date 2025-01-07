@@ -45,3 +45,15 @@ export const setTabStorage = (tabKey, selectedTab, setFunction) => {
 export const clearAllLocalStorage = () => {
     localStorage.clear();
 };
+
+export const setNavigationStorage = (orgId, mainMenu, moreMenu) => {
+    toLocalStorage(`navigation_${orgId}`, mainMenu);
+    toLocalStorage(`morenavigation_${orgId}`, moreMenu);
+};
+
+export const getNavigationStorage = (orgId) => {
+    return fromLocalStorage(`navigation_${orgId}`);
+};
+export const getMoreNavigationStorage = (orgId) => {
+    return fromLocalStorage(`morenavigation_${orgId}`);
+};

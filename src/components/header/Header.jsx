@@ -4,7 +4,7 @@ import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useApp} from "../../context/AppProvider.jsx";
 import {NavBar} from "antd-mobile";
-import {isNullOrEmpty} from "../../utils/Utils.jsx";
+import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {authMember} from "../../storage/AppStorage.jsx";
 import {useTranslation} from "react-i18next";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
@@ -12,7 +12,7 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {isLoading, headerRightIcons} = useApp();
+    const {isLoading, headerRightIcons, headerTitle} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
 
@@ -53,17 +53,25 @@ const Header = forwardRef((props, ref) => {
         </>
     )
 
-    if (isNullOrEmpty(props.route?.title)) {
+    let title = props.route?.title;
+    let useKey = true;
+    
+    if (isNullOrEmpty(title) && toBoolean(props.route?.header)) {
+        title = headerTitle;
+        useKey = false;
+    }
+    console.log(title);
+    
+    if (isNullOrEmpty(title)) {
         return (<></>);
     }
     
     return (
-        <NavBar onBack={backToPreviousPage} className={styles.header}
-                right={isNullOrEmpty(headerRightIcons) ? null : right}>
+        <NavBar onBack={backToPreviousPage} className={styles.header} right={isNullOrEmpty(headerRightIcons) ? null : right}>
             {isLoading && <div className={styles.headerLoadingBar}></div>}
-            {!isNullOrEmpty(props.route?.title) &&
+            {!isNullOrEmpty(title) &&
                 <>
-                    {t(props.route?.title)}
+                    {useKey ? t(title) : title}
                 </>
             }
         </NavBar>

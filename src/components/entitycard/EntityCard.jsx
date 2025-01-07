@@ -7,7 +7,7 @@ import {useStyles} from "./EntityCard.styles.jsx";
 import { cx } from 'antd-style';
 import { useTranslation } from 'react-i18next';
 
-const EntityCard = ({children, title, link, addPadding, isFetching}) => {
+const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
     const { token } = useToken();
     const navigate = useNavigate();
     const { styles } = useStyles();
@@ -28,7 +28,7 @@ const EntityCard = ({children, title, link, addPadding, isFetching}) => {
                 <div className={cx(styles.header, toBoolean(addPadding) && styles.headerPadding)}>
                     <Title level={1}>{title}</Title>
 
-                    <Title level={3} style={{color: token.colorLink}} onClick={() => navigate(link)}>
+                    <Title level={3} style={{color: token.colorLink}} onClick={onClick}>
                         {t('seeAll')}
                     </Title>
                 </div>

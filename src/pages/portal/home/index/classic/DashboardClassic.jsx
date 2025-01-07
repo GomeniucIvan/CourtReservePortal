@@ -19,13 +19,9 @@ function DashboardClassic({dashboardData}) {
 	const {token} = useApp();
 	const navigationItemsToShow = showAll ? navigationItems : navigationItems.slice(0, 6);
 	
-	console.log(dashboardData);
-	
 	useEffect(() => {
 		setNavigationItems(dashboardData?.menu || []);	
 	}, [dashboardData])
-	
-	console.log(navigationItems)
 	
 	return (
 		<>

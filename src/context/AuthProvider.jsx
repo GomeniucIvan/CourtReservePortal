@@ -27,7 +27,7 @@ export const AuthProvider = ({children}) => {
         if (!isNullOrEmpty(memberData) && !isNullOrEmpty(memberData.MemberId)){
             setAuthData(memberData)
             setClientUiCulture(memberData.UiCulture);
-            setNavigationLinks(stringToJson(memberData.NavigationLinksJson));
+            //setNavigationLinks(stringToJson(memberData.NavigationLinksJson));
             setOrgId(memberData.OrgId);
             if (!isNullOrEmpty(memberData.DashboardButtonBgColor)) {
                 setPrimaryColor(memberData.DashboardButtonBgColor);
@@ -49,7 +49,7 @@ export const AuthProvider = ({children}) => {
     }
     
     const setAuthorizationData = async (memberResponseData) => {
-        setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
+        //setNavigationLinks(stringToJson(memberResponseData.NavigationLinksJson));
         
         if (!isNullOrEmpty(memberResponseData.RequestData)){
             setRequestData(memberResponseData.RequestData)

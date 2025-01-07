@@ -1,6 +1,6 @@
 ﻿import {Button, Flex, Typography} from "antd";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
+import {fromLocalStorage, setNavigationStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import apiService from "@/api/api.jsx";
 const { Title } = Typography;
@@ -15,7 +15,7 @@ import {useStyles} from "./styles.jsx";
 import appService from "@/api/app.jsx";
 
 function Dashboard() {
-    const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading } = useApp();
+    const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
     const {orgId, setAuthorizationData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
     const [backendIsFetching, setBackendIsFetching] = useState(false);
@@ -38,9 +38,14 @@ function Dashboard() {
         let dashboardData = await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}`);
         
         if (toBoolean(dashboardData?.IsValid)) {
-            console.log(dashboardData?.Data);
+
             //setAuthorizationData(authResponse.Data);
             setDashboardData(dashboardData.Data);
+            setNavigationStorage(orgId, dashboardData.Data.menu);
+            
+            //todo delete setNavigationLinks
+            //setNavigationLinks(dashboardData.Data.menu);
+            
             toLocalStorage(`dashboardData_${orgId}`, dashboardData.Data);
             setIsFetching(false);
         }

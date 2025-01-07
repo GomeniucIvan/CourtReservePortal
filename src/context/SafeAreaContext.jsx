@@ -16,7 +16,7 @@ const SafeArea = ({children}) => {
     const location = useLocation();
 
     let currentRoute = AppRoutes.find(route => {
-        const matcher = match(route.path, { decode: decodeURIComponent });
+        const matcher = match(route?.path, { decode: decodeURIComponent });
         return matcher(location.pathname);
         
     });

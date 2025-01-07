@@ -5,7 +5,7 @@ import EventDetails from "@portal/event/details/EventDetails.jsx";
 import EventList from "@portal/event/list/EventList.jsx";
 
 export const EventRouteNames = {
-    EVENT_LIST: '/event/list',
+    EVENT_LIST: '/Online/events/list/:id',
     EVENT_DETAILS: '/event/details/:number',
     EVENT_SIGNUP: '/event/signup/:eventId/:reservationId',
     EVENT_FULL_SIGNUP: '/event/full-signup/:eventId/:reservationId',

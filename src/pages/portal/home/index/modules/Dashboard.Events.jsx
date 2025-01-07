@@ -4,9 +4,12 @@ import {anyInList, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import EntityCard from "@/components/entitycard/EntityCard.jsx";
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const DashboardEvents = ({ dashboardData, isFetching }) => {
     let events = dashboardData?.Events;
+    const {orgId} = useAuth();
     let showEvents = dashboardData?.ShowEvents;
     
     if (!toBoolean(showEvents)){
@@ -14,7 +17,10 @@ const DashboardEvents = ({ dashboardData, isFetching }) => {
     }
     
     return (
-        <EntityCard title={e('Events')} link={EventRouteNames.EVENT_LIST} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={e('Events')} onClick={() => {
+            let route = toRoute(EventRouteNames.EVENT_LIST, 'id', orgId);
+            navigate(route);
+        }} isFetching={isFetching} addPadding={true}>
             {anyInList(events) ? (
                 <SlickSlider>
                     {events.map((booking, index) => (
