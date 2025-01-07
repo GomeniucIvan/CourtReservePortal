@@ -62,7 +62,7 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
     }
     
     return (
-        <EntityCard title={t('booking.myBookings')} link={ProfileRouteNames.RESERVATION_LIST} isFetching={isFetching} addPadding={true}>
+        <EntityCard title={t('booking.myBookings')} link={ProfileRouteNames.BOOKING_LIST} isFetching={isFetching} addPadding={true}>
             {isFetching &&
                 <SlickSlider>
                     <CardSkeleton type={SkeletonEnum.RESERVATION} count={1} marginBottom={true}/>

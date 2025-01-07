@@ -11,16 +11,16 @@ import MemberGroupDetails from "@portal/membergroup/details/MemberGroupDetails.j
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
     INDEX: '/',
-    SCHEDULER: '/scheduler/',
+    SCHEDULER: '/online/reservations/bookings/:id',
     CALENDAR: '/calendar',
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
-    ANNOUNCEMENT_LIST: `/announcement/list`,
+    ANNOUNCEMENT_LIST: `/online/announcement/index/:id`,
     LEAGUES_LIST: `/leagues/list`,
     MORE_NAVIGATION: `/more`,
     NAVIGATE: `/online/portal/navigate/:id/:nodeId`,
     DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
     MY_CLUBS: `/myclubs`,
-    MEMBER_GROUP: `/membergroup/:id`,
+    MEMBER_GROUP: `/online/publicmembergroup/MemberGroup/:id`,
     MEMBERSHIPS: `/memberships`
 };
 

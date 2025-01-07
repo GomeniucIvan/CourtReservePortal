@@ -1,4 +1,4 @@
-﻿import {useNavigate} from "react-router-dom";
+﻿import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
 import {anyInList, containsString, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
@@ -53,7 +53,13 @@ function ProfileBookingList() {
     const [selectedType, setSelectedType] = useState('Upcoming');
     const [isFetching, setIsFetching] = useState(true);
     const {t} = useTranslation('');
-
+    
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const typeParam = queryParams.get("type");
+    
+    console.log(typeParam)
+    
     const loadBookings = (incFilterData, type, skip) => {
         if (isNullOrEmpty(incFilterData)) {
             incFilterData = filterData;

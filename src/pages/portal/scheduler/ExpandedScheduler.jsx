@@ -4,7 +4,7 @@ import {DayView} from "@/components/scheduler/partial/views/day/DayViewDisplay.j
 import {InnerScheduler} from "@/components/scheduler/partial/InnerScheduler.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {Flex, Skeleton, Spin, Typography} from "antd";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import moment from "moment";
 const {Text} = Typography
@@ -25,7 +25,6 @@ import {saveCookie} from "@/utils/CookieUtils.jsx";
 function ExpandedScheduler() {
     const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData, token, globalStyles} = useApp();
     const {orgId} = useAuth();
-    const customSchedulerId = 11945;
     
     const hideReserveButtonsOnAdminSchedulers = false;
     const allowSchedulerDragAndDrop = false;
@@ -48,13 +47,17 @@ function ExpandedScheduler() {
     const [startTimeString, setStartTimeString] = useState('')
     const [endTimeString, setEndTimeString] = useState('')
 
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const customSchedulerId = queryParams.get("sId");
+    
     useEffect(() => {
         if (!isNullOrEmpty(selectedDate) && schedulerData){
 
             const result = {
                 startDate: selectedDate,
                 //end: scheduler.view().endDate(),
-                orgId: schedulerData.OrgId,
+                orgId: orgId,
                 TimeZone: schedulerData.TimeZone,
                 Date: moment(selectedDate).format(dateFormatByUiCulture()),
                 KendoDate: {
@@ -99,7 +102,7 @@ function ExpandedScheduler() {
                 }
             }
             
-            apiService.get(`/api/scheduler/member-expanded?id=${schedulerData.OrgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
+            apiService.get(`/api/scheduler/member-expanded?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
                 const formattedEvents = resp.Data.map(event => ({
                     ...event,
                     Start: new Date(event.Start),

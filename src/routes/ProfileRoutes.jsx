@@ -12,7 +12,7 @@ import ProfileBillingPayment from "@portal/profile/billing/payment/ProfileBillin
 import ProfileBookingList from "@portal/profile/booking/list/ProfileBookingList.jsx";
 
 export const ProfileRouteNames = {
-    RESERVATION_LIST: `/profile/reservation/list`, //navigation-data
+    BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
     RESERVATION_EDIT: `/profile/reservation/edit/:id`,
     RESERVATION_CREATE: `/profile/reservation/create`,
@@ -31,7 +31,7 @@ export const ProfileRouteNames = {
 
 const ProfileRoutes = [
     {
-        path: ProfileRouteNames.RESERVATION_LIST,
+        path: ProfileRouteNames.BOOKING_LIST,
         element: <ProfileBookingList />,
         title: 'bookings'
     },

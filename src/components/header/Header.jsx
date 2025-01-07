@@ -60,7 +60,6 @@ const Header = forwardRef((props, ref) => {
         title = headerTitle;
         useKey = false;
     }
-    console.log(title);
     
     if (isNullOrEmpty(title)) {
         return (<></>);

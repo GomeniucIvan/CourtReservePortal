@@ -55,7 +55,6 @@ function Navigation({key}) {
                 //my leagues
                 setIsFetching(true);
                 setHeaderTitle('My Leagues');
-                
                 loadMyLeagues();
             } else {
                 //3rd level not update new links

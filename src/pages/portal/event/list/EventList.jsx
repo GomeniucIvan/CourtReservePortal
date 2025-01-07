@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import mockData from "@/mocks/event-data.json";
 import {useApp} from "@/context/AppProvider.jsx";
@@ -10,7 +10,7 @@ import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {Segmented, Space, Flex, Typography, Progress} from "antd";
 import {BarsOutlined, AppstoreOutlined} from "@ant-design/icons";
 import {cx} from "antd-style";
-import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
+import {fromLocalStorage, getNavigationStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import InfiniteScroll from "@/components/infinitescroll/InfiniteScroll.jsx";
@@ -24,7 +24,8 @@ import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 
 const {Title, Text} = Typography;
 
-function EventList() {
+function EventList({filter}) {
+    
     const {
         isMockData,
         setIsFooterVisible,
@@ -33,7 +34,8 @@ function EventList() {
         globalStyles,
         token,
         shouldFetch,
-        resetFetch
+        resetFetch,
+        setHeaderTitle
     } = useApp();
 
     const navigate = useNavigate();
@@ -47,6 +49,7 @@ function EventList() {
     const {orgId, authData} = useAuth();
     const [eventData, setEventData] = useState(null);
     const [filteredCount, setFilteredCount] = useState(0);
+    const { filterKey } = useParams();
     
     const loadEvents = async (data) => {
         let postData = {
@@ -66,7 +69,7 @@ function EventList() {
             EventRegistrationTypeId: null,
             EventSortBy: 1,
             EmbedCodeId: null,
-            Filter: '',
+            Filter: filterKey,
             preventCookieSave: true,
             FilterPublicKey: '',
             HideIneligibleAndFullEvents: false,
@@ -77,7 +80,6 @@ function EventList() {
 
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiLoadEvents?id=${orgId}`, postData);
         if (toBoolean(response?.IsValid)){
-            console.log(response.Data)
             setEvents(response.Data.List)
             setHasMore(response.Data.TotalRecords > response.Data.List.length)
         }
@@ -113,6 +115,23 @@ function EventList() {
     }, [shouldFetch, resetFetch]);
 
     useEffect(() => {
+        if (filter) {
+            //should set title from header nav
+            let cacheLinks = getNavigationStorage(orgId);
+            
+            //find event node
+            const parentNode = cacheLinks.find((link) => equalString(link.Item, 3));
+            if (parentNode) {
+                let eventChildrens = parentNode?.Childrens;
+                if (anyInList(eventChildrens)) {
+                    let children = eventChildrens.find(filter => !isNullOrEmpty(filter.Url) && filter.Url.includes(filterKey));
+                    if (children) {
+                        setHeaderTitle(children.Text);
+                    }
+                }
+            }
+        }
+        
         setIsFooterVisible(true);
         loadData();
     }, []);

@@ -1,4 +1,4 @@
-﻿import {useNavigate, useParams} from "react-router-dom";
+﻿import {useLocation, useNavigate, useParams} from "react-router-dom";
 import { IndexBar, List } from 'antd-mobile';
 import {useEffect, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
@@ -15,15 +15,17 @@ function MemberGroupDetails() {
     const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setHeaderTitle, setFooterContent, availableHeight, globalStyles} = useApp();
     const {orgId} = useAuth();
     const [isFetching, setIsFetching] = useState(true);
-    let {id} = useParams();
-
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const memberGroupId = queryParams.get("memberGroupId");
+    
     const loadData = (refresh) => {
         if (isMockData) {
 
             setIsFetching(false)
         } else {
             setIsFetching(true);
-            appService.get(navigate, `/app/Online/PublicMemberGroup/GetGroupMembers?id=${orgId}&groupId=${id}`).then(r => {
+            appService.get(navigate, `/app/Online/PublicMemberGroup/GetGroupMembers?id=${orgId}&groupId=${memberGroupId}`).then(r => {
 
                 if (toBoolean(r?.IsValid)){
                     const data = r.Data;
@@ -56,7 +58,6 @@ function MemberGroupDetails() {
                             return acc;
                         }, {});
 
-                        console.log(grouped);
                         setGroups(grouped);
                     }
                 }

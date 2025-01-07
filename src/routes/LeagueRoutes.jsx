@@ -1,7 +1,7 @@
 import LeagueList from "@portal/league/list/LeagueList.jsx";
 
 export const LeagueRouteNames = {
-    LEAGUE_LIST: '/event/list'
+    LEAGUE_LIST: '/online/leagues/list/:id'
 };
 
 const LeagueRoutes = [

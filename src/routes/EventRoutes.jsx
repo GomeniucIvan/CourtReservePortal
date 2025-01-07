@@ -5,7 +5,9 @@ import EventDetails from "@portal/event/details/EventDetails.jsx";
 import EventList from "@portal/event/list/EventList.jsx";
 
 export const EventRouteNames = {
-    EVENT_LIST: '/Online/events/list/:id',
+    EVENT_LIST: '/online/events/list/:id',
+    EVENT_CATEGORIES: '/online/events/categories/:id',
+    EVENT_FILTER: '/online/events/list/:id/:filterKey',
     EVENT_DETAILS: '/event/details/:number',
     EVENT_SIGNUP: '/event/signup/:eventId/:reservationId',
     EVENT_FULL_SIGNUP: '/event/full-signup/:eventId/:reservationId',
@@ -16,6 +18,17 @@ const EventRoutes = [
         path: EventRouteNames.EVENT_LIST,
         element: <EventList />,
         title: 'events',
+        entityTitle: true,
+    },
+    {
+        path: EventRouteNames.EVENT_FILTER,
+        element: <EventList filter={true}/>,
+        header: true,
+    },
+    {
+        path: EventRouteNames.EVENT_CATEGORIES,
+        element: <EventCategoryList />,
+        title: 'eventCategories',
         entityTitle: true,
     },
     {
