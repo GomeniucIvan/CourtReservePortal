@@ -29,7 +29,7 @@ function DashboardModern() {
                <PaddingBlock topBottom={true}>
                    <Flex vertical={true} gap={token.paddingSM} >
                        <Button block onClick={() => navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
-                       <Button block onClick={() => navigate(HomeRouteNames.CALENDAR)}>Calendar</Button>
+                       <Button block onClick={() => navigate(EventRouteNames.EVENT_CALENDAR)}>Calendar</Button>
                        <Button block onClick={() => navigate(EventRouteNames.EVENT_LIST)}>Event List</Button>
                        <Button block onClick={() => navigate('/membergroup/21072')}>Member Group</Button>
 

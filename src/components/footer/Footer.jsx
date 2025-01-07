@@ -4,18 +4,20 @@ import {Skeleton} from "antd-mobile";
 import {useEffect, useRef, useState} from "react";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
-import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {Flex, Typography} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import { cx } from 'antd-style';
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const {Text} = Typography;
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {styles} = useStyles();
     const navigate = useNavigate();
     const {token} = useApp();
-    
+    const {orgId} = useAuth();
     const [activeKey, setActiveKey] = useState('home');
     const footerRef = useRef();
     const [footerHeight, setFooterHeight] = useState();
@@ -31,12 +33,20 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
             return;
         }
         
-        setActiveKey(key);
+        if (!equalString(key, 'reserve')) {
+            setActiveKey(key);
+        }
         
         if (equalString(key, 'home')){
             navigate(HomeRouteNames.INDEX);
         } else if(equalString(key, 'more')){
             navigate(HomeRouteNames.MORE_NAVIGATION);
+        } else if(equalString(key, 'calendar')){
+            let route = toRoute(EventRouteNames.EVENT_CALENDAR, 'id', orgId);
+            navigate(route);
+        } else if(equalString(key, 'alerts')){
+            let route = toRoute(HomeRouteNames.NOTIFICATION_LIST, 'id', orgId);
+            navigate(route);
         }
     }
     

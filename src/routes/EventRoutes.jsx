@@ -3,10 +3,12 @@ import EventCalendar from "@portal/event/calendar/EventCalendar.jsx";
 import EventRegistration from "@portal/event/registration/EventRegistration.jsx";
 import EventDetails from "@portal/event/details/EventDetails.jsx";
 import EventList from "@portal/event/list/EventList.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 
 export const EventRouteNames = {
     EVENT_LIST: '/online/events/list/:id',
     EVENT_CATEGORIES: '/online/events/categories/:id',
+    EVENT_CALENDAR: '/online/calendar/events/:id',
     EVENT_FILTER: '/online/events/list/:id/:filterKey',
     EVENT_DETAILS: '/event/details/:number',
     EVENT_SIGNUP: '/event/signup/:eventId/:reservationId',
@@ -57,8 +59,11 @@ const EventRoutes = [
         element: <EventCategoryList />
     },
     {
-        path: '/event-calendar/:orgId',
-        element: <EventCalendar />
+        path: EventRouteNames.EVENT_CALENDAR,
+        element: <EventCalendar />,
+        title: 'eventCalendar',
+        entityTitle: true,
+        disablePullDown: true
     },
     {
         path: '/event-registration/:orgId/:resId',

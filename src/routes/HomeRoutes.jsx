@@ -7,15 +7,15 @@ import EventCalendar from "@portal/event/calendar/EventCalendar.jsx";
 import Navigation from "@portal/navigation/Navigation.jsx";
 import DisclosurePending from "@portal/home/disclosure/DisclosurePending.jsx";
 import MemberGroupDetails from "@portal/membergroup/details/MemberGroupDetails.jsx";
+import NotificationList from "@portal/notification/list/NotificationList.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
     INDEX: '/',
     SCHEDULER: '/online/reservations/bookings/:id',
-    CALENDAR: '/calendar',
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/online/announcement/index/:id`,
-    LEAGUES_LIST: `/leagues/list`,
+    NOTIFICATION_LIST: `/online/notification/list/:id`,
     MORE_NAVIGATION: `/more`,
     NAVIGATE: `/online/portal/navigate/:id/:nodeId`,
     DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
@@ -50,18 +50,6 @@ const HomeRoutes = [
         header: true
     },
     {
-        path: HomeRouteNames.LEAGUES_LIST,
-        element: <LeagueList />,
-        title: 'leagues'
-    },
-    {
-        path: HomeRouteNames.CALENDAR,
-        element: <EventCalendar />,
-        title: 'eventCalendar',
-        entityTitle: true,
-        disablePullDown: true
-    },
-    {
         path: HomeRouteNames.MORE_NAVIGATION,
         element: <Navigation key={'more'}/>,
         title: 'more',
@@ -83,6 +71,11 @@ const HomeRoutes = [
         element: <MemberGroupDetails scope={2}/>,
         title: 'memberGroup',
         entityTitle: true,
+    },
+    {
+        path: HomeRouteNames.NOTIFICATION_LIST,
+        element: <NotificationList/>,
+        title: 'notifications'
     }
 ];
 
