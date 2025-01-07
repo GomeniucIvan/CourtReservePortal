@@ -12,19 +12,20 @@ import DashboardCards from "@portal/home/index/cards/DashboardCards.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {cx} from "antd-style";
 import {useStyles} from "./styles.jsx";
+import appService from "@/api/app.jsx";
 
 function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading } = useApp();
     const {orgId, setAuthorizationData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
+    const [backendIsFetching, setBackendIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const navigate = useNavigate();
     const drawerBarcodeRef = useRef();
     const { styles } = useStyles();
     
     const loadData = async (refresh) => {
-        const cachedData = fromLocalStorage('dashboardData');
-
+        const cachedData = fromLocalStorage(`dashboardData_${orgId}`);
         if (refresh){
             setIsFetching(true);
         } else{
@@ -34,12 +35,13 @@ function Dashboard() {
             }
         }
 
-        let authResponse = await apiService.authData(orgId,{loadWeatherData:true,includeDashboardData:true});
-
-        if (toBoolean(authResponse?.IsValid)) {
-            setAuthorizationData(authResponse.Data);
-            setDashboardData(authResponse.Data);
-            toLocalStorage('dashboardData', authResponse.Data);
+        let dashboardData = await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}`);
+        
+        if (toBoolean(dashboardData?.IsValid)) {
+            console.log(dashboardData?.Data);
+            //setAuthorizationData(authResponse.Data);
+            setDashboardData(dashboardData.Data);
+            toLocalStorage(`dashboardData_${orgId}`, dashboardData.Data);
             setIsFetching(false);
         }
         
@@ -66,20 +68,25 @@ function Dashboard() {
         <div className={cx(styles.orgArea, 'safe-area-top')}>
             {/*<div className={globalStyles.safeAreaGlass}></div>*/}
 
-            {/*Modern Dashboard*/}
-            {(equalString(dashboardData?.MobileDashboardView, 3)) &&
-                <DashboardModern dashboardData={dashboardData} />
+            {dashboardData &&
+                <>
+                    {/*Modern Dashboard*/}
+                    {(equalString(dashboardData?.mobileDashboardView, 3)) &&
+                        <DashboardModern dashboardData={dashboardData} />
+                    }
+
+                    {/*Classic*/}
+                    {(equalString(dashboardData?.mobileDashboardView, 1) ||equalString(dashboardData?.mobileDashboardView, 2) || isNullOrEmpty(dashboardData?.mobileDashboardView)) &&
+                        <DashboardClassic dashboardData={dashboardData}/>
+                    }
+
+                    {/*Cards*/}
+                    {equalString(dashboardData?.mobileDashboardView, 4) &&
+                        <DashboardCards dashboardData={dashboardData}/>
+                    }
+                </>
             }
 
-            {/*Classic*/}
-            {(equalString(dashboardData?.MobileDashboardView, 2) || isNullOrEmpty(dashboardData?.MobileDashboardView)) &&
-                <DashboardClassic dashboardData={dashboardData}/>
-            }
-
-            {/*Cards*/}
-            {equalString(dashboardData?.MobileDashboardView, 4) &&
-                <DashboardCards dashboardData={dashboardData}/>
-            }
         </div>
     )
 }

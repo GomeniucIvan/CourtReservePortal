@@ -77,7 +77,7 @@ function LoginUpdatePassword() {
             let orgId = loginResponse.orgId;
             let memberId = loginResponse.memberId;
 
-            let requestData = await appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`);
+            let requestData = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${orgId}`);
 
             if (requestData.IsValid) {
                 const responseData = requestData.Data;

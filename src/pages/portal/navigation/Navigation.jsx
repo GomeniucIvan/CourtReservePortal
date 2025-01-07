@@ -1,4 +1,4 @@
-﻿import CardLinks from "@/components/cardlinks/CardLinks.jsx";
+﻿import CardLinks from "@/components/navigationlinks/CardLinks.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {useEffect, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";

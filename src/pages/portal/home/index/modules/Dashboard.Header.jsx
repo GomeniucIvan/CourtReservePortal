@@ -43,6 +43,10 @@ const DashboardHeader = ({ dashboardData }) => {
         loadData();
     }, [])
     
+    useEffect(() => {
+        setOrgList(dashboardData?.listOrg || []);
+    }, [dashboardData]);
+    
     const WEATHER_TYPE = {
         temperature: 'temperature',
         rainPercentage: 'rainPercentage',

@@ -118,7 +118,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
 
         if (toBoolean(response?.IsValid)){
             let memberId = response.memberId;
-            let requestData = await appService.get(navigate, `/app/Online/Account/RequestData?id=${values.selectedOrgId}&memberId=${memberId}`);
+            let requestData = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${values.selectedOrgId}`);
             
             if (requestData.IsValid) {
                 const responseData = requestData.Data;

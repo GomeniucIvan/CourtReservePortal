@@ -247,10 +247,10 @@ function Layout() {
             orgId = memberData?.OrgId;
         }
         
-        let requestData = await appService.get(navigate, `/app/Online/Account/RequestData?id=${orgId}&memberId=${memberId}`);
-
+        let requestData = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${orgId}`);
+        const responseData = requestData?.Data;
+        
         if (requestData.IsValid) {
-            const responseData = requestData.Data;
             setRequestData(responseData.RequestData);
 
             let authResponse = await apiService.authData(orgId);
@@ -258,6 +258,11 @@ function Layout() {
             if (toBoolean(authResponse?.IsValid)) {
                 await setAuthorizationData(authResponse.Data);
                 setIsFetching(false);
+            }
+        } else {
+            if (toBoolean(responseData?.UnathorizeAccess)) {
+                //validating data from backend
+                navigate(AuthRouteNames.LOGIN);
             }
         }
 

@@ -25,7 +25,8 @@ export const getRequestData = () => {
 
 const loadBearerToken = async () => {
     if (isNullOrEmpty(getBearerToken())) {
-        const tokenResponse = await appService.post('/app/MobileSso/ValidateAndCreateToken');
+        //id 0 
+        const tokenResponse = await appService.post('/app/MobileSso/AuthorizationData');
         if (toBoolean(tokenResponse?.IsValid)) {
             setBearerToken(tokenResponse.Token);
             return true;

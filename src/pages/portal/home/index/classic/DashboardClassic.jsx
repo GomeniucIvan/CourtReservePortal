@@ -1,24 +1,15 @@
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {cx} from "antd-style";
-import {Button, Flex, Typography} from "antd";
+import {Button, Divider, Flex, Typography} from "antd";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
-import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import apiService from "@/api/api.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import {EventRouteNames} from "@/routes/EventRoutes.jsx";
-import DrawerBarcode from "@/components/drawer/DrawerBarcode.jsx";
 const { Title } = Typography;
-import DashboardAnnouncements from "@portal/home/index/modules/Dashboard.Announcements.jsx";
 import DashboardReservations from "@portal/home/index/modules/Dashboard.Reservations.jsx";
-import DashboardOpenMatches from "@portal/home/index/modules/Dashboard.OpenMatches.jsx";
-import DashboardEvents from "@portal/home/index/modules/Dashboard.Events.jsx";
-import DashboardLeagues from "@portal/home/index/modules/Dashboard.Leagues.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
 import DashboardMembershipBar from "@portal/home/index/modules/Dashboard.MembershipBar.jsx";
+import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
+import SVG from "@/components/svg/SVG.jsx";
 
 function DashboardClassic({dashboardData}) {
 	const {orgId, setAuthorizationData} = useAuth();
@@ -26,16 +17,47 @@ function DashboardClassic({dashboardData}) {
 	const [navigationItems, setNavigationItems] = useState([]);
 	const navigate = useNavigate();
 	const {token} = useApp();
-	const showAllMenuList = showAll ? navigationItems : navigationItems.slice(0, 6);
-
+	const navigationItemsToShow = showAll ? navigationItems : navigationItems.slice(0, 6);
+	
+	console.log(dashboardData);
+	
+	useEffect(() => {
+		setNavigationItems(dashboardData?.menu || []);	
+	}, [dashboardData])
+	
+	console.log(navigationItems)
+	
 	return (
 		<>
-			<PaddingBlock topBottom={true}>
-				<Flex vertical={true} gap={token.padding}>
+			<Flex vertical={true} gap={token.padding}>
+				<PaddingBlock onlyTop={true}>
 					<DashboardHeader dashboardData={dashboardData} />
-					<DashboardMembershipBar dashboardData={dashboardData}  />
-				</Flex>
-			</PaddingBlock>
+				</PaddingBlock>
+				<PaddingBlock>
+					<DashboardMembershipBar dashboardData={dashboardData} />
+				</PaddingBlock>
+				
+				//alert
+
+				<PaddingBlock>
+					<Flex vertical={true} gap={token.paddingSM}>
+						<ListLinks links={navigationItemsToShow} />
+
+						{navigationItems.length > 6 &&
+							<Divider>
+								<Flex gap={token.paddingSM} align={'center'} onClick={() => setShowAll((prev) => !prev)}>
+									{`Show ${showAll ? 'Less' : 'More'}`}
+									<SVG icon={showAll ? 'chevron-up-regular' : 'chevron-down-regular'} size={token.fontSize} />
+								</Flex>
+							</Divider>
+						}
+					</Flex>
+				</PaddingBlock>
+				
+				<PaddingBlock onlyBottom={true}>
+					<DashboardReservations dashboardData={dashboardData}/>
+				</PaddingBlock>
+			</Flex>
 		</>
 	)
 }
