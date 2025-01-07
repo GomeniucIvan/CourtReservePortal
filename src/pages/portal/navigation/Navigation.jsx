@@ -13,11 +13,12 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {Swiper} from "antd-mobile";
 import SVG from "@/components/svg/SVG.jsx";
 import * as React from "react";
+import appService, {apiRoutes} from "@/api/app.jsx";
 
 function Navigation({key}) {
     const { nodeId } = useParams();
     const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, setHeaderTitle, token} = useApp();
-    const {orgId} = useAuth();
+    const {orgId, authData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
     const [links, setLinks] = useState(getNavigationStorage(orgId));
 
@@ -27,7 +28,24 @@ function Navigation({key}) {
         }
     }, [key]);
 
-    console.log(nodeId)
+    const loadMyLeagues = async () => {
+        let response =await appService.getRoute(apiRoutes.API4, `/app/Online/Utils/Member_GetRegisteredLeagues?orgId=${orgId}&memberId=${authData?.MemberId}`);
+        if (toBoolean(response?.IsValid)) {
+            const data = response.Data;
+            
+            let myLeagues = data.map((league) => {
+                return {
+                    IconClass: 'trophy',
+                    Text: league.Name,
+                    Url: `/Online/Leagues/Details/${league.Id}`
+                }
+            });
+
+            setLinks(myLeagues);
+            setIsFetching(false);
+        }
+    }
+    
     useEffect(() => {
         if (!isNullOrEmpty(nodeId)) {
             //TODO LOGOUT
@@ -37,6 +55,8 @@ function Navigation({key}) {
                 //my leagues
                 setIsFetching(true);
                 setHeaderTitle('My Leagues');
+                
+                loadMyLeagues();
             } else {
                 //3rd level not update new links
                 //we should reset links

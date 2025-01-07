@@ -9,6 +9,7 @@ const appUrl = isProduction ? import.meta.env.VITE_APP_URL : '';
 
 export const apiRoutes = {
     API2: appUrl,
+    API4: appUrl,
     CREATE_RESERVATION: appUrl,
     HUB_URL_READ: appUrl,
     MemberSchedulersApiUrl: appUrl,
