@@ -15,7 +15,7 @@ import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 const { Title, Text } = Typography;
 
-const DashboardMembershipBar = () => {
+const DashboardMembershipBar = ({dashboardData}) => {
     const{ token, globalStyles } = useApp();
     const{ authData } = useAuth();
     const drawerBarcodeRef = useRef(null);
@@ -45,8 +45,8 @@ const DashboardMembershipBar = () => {
                                     <Ellipsis direction='end' content={authData?.MemberFullName}/>
                                 </Title>
                             }
-                            {authData?.MembershipName &&
-                                <Text style={{color: token.colorSecondary}}><Ellipsis direction='end' content={authData?.MembershipName}/></Text>
+                            {dashboardData?.MembershipName &&
+                                <Text style={{color: token.colorSecondary}}><Ellipsis direction='end' content={dashboardData?.MembershipName}/></Text>
                             }
                         </Flex>
                     </Flex>

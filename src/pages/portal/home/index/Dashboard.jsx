@@ -26,9 +26,8 @@ function Dashboard() {
     const { orgId, authData } = useAuth();
     const [navigationItems, setNavigationItems] = useState([]);
     const [navigationMoreItems, setNavigationMoreItems] = useState([]);
-    
-    const [dashboardData, setDashboardData] = useState(null);
     const navigate = useNavigate();
+    const [dashboardData, setDashboardData] = useState(null);
     const { styles } = useStyles();
     
     const loadNavigationData = async (refresh) => {
@@ -118,13 +117,14 @@ function Dashboard() {
                 <>
                     {/*Modern Dashboard*/}
                     {(equalString(dashboardData?.mobileDashboardView, 3)) &&
-                        <DashboardModern dashboardData={dashboardData} />
+                        <DashboardModern dashboardData={dashboardData}
+                                         navigationItems={navigationItems} />
                     }
 
                     {/*Classic*/}
                     {(equalString(dashboardData?.mobileDashboardView, 1) ||equalString(dashboardData?.mobileDashboardView, 2) || isNullOrEmpty(dashboardData?.mobileDashboardView)) &&
                         <DashboardClassic dashboardData={dashboardData}
-                                          navigationItems={navigationItems}/>
+                                          navigationItems={navigationItems} />
                     }
 
                     {/*Cards*/}
