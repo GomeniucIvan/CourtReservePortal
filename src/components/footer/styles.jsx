@@ -36,12 +36,6 @@ export const useStyles = createStyles(({ css, token }) => {
         footerSkeletonWrapper: css`
             padding-left: ${token.padding}px;
             padding-right: ${token.padding}px;
-        `,
-        drawerReserveListItem: css`
-            min-height: 60px !important;
-            border-bottom: 1px solid ${token.colorBorder};
-            padding-left: ${token.padding}px;
-            padding-right: ${token.padding}px;
         `
     };
 });

@@ -1,6 +1,6 @@
 ﻿import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {anyInList, equalString, isNullOrEmpty, oneListItem, toBoolean} from "../../utils/Utils.jsx";
-import {Popup} from "antd-mobile";
+import {Ellipsis, Popup} from "antd-mobile";
 import {Divider, Flex, QRCode, Typography} from "antd";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
@@ -9,6 +9,8 @@ import {useStyles} from "./styles.jsx";
 import Barcode from "react-barcode";
 import DrawerBottom from "./DrawerBottom.jsx";
 import FormDrawerRadio from "../../form/formradio/FormDrawerRadio.jsx";
+import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
+import SVG from "@/components/svg/SVG.jsx";
 
 const {Title} = Typography;
 
@@ -31,7 +33,7 @@ const DrawerBarcode = forwardRef(({familyList = [], format}, ref) => {
             }
         }
     }));
-
+    
     return (
         <>
             <Modal show={!isNullOrEmpty(barcode)}
@@ -78,9 +80,9 @@ const DrawerBarcode = forwardRef(({familyList = [], format}, ref) => {
                                         }}>
                                             <PaddingBlock>
                                                 <Flex className={globalStyles.drawerRow}>
-                                                    <Title level={1}>
-                                                        {familyMember.FullName}
-                                                    </Title>
+                                                    <Text style={{fontSize: `${token.fontSizeLG}px`}}>
+                                                        <Ellipsis direction='end' rows={1} content={familyMember.FullName}/>
+                                                    </Text>
                                                 </Flex>
                                             </PaddingBlock>
                                             {!isLastItem &&

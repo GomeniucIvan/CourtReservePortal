@@ -410,5 +410,11 @@ export const useStyles = createStyles(({ css, token }) => ({
       align-items: center;
       justify-content: center;
       line-height: 48px;
-   `
+   `,
+    drawerCustomListItem: css`
+        min-height: 60px !important;
+        border-bottom: 1px solid ${token.colorBorder};
+        padding-left: ${token.padding}px;
+        padding-right: ${token.padding}px;
+    `
 }));

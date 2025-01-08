@@ -2,7 +2,7 @@
 import {useLocation, useNavigate} from 'react-router-dom';
 import {Skeleton} from "antd-mobile";
 import React, {useEffect, useRef, useState} from "react";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {Flex, Typography} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
@@ -21,7 +21,7 @@ const {Text} = Typography;
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {styles} = useStyles();
     const navigate = useNavigate();
-    const {token} = useApp();
+    const {token, globalStyles} = useApp();
     const {orgId, authData} = useAuth();
     const [activeKey, setActiveKey] = useState('home');
     const footerRef = useRef();
@@ -38,20 +38,20 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
 
     useEffect(() => {
         let cacheLinks = getNavigationStorage(orgId);
-        console.log(cacheLinks)
 
         if (isNullOrEmpty(drawerLInks)){
             let reserveList = [];
-            
-            cacheLinks.forEach(item => {
-                if (equalString(item.Item, 3)) {
-                    reserveList.push(item);
-                } else if (equalString(item.Item, 12)) {
-                    reserveList.push(item);
-                } else if (equalString(item.Item, 9)) {
-                    reserveList.push(item);
-                }
-            });
+            if (anyInList(cacheLinks)){
+                cacheLinks.forEach(item => {
+                    if (equalString(item.Item, 3)) {
+                        reserveList.push(item);
+                    } else if (equalString(item.Item, 12)) {
+                        reserveList.push(item);
+                    } else if (equalString(item.Item, 9)) {
+                        reserveList.push(item);
+                    }
+                });
+            }
             setDrawerLinks(reserveList);
         }
 
@@ -202,7 +202,7 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
                showButton={false}
            >
               <PaddingBlock onlyBottom={true} leftRight={false}>
-                  <ListLinks links={drawerLInks} hideChevron={true} classNameLi={styles.drawerReserveListItem} />
+                  <ListLinks links={drawerLInks} hideChevron={true} classNameLi={globalStyles.drawerCustomListItem} />
               </PaddingBlock>
            </DrawerBottom>
        </>

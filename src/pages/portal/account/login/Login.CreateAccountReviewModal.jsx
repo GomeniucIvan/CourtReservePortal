@@ -163,7 +163,10 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                     }
                 }
             }
-        } else{
+        } else if (toBoolean(response?.Data?.UnathorizeAccess)){
+            navigate(AuthRouteNames.LOGIN);
+        }
+        else{
             ModalClose({
                 content: response.Message,
                 showIcon: false,

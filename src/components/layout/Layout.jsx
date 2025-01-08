@@ -249,7 +249,6 @@ function Layout() {
         
         let requestData = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${orgId}`);
         const responseData = requestData?.Data;
-        
         if (requestData.IsValid) {
             setRequestData(responseData.RequestData);
 
@@ -263,9 +262,10 @@ function Layout() {
             if (toBoolean(responseData?.UnathorizeAccess)) {
                 //validating data from backend
                 navigate(AuthRouteNames.LOGIN);
+                
             }
         }
-
+        setIsFetching(false);
         setIsLoading(false);
     }
 
