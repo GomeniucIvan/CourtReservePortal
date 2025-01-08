@@ -39,6 +39,8 @@
   "waivers": "Waivers",
   "memberGroup": "Member Group",
   "notifications": "Alerts",
+  "news": "News",
+  "newsDetails": "News Details",
   
   "requestAccess": "Request Access"
 }
