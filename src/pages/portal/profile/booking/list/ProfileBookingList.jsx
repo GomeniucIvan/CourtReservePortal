@@ -9,7 +9,7 @@ import mockData from "@/mocks/reservation-data.json";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import {Card, Ellipsis, List, Selector} from "antd-mobile";
-import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {getQueryParameter, setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
@@ -55,10 +55,7 @@ function ProfileBookingList() {
     const {t} = useTranslation('');
     
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const typeParam = queryParams.get("type");
-    
-    console.log(typeParam)
+    const typeParam = getQueryParameter(location, "type");
     
     const loadBookings = (incFilterData, type, skip) => {
         if (isNullOrEmpty(incFilterData)) {
@@ -207,7 +204,7 @@ function ProfileBookingList() {
 
         return (
             <Card
-                className={cx(globalStyles.card, globalStyles.listCardGrid, globalStyles.clickableCard, lessStyles.cardGrid)}
+                className={cx(globalStyles.card, globalStyles.listCardGrid, globalStyles.clickableCard, globalStyles.listCardGrid)}
                 style={{borderColor: booking.TypeBackgroundColor}}>
                 <div className={globalStyles.listBgColor}
                      style={{backgroundColor: booking.TypeBackgroundColor}}></div>

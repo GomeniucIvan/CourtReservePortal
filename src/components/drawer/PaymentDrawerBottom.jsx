@@ -6,12 +6,9 @@ import {CloseOutline, SearchOutline} from "antd-mobile-icons";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
-import {SvgIcon} from "@progress/kendo-react-common";
 import SVG from "../svg/SVG.jsx";
 import {costDisplay} from "../../utils/CostUtils.jsx";
 import {cx} from "antd-style";
-import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
-import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 import {ModalClose} from "../../utils/ModalUtils.jsx";
 
 const {Title, Text} = Typography;
@@ -101,6 +98,7 @@ const PaymentDrawerBottom = forwardRef(({
                         mask={isDrawerOpen}
                         onMaskClick={() => {setIsDrawerOpen(false)}}
                         onClose={() => {setIsDrawerOpen(false)}}
+                        className={styles.paymentDrawerWrapper}
                         bodyStyle={{
                             height: toBoolean(fullHeight) ? '100%' : 'auto',
                             maxHeight: `${maxHeightVh}vh`,

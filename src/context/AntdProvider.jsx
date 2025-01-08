@@ -35,6 +35,7 @@ export const AntdProvider = ({ children }) => {
         }
     }, [isDarkMode]);
     
+    let colorError = '#D32F2F';
     return (
         <AntdContext.Provider value={{setPrimaryColor,setIsDarkMode, isDarkMode}}>
             <App>
@@ -57,7 +58,7 @@ export const AntdProvider = ({ children }) => {
                             fontSizeLG: 16,
                             fontSizeXL: 20,
                             colorSecondary: '#a1a1a1',
-                            colorError: '#D32F2F',
+                            colorError: colorError,
                             colorTextDisabled: toBoolean(isDarkMode) ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
                             checkboxBorderRadius: 4,
                             ribonBorderRadius: 4,
@@ -107,9 +108,9 @@ export const AntdProvider = ({ children }) => {
                                 labelFontSize: 14,
                                 verticalLabelPadding: '0 0 8px',
                                 labelColonMarginInlineStart: 0,
-                                colorError: "rgb(255,77,80)",
+                                colorError: colorError,
                                 itemMarginBottom: 16,
-                                labelRequiredMarkColor: "rgb(255,77,80)",
+                                labelRequiredMarkColor: colorError,
                                 marginXXS: 4,
                                 colorBorder: "rgb(217,217,217)"
                             },

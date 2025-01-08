@@ -51,5 +51,8 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     barcodeWrapper: css`
         height: 100%;
+    `,
+    paymentDrawerWrapper: css`
+        --z-index: 990;
     `
 }));

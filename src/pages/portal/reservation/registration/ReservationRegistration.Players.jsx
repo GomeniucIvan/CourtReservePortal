@@ -182,7 +182,7 @@ function ReservationRegistrationPlayers({formik,
         <>
             {!isNullOrEmpty(formik?.values?.ReservationTypeId) &&
                 <>
-                    <Divider className={globalStyles.formDivider}/>
+                    <Divider className={cx(globalStyles.formDivider, globalStyles.noMargin)}/>
 
                     <Flex vertical gap={token.padding}>
                         <Sticky disable={isNullOrEmpty(selectedReservationType?.MinimumNumberOfPlayers) && isNullOrEmpty(selectedReservationType?.MaximumNumberOfPlayers)}>

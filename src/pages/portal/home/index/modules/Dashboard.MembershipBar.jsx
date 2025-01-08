@@ -14,12 +14,11 @@ import {cx} from "antd-style";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 import {toRoute} from "@/utils/RouteUtils.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 const { Title, Text } = Typography;
 
 const DashboardMembershipBar = ({dashboardData}) => {
     const{ token, globalStyles } = useApp();
-    const{ authData } = useAuth();
+    const{ authData, orgId } = useAuth();
     const drawerBarcodeRef = useRef(null);
     const navigate = useNavigate();
     

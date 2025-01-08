@@ -6,8 +6,7 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
 
     selectGlobal: css`
-        .ant-select-selector {
-            border-color: ${token.colorBorder} !important;
+        .ant-select-selector:not(.ant-select-status-error) {
             box-shadow: none !important;
         }
         .ant-select-selection-item-remove{

@@ -25,6 +25,7 @@ function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
     const { orgId, authData } = useAuth();
     const [navigationItems, setNavigationItems] = useState([]);
+    const [organizationList, setOrganizationList] = useState([]);
     const [navigationMoreItems, setNavigationMoreItems] = useState([]);
     const navigate = useNavigate();
     const [dashboardData, setDashboardData] = useState(null);
@@ -52,6 +53,7 @@ function Dashboard() {
         if (toBoolean(dashboardData?.IsValid)) {
             setNavigationItems(dashboardData.Data.menu);
             setNavigationMoreItems(dashboardData.Data.more);
+            setOrganizationList(dashboardData.Data.listOrg);
             setNavigationStorage(orgId, dashboardData.Data.menu, dashboardData.Data.more);
         }
         
@@ -118,12 +120,14 @@ function Dashboard() {
                     {/*Modern Dashboard*/}
                     {(equalString(dashboardData?.mobileDashboardView, 3)) &&
                         <DashboardModern dashboardData={dashboardData}
+                                         organizationList={organizationList}
                                          navigationItems={navigationItems} />
                     }
 
                     {/*Classic*/}
                     {(equalString(dashboardData?.mobileDashboardView, 1) ||equalString(dashboardData?.mobileDashboardView, 2) || isNullOrEmpty(dashboardData?.mobileDashboardView)) &&
                         <DashboardClassic dashboardData={dashboardData}
+                                          organizationList={organizationList}
                                           navigationItems={navigationItems} />
                     }
 

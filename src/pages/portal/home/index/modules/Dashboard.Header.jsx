@@ -14,9 +14,8 @@ import {getCookie} from "@/utils/CookieUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const {Text, Title} = Typography;
 
-const DashboardHeader = ({ dashboardData }) => {
+const DashboardHeader = ({ dashboardData, organizationList }) => {
     const [showOrganizationDrawer, setShowOrganizationDrawer] = useState(false);
-    const [orgList, setOrgList] = useState([]);
     const [weather, setWeather] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
     const [showInCelsius, setShowInCelsius] = useState(true);
@@ -56,12 +55,16 @@ const DashboardHeader = ({ dashboardData }) => {
             setIsFetching(false);
         }
     }, [])
+
+    useEffect(() => {
+        console.log(authData)
+        
+    }, [authData]);
     
     useEffect(() => {
         if (!isNullOrEmpty(dashboardData)){
             loadData();
         }
-        setOrgList(dashboardData?.listOrg || []);
     }, [dashboardData]);
     
     const WEATHER_TYPE = {
@@ -149,7 +152,7 @@ const DashboardHeader = ({ dashboardData }) => {
                 onConfirmButtonClick={() => {
                     //window.location.href = `/Online/MyProfile/JoinClub/${orgId}`
                 }}>
-                {orgList.map((orgListItem, index) => {
+                {organizationList.map((orgListItem, index) => {
                     const innerLogoSrc = organizationLogoSrc(orgListItem.Id, orgListItem.LogoUrl);
                     let isLastItem = index === innerLogoSrc.length - 1;
                     

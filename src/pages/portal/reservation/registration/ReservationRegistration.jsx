@@ -671,155 +671,157 @@ function ReservationRegistration() {
             {!isFetching &&
                 <>
                     <PaddingBlock topBottom={true}>
-                        <Title level={1} className={globalStyles.noTopPadding}>Reservation Details</Title>
-
-                        {!isNullOrEmpty(reservation?.InstructorId) &&
-                            <FormInput formik={formik}
-                                       disabled={true}
-                                       label={'Instructor'}
-                                       name={`InstructorName`}/>
-                        }
-
-                        {anyInList(reservation?.FamilyMembers) &&
-                            <div style={{display: 'none'}}>
-                                <FormSelect formik={formik}
-                                            ref={selectRegisteringMemberIdRef}
-                                            name={`RegisteringMemberId`}
-                                            label='Reserve For'
-                                            options={reservation?.FamilyMembers}
-                                            required={true}
-                                            propText='FullName'
-                                            propValue='Id'/>
-                            </div>
-                        }
-
-                        {toBoolean(reservation?.IsResourceReservation) ? (
-                            <FormSelect formik={formik}
-                                        name={`ReservationTypeId`}
-                                        label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
-                                        options={reservation?.ReservationTypesSelectListItem}
-                                        required={true}
-                                        propText='Text'
-                                        propValue='Value'/>
-                        ) : (
-                            <FormSelect formik={formik}
-                                        name={`ReservationTypeId`}
-                                        label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
-                                        options={reservationTypes}
-                                        ref={selectReservationTypeIdRef}
-                                        required={true}
-                                        loading={toBoolean(loadingState.ReservationTypeId)}
-                                        propText='Name'
-                                        propValue='Id'/>
-                        )}
-
-                        {toBoolean(reservation?.IsResourceReservation) &&
-                            <FormInput formik={formik}
-                                       disabled={true}
-                                       label={'Resource'}
-                                       name={`SelectedResourceName`}/>
-                        }
-
-                        <InlineBlock>
-                            {toBoolean(allowToSelectedStartTime(reservation)) &&
-                                <>
-                                    <FormInput label="Start Time"
-                                               formik={formik}
-                                               required={true}
-                                               name='StartTime'
-                                    />
-
-                                    <FormInput label="End Time"
-                                               formik={formik}
-                                               required={true}
-                                               name='EndTime'
-                                    />
-                                </>
+                        <Flex vertical={true} gap={token.padding}>
+                            <Title level={1} className={globalStyles.noTopPadding}>Reservation Details</Title>
+                            
+                            {!isNullOrEmpty(reservation?.InstructorId) &&
+                                <FormInput formik={formik}
+                                           disabled={true}
+                                           label={'Instructor'}
+                                           name={`InstructorName`}/>
                             }
 
-                            {!toBoolean(allowToSelectedStartTime(reservation)) &&
-                                <>
-                                    <FormSelect label="Duration"
-                                                formik={formik}
-                                                name='Duration'
-                                                options={durations}
+                            {anyInList(reservation?.FamilyMembers) &&
+                                <div style={{display: 'none'}}>
+                                    <FormSelect formik={formik}
+                                                ref={selectRegisteringMemberIdRef}
+                                                name={`RegisteringMemberId`}
+                                                label='Reserve For'
+                                                options={reservation?.FamilyMembers}
                                                 required={true}
-                                                loading={loadingState.Duration}
-                                    />
+                                                propText='FullName'
+                                                propValue='Id'/>
+                                </div>
+                            }
 
-                                    <FormInput label="End Time"
-                                               formik={formik}
-                                               required={true}
-                                               disabled={true}
-                                               name='EndTime'
-                                    />
+                            {toBoolean(reservation?.IsResourceReservation) ? (
+                                <FormSelect formik={formik}
+                                            name={`ReservationTypeId`}
+                                            label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
+                                            options={reservation?.ReservationTypesSelectListItem}
+                                            required={true}
+                                            propText='Text'
+                                            propValue='Value'/>
+                            ) : (
+                                <FormSelect formik={formik}
+                                            name={`ReservationTypeId`}
+                                            label={!isNullOrEmpty(reservation?.InstructorId) ? 'Reservation Type' : 'Reservation Type'}
+                                            options={reservationTypes}
+                                            ref={selectReservationTypeIdRef}
+                                            required={true}
+                                            loading={toBoolean(loadingState.ReservationTypeId)}
+                                            propText='Name'
+                                            propValue='Id'/>
+                            )}
+
+                            {toBoolean(reservation?.IsResourceReservation) &&
+                                <FormInput formik={formik}
+                                           disabled={true}
+                                           label={'Resource'}
+                                           name={`SelectedResourceName`}/>
+                            }
+
+                            <InlineBlock>
+                                {toBoolean(allowToSelectedStartTime(reservation)) &&
+                                    <>
+                                        <FormInput label="Start Time"
+                                                   formik={formik}
+                                                   required={true}
+                                                   name='StartTime'
+                                        />
+
+                                        <FormInput label="End Time"
+                                                   formik={formik}
+                                                   required={true}
+                                                   name='EndTime'
+                                        />
+                                    </>
+                                }
+
+                                {!toBoolean(allowToSelectedStartTime(reservation)) &&
+                                    <>
+                                        <FormSelect label="Duration"
+                                                    formik={formik}
+                                                    name='Duration'
+                                                    options={durations}
+                                                    required={true}
+                                                    loading={loadingState.Duration}
+                                        />
+
+                                        <FormInput label="End Time"
+                                                   formik={formik}
+                                                   required={true}
+                                                   disabled={true}
+                                                   name='EndTime'
+                                        />
+                                    </>
+                                }
+                            </InlineBlock>
+
+                            <FormSelect formik={formik}
+                                        name={`CourtId`}
+                                        label='Court(s)'
+                                        options={courts}
+                                        required={true}
+                                        loading={toBoolean(loadingState.CourtId)}
+                                        propText='DisplayName'
+                                        propValue='Id'/>
+
+                            <ReservationRegistrationMatchMaker
+                                formik={formik}
+                                matchMaker={matchMaker}
+                                selectedReservationType={selectedReservationType}
+                                matchMakerShowSportTypes={matchMakerShowSportTypes}
+                                matchMakerMemberGroups={matchMakerMemberGroups}
+                                matchMakerRatingCategories={matchMakerRatingCategories}
+                            />
+
+                            <ReservationRegistrationPlayers
+                                formik={formik}
+                                reservation={reservation}
+                                showSearchPlayers={showSearchPlayers}
+                                setShowSearchPlayers={setShowSearchPlayers}
+                                reservationMembers={reservationMembers}
+                                selectedReservationType={selectedReservationType}
+                                loadingState={loadingState}
+                                selectRegisteringMemberIdRef={selectRegisteringMemberIdRef}
+                                setReservationMembers={setReservationMembers}
+                                setShouldRebindPlayers={setShouldRebindPlayers}
+                                reloadPlayers={reloadPlayers}
+                                setLoading={setLoading}
+                                playersModelData={playersModelData}
+                                searchPlayerDrawerBottomRef={searchPlayerDrawerBottomRef}
+                            />
+
+                            <Divider className={cx(globalStyles.formDivider, globalStyles.noMargin)}/>
+
+                            {!toBoolean(formik?.values?.IsOpenReservation) &&
+                                <ReservationRegistrationMiscItems miscFeesQuantities={miscFeesQuantities}
+                                                                  setMiscFeesQuantities={setMiscFeesQuantities}/>
+                            }
+
+                            {(showResources && anyInList(resources)) &&
+                                <FormSelect formik={formik}
+                                            name={`ResourceIds`}
+                                            multi={true}
+                                            loading={toBoolean(loadingState.ResourceIds)}
+                                            label={'Resource(s)'}
+                                            options={resources}
+                                            propText='Name'
+                                            propValue='Id'/>
+                            }
+
+                            {anyInList(customFields) &&
+                                <>
+                                    <Title level={1} className={globalStyles.noTopPadding}>Additional Information</Title>
+
+                                    <FormCustomFields customFields={formik?.values?.Udfs} formik={formik} loading={isFetching} name={`Udfs[{udfIndex}].Value`}/>
+                                    <Divider className={cx(globalStyles.formDivider, globalStyles.noMargin)}/>
                                 </>
                             }
-                        </InlineBlock>
 
-                        <FormSelect formik={formik}
-                                    name={`CourtId`}
-                                    label='Court(s)'
-                                    options={courts}
-                                    required={true}
-                                    loading={toBoolean(loadingState.CourtId)}
-                                    propText='DisplayName'
-                                    propValue='Id'/>
-
-                        <ReservationRegistrationMatchMaker
-                            formik={formik}
-                            matchMaker={matchMaker}
-                            selectedReservationType={selectedReservationType}
-                            matchMakerShowSportTypes={matchMakerShowSportTypes}
-                            matchMakerMemberGroups={matchMakerMemberGroups}
-                            matchMakerRatingCategories={matchMakerRatingCategories}
-                        />
-
-                        <ReservationRegistrationPlayers
-                            formik={formik}
-                            reservation={reservation}
-                            showSearchPlayers={showSearchPlayers}
-                            setShowSearchPlayers={setShowSearchPlayers}
-                            reservationMembers={reservationMembers}
-                            selectedReservationType={selectedReservationType}
-                            loadingState={loadingState}
-                            selectRegisteringMemberIdRef={selectRegisteringMemberIdRef}
-                            setReservationMembers={setReservationMembers}
-                            setShouldRebindPlayers={setShouldRebindPlayers}
-                            reloadPlayers={reloadPlayers}
-                            setLoading={setLoading}
-                            playersModelData={playersModelData}
-                            searchPlayerDrawerBottomRef={searchPlayerDrawerBottomRef}
-                        />
-
-                        <Divider className={globalStyles.formDivider}/>
-
-                        {!toBoolean(formik?.values?.IsOpenReservation) &&
-                            <ReservationRegistrationMiscItems miscFeesQuantities={miscFeesQuantities}
-                                                              setMiscFeesQuantities={setMiscFeesQuantities}/>
-                        }
-
-                        {(showResources && anyInList(resources)) &&
-                            <FormSelect formik={formik}
-                                        name={`ResourceIds`}
-                                        multi={true}
-                                        loading={toBoolean(loadingState.ResourceIds)}
-                                        label={'Resource(s)'}
-                                        options={resources}
-                                        propText='Name'
-                                        propValue='Id'/>
-                        }
-
-                        {anyInList(customFields) &&
-                            <>
-                                <Title level={1} className={globalStyles.noTopPadding}>Additional Information</Title>
-
-                                <FormCustomFields customFields={formik?.values?.Udfs} formik={formik} loading={isFetching} name={`Udfs[{udfIndex}].Value`}/>
-                                <Divider className={globalStyles.formDivider}/>
-                            </>
-                        }
-
-                        <ReservationRegistrationTermsAndCondition disclosure={disclosure} formik={formik} />
+                            <ReservationRegistrationTermsAndCondition disclosure={disclosure} formik={formik} />
+                        </Flex>
                     </PaddingBlock>
                 </>
             }

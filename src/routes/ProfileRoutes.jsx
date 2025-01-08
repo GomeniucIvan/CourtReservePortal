@@ -15,7 +15,7 @@ export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
     RESERVATION_EDIT: `/profile/reservation/edit/:id`,
-    RESERVATION_CREATE: `/profile/reservation/create`,
+    RESERVATION_CREATE: `/online/profile/reservation/create`,
     PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
     PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
@@ -26,7 +26,7 @@ export const ProfileRouteNames = {
     PROFILE_BILLING_PAYMENT: `/profile/payment/:id`,
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
-    PROFILE_PAYMENT_PROFILE_LIST: `/profile/payment-profiles`
+    PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`
 };
 
 const ProfileRoutes = [

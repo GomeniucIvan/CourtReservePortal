@@ -9,7 +9,7 @@ import React from "react";
 const {Title} = Typography;
 
 const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
-    const {globalStyles} = useApp();
+    const { globalStyles, token } = useApp();
 
     if (isNullOrEmpty(customFields)) {
         return <></>;
@@ -57,16 +57,18 @@ const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
 
                             case 'TextArea':
                                 return (
-                                    <FormTextArea
-                                        key={Id}
-                                        label={Label}
-                                        name={fieldName}
-                                        loading={loading}
-                                        max={250}
-                                        //placeholder={Label}
-                                        required={IsRequired}
-                                        formik={formik}
-                                    />
+                                    <div style={{paddingBottom: `${token.paddingSM}px`}}>
+                                        <FormTextArea
+                                            key={Id}
+                                            label={Label}
+                                            name={fieldName}
+                                            loading={loading}
+                                            max={250}
+                                            //placeholder={Label}
+                                            required={IsRequired}
+                                            formik={formik}
+                                        />
+                                    </div>
                                 );
 
                             case 'Dropdown':

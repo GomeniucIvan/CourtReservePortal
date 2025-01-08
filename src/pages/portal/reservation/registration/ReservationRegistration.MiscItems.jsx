@@ -93,7 +93,7 @@ function ReservationRegistrationMiscItems({miscFeesQuantities, setMiscFeesQuanti
                         </div>
                     }
 
-                    <Divider className={globalStyles.formDivider}/>
+                    <Divider className={cx(globalStyles.formDivider, globalStyles.noMargin)}/>
                 </Flex>
             }
             

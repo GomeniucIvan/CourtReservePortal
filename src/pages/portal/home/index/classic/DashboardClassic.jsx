@@ -11,7 +11,7 @@ import SVG from "@/components/svg/SVG.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 import {toBoolean} from "@/utils/Utils.jsx";
 
-function DashboardClassic({navigationItems, dashboardData}) {
+function DashboardClassic({navigationItems, dashboardData, organizationList}) {
 	const [showAll, setShowAll] = useState(false);
 	const [navItems, setNavItems] = useState([]);
 	const {token} = useApp();
@@ -27,7 +27,7 @@ function DashboardClassic({navigationItems, dashboardData}) {
 			<Flex vertical={true} gap={token.padding}>
 				<Flex vertical={true} gap={token.paddingXXL}>
 					<PaddingBlock onlyTop={true}>
-						<DashboardHeader dashboardData={dashboardData} />
+						<DashboardHeader dashboardData={dashboardData} organizationList={organizationList} />
 					</PaddingBlock>
 					<Flex vertical={true}>
 						<PaddingBlock>
