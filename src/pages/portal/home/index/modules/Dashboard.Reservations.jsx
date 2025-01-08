@@ -1,4 +1,4 @@
-﻿import {anyInList, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+﻿import {anyInList, isNullOrEmpty, oneListItem, toBoolean} from "@/utils/Utils.jsx";
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
 import EntityCard from "@/components/entitycard/EntityCard.jsx";
 import {Badge, Button, Flex, Tag, Typography} from "antd";
@@ -73,19 +73,25 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
 
             {(!isFetching && anyInList(bookings)) ? (
                     <SwiperSlider count={countListItems(bookings)}>
-                        {bookings.map((booking, index) => (
-                            <Swiper.Item key={index}>
-                                <>
-                                    {toBoolean(booking.IsUnpaid) ? (
-                                        <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
-                                            {bookingTemplate(booking, true)}
-                                        </Badge.Ribbon>
-                                    ) : (
-                                        <>{bookingTemplate(booking)}</>
-                                    )}
-                                </>
-                            </Swiper.Item>
-                        ))}
+                        {bookings.map((booking, index) => {
+                            const isLastItem = index === bookings.length - 1;
+                            const isOneItem = oneListItem(bookings);
+                            
+                            return (
+                                <Swiper.Item key={index} 
+                                             className={cx((!isOneItem && !isLastItem) && globalStyles.swiperItem, (!isOneItem && isLastItem) && globalStyles.swiperLastItem)}>
+                                    <>
+                                        {toBoolean(booking.IsUnpaid) ? (
+                                            <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
+                                                {bookingTemplate(booking, true)}
+                                            </Badge.Ribbon>
+                                        ) : (
+                                            <>{bookingTemplate(booking)}</>
+                                        )}
+                                    </>
+                                </Swiper.Item>
+                            )
+                        })}
                     </SwiperSlider>
             ) : (
                 <ErrorBlock status='empty' title='You dont signup to any reservation' description={''} />

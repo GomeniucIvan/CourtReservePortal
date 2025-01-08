@@ -24,6 +24,7 @@ import {useSafeArea} from "../../context/SafeAreaContext.jsx";
 import {match} from "path-to-regexp";
 import {ErrorBoundary} from "react-error-boundary";
 import {Toaster} from "react-hot-toast";
+import portalService from "@/api/portal.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -241,31 +242,21 @@ function Layout() {
 
     const loadOrganizationData = async (orgId) => {
         const memberData = fromAuthLocalStorage('memberData', {});
-        const memberId = memberData?.MemberId;
 
         if (isNullOrEmpty(orgId)){
             orgId = memberData?.OrgId;
         }
-        
-        let requestData = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${orgId}`);
-        const responseData = requestData?.Data;
+
+        let requestData = await portalService.requestData(navigate, orgId);
         if (requestData.IsValid) {
-            setRequestData(responseData.RequestData);
-
-            let authResponse = await apiService.authData(orgId);
-
-            if (toBoolean(authResponse?.IsValid)) {
-                await setAuthorizationData(authResponse.Data);
-                setIsFetching(false);
-            }
-        } else {
-            if (toBoolean(responseData?.UnathorizeAccess)) {
-                //validating data from backend
-                navigate(AuthRouteNames.LOGIN);
-                
-            }
+            await setAuthorizationData(requestData.OrganizationData);
+            setIsFetching(false);
+        } if (toBoolean(requestData?.UnathorizeAccess)) {
+            //validating data from backend
+            navigate(AuthRouteNames.LOGIN);
+        } else{
+            setIsFetching(false);
         }
-        setIsFetching(false);
         setIsLoading(false);
     }
 

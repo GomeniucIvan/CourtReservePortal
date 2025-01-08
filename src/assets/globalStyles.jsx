@@ -416,5 +416,11 @@ export const useStyles = createStyles(({ css, token }) => ({
         border-bottom: 1px solid ${token.colorBorder};
         padding-left: ${token.padding}px;
         padding-right: ${token.padding}px;
-    `
+    `,
+   swiperItem: css`
+        width: calc(100% - ${token.padding}px);
+   `,
+   swiperLastItem: css`
+      width: ${window.innerWidth - (token.padding*2)}px;
+   `
 }));

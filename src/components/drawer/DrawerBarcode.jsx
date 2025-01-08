@@ -12,7 +12,7 @@ import FormDrawerRadio from "../../form/formradio/FormDrawerRadio.jsx";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 
-const {Title} = Typography;
+const {Text} = Typography;
 
 const DrawerBarcode = forwardRef(({familyList = [], format}, ref) => {
     const [showDrawer, setShowDrawer] = useState(false);

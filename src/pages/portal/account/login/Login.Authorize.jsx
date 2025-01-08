@@ -17,6 +17,7 @@ import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {ModalClose} from "@/utils/ModalUtils.jsx";
 import appService from "@/api/app.jsx";
 import {useTranslation} from "react-i18next";
+import portalService from "@/api/portal.jsx";
 
 function LoginAuthorize() {
     const {
@@ -111,10 +112,10 @@ function LoginAuthorize() {
 
                 const responseData = loginApiResponse.Data;
                 setRequestData(responseData.RequestData);
-                const authResponse = await apiService.authData(responseData.OrgId);
+                const authResponse = await portalService.organizationData(responseData.OrgId);
 
                 if (toBoolean(authResponse?.IsValid)) {
-                    await setAuthorizationData(authResponse.Data);
+                    await setAuthorizationData(authResponse.Organization);
                     navigate(loginApiResponse.Path);
                 }
             }

@@ -1,4 +1,4 @@
-﻿import {Flex, Typography} from "antd";
+﻿import {Divider, Flex, Typography} from "antd";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import React, {useEffect, useState} from "react";
 import {useAuth} from "@/context/AuthProvider.jsx";
@@ -11,6 +11,7 @@ import {orgLogoSrc} from "@/utils/ImageUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {DownOutlined} from "@ant-design/icons";
 import {getCookie} from "@/utils/CookieUtils.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const {Text, Title} = Typography;
 
 const DashboardHeader = ({ dashboardData }) => {
@@ -21,7 +22,7 @@ const DashboardHeader = ({ dashboardData }) => {
     const [showInCelsius, setShowInCelsius] = useState(true);
     const [windMeasurements, setWindMeasurements] = useState('');
     const { styles } = useStyles();
-    const {token} = useApp();
+    const {token, globalStyles} = useApp();
     const {spGuideId, orgId, authData} = useAuth();
 
     let cookieWeatherKey = `Dashboard_Weather_${orgId}`;
@@ -148,27 +149,27 @@ const DashboardHeader = ({ dashboardData }) => {
                 onConfirmButtonClick={() => {
                     //window.location.href = `/Online/MyProfile/JoinClub/${orgId}`
                 }}>
-                {orgList.map((orgListItem) => {
+                {orgList.map((orgListItem, index) => {
                     const innerLogoSrc = organizationLogoSrc(orgListItem.Id, orgListItem.LogoUrl);
-
+                    let isLastItem = index === innerLogoSrc.length - 1;
+                    
                     return (
-                        <div
-                            key={orgListItem.Id}
-                            onClick={() => {
-                                //setSelectedRedirectOrganizationId(orgListItem.Id);
-                                //orgChanged(orgListItem.Id)
-                            }}
-                            style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}
-                            className={`fn-org-list-item-${orgListItem.Id} modal-footer-row with-bb ${orgListItem.Id === orgId ? " selected-modal-row" : ""}`}
-                        >
-                            <div className="modal-icon-badge-wrapper">
-                                <img src={innerLogoSrc} alt={orgListItem.Name} />
-                                <span>{orgListItem.Name}</span>
-                            </div>
+                        <div key={orgListItem.Id}>
+                            <PaddingBlock>
+                                <Flex className={globalStyles.drawerRow}
+                                      gap={token.padding} 
+                                      onClick={() => {}}>
+                                    <img style={{maxHeight: '40px', height: '100%', maxWidth: '100px'}}
+                                         src={innerLogoSrc} alt={orgListItem.Name}/>
 
-                            {/*<div className={`organization-drawer-spinner ${equalString(selectedRedirectOrganizationId, orgListItem.Id) ? '' : 'hide'}`}>*/}
-                            {/*    <i className="fas fa-circle-notch rotate-animation"></i>*/}
-                            {/*</div>*/}
+                                    <Text style={{fontSize: `${token.fontSizeLG}px`}}>
+                                        <Ellipsis direction='end' rows={1} content={orgListItem.Name}/>
+                                    </Text>
+                                </Flex>
+                            </PaddingBlock>
+                            {!isLastItem &&
+                                <Divider className={globalStyles.noMargin}/>
+                            }
                         </div>
                     )
                 })}

@@ -16,6 +16,7 @@ import FormInput from "@/form/input/FormInput.jsx";
 import {requiredMessage} from "@/utils/TranslateUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {useTranslation} from "react-i18next";
+import portalService from "@/api/portal.jsx";
 
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
@@ -68,30 +69,19 @@ function LoginUpdatePassword() {
     });
 
     const frictLogin = async (isUpdatePassword) => {
-
         setIsLoading(isUpdatePassword);
         setIsLogin(!isUpdatePassword);
 
-        const loginResponse = await appService.get(navigate, `/app/MobileSso/FrictLogin?ssoKey=${ssoKey}&initialAuthCode=${secretKey}&spGuideId=${spGuideId}&loaded=true`)
+        const loginResponse = await portalService.frictLogin(navigate, ssoKey, secretKey, spGuideId);
         if (loginResponse){
             let orgId = loginResponse.orgId;
-            let memberId = loginResponse.memberId;
 
-            let requestData = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${orgId}`);
-
+            let requestData = await portalService.requestData(navigate, orgId);
             if (requestData.IsValid) {
-                const responseData = requestData.Data;
-                setRequestData(responseData.RequestData);
-
-                let authResponse = await apiService.authData(orgId);
-
-                if (toBoolean(authResponse?.IsValid)) {
-                    await setAuthorizationData(authResponse.Data);
-
-                    setIsLoading(false);
-                    setIsLogin(false);
-                    navigate(HomeRouteNames.INDEX);
-                }
+                await setAuthorizationData(requestData.OrganizationData);
+                setIsLoading(false);
+                setIsLogin(false);
+                navigate(HomeRouteNames.INDEX);
             }
         }
 

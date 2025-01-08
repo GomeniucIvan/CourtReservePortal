@@ -23,6 +23,7 @@ import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
+import portalService from "@/api/portal.jsx";
 
 const {Title} = Typography;
 
@@ -117,50 +118,42 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
         let response = await appService.post(`/app/Online/Portal/RegisterAccount?id=${values.selectedOrgId}`, postModel);
 
         if (toBoolean(response?.IsValid)){
-            let memberId = response.memberId;
-            let requestData = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${values.selectedOrgId}`);
-            
-            if (requestData.IsValid) {
-                const responseData = requestData.Data;
-                setRequestData(responseData.RequestData);
+            let requestData = await portalService.requestData(navigate, values.selectedOrgId);
 
-                let authResponse = await apiService.authData(values.selectedOrgId);
+            if (toBoolean(requestData?.IsValid)) {
+                await setAuthorizationData(requestData.OrganizationData);
 
-                if (toBoolean(authResponse?.IsValid)) {
-                    await setAuthorizationData(authResponse.Data);
+                setIsLoading(false);
+                let navigationKey = response.key.toLowerCase();
 
-                    setIsLoading(false);
-                    let navigationKey = response.key.toLowerCase();
-                    
-                    switch (navigationKey) {
-                        case 'logout':
-                            navigate(AuthRouteNames.LOGIN);
-                            break;
+                switch (navigationKey) {
+                    case 'logout':
+                        navigate(AuthRouteNames.LOGIN);
+                        break;
 
-                        case 'paymymembershipfees':
-                            navigate(ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST);
-                            break;
+                    case 'paymymembershipfees':
+                        navigate(ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST);
+                        break;
 
-                        case 'mymembership':
-                            navigate(ProfileRouteNames.PROFILE_MEMBERSHIP);
-                            break;
+                    case 'mymembership':
+                        navigate(ProfileRouteNames.PROFILE_MEMBERSHIP);
+                        break;
 
-                        case 'myclubs':
-                            navigate(HomeRouteNames.MY_CLUBS);
-                            break;
+                    case 'myclubs':
+                        navigate(HomeRouteNames.MY_CLUBS);
+                        break;
 
-                        case 'dashboard':
-                            navigate(HomeRouteNames.INDEX);
-                            break;
+                    case 'dashboard':
+                        navigate(HomeRouteNames.INDEX);
+                        break;
 
-                        case 'memberships':
-                            navigate(HomeRouteNames.MEMBERSHIPS);
-                            break;
-                            
-                        case 'myfamily':
-                            navigate(ProfileRouteNames.PROFILE_FAMILY_LIST);
-                            break;
-                    }
+                    case 'memberships':
+                        navigate(HomeRouteNames.MEMBERSHIPS);
+                        break;
+
+                    case 'myfamily':
+                        navigate(ProfileRouteNames.PROFILE_FAMILY_LIST);
+                        break;
                 }
             }
         } else if (toBoolean(response?.Data?.UnathorizeAccess)){

@@ -16,6 +16,7 @@ import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import {getNavigationStorage} from "@/storage/AppStorage.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import {any} from "prop-types";
 
 const {Text} = Typography;
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
@@ -39,7 +40,7 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     useEffect(() => {
         let cacheLinks = getNavigationStorage(orgId);
 
-        if (isNullOrEmpty(drawerLInks)){
+        if (!anyInList(drawerLInks)){
             let reserveList = [];
             if (anyInList(cacheLinks)){
                 cacheLinks.forEach(item => {
@@ -55,7 +56,7 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
             setDrawerLinks(reserveList);
         }
 
-    },[showReserveDrawer])
+    }, [showReserveDrawer])
 
     useEffect(() => {
         if (showReserveDrawer) {

@@ -10,18 +10,17 @@ import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
 import DashboardMembershipBar from "@portal/home/index/modules/Dashboard.MembershipBar.jsx";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import SVG from "@/components/svg/SVG.jsx";
+import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 
-function DashboardClassic({dashboardData}) {
-	const {orgId, authData} = useAuth();
+function DashboardClassic({navigationItems, dashboardData}) {
 	const [showAll, setShowAll] = useState(false);
-	const [navigationItems, setNavigationItems] = useState([]);
-	const navigate = useNavigate();
+	const [navItems, setNavItems] = useState([]);
 	const {token} = useApp();
-	const navigationItemsToShow = showAll ? navigationItems : navigationItems.slice(0, 6);
+	const navigationItemsToShow = showAll ? navItems : navItems.slice(0, 6);
 	
 	useEffect(() => {
-		setNavigationItems(dashboardData?.menu || []);	
-	}, [dashboardData])
+		setNavItems(navigationItems || []);	
+	}, [navigationItems])
 	
 	return (
 		<>
@@ -33,9 +32,13 @@ function DashboardClassic({dashboardData}) {
 					<Flex vertical={true}>
 						<PaddingBlock>
 							<DashboardMembershipBar dashboardData={dashboardData} />
-
 						</PaddingBlock>
-						//alert
+						
+						<AlertBlock type={'warning'} 
+									title={'Membership Inactive'} 
+									description={'Action needed for access '} 
+									onPress={() => {}}
+									buttonText={'Review'} />
 					</Flex>
 				</Flex>
 
@@ -43,7 +46,7 @@ function DashboardClassic({dashboardData}) {
 					<Flex vertical={true} gap={token.paddingSM}>
 						<ListLinks links={navigationItemsToShow} />
 
-						{navigationItems.length > 6 &&
+						{navItems.length > 6 &&
 							<Divider>
 								<Flex gap={token.paddingSM} align={'center'} onClick={() => setShowAll((prev) => !prev)}>
 									{`Show ${showAll ? 'Less' : 'More'}`}
@@ -55,7 +58,7 @@ function DashboardClassic({dashboardData}) {
 				</PaddingBlock>
 
 				<PaddingBlock leftRight={false} onlyBottom={true}>
-					<DashboardReservations dashboardData={authData} isFetching={false}/>
+					<DashboardReservations dashboardData={dashboardData?.itemsData} isFetching={false}/>
 				</PaddingBlock>
 			</Flex>
 		</>

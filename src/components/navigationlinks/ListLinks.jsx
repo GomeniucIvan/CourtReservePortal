@@ -42,7 +42,7 @@ function ListLinks({links, className, classNameLi, hideChevron}) {
                               style={{minHeight: '52px'}} 
                               align={'center'}>
                             <Flex gap={token.paddingLG} flex={1}>
-                                <SVG icon={`/navigation/portal/${link.IconClass}`} size={24}/>
+                                <SVG icon={`navigation/portal/${link.IconClass}`} size={24}/>
 
                                 <Text style={{fontSize: `${token.fontSizeLG}px`}}>
                                     <Ellipsis direction='end' rows={1} content={link.Text}/>

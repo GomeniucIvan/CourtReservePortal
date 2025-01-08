@@ -23,7 +23,7 @@ export const getRequestData = () => {
     return requestData;
 };
 
-const loadBearerToken = async () => {
+export const loadBearerToken = async () => {
     if (isNullOrEmpty(getBearerToken())) {
         //id 0 
         const tokenResponse = await appService.post('/app/MobileSso/AuthorizationData');
@@ -142,12 +142,6 @@ const apiService = {
                 message: 'Something wrong, API49-Error'
             }
         }
-    },
-
-    authData: async (orgId, data) => {
-        await loadBearerToken();
-
-        return await apiService.post(`/api/dashboard/member-navigation-data?orgId=${orgId}&loadWeatherData=${toBoolean(data?.loadWeatherData)}&includeDashboardData=${toBoolean(data?.includeDashboardData)}`);
     }
 };
 

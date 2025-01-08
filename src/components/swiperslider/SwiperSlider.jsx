@@ -10,7 +10,7 @@ const SwiperSlider = ({ children, count }) => {
     return (
         <Swiper stuckAtBoundary={false}
                 trackOffset={4}
-                slideSize={count === 1 ? 92 : 82}
+                slideSize={count === 1 ? 92 : 90}
                 indicator={() => null}
                 indicatorProps={styles.swiperIndicators}>
             {children}

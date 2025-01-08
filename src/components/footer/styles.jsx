@@ -29,6 +29,7 @@ export const useStyles = createStyles(({ css, token }) => {
             bottom: -18px;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 2; //scheduler lines
         `,
         minWidth: css`
             min-width: 40px;
