@@ -24,6 +24,7 @@ import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import portalService from "@/api/portal.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
 
 const {Title} = Typography;
 
@@ -136,7 +137,8 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         break;
 
                     case 'mymembership':
-                        navigate(ProfileRouteNames.PROFILE_MEMBERSHIP);
+                        let profileRoute = toRoute(ProfileRouteNames.PROFILE_MEMBERSHIP, 'id', values.selectedOrgId);
+                        navigate(profileRoute);
                         break;
 
                     case 'myclubs':
@@ -152,7 +154,8 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         break;
 
                     case 'myfamily':
-                        navigate(ProfileRouteNames.PROFILE_FAMILY_LIST);
+                        let familyRoute = toRoute(ProfileRouteNames.PROFILE_FAMILY_LIST, 'id', values.selectedOrgId);
+                        navigate(familyRoute);
                         break;
                 }
             }

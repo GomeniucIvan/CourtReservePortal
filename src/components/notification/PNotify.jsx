@@ -13,7 +13,6 @@ export const pNotify = (description, type = 'success', duration = '') => {
         toast.error(description, {
             position: 'top-center',
             className: 'safe-area-top-margin',
-            duration: 30000
         });
     } else if (equalString(type, 'info')) {
         toast(description, {

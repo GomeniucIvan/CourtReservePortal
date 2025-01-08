@@ -1,4 +1,4 @@
-﻿import {useNavigate, useParams} from "react-router-dom";
+﻿import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {cx} from "antd-style";
 import {selectedTabStorage, setTabStorage} from "@/storage/AppStorage.jsx";
 import {Tabs} from "antd";
@@ -7,10 +7,20 @@ import ProfileBillingTransactions from "./ProfileBillingTransactions.jsx";
 import ProfileBillingPackages from "./ProfileBillingPackages.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import ProfileBillingInvoiceList from "../invoice/ProfileBillingInvoiceList.jsx";
+import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
+import {getQueryParameter} from "@/utils/RouteUtils.jsx";
 
-function ProfileBilling() {
-    const navigate = useNavigate();
-    const [selectedTab, setSelectedTab] = useState(selectedTabStorage('profilebilling', 'transactions'));
+function ProfileBilling({tabKey}) {
+    const location = useLocation();
+    const {setHeaderTitle} = useApp();
+    const page = getQueryParameter(location, "page");
+    let tabToShow = tabKey;
+    
+    if (isNullOrEmpty(tabToShow)) {
+        tabToShow = page;
+    }
+    
+    const [selectedTab, setSelectedTab] = useState(!isNullOrEmpty(tabToShow) ? tabToShow : selectedTabStorage('profilebilling', 'transactions'));
     const {token, globalStyles} = useApp();
     const [tabsHeight, setTabHeight] = useState(0);
     const tabsRef = useRef();
@@ -26,6 +36,16 @@ function ProfileBilling() {
         }
     }, [tabsRef]);
 
+    useEffect(() => {
+        // if (equalString(selectedTab, 'transactions')){
+        //     setHeaderTitle('Transactions')
+        // } else if (equalString(selectedTab, 'packages')){
+        //     setHeaderTitle('Packages')
+        // } else if (equalString(selectedTab, 'invoices')){
+        //     setHeaderTitle('Invoices')
+        // }
+    },[selectedTab])
+    
     return (
         <div ref={tabsRef} style={{display: 'block'}}>
             <Tabs

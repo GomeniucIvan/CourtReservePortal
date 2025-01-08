@@ -168,6 +168,19 @@ function ProfileFamilyList() {
                                                     navigate(route);
                                                 }}/>
                                             ]
+                                        } else if (familyMember.IsCurrentLoggedMember) {
+                                            actions = [
+                                                <EditOutlined key="edit" onClick={(e) => {
+                                                    setTabStorage('myprofile', 'pers');
+                                                    let route = toRoute(ProfileRouteNames.PROFILE_FAMILY_INFO_EDIT, 'id', familyMember.MemberId);
+                                                    setPage(setDynamicPages, familyMember.FullName, route);
+                                                    navigate(route);
+                                                }}/>,
+
+                                                <InfoOutlined key="info" onClick={() => {
+                                                    setSelectedDrawerMember(familyMember)
+                                                }}/>
+                                            ];
                                         } else {
                                             actions = [
                                                 <EditOutlined key="edit" onClick={(e) => {
@@ -182,22 +195,17 @@ function ProfileFamilyList() {
                                                 }}/>,
 
                                                 <DeleteOutlined key="delete"
-                                                                style={{opacity: (toBoolean(familyMember.IsCurrentLoggedMember) ? '0.4' : '1')}}
                                                                 onClick={() => {
-                                                                    if (!toBoolean(familyMember.IsCurrentLoggedMember)) {
-                                                                        ModalDelete({
-                                                                            content: `Are you sure you want to delete <b>${familyMember.FullName}</b>?`,
-                                                                            showIcon: false,
-                                                                            onDelete: (e) => {
-                                                                                deleteFamilyMember(familyMember);
-                                                                            }
-                                                                        })
-                                                                    }
+                                                                    ModalDelete({
+                                                                        content: `Are you sure you want to delete <b>${familyMember.FullName}</b>?`,
+                                                                        showIcon: false,
+                                                                        onDelete: (e) => {
+                                                                            deleteFamilyMember(familyMember);
+                                                                        }
+                                                                    })
                                                                 }}/>,
                                             ];
                                         }
-                                        
-                                       
 
                                         return (
                                             <Card actions={actions} key={index} size="small">

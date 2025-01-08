@@ -13,6 +13,8 @@ import SVG from "@/components/svg/SVG.jsx";
 import {cx} from "antd-style";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 const { Title, Text } = Typography;
 
 const DashboardMembershipBar = ({dashboardData}) => {
@@ -26,7 +28,8 @@ const DashboardMembershipBar = ({dashboardData}) => {
             <Card className={cx(globalStyles.card, globalStyles.cardSMPadding)}>
                 <Flex justify="space-between" align={'center'}>
                     <Flex gap={token.paddingLG} flex={1} onClick={() => {
-                        navigate(ProfileRouteNames.PROFILE_PERSONAL_INFO)
+                        let route = toRoute(ProfileRouteNames.PROFILE_PERSONAL_INFO, 'id', orgId);
+                        navigate(route);
                     }}>
                         <Flex justify={'center'} align={'center'}
                               style={{

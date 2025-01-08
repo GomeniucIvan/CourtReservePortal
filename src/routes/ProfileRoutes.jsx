@@ -16,14 +16,14 @@ export const ProfileRouteNames = {
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
     RESERVATION_EDIT: `/profile/reservation/edit/:id`,
     RESERVATION_CREATE: `/profile/reservation/create`,
-    PROFILE_PERSONAL_INFO: `/profile/personalinfo`,
+    PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
     PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
-    PROFILE_FAMILY_LIST: `/profile/family`,
-    PROFILE_CALENDAR_FEED: `/profile/calendar`,
-    PROFILE_MEMBERSHIP: `/profile/membership`,
-    PROFILE_BILLING: `/profile/billing`,
+    PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
+    PROFILE_CALENDAR_FEED: `/online/myprofile/mycalendar/:id`,
+    PROFILE_MEMBERSHIP: `/online/myprofile/mymembership/:id`,
+    PROFILE_BILLING: `/online/mybalance/index/:id`,
+    PROFILE_BILLING_INVOICES: `/online/myinvoices/index/:id`,
     PROFILE_BILLING_PAYMENT: `/profile/payment/:id`,
-    PROFILE_BILLING_PAYMENTS: `/profile/payments`,
     PROFILE_STRINGING: `/profile/stringing`,
     PROFILE_STRINGING_DETAILS: `/profile/stringing/:id`,
     PROFILE_PAYMENT_PROFILE_LIST: `/profile/payment-profiles`
@@ -76,6 +76,12 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.PROFILE_BILLING,
         element: <ProfileBilling />,
+        title: 'billing',
+        disablePullDown: true
+    },
+    {
+        path: ProfileRouteNames.PROFILE_BILLING_INVOICES,
+        element: <ProfileBilling tabKey={'invoices'} />,
         title: 'billing',
         disablePullDown: true
     },
