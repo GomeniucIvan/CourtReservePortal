@@ -12,7 +12,7 @@ import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 
 function DashboardClassic({dashboardData}) {
-	const {orgId, setAuthorizationData} = useAuth();
+	const {orgId, authData} = useAuth();
 	const [showAll, setShowAll] = useState(false);
 	const [navigationItems, setNavigationItems] = useState([]);
 	const navigate = useNavigate();
@@ -26,14 +26,18 @@ function DashboardClassic({dashboardData}) {
 	return (
 		<>
 			<Flex vertical={true} gap={token.padding}>
-				<PaddingBlock onlyTop={true}>
-					<DashboardHeader dashboardData={dashboardData} />
-				</PaddingBlock>
-				<PaddingBlock>
-					<DashboardMembershipBar dashboardData={dashboardData} />
-				</PaddingBlock>
-				
-				//alert
+				<Flex vertical={true} gap={token.paddingXXL}>
+					<PaddingBlock onlyTop={true}>
+						<DashboardHeader dashboardData={dashboardData} />
+					</PaddingBlock>
+					<Flex vertical={true}>
+						<PaddingBlock>
+							<DashboardMembershipBar dashboardData={dashboardData} />
+
+						</PaddingBlock>
+						//alert
+					</Flex>
+				</Flex>
 
 				<PaddingBlock>
 					<Flex vertical={true} gap={token.paddingSM}>
@@ -49,9 +53,9 @@ function DashboardClassic({dashboardData}) {
 						}
 					</Flex>
 				</PaddingBlock>
-				
-				<PaddingBlock onlyBottom={true}>
-					<DashboardReservations dashboardData={dashboardData}/>
+
+				<PaddingBlock leftRight={false} onlyBottom={true}>
+					<DashboardReservations dashboardData={authData} isFetching={false}/>
 				</PaddingBlock>
 			</Flex>
 		</>

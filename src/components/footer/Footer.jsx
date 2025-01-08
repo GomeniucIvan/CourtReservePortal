@@ -1,5 +1,5 @@
 ﻿import {useStyles} from "./styles.jsx";
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {Skeleton} from "antd-mobile";
 import React, {useEffect, useRef, useState} from "react";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
@@ -12,10 +12,10 @@ import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {ModalClose} from "@/utils/ModalUtils.jsx";
-import FormDrawerRadio from "@/form/formradio/FormDrawerRadio.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import {getNavigationStorage} from "@/storage/AppStorage.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 
 const {Text} = Typography;
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
@@ -25,9 +25,10 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {orgId, authData} = useAuth();
     const [activeKey, setActiveKey] = useState('home');
     const footerRef = useRef();
+    const location = useLocation();
     const [footerHeight, setFooterHeight] = useState();
     const [showReserveDrawer, setShowReserveDrawer] = useState(false);
-    const [drawerLInks, setDrawerLinks] = useState([]);
+    const [drawerLInks, setDrawerLinks] = useState(null);
     
     useEffect(() => {
         if (footerRef.current){
@@ -38,7 +39,29 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     useEffect(() => {
         let cacheLinks = getNavigationStorage(orgId);
         console.log(cacheLinks)
+
+        if (isNullOrEmpty(drawerLInks)){
+            let reserveList = [];
+            
+            cacheLinks.forEach(item => {
+                if (equalString(item.Item, 3)) {
+                    reserveList.push(item);
+                } else if (equalString(item.Item, 12)) {
+                    reserveList.push(item);
+                } else if (equalString(item.Item, 9)) {
+                    reserveList.push(item);
+                }
+            });
+            setDrawerLinks(reserveList);
+        }
+
     },[showReserveDrawer])
+
+    useEffect(() => {
+        if (showReserveDrawer) {
+            setShowReserveDrawer(false);         
+        }
+    }, [location]);
     
     const onTabBarChange = (key) => {
         if (isFetching){
@@ -73,8 +96,6 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         } else if(equalString(key, 'alerts')) {
             let route = toRoute(HomeRouteNames.NOTIFICATION_LIST, 'id', orgId);
             navigate(route);
-        } else if (equalString(key, 'reserve')) {
-            setShowReserveDrawer(true);
         }
     }
     
@@ -117,7 +138,7 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
                         if (equalString(tab.key, 'reserve')){
                             return (
                                 <Flex key={tab.key} align="center"
-                                      
+                                      onClick={() => {setShowReserveDrawer(true)}}
                                       className={cx(styles.plusIconWrapper, styles.minWidth)}>
                                     <div className={styles.plusIcon}>
                                         <SVG icon={`navigation/portal/footer/footer-${tab.key}`}
@@ -178,11 +199,11 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
                showDrawer={showReserveDrawer}
                closeDrawer={() => {setShowReserveDrawer(false)}}
                label={'Select Action'}
-               showButton={true}
-               confirmButtonText={'Close'}
-               onConfirmButtonClick={() => {setShowReserveDrawer(false)}}
+               showButton={false}
            >
-               <ListLinks links={drawerLInks} />
+              <PaddingBlock onlyBottom={true} leftRight={false}>
+                  <ListLinks links={drawerLInks} hideChevron={true} classNameLi={styles.drawerReserveListItem} />
+              </PaddingBlock>
            </DrawerBottom>
        </>
     )

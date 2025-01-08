@@ -18,10 +18,9 @@ function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
     const {orgId, setAuthorizationData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
-    const [backendIsFetching, setBackendIsFetching] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
+    const [backendDashboardData, setBackendDashboardData] = useState(null);
     const navigate = useNavigate();
-    const drawerBarcodeRef = useRef();
     const { styles } = useStyles();
     
     const loadData = async (refresh) => {
@@ -38,8 +37,6 @@ function Dashboard() {
         let dashboardData = await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}`);
         
         if (toBoolean(dashboardData?.IsValid)) {
-
-            //setAuthorizationData(authResponse.Data);
             setDashboardData(dashboardData.Data);
             setNavigationStorage(orgId, dashboardData.Data.menu);
             
@@ -47,7 +44,6 @@ function Dashboard() {
             //setNavigationLinks(dashboardData.Data.menu);
             
             toLocalStorage(`dashboardData_${orgId}`, dashboardData.Data);
-            setIsFetching(false);
         }
         
         setIsLoading(false);
@@ -82,7 +78,7 @@ function Dashboard() {
 
                     {/*Classic*/}
                     {(equalString(dashboardData?.mobileDashboardView, 1) ||equalString(dashboardData?.mobileDashboardView, 2) || isNullOrEmpty(dashboardData?.mobileDashboardView)) &&
-                        <DashboardClassic dashboardData={dashboardData}/>
+                        <DashboardClassic dashboardData={dashboardData} backendDashboardData={backendDashboardData}/>
                     }
 
                     {/*Cards*/}

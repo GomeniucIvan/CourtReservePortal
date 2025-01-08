@@ -110,7 +110,7 @@ export const oneListItem = (data) => {
     if (data === undefined || data === '' || data === null || data === 'undefined') {
         return false;
     }
-    return data.length <= 1;
+    return data.length === 1;
 }
 
 export const organizationLogoSrc = (orgId, logoUrl) => {

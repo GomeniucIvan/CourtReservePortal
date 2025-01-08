@@ -10,9 +10,11 @@ import {useApp} from "@/context/AppProvider.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
-import {stringToJson} from "@/utils/ListUtils.jsx";
+import {countListItems, stringToJson} from "@/utils/ListUtils.jsx";
 import {useTranslation} from "react-i18next";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import { Swiper } from 'antd-mobile'
+import SwiperSlider from "@/components/swiperslider/SwiperSlider.jsx";
 
 const DashboardReservations = ({dashboardData, isFetching}) => {
     let bookings = stringToJson(dashboardData?.BookingsJson);
@@ -70,19 +72,21 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
             }
 
             {(!isFetching && anyInList(bookings)) ? (
-                <SlickSlider>
-                    {bookings.map((booking, index) => (
-                        <div key={index}>
-                            {toBoolean(booking.IsUnpaid) ? (
-                                <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
-                                    {bookingTemplate(booking, true)}
-                                </Badge.Ribbon>
-                            ) : (
-                                <>{bookingTemplate(booking)}</>
-                            )}
-                        </div>
-                    ))}
-                </SlickSlider>
+                    <SwiperSlider count={countListItems(bookings)}>
+                        {bookings.map((booking, index) => (
+                            <Swiper.Item key={index}>
+                                <>
+                                    {toBoolean(booking.IsUnpaid) ? (
+                                        <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
+                                            {bookingTemplate(booking, true)}
+                                        </Badge.Ribbon>
+                                    ) : (
+                                        <>{bookingTemplate(booking)}</>
+                                    )}
+                                </>
+                            </Swiper.Item>
+                        ))}
+                    </SwiperSlider>
             ) : (
                 <ErrorBlock status='empty' title='You dont signup to any reservation' description={''} />
             )}

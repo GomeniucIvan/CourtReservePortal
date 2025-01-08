@@ -15,7 +15,7 @@ import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 
-function ListLinks({links}) {
+function ListLinks({links, className, classNameLi, hideChevron}) {
     const {token, setDynamicPages, globalStyles, } = useApp();
     const {logout, orgId} = useAuth();
     const { styles } = useStyles();
@@ -24,10 +24,11 @@ function ListLinks({links}) {
     return (
         <>
             {anyInList(links) &&
-                <Flex vertical={true}>
+                <Flex vertical={true} className={className}>
                     {links.map((link, index) => (
                         <Flex justify={'space-between'}
                               key={index}
+                              className={classNameLi}
                               onClick={() => {
                                   if (anyInList(link.Childrens)) {
                                       let route = toRoute(HomeRouteNames.NAVIGATE, 'id', orgId);
@@ -48,7 +49,7 @@ function ListLinks({links}) {
                                 </Text>
                             </Flex>
 
-                            {anyInList(link.Childrens) &&
+                            {(anyInList(link.Childrens) && !hideChevron) &&
                                 <SVG icon={'chevron-right'} size={token.fontSizeLG} />
                             }
                         </Flex>

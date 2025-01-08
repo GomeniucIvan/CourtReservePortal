@@ -14,7 +14,7 @@ const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
     const { t } = useTranslation('');
     
     return (
-        <>
+        <Flex vertical={true} gap={token.paddingXL}>
             {isFetching &&
                 <div className={cx(styles.header, toBoolean(addPadding) && styles.headerPadding)} style={{paddingBottom: '2px'}}>
                     <Flex justify={'space-between'} style={{width : '100%'}}>
@@ -37,7 +37,7 @@ const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
             <div className={toBoolean(addPadding) ? styles.cardPadding : null}>
                 {children}
             </div>
-        </>
+        </Flex>
     )
 }
 
