@@ -17,7 +17,6 @@ import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx
 const {Title, Text} = Typography;
 
 function ProfileStringingList() {
-
     const navigate = useNavigate();
 
     const {

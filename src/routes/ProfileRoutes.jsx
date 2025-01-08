@@ -24,8 +24,8 @@ export const ProfileRouteNames = {
     PROFILE_BILLING: `/online/mybalance/index/:id`,
     PROFILE_BILLING_INVOICES: `/online/myinvoices/index/:id`,
     PROFILE_BILLING_PAYMENT: `/profile/payment/:id`,
-    PROFILE_STRINGING: `/profile/stringing`,
-    PROFILE_STRINGING_DETAILS: `/profile/stringing/:id`,
+    PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
+    PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
     PROFILE_PAYMENT_PROFILE_LIST: `/profile/payment-profiles`
 };
 
@@ -92,18 +92,12 @@ const ProfileRoutes = [
         disablePullDown: true
     },
     {
-        path: ProfileRouteNames.PROFILE_BILLING_PAYMENTS,
-        element: <ProfileBillingPayment />,
-        title: 'billingPayment',
-        disablePullDown: true
-    },
-    {
         path: ProfileRouteNames.PROFILE_STRINGING_DETAILS,
         element: <ProfileStringingDetails />,
         title: 'stringingDetails'
     },
     {
-        path: ProfileRouteNames.PROFILE_STRINGING,
+        path: ProfileRouteNames.PROFILE_STRINGING_LIST,
         element: <ProfileStringingList />,
         title: 'stringing'
     },

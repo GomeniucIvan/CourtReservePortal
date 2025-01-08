@@ -25,13 +25,11 @@ import {match} from "path-to-regexp";
 import {ErrorBoundary} from "react-error-boundary";
 import {Toaster} from "react-hot-toast";
 import portalService from "@/api/portal.jsx";
+import {locationCurrentRoute} from "@/utils/RouteUtils.jsx";
 
 function Layout() {
     const location = useLocation();
-    let currentRoute = AppRoutes.find(route => {
-        const matcher = match(route.path, { decode: decodeURIComponent });
-        return matcher(location.pathname);
-    });
+    let currentRoute = locationCurrentRoute(location);
     
     const headerRef = useRef(null);
     const footerRef = useRef(null);
