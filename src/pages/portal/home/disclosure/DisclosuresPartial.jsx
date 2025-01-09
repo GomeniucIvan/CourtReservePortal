@@ -3,7 +3,7 @@ import React, {useEffect, useState, useRef, forwardRef, useImperativeHandle} fro
 import {useApp} from "@/context/AppProvider.jsx";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {anyInList, equalString, focus, isNullOrEmpty, randomNumber, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, focus, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {Alert, Button, Card, Checkbox, Divider, Flex, Skeleton, Typography, Upload} from "antd";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useFormik} from "formik";
@@ -17,6 +17,7 @@ import { Document,pdfjs } from 'react-pdf';
 import {DownloadOutlined} from "@ant-design/icons";
 import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "@/utils/FileUtils.jsx";
 import EmptyBlock, {emptyBlockTypes} from "@/components/emptyblock/EmptyBlock.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 const {Title, Text} = Typography;
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 
@@ -40,8 +41,8 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
     
     const {orgId, authData} = useAuth();
     const {t} = useTranslation('');
-    const cardRef = useRef();
-    const sigCanvasRef = useRef();
+    const cardRef = useRef(null);
+    const sigCanvasRef = useRef(null);
 
     const loadData = (refresh) => {
         if (isModal){

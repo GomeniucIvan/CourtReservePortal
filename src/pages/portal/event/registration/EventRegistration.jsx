@@ -15,7 +15,6 @@ import {
     equalString,
     isNullOrEmpty,
     moreThanOneInList,
-    randomNumber,
     toBoolean
 } from "@/utils/Utils.jsx";
 import {dateTimeToFormat, dateTimeToTimes} from "@/utils/DateUtils.jsx";
@@ -26,6 +25,7 @@ import {Toast} from "antd-mobile";
 import Modal from "@/components/modal/Modal.jsx";
 import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
 import DisclosuresPartial from "@portal/home/disclosure/DisclosuresPartial.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 const {Title, Text} = Typography;
 

@@ -69,7 +69,7 @@ function NewsList() {
                                       key={newsItem.Id}
                                       onClick={() => {
                                           let route = toRoute(HomeRouteNames.NEWS_DETAILS, 'id', orgId);
-                                          navigate(`${route}?newsId=${news.Guid}`);
+                                          navigate(`${route}?newsId=${newsItem.Guid}`);
                                       }}>
                                     <Flex vertical={true} gap={4}>
                                         {!isNullOrEmpty(newsItem?.ImageUrl) &&

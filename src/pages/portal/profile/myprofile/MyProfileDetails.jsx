@@ -10,7 +10,7 @@ import {useEffect, useRef, useState} from "react";
 import {Button, Flex, Skeleton} from "antd";
 import FormStateProvince from "@/form/formstateprovince/FormStateProvince.jsx";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
-import {equalString, isNullOrEmpty, randomNumber, toBoolean} from "@/utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
@@ -25,6 +25,7 @@ import {validatePersonalInformation} from "@/utils/ValidationUtils.jsx";
 import ReCAPTCHA from 'react-google-recaptcha';
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();

@@ -12,8 +12,8 @@ import {
     anyInList,
     encodeParam,
     encodeParamsObject,
-    equalString, fullNameInitials,
-    isNullOrEmpty, oneListItem, randomNumber,
+    equalString,
+    isNullOrEmpty, oneListItem,
     toBoolean
 } from "@/utils/Utils.jsx";
 import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
@@ -46,6 +46,7 @@ import ReservationRegistrationMatchMaker from "./ReservationRegistration.MatchMa
 import ReservationRegistrationMiscItems from "./ReservationRegistration.MiscItems.jsx";
 import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.TermsAndCondition.jsx";
 import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 const {Title, Text, Link} = Typography;
 

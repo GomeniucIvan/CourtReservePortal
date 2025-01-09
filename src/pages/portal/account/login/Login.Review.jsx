@@ -10,7 +10,6 @@ import {
     isNullOrEmpty,
     isValidEmail, moreThanOneInList,
     oneListItem,
-    randomNumber,
     toBoolean
 } from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
@@ -29,6 +28,7 @@ import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import {setFormikError, validatePaymentProfile} from "@/utils/ValidationUtils.jsx";
 import FormCheckbox from "@/form/formcheckbox/FomCheckbox.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 

@@ -1,6 +1,6 @@
 ﻿import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
-import {equalString, randomNumber, toBoolean} from "@/utils/Utils.jsx";
+import {toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Divider, Flex, Skeleton} from "antd";
 import appService from "@/api/app.jsx";
@@ -19,6 +19,7 @@ import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import ReCAPTCHA from "react-google-recaptcha";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 function ProfileBillingPayment({}) {
     const navigate = useNavigate();

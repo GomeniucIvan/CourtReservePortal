@@ -9,7 +9,6 @@ import {
     anyInList,
     isNullOrEmpty,
     nullToEmpty,
-    randomNumber,
     toBoolean
 } from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
@@ -31,6 +30,7 @@ import {requiredMessage} from "@/utils/TranslateUtils.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {validateRatingCategories, validateUdfs} from "@/utils/ValidationUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -229,7 +229,7 @@ function LoginAdditionalInfo() {
                                     <Skeleton.Button active={true} block
                                                      style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
                                     <Skeleton.Button active={true} block style={{height: `${token.Input.controlHeight}px`}}/>
-                                </Flex>
+                                </Flex>F
                             </div>
                         ))}
                     </Flex>

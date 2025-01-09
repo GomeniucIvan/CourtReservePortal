@@ -1,4 +1,5 @@
 import {pNotify} from "../components/notification/PNotify.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const isNullOrEmpty = (data) => {
@@ -122,13 +123,6 @@ export const organizationLogoSrc = (orgId, logoUrl) => {
     return defSrc;
 }
 
-export const getCookieValue = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2)
-        return decodeURIComponent(parts.pop().split(';').shift());
-}
-
 export const setCookie = (name, value, minutes) => {
     const now = new Date();
     now.setTime(now.getTime() + (minutes * 60 * 1000));
@@ -194,10 +188,6 @@ export const calculateSkeletonLabelWidth = (label) => {
         charCount = 30 + randomNumber(1, 4);
     }
     return `${charCount * 9}px`;
-};
-
-export const randomNumber = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 export const copyToClipboard = (text) => {

@@ -1,7 +1,7 @@
 ﻿import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {useEffect, useState} from "react";
-import {anyInList, equalString, isNullOrEmpty, randomNumber, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import {Table, Typography, Checkbox, Flex, Skeleton} from "antd";
 import {useStyles} from "./styles.jsx";

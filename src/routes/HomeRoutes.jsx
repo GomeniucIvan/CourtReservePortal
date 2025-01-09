@@ -9,7 +9,7 @@ import DisclosurePending from "@portal/home/disclosure/DisclosurePending.jsx";
 import MemberGroupDetails from "@portal/membergroup/details/MemberGroupDetails.jsx";
 import NotificationList from "@portal/notification/list/NotificationList.jsx";
 import NewsList from "@portal/news/list/NewsList.jsx";
-import NewsDetails from "@portal/news/details/NewsList.jsx";
+import NewsDetails from "@portal/news/details/NewsDetails.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
