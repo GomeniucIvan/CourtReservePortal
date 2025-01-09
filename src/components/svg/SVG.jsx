@@ -1,6 +1,7 @@
 ﻿import { ReactSVG } from 'react-svg'
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const SGV = ({ icon, color = 'black',
                  size = 24, 
@@ -11,6 +12,10 @@ const SGV = ({ icon, color = 'black',
                  preventPaths = false,
                  preventRects = true}) => {
     const {token} = useApp();
+    
+    if (equalString(color, 'black')) {
+        color = token.colorText;
+    }
     
     return (
         <ReactSVG

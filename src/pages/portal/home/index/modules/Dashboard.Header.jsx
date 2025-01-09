@@ -7,7 +7,7 @@ import {useStyles} from ".././styles.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {Ellipsis} from "antd-mobile";
 import apiService from "@/api/api.jsx";
-import {orgLogoSrc} from "@/utils/ImageUtils.jsx";
+import {imageSrc} from "@/utils/ImageUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {DownOutlined} from "@ant-design/icons";
 import {getCookie} from "@/utils/CookieUtils.jsx";
@@ -116,7 +116,7 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
             <Flex vertical={true} gap={token.paddingLG}>
                 <Flex justify={'space-between'} align={'center'} onClick={() => setShowOrganizationDrawer(true)}>
                     <Flex gap={token.paddingLG} flex={1} align={'center'}>
-                        <img src={orgLogoSrc(authData?.LogoUrl, authData?.OrgId)} alt={authData?.OrgName}
+                        <img src={imageSrc(authData?.LogoUrl, authData?.OrgId)} alt={authData?.OrgName}
                              style={{
                                  maxHeight: '44px',
                                  maxWidth: '72px',

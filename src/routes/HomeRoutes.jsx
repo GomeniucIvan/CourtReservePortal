@@ -77,12 +77,14 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.NEWS_LIST,
         element: <NewsList />,
-        title: 'news'
+        title: 'news',
+        header: true
     },
     {
         path: HomeRouteNames.NEWS_DETAILS,
         element: <NewsDetails />,
-        title: 'newsDetails'
+        title: 'newsDetails',
+        header: true
     }
 ];
 

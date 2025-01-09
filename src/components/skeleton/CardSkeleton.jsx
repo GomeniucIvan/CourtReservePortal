@@ -33,7 +33,7 @@ const CardSkeleton = ({type, count = 1, marginBottom = false}) => {
         case SkeletonEnum.ANNOUNCEMENT_LIST_ITEM:
             height = 180;
             break;
-        case SkeletonEnum.ANNOUNCEMENT_LIST_ITEM:
+        case SkeletonEnum.NEWS_LIST_ITEM:
             height = 160;
             break;
         case SkeletonEnum.EVENT:

@@ -1,6 +1,6 @@
 import {isNullOrEmpty} from "@/utils/Utils.jsx";
 
-export const orgLogoSrc = (logoUrl, orgId) => {
+export const imageSrc = (logoUrl, orgId) => {
     if (!isNullOrEmpty(logoUrl)) {
        return `https://tgcstorage.blob.core.windows.net/court-reserve-${orgId}/${logoUrl}`; 
     }

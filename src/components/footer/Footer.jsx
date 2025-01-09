@@ -82,7 +82,7 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         } else if(equalString(key, 'more')){
             let route = toRoute(HomeRouteNames.NAVIGATE, 'id', orgId);
             route = toRoute(route, 'nodeId', 19); //19 more menu nodeId
-            navigate(`${route}`);
+            navigate(route);
         } else if(equalString(key, 'calendar')){
             if (hideEventsCalendar) {
                 ModalClose({
