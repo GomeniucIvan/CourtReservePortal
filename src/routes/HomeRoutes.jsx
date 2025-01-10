@@ -1,15 +1,14 @@
 import Dashboard from "@portal/home/index/Dashboard.jsx";
 import AnnouncementDetails from "@portal/announcement/details/AnnouncementDetails.jsx";
 import AnnouncementList from "@portal/announcement/list/AnnouncementList.jsx";
-import LeagueList from "@portal/league/list/LeagueList.jsx";
 import ExpandedScheduler from "@portal/scheduler/ExpandedScheduler.jsx";
-import EventCalendar from "@portal/event/calendar/EventCalendar.jsx";
 import Navigation from "@portal/navigation/Navigation.jsx";
 import DisclosurePending from "@portal/home/disclosure/DisclosurePending.jsx";
 import MemberGroupDetails from "@portal/membergroup/details/MemberGroupDetails.jsx";
 import NotificationList from "@portal/notification/list/NotificationList.jsx";
 import NewsList from "@portal/news/list/NewsList.jsx";
 import NewsDetails from "@portal/news/details/NewsDetails.jsx";
+import ProfileMyOrganizationList from "@portal/profile/organizations/list/ProfileMyOrganizationList.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -18,6 +17,7 @@ export const HomeRouteNames = {
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/online/announcement/index/:id`,
     NOTIFICATION_LIST: `/online/notification/list/:id`,
+    ORGANIZATION_LIST: `/online/myprofile/myclubs/:id`,
     NEWS_LIST: `/online/news/list/:id`,
     NEWS_DETAILS: `/online/news/details/:id`,
     NAVIGATE: `/online/portal/navigate/:id/:nodeId`,
@@ -84,6 +84,12 @@ const HomeRoutes = [
         path: HomeRouteNames.NEWS_DETAILS,
         element: <NewsDetails />,
         title: 'newsDetails',
+        header: true
+    },
+    {
+        path: HomeRouteNames.ORGANIZATION_LIST,
+        element: <ProfileMyOrganizationList />,
+        title: 'organizationList',
         header: true
     }
 ];

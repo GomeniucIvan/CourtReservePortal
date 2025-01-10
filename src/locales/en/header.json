@@ -41,5 +41,7 @@
   "notifications": "Alerts",
   "news": "News",
   "newsDetails": "News Details",
-  "requestAccess": "Request Access"
+  "requestAccess": "Request Access",
+  "organizationList": "My Organization(s)",
+  "locationList": "My Location(s)"
 }
