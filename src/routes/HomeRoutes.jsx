@@ -9,6 +9,7 @@ import NotificationList from "@portal/notification/list/NotificationList.jsx";
 import NewsList from "@portal/news/list/NewsList.jsx";
 import NewsDetails from "@portal/news/details/NewsDetails.jsx";
 import ProfileMyOrganizationList from "@portal/profile/organizations/list/ProfileMyOrganizationList.jsx";
+import NotificationDetails from "@portal/notification/details/NotificationDetails.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -17,6 +18,7 @@ export const HomeRouteNames = {
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/online/announcement/index/:id`,
     NOTIFICATION_LIST: `/online/notification/list/:id`,
+    NOTIFICATION_DETAILS: `/online/notification/pushnotificationdetails/:id`,
     ORGANIZATION_LIST: `/online/myprofile/myclubs/:id`,
     NEWS_LIST: `/online/news/list/:id`,
     NEWS_DETAILS: `/online/news/details/:id`,
@@ -73,6 +75,12 @@ const HomeRoutes = [
         path: HomeRouteNames.NOTIFICATION_LIST,
         element: <NotificationList/>,
         title: 'notifications'
+    },
+    {
+        path: HomeRouteNames.NOTIFICATION_DETAILS,
+        element: <NotificationDetails />,
+        title: 'notificationDetails',
+        header: true
     },
     {
         path: HomeRouteNames.NEWS_LIST,

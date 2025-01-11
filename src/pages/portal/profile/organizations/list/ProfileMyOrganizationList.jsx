@@ -6,7 +6,6 @@ import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.js
 import apiService from "@/api/api.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Card, Divider, Flex, Skeleton, Tabs, Tag, Typography} from "antd";
-import {imageSrc} from "@/utils/ImageUtils.jsx";
 import {cx} from "antd-style";
 import {selectedTabStorage, setTabStorage} from "@/storage/AppStorage.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
@@ -14,10 +13,8 @@ import {useStyles} from "./styles.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import portalService from "@/api/portal.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import Modal from "@/components/modal/Modal.jsx";
 import CenterModal from "@/components/modal/CenterModal.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 const {Title, Text} = Typography;
 

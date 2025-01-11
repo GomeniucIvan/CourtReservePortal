@@ -26,3 +26,7 @@ export const locationCurrentRoute = (location) => {
         return matcher(location.pathname);
     });
 };
+
+export const currentBaseUrl = () => {
+    return `${window.location.protocol}//${window.location.host}/`;
+}

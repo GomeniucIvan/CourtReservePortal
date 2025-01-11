@@ -71,7 +71,7 @@ function NewsList() {
                                           let route = toRoute(HomeRouteNames.NEWS_DETAILS, 'id', orgId);
                                           navigate(`${route}?newsId=${newsItem.Guid}`);
                                       }}>
-                                    <Flex vertical={true} gap={4}>
+                                    <Flex vertical={true} gap={token.paddingXS}>
                                         {!isNullOrEmpty(newsItem?.ImageUrl) &&
                                             <img src={imageSrc(newsItem?.ImageUrl, orgId)}  alt={newsItem.Subject}/>
                                         }

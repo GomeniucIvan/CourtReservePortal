@@ -26,6 +26,6 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
     `,
     iframe: css`
-        padding: ${token.paddingSM}px;
+        //padding: ${token.paddingSM}px;
     `
 }));
