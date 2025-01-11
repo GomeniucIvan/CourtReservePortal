@@ -27,9 +27,9 @@
 }
 
 
-.ant-modal:not(.ant-center-modal) {
-  width: 280px !important;
-}
+/*.ant-modal:not(.ant-center-modal) {*/
+/*  width: 280px !important;*/
+/*}*/
 .ant-modal-confirm-btns {
   display: flex;
   flex-direction: column-reverse;
