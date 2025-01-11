@@ -16,7 +16,7 @@ import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx
 import { Swiper } from 'antd-mobile'
 import SwiperSlider from "@/components/swiperslider/SwiperSlider.jsx";
 
-const DashboardReservations = ({dashboardData, isFetching}) => {
+const DashboardBookings = ({dashboardData, isFetching}) => {
     let bookings = stringToJson(dashboardData?.BookingsJson);
     let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) && anyInList(bookings) || isFetching;
     const {globalStyles, token, setDynamicPages} = useApp();
@@ -100,4 +100,4 @@ const DashboardReservations = ({dashboardData, isFetching}) => {
     );
 };
 
-export default DashboardReservations
+export default DashboardBookings

@@ -16,7 +16,7 @@ function AnnouncementList() {
     const { styles } = useStyles();
     const [isFetching, setIsFetching] = useState(true);
     
-    const{isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading} = useApp();
+    const{isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading, globalStyles} = useApp();
     const [announcements, setAnnouncements] = useState([]);
     const {orgId} = useAuth();
     

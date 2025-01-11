@@ -1,69 +1,100 @@
-﻿import {Button, Flex, Typography} from "antd";
+﻿import {Button, Divider, Flex, Typography} from "antd";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
-import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import apiService from "@/api/api.jsx";
+import {anyInList, equalString, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import {EventRouteNames} from "@/routes/EventRoutes.jsx";
-import DrawerBarcode from "@/components/drawer/DrawerBarcode.jsx";
 const { Title } = Typography;
 import DashboardAnnouncements from "@portal/home/index/modules/Dashboard.Announcements.jsx";
-import DashboardReservations from "@portal/home/index/modules/Dashboard.Reservations.jsx";
-import DashboardOpenMatches from "@portal/home/index/modules/Dashboard.OpenMatches.jsx";
-import DashboardEvents from "@portal/home/index/modules/Dashboard.Events.jsx";
 import DashboardLeagues from "@portal/home/index/modules/Dashboard.Leagues.jsx";
 import {useNavigate} from "react-router-dom";
-import {useRef} from "react";
+import {useEffect, useRef, useState} from "react";
+import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
+import DashboardMembershipBar from "@portal/home/index/modules/Dashboard.MembershipBar.jsx";
+import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import DashboardBookings from "@portal/home/index/modules/Dashboard.Bookings.jsx";
+import {useStyles} from ".././styles.jsx";
+import ButtonLinks from "@/components/navigationlinks/ButtonLinks.jsx";
+import {getDashboardMainLinks} from "@/storage/AppStorage.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import CardLinks from "@/components/navigationlinks/CardLinks.jsx";
 
-function DashboardModern() {
+function DashboardModern({navigationItems, 
+                             dashboardData, 
+                             organizationList, 
+                             dashboardViewType }) {
     const { styles } = useStyles();
-    const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, isLoading,globalStyles  } = useApp();
-    const {orgId, setAuthorizationData} = useAuth();
+    const { token, setDynamicPages } = useApp();
     const navigate = useNavigate();
-    const drawerBarcodeRef = useRef(null);
+    const {orgId} = useAuth();
+    const [buttons, setButtons] = useState(anyInList(getDashboardMainLinks(orgId)) ? getDashboardMainLinks(orgId) : []);
     
     return (
         <>
-            <div className={cx(styles.orgArea, 'safe-area-top')}>
-               <PaddingBlock topBottom={true}>
-                   <Flex vertical={true} gap={token.paddingSM} >
-                       <Button block onClick={() => navigate(HomeRouteNames.SCHEDULER)}>Scheduler</Button>
-                       <Button block onClick={() => navigate(EventRouteNames.EVENT_CALENDAR)}>Calendar</Button>
-                       <Button block onClick={() => navigate(EventRouteNames.EVENT_LIST)}>Event List</Button>
-                       <Button block onClick={() => navigate('/membergroup/21072')}>Member Group</Button>
+            <Flex vertical={true} gap={token.padding}>
+                <Flex vertical={true} gap={token.paddingXXL}>
+                    <PaddingBlock onlyTop={true}>
+                        <DashboardHeader dashboardData={dashboardData} organizationList={organizationList} />
+                    </PaddingBlock>
+                    <PaddingBlock>
+                        <DashboardMembershipBar dashboardData={dashboardData?.itemsData} />
+                    </PaddingBlock>
 
-                       {toBoolean(dashboardData?.OrgShowBarcode) &&
-                           <>
-                               <Button block onClick={() => {
-                                   if (drawerBarcodeRef.current) {
-                                       drawerBarcodeRef.current.open();
-                                   }
-                               }}>
-                                   Barcode
-                               </Button>
+                    <PaddingBlock>
+                        {anyInList(buttons) &&
+                            <Flex vertical={true} gap={token.paddingSM}>
+                                {buttons.map((button, i) => {
+                                    return (
+                                        <Button type={'primary'}
+                                                key={button.Item}
+                                                onClick={() => {
+                                                    if (anyInList(button.Childrens)) {
+                                                        let route = toRoute(HomeRouteNames.NAVIGATE, 'id', orgId);
+                                                        route = toRoute(route, 'nodeId', button.Item);
+                                                        setPage(setDynamicPages, button.Text, route);
+                                                        navigate(route);
+                                                    } else {
+                                                        navigate(button.Url);
+                                                    }
+                                                }}
+                                                htmlType={'button'}
+                                                block={true}>
+                                            {button.Text}
+                                        </Button>
+                                    )
+                                })}
+                            </Flex>
+                        }
+                    </PaddingBlock>
+                </Flex>
+                
+                {toBoolean(dashboardData?.itemsModel?.ShowMembershipBtn) &&
+                    <AlertBlock
+                        type={dashboardData?.itemsModel.MembershipStatusDisplay}
+                        title={dashboardData?.itemsModel?.MembershipText}
+                        description={dashboardData?.itemsModel?.MembershipDescriptionHtml}
+                        buttonText={dashboardData?.itemsModel?.GetMembershipButtonText}
+                        onButtonClick={() => {navigate(dashboardData?.itemsModel?.GetMembershipBtnUrl)}}
+                    />
+                }
+                
+                <PaddingBlock leftRight={false} onlyBottom={true}>
+                    <DashboardAnnouncements dashboardData={dashboardData?.itemsData}/>
+                    <DashboardBookings dashboardData={dashboardData?.itemsData}/>
+                    <DashboardLeagues dashboardData={dashboardData?.itemsData}/>
+                </PaddingBlock>
 
-                               <DrawerBarcode ref={drawerBarcodeRef} format={dashboardData?.OrgBarcodeFormat} familyList={stringToJson(dashboardData?.FamilyMembesJson)}/>
-                           </>
-                       }
-                   </Flex>
-               </PaddingBlock>
-            </div>
-
-            <DashboardAnnouncements dashboardData={dashboardData} isFetching={isFetching}/>
-            <DashboardReservations dashboardData={dashboardData} isFetching={isFetching}/>
-            <DashboardOpenMatches dashboardData={dashboardData} isFetching={isFetching}/>
-            <DashboardEvents dashboardData={dashboardData} isFetching={isFetching}/>
-            <DashboardLeagues dashboardData={dashboardData} isFetching={isFetching}/>
-
-            {anyInList(stringToJson(dashboardData?.DashboardLinksJson)) &&
-                <>
-                    <div className={cx(styles.header)} style={{padding: `0px ${token.padding}px`}}>
-                        <Title level={3}>Additional Links</Title>
-                    </div>
-                    <CardLinks links={stringToJson(dashboardData?.DashboardLinksJson)} isFetching={isFetching}/>
-                </>
-            }
+                {anyInList(navigationItems) &&
+                    <PaddingBlock onlyBottom={true}>
+                        {equalString(dashboardViewType, 3) &&
+                            <ButtonLinks links={navigationItems}/>
+                        }
+                        {equalString(dashboardViewType, 4) &&
+                            <CardLinks links={navigationItems}/>
+                        }
+                    </PaddingBlock>
+                }
+            </Flex>
         </>
     )
 }

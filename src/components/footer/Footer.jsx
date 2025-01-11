@@ -14,7 +14,7 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import {ModalClose} from "@/utils/ModalUtils.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
-import {getNavigationStorage} from "@/storage/AppStorage.jsx";
+import {getDashboardMainLinks, getNavigationStorage} from "@/storage/AppStorage.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {any} from "prop-types";
 
@@ -38,24 +38,8 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     }, [footerRef]);
 
     useEffect(() => {
-        let cacheLinks = getNavigationStorage(orgId);
-
-        if (!anyInList(drawerLInks)){
-            let reserveList = [];
-            if (anyInList(cacheLinks)){
-                cacheLinks.forEach(item => {
-                    if (equalString(item.Item, 3)) {
-                        reserveList.push(item);
-                    } else if (equalString(item.Item, 12)) {
-                        reserveList.push(item);
-                    } else if (equalString(item.Item, 9)) {
-                        reserveList.push(item);
-                    }
-                });
-            }
-            setDrawerLinks(reserveList);
-        }
-
+        let cacheLinks = getDashboardMainLinks(orgId);
+        setDrawerLinks(anyInList(cacheLinks) ? cacheLinks : []);
     }, [showReserveDrawer])
 
     useEffect(() => {

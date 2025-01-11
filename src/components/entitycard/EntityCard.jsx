@@ -6,6 +6,7 @@ const { useToken } = theme;
 import {useStyles} from "./EntityCard.styles.jsx";
 import { cx } from 'antd-style';
 import { useTranslation } from 'react-i18next';
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 
 const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
     const { token } = useToken();
@@ -14,29 +15,32 @@ const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
     const { t } = useTranslation('');
     
     return (
-        <Flex vertical={true} gap={token.paddingXL}>
+        <Flex vertical={true}>
             {isFetching &&
-                <div className={cx(styles.header, toBoolean(addPadding) && styles.headerPadding)} style={{paddingBottom: '2px'}}>
-                    <Flex justify={'space-between'} style={{width : '100%'}}>
+                <PaddingBlock>
+                    <Flex align={'center'} justify={'space-between'} className={cx(styles.cardHeader)}>
                         <Skeleton.Button active/>
-                        <Skeleton.Button active />
+
+                        <Skeleton.Button active/>
                     </Flex>
-                </div>
+                </PaddingBlock>
             }
 
             {!isFetching &&
-                <div className={cx(styles.header, toBoolean(addPadding) && styles.headerPadding)}>
-                    <Title level={1}>{title}</Title>
+                <PaddingBlock>
+                    <Flex align={'center'} justify={'space-between'} className={cx(styles.cardHeader)}>
+                        <Title level={1}>{title}</Title>
 
-                    <Title level={3} style={{color: token.colorLink}} onClick={onClick}>
-                        {t('seeAll')}
-                    </Title>
-                </div>
+                        <Title level={3} style={{color: token.colorLink}} onClick={onClick}>
+                            {t('seeAll')}
+                        </Title>
+                    </Flex>
+                </PaddingBlock>
             }
 
-            <div className={toBoolean(addPadding) ? styles.cardPadding : null}>
+            <PaddingBlock>
                 {children}
-            </div>
+            </PaddingBlock>
         </Flex>
     )
 }

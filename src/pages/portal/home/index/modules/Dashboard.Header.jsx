@@ -9,18 +9,17 @@ import {Ellipsis} from "antd-mobile";
 import apiService, {setRequestData} from "@/api/api.jsx";
 import {imageSrc} from "@/utils/ImageUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
-import {DownOutlined} from "@ant-design/icons";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import portalService from "@/api/portal.jsx";
 import {useNavigate} from "react-router-dom";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {useAntd} from "@/context/AntdProvider.jsx";
 import {toAuthLocalStorage} from "@/storage/AppStorage.jsx";
 import {setClientUiCulture} from "@/utils/DateUtils.jsx";
+import {isValidJson} from "@/utils/ListUtils.jsx";
 const {Text, Title} = Typography;
 
-const DashboardHeader = ({ dashboardData, organizationList }) => {
+const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) => {
     const [showOrganizationDrawer, setShowOrganizationDrawer] = useState(false);
     const [weather, setWeather] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
@@ -30,18 +29,19 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
     const {token, globalStyles} = useApp();
     const {spGuideId, orgId, authData, setAuthData,setOrgId } = useAuth();
     const [loadingOrganizationId, setLoadingOrganizationId] = useState(null);
+    const [headerTopPosition, setHeaderTopPosition] = useState(12);
     const navigate = useNavigate();
     const {setPrimaryColor} = useAntd();
     
     let cookieWeatherKey = `Dashboard_Weather_${orgId}`;
     
     const loadData = async () => {
-        let currentDateTimeString = dashboardData?.currentDateTimeString;
+        let currentDateTimeString = dashboardData?.currentOrgDateTimeString;
         let response = await apiService.get(`/api/dashboard/weather?id=${orgId}&currentDateTime=${currentDateTimeString}`);
 
         if (toBoolean(response?.IsValid)) {
             let data = response.Data;
-            setCookie(cookieWeatherKey, data, 30);
+            setCookie(cookieWeatherKey, JSON.stringify(data), 30);
             
             if (toBoolean(data?.displayWeather)) {
                 setWeather(data.weatherInfo);  
@@ -55,23 +55,21 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
     
     useEffect(() => {
         const weatherCookieData = getCookie(cookieWeatherKey);
-        if (!isNullOrEmpty(weatherCookieData)) {
-            if (toBoolean(weatherCookieData?.displayWeather)) {
-                setWeather(weatherCookieData.weatherInfo);
+        
+        if (isValidJson(weatherCookieData)) {
+            let weatherData = JSON.parse(weatherCookieData);
+
+            if (toBoolean(weatherData?.displayWeather)) {
+                setWeather(weatherData.weatherInfo);
             }
-            setShowInCelsius(weatherCookieData?.showInCelsius);
-            setWindMeasurements(weatherCookieData?.windMeasurements);
+            setShowInCelsius(weatherData?.showInCelsius);
+            setWindMeasurements(weatherData?.windMeasurements);
             setIsFetching(false);
         }
     }, [])
-
-    useEffect(() => {
-
-        
-    }, [authData]);
     
     useEffect(() => {
-        if (!isNullOrEmpty(dashboardData)){
+        if (!isNullOrEmpty(dashboardData) && !isReloadFetching){
             loadData();
         }
     }, [dashboardData]);
@@ -161,14 +159,14 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
     
     return (
         <>
-            <Flex vertical={true} gap={token.paddingLG}>
+            <div className={styles.headerDashboardBlock}>
                 <Flex justify={'space-between'} align={'center'} onClick={() => setShowOrganizationDrawer(true)}>
                     <Flex gap={token.paddingLG} flex={1} align={'center'}>
                         <img src={imageSrc(authData?.LogoUrl, authData?.OrgId)} alt={authData?.OrgName}
                              style={{
                                  maxHeight: '44px',
                                  maxWidth: '72px',
-                                 width: '100%',
+                                 //width: '100%',
                                  height: 'auto',
                                  objectFit: 'contain'
                              }}/>
@@ -181,15 +179,19 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
 
                     <SVG icon={'chevron-down-regular'} size={14} />
                 </Flex>
+            </div>
 
-                {weather &&
-                    <Flex gap={token.padding} align={"center"}>
-                        {weather[temperatureLabel] && renderWeatherData(WEATHER_TYPE.temperature, weather[temperatureLabel])}
-                        {weather.RainPercentage && renderWeatherData(WEATHER_TYPE.rainPercentage, weather.RainPercentage)}
-                        {windMeasurements && renderWeatherData(WEATHER_TYPE.wind, weather[windMeasurements], windMeasurements)}
-                    </Flex>
-                }
-            </Flex>
+            {!isReloadFetching &&
+                <Flex vertical={true} gap={token.paddingLG}>
+                    {weather &&
+                        <Flex gap={token.padding} align={"center"}>
+                            {weather[temperatureLabel] && renderWeatherData(WEATHER_TYPE.temperature, weather[temperatureLabel])}
+                            {weather.RainPercentage && renderWeatherData(WEATHER_TYPE.rainPercentage, weather.RainPercentage)}
+                            {windMeasurements && renderWeatherData(WEATHER_TYPE.wind, weather[windMeasurements], windMeasurements)}
+                        </Flex>
+                    }
+                </Flex>
+            }
 
             <DrawerBottom
                 showDrawer={showOrganizationDrawer || !isNullOrEmpty(loadingOrganizationId)}

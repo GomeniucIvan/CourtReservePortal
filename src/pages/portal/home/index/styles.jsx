@@ -106,5 +106,13 @@ export const useStyles = createStyles(({ css, token }) => ({
                 transform:rotate(360deg);
             }
         }
+    `,
+    headerDashboardBlock: css`
+        position: absolute;
+        width: calc(100% - ${token.padding * 2}px);
+        z-index: 2;
+        background-color: ${token.colorBgBase};
+        top: 6px;
+        padding-bottom: 6px;
     `
 }));

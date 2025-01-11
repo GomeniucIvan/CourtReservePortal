@@ -2,7 +2,6 @@ import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Button, Divider, Flex, Typography} from "antd";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import DashboardReservations from "@portal/home/index/modules/Dashboard.Reservations.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
 import DashboardMembershipBar from "@portal/home/index/modules/Dashboard.MembershipBar.jsx";
@@ -10,8 +9,9 @@ import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 import {toBoolean} from "@/utils/Utils.jsx";
+import DashboardBookings from "@portal/home/index/modules/Dashboard.Bookings.jsx";
 
-function DashboardClassic({navigationItems, dashboardData, organizationList}) {
+function DashboardClassic({navigationItems, dashboardData, organizationList, announcementsCount}) {
 	const [showAll, setShowAll] = useState(false);
 	const [navItems, setNavItems] = useState([]);
 	const {token} = useApp();
@@ -48,7 +48,8 @@ function DashboardClassic({navigationItems, dashboardData, organizationList}) {
 
 				<PaddingBlock>
 					<Flex vertical={true} gap={token.paddingSM}>
-						<ListLinks links={navigationItemsToShow} />
+						<ListLinks links={navigationItemsToShow} 
+								   announcementsCount={announcementsCount} />
 
 						{navItems.length > 6 &&
 							<Divider>
@@ -62,7 +63,7 @@ function DashboardClassic({navigationItems, dashboardData, organizationList}) {
 				</PaddingBlock>
 
 				<PaddingBlock leftRight={false} onlyBottom={true}>
-					<DashboardReservations dashboardData={dashboardData?.itemsData} isFetching={false}/>
+					<DashboardBookings dashboardData={dashboardData?.itemsData} isFetching={false}/>
 				</PaddingBlock>
 			</Flex>
 		</>

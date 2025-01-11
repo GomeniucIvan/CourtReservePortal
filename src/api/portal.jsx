@@ -2,6 +2,7 @@ import {encodeParamsObject, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import appService from "@/api/app.jsx";
 import apiService, {loadBearerToken, setRequestData} from "@/api/api.jsx";
 import {setNavigationStorage} from "@/storage/AppStorage.jsx";
+import {getCookie} from "@/utils/CookieUtils.jsx";
 
 
 const portalService = {
@@ -9,7 +10,8 @@ const portalService = {
         return await appService.get(navigate, `/app/MobileSso/FrictLogin?ssoKey=${ssoKey}&initialAuthCode=${secretKey}&spGuideId=${spGuideId}&loaded=true`)
     },
     navigationData: async (navigate, orgId) => {
-        return  await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}`);
+        let navigationType = getCookie("dashboard_navigationType");
+        return  await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}&navigationType=${navigationType}`);
     },
     requestData: async (navigate, orgId) => {
         //params for bearer authorization, we pass param like requestData to auth member/user
@@ -23,7 +25,11 @@ const portalService = {
             let dashboardData = await portalService.navigationData(navigate, orgId);
 
             if (toBoolean(dashboardData?.IsValid)) {
-                setNavigationStorage(orgId, dashboardData.Data.menu, dashboardData.Data.more, dashboardData.Data.listOrg);
+                setNavigationStorage(orgId,
+                    dashboardData.Data.menu,
+                    dashboardData.Data.more,
+                    dashboardData.Data.listOrg,
+                    dashboardData.Data.mainLinks);
             }
             
             return await portalService.organizationData(orgId);

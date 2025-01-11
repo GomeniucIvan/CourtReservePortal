@@ -1,13 +1,8 @@
 ﻿import { createStyles } from 'antd-style';
 
 export const useStyles = createStyles(({ css, token }) => ({
-    header: css`
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    `,
-    headerPadding: css`
-        margin: 0 ${token.padding}px;
+    cardHeader: css`
+        min-height: 72px;
     `,
     cardPadding: css`
         .slick-slide {

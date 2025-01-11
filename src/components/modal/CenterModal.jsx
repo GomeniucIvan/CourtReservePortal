@@ -1,12 +1,10 @@
-﻿import React, {useRef, useState} from 'react';
+﻿import React from 'react';
 import { useApp } from "../../context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
-import {Button, DatePicker, Flex, Typography, Modal as AntModal} from "antd";
+import {Modal as AntModal} from "antd";
 import {cx} from "antd-style";
-import Modal from "./Modal.jsx";
 import {toBoolean} from "@/utils/Utils.jsx";
 
-const {Title} = Typography;
 
 function CenterModal({ show,
                          rootClass,
@@ -14,6 +12,7 @@ function CenterModal({ show,
                          hideFooter = false,
                          children,
                          onClose}) {
+    
     const { token } = useApp();
     const {styles} = useStyles();
 

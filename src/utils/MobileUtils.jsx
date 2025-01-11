@@ -32,4 +32,12 @@ export const reactActivateStatus = () => {
     }
 };
 
+export const openMobileExternalBrowser = (url) => {
+    if (window.ReactNativeWebView) {
+        const message = JSON.stringify({ type: 'open_browser', url: url });
+        window.ReactNativeWebView.postMessage(message);
+        window.ReactNativeWebView.postMessage(message);
+    }
+}
+
 window.reactActivateStatus = reactActivateStatus;

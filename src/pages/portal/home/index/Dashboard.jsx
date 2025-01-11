@@ -1,31 +1,34 @@
-﻿import {Button, Flex, Typography} from "antd";
-import {useAuth} from "@/context/AuthProvider.jsx";
+﻿import {useAuth} from "@/context/AuthProvider.jsx";
 import {
     fromLocalStorage, getMemberOrgList,
-    getMoreNavigationStorage,
     getNavigationStorage,
-    setNavigationStorage,
     toLocalStorage
 } from "@/storage/AppStorage.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import apiService from "@/api/api.jsx";
-const { Title } = Typography;
+import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
 import {useNavigate} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import DashboardModern from "@portal/home/index/modern/DashboardModern.jsx";
 import DashboardClassic from "@portal/home/index/classic/DashboardClassic.jsx";
-import DashboardCards from "@portal/home/index/cards/DashboardCards.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {cx} from "antd-style";
 import {useStyles} from "./styles.jsx";
-import appService from "@/api/app.jsx";
 import portalService from "@/api/portal.jsx";
+import {getCookie} from "@/utils/CookieUtils.jsx";
+import {Flex, Skeleton} from "antd";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import * as React from "react";
+import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
 
 function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
     const { orgId, authData } = useAuth();
     const [navigationItems, setNavigationItems] = useState(getNavigationStorage(orgId));
     const [organizationList, setOrganizationList] = useState(getMemberOrgList(orgId));
+    const [announcementsCount, setAnnouncementsCount] = useState(0);
+    const [dashboardViewType, setDashboardViewType] = useState(2);
+    const [isFetching, setIsFetching] = useState(true);
     const navigate = useNavigate();
     const [dashboardData, setDashboardData] = useState(null);
     const { styles } = useStyles();
@@ -34,10 +37,11 @@ function Dashboard() {
         const cachedData = fromLocalStorage(`dashboardItems_${orgId}`);
         
         if (refresh) {
-            setDashboardData(null);
+            setIsFetching(true);
         } else{
             if (!isNullOrEmpty(cachedData)){
-                setDashboardData(cachedData);
+                setDashboardData(JSON.parse(cachedData));
+                setIsFetching(false);
             }
         }
         
@@ -55,7 +59,18 @@ function Dashboard() {
             authData.OrgMemberFamilyId,
             null);
 
-        setDashboardData(dashboardData)
+        let navigationType = getCookie("dashboard_navigationType");
+        
+        let dashboardViewTypeToSet = dashboardData?.mobileDashboardView;
+        if (!isNullOrEmpty(navigationType)) {
+            dashboardViewTypeToSet = navigationType;
+        }
+        setDashboardViewType(dashboardViewTypeToSet);
+            
+        setDashboardData(dashboardData);
+        setAnnouncementsCount(dashboardData?.NewGlobalAnnouncementsCount || 0);
+        toLocalStorage(`dashboardItems_${orgId}`, JSON.stringify(dashboardData));
+        setIsFetching(false);
     }
     
     useEffect(() => {
@@ -83,25 +98,39 @@ function Dashboard() {
         <div className={cx(styles.orgArea, 'safe-area-top')}>
             {/*<div className={globalStyles.safeAreaGlass}></div>*/}
 
-            {dashboardData &&
+            {isFetching &&
+                <PaddingBlock topBottom={true}>
+                    <Flex vertical={true} gap={token.padding}>
+                        <DashboardHeader dashboardData={dashboardData}
+                                         isReloadFetching={true}
+                                         organizationList={[]} />
+                        
+                        <Skeleton.Button active={true} block style={{height: `60px`}}/>
+                        <Skeleton.Button active={true} block style={{height: `80px`}}/>
+                        <Skeleton.Button active={true} block style={{height: `160px`}}/>
+                        <Skeleton.Button active={true} block style={{height: `80px`}}/>
+                        <Skeleton.Button active={true} block style={{height: `70px`}}/>
+                        <Skeleton.Button active={true} block style={{height: `95px`}}/>
+                    </Flex>
+                </PaddingBlock>
+            }
+            
+            {(dashboardData && !isFetching) &&
                 <>
                     {/*Modern Dashboard*/}
-                    {(equalString(dashboardData?.mobileDashboardView, 3)) &&
+                    {(equalString(dashboardViewType, 3) || equalString(dashboardViewType, 4)) &&
                         <DashboardModern dashboardData={dashboardData}
                                          organizationList={organizationList}
+                                         dashboardViewType={dashboardViewType}
                                          navigationItems={navigationItems} />
                     }
 
                     {/*Classic*/}
-                    {(equalString(dashboardData?.mobileDashboardView, 1) ||equalString(dashboardData?.mobileDashboardView, 2) || isNullOrEmpty(dashboardData?.mobileDashboardView)) &&
+                    {(equalString(dashboardViewType, 1) ||equalString(dashboardViewType, 2) || isNullOrEmpty(dashboardViewType)) &&
                         <DashboardClassic dashboardData={dashboardData}
                                           organizationList={organizationList}
+                                          announcementsCount={announcementsCount}
                                           navigationItems={navigationItems} />
-                    }
-
-                    {/*Cards*/}
-                    {equalString(dashboardData?.mobileDashboardView, 4) &&
-                        <DashboardCards dashboardData={dashboardData}/>
                     }
                 </>
             }

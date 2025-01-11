@@ -283,18 +283,25 @@ function Layout() {
     
     return (
         <div className={styles.root}>
-            {(currentRoute && !toBoolean(isFetching)) &&
+            {(!toBoolean(isFetching)) &&
                 <div ref={headerRef}>
                     <Header route={currentRoute}/>
                 </div>
             }
 
-            <div id={'page-body'} style={{overflow: 'auto', height: `${maxHeight}px`, overflowX: 'hidden'}}>
+            <div id={'page-body'} style={{
+                overflow: 'auto', 
+                height: `${maxHeight}px`,
+                overflowX: 'hidden'}}>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <>
                         <LayoutExtra/>
 
-                        <Toaster />
+                        <Toaster
+                            toastOptions={{
+                                className: 'safe-area-top-margin',
+                            }}
+                        />
                         
                         {toBoolean(isFetching) ? (
                             <>

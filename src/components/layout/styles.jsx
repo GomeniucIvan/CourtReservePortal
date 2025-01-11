@@ -120,5 +120,20 @@ export const useStyles = createStyles(({css, token}) => ({
         --width: 100%;
         --height: 250px;
         --border-radius: ${token.borderRadius}px;
-    `
+    `,
+    dashboardTypeContainer: css`
+        position: relative;
+    `,
+    dashboardTypes: css`
+        position: absolute;
+        background-color: ${token.colorText};
+        top: -3px;
+        width: 96px;
+        display: flex;
+        left: -105px;
+        border-radius: ${token.borderRadius}px;
+        height: 34px;
+        align-items: center;
+        justify-content: space-around;
+    `,
 }));

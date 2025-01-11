@@ -46,10 +46,11 @@ export const clearAllLocalStorage = () => {
     localStorage.clear();
 };
 
-export const setNavigationStorage = (orgId, mainMenu, moreMenu, listOrg) => {
+export const setNavigationStorage = (orgId, mainMenu, moreMenu, listOrg, mainLinks) => {
     toLocalStorage(`navigation_${orgId}`, mainMenu);
     toLocalStorage(`morenavigation_${orgId}`, moreMenu);
     toLocalStorage(`navigationorgs_${orgId}`, listOrg);
+    toLocalStorage(`navigation_mainlinks_${orgId}`, mainLinks);
 };
 
 export const getNavigationStorage = (orgId) => {
@@ -60,4 +61,7 @@ export const getMoreNavigationStorage = (orgId) => {
 };
 export const getMemberOrgList = (orgId) => {
     return fromLocalStorage(`navigationorgs_${orgId}`);
+};
+export const getDashboardMainLinks = (orgId) => {
+    return fromLocalStorage(`navigation_mainlinks_${orgId}`);
 };

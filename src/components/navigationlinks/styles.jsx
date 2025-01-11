@@ -48,5 +48,10 @@ export const useStyles = createStyles(({ css, token }) => ({
         svg {
             filter: drop-shadow(-2px 4px 2px rgba(0, 0, 0, .3));
         }
+    `,
+    cardButton: css`
+        .ant-card-body {
+            padding: 18px;
+        }
     `
 }));

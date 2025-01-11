@@ -55,25 +55,23 @@ const Header = forwardRef((props, ref) => {
 
     let title = props.route?.title;
     let useKey = true;
-    
+
     if (isNullOrEmpty(title) && toBoolean(props.route?.header)) {
         title = headerTitle;
         useKey = false;
     }
     
-    if (isNullOrEmpty(title)) {
-        return (<></>);
-    }
-    
     return (
-        <NavBar onBack={backToPreviousPage} className={styles.header} right={isNullOrEmpty(headerRightIcons) ? null : right}>
-            {isLoading && <div className={styles.headerLoadingBar}></div>}
-            {!isNullOrEmpty(title) &&
-                <>
-                    {useKey ? t(title) : title}
-                </>
-            }
-        </NavBar>
+        <div style={{opacity: isNullOrEmpty(title) ? 0 : 1}}>
+            <NavBar onBack={backToPreviousPage} className={styles.header} right={isNullOrEmpty(headerRightIcons) ? null : right}>
+                {isLoading && <div className={styles.headerLoadingBar}></div>}
+                {!isNullOrEmpty(title) &&
+                    <>
+                        {useKey ? t(title) : title}
+                    </>
+                }
+            </NavBar>
+        </div>
     );
 })
 
