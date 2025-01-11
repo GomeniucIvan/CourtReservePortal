@@ -121,7 +121,7 @@ export const AntdProvider = ({ children }) => {
                             },
                             Typography: {
                                 titleMarginTop: 0,
-                                lineHeight: '26px',
+                                lineHeight: '22px',
                                 titleMarginBottom: 0,
                                 fontSizeHeading1: 20,
                                 fontSizeHeading2: 18,

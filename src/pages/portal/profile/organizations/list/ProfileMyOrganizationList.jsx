@@ -14,6 +14,10 @@ import {useStyles} from "./styles.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import portalService from "@/api/portal.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import Modal from "@/components/modal/Modal.jsx";
+import CenterModal from "@/components/modal/CenterModal.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 
 const {Title, Text} = Typography;
 
@@ -24,8 +28,13 @@ function ProfileMyOrganizationList() {
     const{setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading, globalStyles} = useApp();
     const [selectedTab, setSelectedTab] = useState(selectedTabStorage('organizations-list', 'active'));
     const [loadingOrganization, setLoadingOrganization] = useState(null);
-    const {styles} = useStyles();
+    const [primaryOrganizationDataModal, setPrimaryOrganizationDataModal] = useState(null);
+    const [hideOrganizationDataModal, setHideOrganizationDataModal] = useState(null);
+    const [tabKey, setTabKey] = useState(1);
+    const [showOrganizationDataModal, setShowOrganizationDataModal] = useState(null);
     
+    const {styles} = useStyles();
+
     const [organizations, setOrganizations] = useState([]);
 
     const loadData = async (refresh) => {
@@ -37,7 +46,12 @@ function ProfileMyOrganizationList() {
         let response = await apiService.get(`/api/member-portal/my-organizations/get-list?orgId=${orgId}&spGuideId=${spGuideId}`);
 
         if (toBoolean(response?.IsValid)) {
-            setOrganizations(response.Data);
+            let incOrganizations = response?.Data;
+            setOrganizations(incOrganizations);
+            
+            if (!incOrganizations?.some((organization) => toBoolean(organization.IsHidden))) {
+                setTabStorage('organizations-list', 'active', setSelectedTab);
+            }
         }
 
         setIsFetching(false);
@@ -57,11 +71,23 @@ function ProfileMyOrganizationList() {
         loadData();
     }, []);
 
+    const changeViewingOrganization = async (selectedOrg) => {
+        setIsFooterVisible(false);
+        setLoadingOrganization(selectedOrg);
+
+        let requestData = await portalService.requestData(navigate, selectedOrg.Id);
+        if (toBoolean(requestData?.IsValid)) {
+            await setAuthorizationData(requestData.OrganizationData);
+            navigate(HomeRouteNames.INDEX);
+        }
+    }
+
     const makePrimary = async (selectedOrgId) => {
-        let response = await apiService.get(`/api/member-portal/my-organizations/make-primary?orgId=${selectedOrgId}&spGuideId=${spGuideId}`);
+        setPrimaryOrganizationDataModal(null);
+        let response = await apiService.post(`/api/member-portal/my-organizations/make-primary?orgId=${orgId}&spGuideId=${spGuideId}&selectedOrgId=${selectedOrgId}`);
 
         if (toBoolean(response?.IsValid)) {
-            if (isNullOrEmpty(spGuideId)){
+            if (!isNullOrEmpty(spGuideId)){
                 pNotify('The location has been successfully updated to primary');
             } else{
                 pNotify('The organization has been successfully updated to primary');
@@ -71,22 +97,59 @@ function ProfileMyOrganizationList() {
         loadData(true);
     }
 
-    const addToActiveOrganizations = (selectedOrgId) => {
-        
-    }
-    
-    const changeViewingOrganization = async (selectedOrg) => {
-        setIsFooterVisible(false);
-        setLoadingOrganization(selectedOrg);
-        
-        let requestData = await portalService.requestData(navigate, selectedOrg.Id);
-        if (toBoolean(requestData?.IsValid)) {
-            await setAuthorizationData(requestData.OrganizationData);
-            navigate(HomeRouteNames.INDEX);
+    const addToActiveOrganizations = async (selectedOrgId) => {
+        setShowOrganizationDataModal(null);
+        let response = await apiService.post(`/api/member-portal/my-organizations/change-visibility?orgId=${orgId}&spGuideId=${spGuideId}&selectedOrgId=${selectedOrgId}&isHidden=false`);
+
+        if (toBoolean(response?.IsValid)) {
+            const updateOrganizations = organizations.map((item) => {
+                if (equalString(selectedOrgId, item.Id)) {
+                    return {
+                        ...item,
+                        IsHidden: false,
+                    }
+                } else {
+                    return item;
+                }
+            })
+
+            setOrganizations(updateOrganizations);
+            setTabKey((prevKey) => prevKey + 1);
+            
+            if (!isNullOrEmpty(spGuideId)){
+                pNotify('The location has been added back to your list successfully');
+            } else{
+                pNotify('The organization has been added back to your list successfully');
+            }
         }
     }
     
-    const anyHiddenOrganization = organizations?.some((organization) => toBoolean(organization.IsHidden));
+    const hideOrganization = async (selectedOrgId) => {
+        setHideOrganizationDataModal(null);
+        let response = await apiService.post(`/api/member-portal/my-organizations/change-visibility?orgId=${orgId}&spGuideId=${spGuideId}&selectedOrgId=${selectedOrgId}&isHidden=true`);
+
+        if (toBoolean(response?.IsValid)) {
+
+            const updateOrganizations = organizations.map((item) => {
+                if (equalString(selectedOrgId, item.Id)) {
+                    return {
+                        ...item,
+                        IsHidden: true,
+                    }
+                } else {
+                    return item;
+                }
+            })
+            
+            setOrganizations(updateOrganizations);
+            setTabKey((prevKey) => prevKey + 1);
+            if (!isNullOrEmpty(spGuideId)){
+                pNotify('The location has been hidden successfully');
+            } else{
+                pNotify('The organization has been hidden successfully');
+            }
+        }
+    }
     
     const organizationList = (selectedKey) => {
         let organizationsToDisplay = [];
@@ -171,7 +234,7 @@ function ProfileMyOrganizationList() {
                                                                 variant="text"
                                                                 className={styles.primaryButton}
                                                                 htmlType="button"
-                                                                onClick={() => {makePrimary(organization.Id)}}>
+                                                                onClick={() => {setPrimaryOrganizationDataModal(organization)}}>
                                                             Make Primary
                                                         </Button>
                                                     }
@@ -180,7 +243,7 @@ function ProfileMyOrganizationList() {
                                                                 variant="text"
                                                                 className={styles.primaryButton}
                                                                 htmlType="button"
-                                                                onClick={() => {addToActiveOrganizations(organization.Id)}}>
+                                                                onClick={() => {setShowOrganizationDataModal(organization)}}>
                                                             Add To My Organizations
                                                         </Button>
                                                     }
@@ -189,10 +252,14 @@ function ProfileMyOrganizationList() {
                                                 {!equalString(selectedKey, 'hidden') &&
                                                     <div>
                                                         <Flex style={{opacity: '0.7'}}>
-                                                            <Flex align={'center'} justify={'end'} className={styles.footerIconFlex}>
+                                                            <Flex align={'center'}
+                                                                  justify={'end'} 
+                                                                  onClick={() => {setHideOrganizationDataModal(organization)}}
+                                                                  className={styles.footerIconFlex}>
                                                                 <SVG icon={'eye-slash-regular'} size={24}  />
                                                             </Flex>
-                                                            <Flex align={'center'}
+                                                            <Flex align=
+                                                                      {'center'}
                                                                   justify={'end'}
                                                                   onClick={() => {changeViewingOrganization(organization)}}
                                                                   className={styles.footerIconFlex}>
@@ -201,8 +268,6 @@ function ProfileMyOrganizationList() {
                                                         </Flex>
                                                     </div>
                                                 }
-                                                
-                                                
                                             </Flex>
                                         </PaddingBlock>
                                     </Card>
@@ -214,21 +279,27 @@ function ProfileMyOrganizationList() {
             </PaddingBlock>
         )
     }
-
+    
     return (
-        <>
+        <div key={tabKey}>
             {(isNullOrEmpty(loadingOrganization)) &&
                 <>
                     {isFetching &&
                         <PaddingBlock topBottom={true}>
-                            <Skeleton.Button block active={true} style={{height : `200px`}} />
+                            <Flex vertical={true} gap={token.padding}>
+                                {emptyArray(8).map((item, index) => (
+                                    <div key={index}>
+                                        <Skeleton.Button block active={true} style={{height : `200px`}} />
+                                    </div>
+                                ))}
+                            </Flex>
                         </PaddingBlock>
                     }
 
 
                     {!isFetching &&
                         <>
-                            {anyHiddenOrganization &&
+                            {organizations?.some((organization) => toBoolean(organization.IsHidden)) &&
                                 <Tabs
                                     rootClassName={cx(globalStyles.tabs)}
                                     onChange={(e) => {setTabStorage('organizations-list', e, setSelectedTab)}}
@@ -248,7 +319,7 @@ function ProfileMyOrganizationList() {
                                 />
                             }
 
-                            {!anyHiddenOrganization &&
+                            {!organizations?.some((organization) => toBoolean(organization.IsHidden)) &&
                                 <>{organizationList('active')}</>
                             }
                         </>
@@ -260,14 +331,91 @@ function ProfileMyOrganizationList() {
                 <PaddingBlock topBottom={true}>
                     <Flex justify={'center'} gap={token.padding}  vertical={true} align={'center'}>
                         <img src={loadingOrganization?.LogoUrl} alt={loadingOrganization?.Name} className={styles.orgLoadingLogo}/>
-                        
+
                         <Title level={3}>{loadingOrganization?.Name}</Title>
 
                         <Skeleton.Button block active={true} style={{height : `450px`}} />
                     </Flex>
                 </PaddingBlock>
             }
-        </>
+
+            <CenterModal show={!isNullOrEmpty(primaryOrganizationDataModal)}
+                         hideFooter={true}
+                         onClose={() => {setPrimaryOrganizationDataModal(null)}}
+                         title={isNullOrEmpty(spGuideId) ? 'Make Primary Organization' : 'Make Primary Location'}>
+                <Flex vertical={true} gap={token.paddingXXL}>
+                    <Flex vertical={true} gap={token.paddingLG}>
+                        <Text style={{color: token.colorSecondary}}>Are you sure you want to make this your Primary {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'}</Text>
+
+                        <Flex gap={token.paddingLG} className={styles.orgModalOrgInfo}>
+                            <img src={primaryOrganizationDataModal?.LogoUrl} alt={loadingOrganization?.Name} className={styles.orgModalLogo}/>
+
+                            <Flex vertical={true} align={'start'}>
+                                <Title level={3}>{primaryOrganizationDataModal?.Name}</Title>
+                                <Text>{primaryOrganizationDataModal?.Address}</Text>
+                            </Flex>
+                        </Flex>
+                    </Flex>
+
+                    <Flex vertical={true} gap={token.paddingSM}>
+                        <Button type={'primary'} block={true} onClick={() => {makePrimary(primaryOrganizationDataModal.Id)}}>Yes</Button>
+                        <Button block={true} onClick={() => {setPrimaryOrganizationDataModal(null)}}>No</Button>
+                    </Flex>
+                </Flex>
+            </CenterModal>
+
+            <CenterModal show={!isNullOrEmpty(hideOrganizationDataModal)}
+                         hideFooter={true}
+                         onClose={() => {setHideOrganizationDataModal(null)}}
+                         title={isNullOrEmpty(spGuideId) ? 'Hide Organization' : 'Hide Location'}>
+                <Flex vertical={true} gap={token.paddingXXL}>
+                    <Flex vertical={true} gap={token.paddingLG}>
+                        <Text style={{color: token.colorSecondary}}>Are you sure you want to make this your Primary {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'}</Text>
+
+                        <Flex gap={token.paddingLG} className={styles.orgModalOrgInfo}>
+                            <img src={hideOrganizationDataModal?.LogoUrl} alt={hideOrganizationDataModal?.Name} className={styles.orgModalLogo}/>
+
+                            <Flex vertical={true} align={'start'}>
+                                <Title level={3}>{hideOrganizationDataModal?.Name}</Title>
+                                <Text>{hideOrganizationDataModal?.Address}</Text>
+                            </Flex>
+                        </Flex>
+
+                        <Text><b>Note:</b> This will not cancel your membership or remove your record. Please contact the {isNullOrEmpty(spGuideId) ? 'organization' : 'location'} directly to request further action.</Text>
+                    </Flex>
+
+                    <Flex vertical={true} gap={token.paddingSM}>
+                        <Button type={'primary'} danger={true} block={true} onClick={() => {hideOrganization(hideOrganizationDataModal.Id)}}>Yes</Button>
+                        <Button block={true} onClick={() => {setHideOrganizationDataModal(null)}}>No</Button>
+                    </Flex>
+                </Flex>
+            </CenterModal>
+
+            <CenterModal show={!isNullOrEmpty(showOrganizationDataModal)}
+                         hideFooter={true}
+                         onClose={() => {setShowOrganizationDataModal(null)}}
+                         title={isNullOrEmpty(spGuideId) ? 'Add To My Organizations' : 'Add To My Locations'}>
+                <Flex vertical={true} gap={token.paddingXXL}>
+                    <Flex vertical={true} gap={token.paddingLG}>
+                        <Text style={{color: token.colorSecondary}}>Are you sure you would like to add this {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'} back to your {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'} list?</Text>
+
+                        <Flex gap={token.paddingLG} className={styles.orgModalOrgInfo}>
+                            <img src={showOrganizationDataModal?.LogoUrl} alt={showOrganizationDataModal?.Name} className={styles.orgModalLogo}/>
+
+                            <Flex vertical={true} align={'start'}>
+                                <Title level={3}>{showOrganizationDataModal?.Name}</Title>
+                                <Text>{showOrganizationDataModal?.Address}</Text>
+                            </Flex>
+                        </Flex>
+                    </Flex>
+
+                    <Flex vertical={true} gap={token.paddingSM}>
+                        <Button type={'primary'} block={true} onClick={() => {addToActiveOrganizations(showOrganizationDataModal.Id)}}>Yes</Button>
+                        <Button block={true} onClick={() => {setShowOrganizationDataModal(null)}}>No</Button>
+                    </Flex>
+                </Flex>
+            </CenterModal>
+        </div>
     )
 }
 

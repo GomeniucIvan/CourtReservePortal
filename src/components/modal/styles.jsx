@@ -123,5 +123,15 @@ export const useStyles = createStyles(({ css, token }) => ({
         display: -ms-flexbox;
         display: flex;
         margin: 10px auto;
+    `,
+    centerModal: css`
+        .ant-modal-content {
+            box-shadow: none;
+            padding: ${token.paddingXXL}px !important;
+        }
+
+        .ant-modal-close {
+            top: ${token.paddingXXL-1.5}px;
+        }
     `
 }));
