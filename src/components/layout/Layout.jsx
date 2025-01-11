@@ -135,18 +135,22 @@ function Layout() {
             calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
         }
 
+        debugger;
+        
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
     };
 
     useEffect(() => {
         calculateMaxHeight();
+    }, [isFooterVisible, footerContent, footerRef.current, headerRef.current]);
 
+    useEffect(() => {
         setTimeout(function(){
             //dom, pages like payment drawer bottom not updates height instantly
             calculateMaxHeight();
         }, 50)
-        
+
         window.addEventListener('resize', calculateMaxHeight);
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', calculateMaxHeight);
@@ -160,8 +164,8 @@ function Layout() {
                 window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
             }
         };
-    }, [isFooterVisible, footerContent, footerRef.current]);
-
+    }, []);
+    
     useEffect(() => {
         calculateMaxHeight();
     }, [location]);
@@ -246,12 +250,14 @@ function Layout() {
         }
 
         let requestData = await portalService.requestData(navigate, orgId);
-        if (requestData.IsValid) {
+        
+        if (toBoolean(requestData?.IsValid)) {
             await setAuthorizationData(requestData.OrganizationData);
             setIsFetching(false);
         } if (toBoolean(requestData?.UnathorizeAccess)) {
             //validating data from backend
             navigate(AuthRouteNames.LOGIN);
+            setIsFetching(false);
         } else{
             setIsFetching(false);
         }

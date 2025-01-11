@@ -14,7 +14,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({children}) => {
     const [orgId, setOrgId] = useState(null);
-    const [spGuideId, setSpGuideId] = useState(null);
+    const [spGuideId, setSpGuideId] = useState('');
     const [shouldLoadOrgData, setShouldLoadOrgData] = useState(true);
     const [authData, setAuthData] = useState(null);
     const navigate = useNavigate();

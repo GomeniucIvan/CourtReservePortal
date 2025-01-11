@@ -112,10 +112,10 @@ function LoginAuthorize() {
 
                 const responseData = loginApiResponse.Data;
                 setRequestData(responseData.RequestData);
-                const authResponse = await portalService.organizationData(responseData.OrgId);
-
+                const authResponse = await portalService.requestData(responseData.OrgId);
+                
                 if (toBoolean(authResponse?.IsValid)) {
-                    await setAuthorizationData(authResponse.Organization);
+                    await setAuthorizationData(authResponse.OrganizationData);
                     navigate(loginApiResponse.Path);
                 }
             }

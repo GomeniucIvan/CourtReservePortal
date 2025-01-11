@@ -1,7 +1,7 @@
 ﻿import {Button, Flex, Typography} from "antd";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {
-    fromLocalStorage,
+    fromLocalStorage, getMemberOrgList,
     getMoreNavigationStorage,
     getNavigationStorage,
     setNavigationStorage,
@@ -24,41 +24,11 @@ import portalService from "@/api/portal.jsx";
 function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
     const { orgId, authData } = useAuth();
-    const [navigationItems, setNavigationItems] = useState([]);
-    const [organizationList, setOrganizationList] = useState([]);
-    const [navigationMoreItems, setNavigationMoreItems] = useState([]);
+    const [navigationItems, setNavigationItems] = useState(getNavigationStorage(orgId));
+    const [organizationList, setOrganizationList] = useState(getMemberOrgList(orgId));
     const navigate = useNavigate();
     const [dashboardData, setDashboardData] = useState(null);
     const { styles } = useStyles();
-    
-    const loadNavigationData = async (refresh) => {
-        const cachedNavigationData = getNavigationStorage(orgId);
-        const cachedMenuData = getMoreNavigationStorage(orgId);
-        
-        if (refresh){
-            setNavigationItems(null);
-            setNavigationMoreItems(null);
-        } else{
-            if (!isNullOrEmpty(cachedNavigationData)) {
-                setNavigationItems(cachedNavigationData);
-            }
-
-            if (!isNullOrEmpty(cachedMenuData)) {
-                setNavigationMoreItems(cachedNavigationData);
-            }
-        }
-
-        let dashboardData = await portalService.navigationData(navigate, orgId);
-        
-        if (toBoolean(dashboardData?.IsValid)) {
-            setNavigationItems(dashboardData.Data.menu);
-            setNavigationMoreItems(dashboardData.Data.more);
-            setOrganizationList(dashboardData.Data.listOrg);
-            setNavigationStorage(orgId, dashboardData.Data.menu, dashboardData.Data.more);
-        }
-        
-        setIsLoading(false);
-    }
     
     const loadDashboardData = async (refresh) => {
         const cachedData = fromLocalStorage(`dashboardItems_${orgId}`);
@@ -91,7 +61,6 @@ function Dashboard() {
     useEffect(() => {
         if (shouldFetch) {
             const fetchData = () => {
-                loadNavigationData(true);
                 loadDashboardData(true);
                 resetFetch();
             };
@@ -106,7 +75,6 @@ function Dashboard() {
     
     useEffect(() => {
         if (!isNullOrEmpty(authData)) {
-            loadNavigationData();
             loadDashboardData();     
         }
     }, [authData]);
