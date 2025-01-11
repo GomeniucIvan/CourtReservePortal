@@ -73,7 +73,7 @@ function AnnouncementList() {
                             <List.Item key={item.Id}>
                                 <List.Item.Meta
                                     title={item.Title}
-                                    description={<>{item.UpdatedOnDisplay}{toBoolean(item.IsUrgent) && <Tag color="error">Urgent</Tag>}</> }
+                                    description={<>{item.UpdatedOnDisplay}{toBoolean(item.IsUrgent) && <Tag color="error" className={globalStyles.tag}>Urgent</Tag>}</> }
                                 />
                                 {!isNullOrEmpty(item.Content) &&
                                     <IframeContent content={item.Content} id={item.Id} />

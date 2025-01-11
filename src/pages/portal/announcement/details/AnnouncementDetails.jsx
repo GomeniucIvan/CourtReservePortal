@@ -70,7 +70,7 @@ function AnnouncementDetails() {
             
             {(!isNullOrEmpty(announcement?.Content) && !isFetching) &&
                <>
-                   <Title level={3}>{announcement?.Title} {toBoolean(announcement?.IsUrgent) && <Tag color="#f50">{t('urgent')}</Tag>}</Title>
+                   <Title level={3}>{announcement?.Title} {toBoolean(announcement?.IsUrgent) && <Tag color="#f50" className={globalStyles.tag}>{t('urgent')}</Tag>}</Title>
                    <IframeContent content={announcement?.Content} id={announcement?.Id}/>
                </>
             }

@@ -133,11 +133,11 @@ function LoginMemberships() {
                                                 {(toBoolean(membership?.IsFull) || toBoolean(membership?.AllowedForFamilies)) &&
                                                     <Flex gap="4px" className={styles.membershipTags}>
                                                         {membership.IsFull &&
-                                                            <Tag color="#f50">{t(`membership.full`)}</Tag>
+                                                            <Tag color="#f50" className={globalStyles.tag}>{t(`membership.full`)}</Tag>
                                                         }
 
                                                         {membership.AllowedForFamilies &&
-                                                            <Tag color="#108ee9">{t(`membership.familyMembership`)}</Tag>
+                                                            <Tag color="#108ee9" className={globalStyles.tag}>{t(`membership.familyMembership`)}</Tag>
                                                         }
                                                     </Flex>
                                                 }
@@ -164,7 +164,7 @@ function LoginMemberships() {
                                                 }
 
                                                 {toBoolean(membership?.IsRestrictByAge) &&
-                                                    <Tag color="warning"> {t(`membership.ageRestrictionMessage`)}</Tag>
+                                                    <Tag color="warning" className={globalStyles.tag}> {t(`membership.ageRestrictionMessage`)}</Tag>
                                                 }
                                             </Flex>
                                         </PaddingBlock>
@@ -267,7 +267,7 @@ function LoginMemberships() {
 
                     {toBoolean(viewMembership?.IsRestrictByAge) &&
                         <div>
-                            <Tag color="warning"> {t(`membership.ageRestrictionMessage`)}</Tag>
+                            <Tag color="warning" className={globalStyles.tag}> {t(`membership.ageRestrictionMessage`)}</Tag>
                         </div>
                     }
 

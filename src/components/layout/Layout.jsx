@@ -16,12 +16,9 @@ import {useAuth} from "../../context/AuthProvider.jsx";
 import {Flex} from "antd";
 import {Skeleton} from 'antd-mobile'
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
-import appService from "../../api/app.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
-import apiService, {setRequestData} from "../../api/api.jsx";
 import {useSafeArea} from "../../context/SafeAreaContext.jsx";
-import {match} from "path-to-regexp";
 import {ErrorBoundary} from "react-error-boundary";
 import {Toaster} from "react-hot-toast";
 import portalService from "@/api/portal.jsx";
@@ -135,8 +132,6 @@ function Layout() {
             calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
         }
 
-        debugger;
-        
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
     };

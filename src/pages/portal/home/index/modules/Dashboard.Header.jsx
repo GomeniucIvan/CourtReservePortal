@@ -6,12 +6,18 @@ import {equalString, isNullOrEmpty, organizationLogoSrc, setCookie, toBoolean} f
 import {useStyles} from ".././styles.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {Ellipsis} from "antd-mobile";
-import apiService from "@/api/api.jsx";
+import apiService, {setRequestData} from "@/api/api.jsx";
 import {imageSrc} from "@/utils/ImageUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {DownOutlined} from "@ant-design/icons";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import portalService from "@/api/portal.jsx";
+import {useNavigate} from "react-router-dom";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import {useAntd} from "@/context/AntdProvider.jsx";
+import {toAuthLocalStorage} from "@/storage/AppStorage.jsx";
+import {setClientUiCulture} from "@/utils/DateUtils.jsx";
 const {Text, Title} = Typography;
 
 const DashboardHeader = ({ dashboardData, organizationList }) => {
@@ -22,8 +28,11 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
     const [windMeasurements, setWindMeasurements] = useState('');
     const { styles } = useStyles();
     const {token, globalStyles} = useApp();
-    const {spGuideId, orgId, authData} = useAuth();
-
+    const {spGuideId, orgId, authData, setAuthData,setOrgId } = useAuth();
+    const [loadingOrganizationId, setLoadingOrganizationId] = useState(null);
+    const navigate = useNavigate();
+    const {setPrimaryColor} = useAntd();
+    
     let cookieWeatherKey = `Dashboard_Weather_${orgId}`;
     
     const loadData = async () => {
@@ -57,7 +66,7 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
     }, [])
 
     useEffect(() => {
-        console.log(authData)
+
         
     }, [authData]);
     
@@ -111,6 +120,45 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
     };
     const temperatureLabel = showInCelsius ? 'TempC' : 'TempF';
     
+    const loadOrganizationData = async (requestData) => {
+
+        let memberResponseData = requestData.OrganizationData;
+        
+        if (!isNullOrEmpty(memberResponseData.RequestData)){
+            setRequestData(memberResponseData.RequestData)
+        }
+
+        if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
+            setPrimaryColor(memberResponseData.DashboardButtonBgColor);
+        }
+        
+        //prevent set auth data it will throw exception because it is used by hook 
+        //setAuthData(memberResponseData);
+        
+        toAuthLocalStorage('memberData', memberResponseData);
+        setOrgId(memberResponseData.OrgId);
+        setClientUiCulture(memberResponseData.UiCulture);
+        
+        //setAuthorizationData will not work because dashboard already check this hook state
+        //await setAuthorizationData(requestData.OrganizationData);
+        
+        //navigate will not reload required information like request data
+        //navigate(HomeRouteNames.INDEX);
+        
+        window.location.reload();
+    } 
+    
+    const changeViewingOrganization = async (selectedOrg) => {
+        setLoadingOrganizationId(selectedOrg.Id);
+
+        let requestData = await portalService.requestData(navigate, selectedOrg.Id);
+        if (toBoolean(requestData?.IsValid)) {
+            setTimeout(function(){
+                loadOrganizationData(requestData)
+            }, 1000)
+        }
+    }
+    
     return (
         <>
             <Flex vertical={true} gap={token.paddingLG}>
@@ -144,7 +192,7 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
             </Flex>
 
             <DrawerBottom
-                showDrawer={showOrganizationDrawer}
+                showDrawer={showOrganizationDrawer || !isNullOrEmpty(loadingOrganizationId)}
                 closeDrawer={() => setShowOrganizationDrawer(false)}
                 label={!spGuideId || equalString(spGuideId, 'courtreserve') ? "My Organization(s)" : "My Location(s)"}
                 showButton={(isNullOrEmpty(spGuideId) || !toBoolean(authData?.HideJoinOrganization))}
@@ -160,14 +208,30 @@ const DashboardHeader = ({ dashboardData, organizationList }) => {
                         <div key={orgListItem.Id}>
                             <PaddingBlock>
                                 <Flex className={globalStyles.drawerRow}
-                                      gap={token.padding} 
-                                      onClick={() => {}}>
-                                    <img style={{maxHeight: '40px', height: '100%', maxWidth: '100px'}}
-                                         src={innerLogoSrc} alt={orgListItem.Name}/>
+                                      style={{opacity : `${isNullOrEmpty(loadingOrganizationId) ? 1 : 0.8}`}}
+                                      onClick={() => {
+                                          if (isNullOrEmpty(loadingOrganizationId)) {
+                                              changeViewingOrganization(orgListItem)
+                                          } else {
+                                             //already change
+                                          }
+                                      }}>
+                                    <Flex justify={'space-between'} align={'center'} flex={1}>
+                                        <Flex gap={token.padding} align={'center'}>
+                                            <img style={{maxHeight: '40px', height: '100%', maxWidth: '100px'}}
+                                                 src={innerLogoSrc} alt={orgListItem.Name}/>
 
-                                    <Text style={{fontSize: `${token.fontSizeLG}px`}}>
-                                        <Ellipsis direction='end' rows={1} content={orgListItem.Name}/>
-                                    </Text>
+                                            <Text style={{fontSize: `${token.fontSizeLG}px`}}>
+                                                <Ellipsis direction='end' rows={1} content={orgListItem.Name}/>
+                                            </Text>
+                                        </Flex>
+
+                                        {equalString(loadingOrganizationId, orgListItem.Id) &&
+                                            <div className={styles.rotateNotch}>
+                                                <SVG icon={'circle-notch-regular'} size={18}  />
+                                            </div>
+                                        }
+                                    </Flex>
                                 </Flex>
                             </PaddingBlock>
                             {!isLastItem &&

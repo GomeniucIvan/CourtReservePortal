@@ -192,10 +192,10 @@ function ProfileBookingList() {
                     <CardIconLabel icon={'team'} description={booking.ReservationId}/>
 
                     {!isNullOrEmpty(booking.CourtNamesDisplay) &&
-                        <Tag color="default">{booking.CourtNamesDisplay}</Tag>
+                        <Tag color="default" className={globalStyles.tag}>{booking.CourtNamesDisplay}</Tag>
                     }
 
-                    <Tag color="default">
+                    <Tag color="default" className={globalStyles.tag}>
                         {booking.RegistrantsCount} {!isNullOrEmpty(booking.EventId) ? "Registrant(s)" : "Player(s)"}
                     </Tag>
                 </Card>

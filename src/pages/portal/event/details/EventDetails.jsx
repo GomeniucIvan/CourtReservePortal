@@ -257,7 +257,7 @@ function EventDetails() {
                     {anyInList(event?.EventTags) &&
                         <Flex gap={token.padding/2}>
                             {event.EventTags.map(eventTag => (
-                                <Tag color={eventTag.TextColor} key={eventTag.EventTagId} style={{ backgroundColor: eventTag.BackgroundColor }}>{eventTag.Name}</Tag>
+                                <Tag color={eventTag.TextColor} key={eventTag.EventTagId} style={{ backgroundColor: eventTag.BackgroundColor }} className={globalStyles.tag}>{eventTag.Name}</Tag>
                             ))}
                         </Flex>
                     }
@@ -267,7 +267,7 @@ function EventDetails() {
                             {event?.EventName}
 
                             {toBoolean(event?.IsFeatured) &&
-                                <Tag color="default">Featured</Tag>
+                                <Tag color="default" className={globalStyles.tag}>Featured</Tag>
                             }
                         </Title>
                         <Text type="secondary">{event?.EventType}</Text>

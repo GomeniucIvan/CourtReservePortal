@@ -21,6 +21,11 @@ export const useStyles = createStyles(({ css, token }) => ({
            padding: 14px;
         }
     `,
+    cardNoPadding: css`
+        .ant-card-body {
+           padding: 0;
+        }
+    `,
    listItemSM: css`
       &.ant-list-item{
          padding-inline: 12px;
@@ -422,5 +427,8 @@ export const useStyles = createStyles(({ css, token }) => ({
    `,
    swiperLastItem: css`
       width: ${window.innerWidth - (token.padding*2)}px;
+   `,
+   tag: css`
+    border-radius: ${token.borderRadiusXS}px;
    `
 }));

@@ -41,7 +41,7 @@ const portalService = {
         //organization data like org name, member membership id, fullname
         await loadBearerToken();
         let authResponse = await apiService.post(`/api/dashboard/org-member-data?orgId=${orgId}`);
-        console.log(authResponse)
+
         if (toBoolean(authResponse?.IsValid)) {
             let data = authResponse.Data;
             return {
@@ -78,7 +78,11 @@ const portalService = {
             
         }
         return await apiService.post(`/api/dashboard/portal?id=${orgId}&${encodeParamsObject(postModel)}`);
-    }
+    },
+    changeOrganization: async (orgId) => {
+        
+        window.location.href = '/'
+    }   
 }
 
 export default portalService;
