@@ -52,6 +52,10 @@ export const useStyles = createStyles(({css, token}) => ({
         .ant-btn-primary.ant-btn-color-primary.ant-btn-variant-solid{
             color: ${token.colorOrgText};
         }
+        
+        .footer-selected-calendar {
+            stroke: ${token.colorPrimary} !important;
+        }
     `,
     layoutExtra: css`
         position: absolute;

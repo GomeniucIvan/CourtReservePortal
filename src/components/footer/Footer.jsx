@@ -145,7 +145,8 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
                             <div key={tab.key}>
                                 <Flex align="center" justify={'center'} className={cx(styles.minWidth)} onClick={() => onTabBarChange(tab.key)}>
                                     <Flex vertical={true} gap={token.paddingXS} align={'center'}>
-                                        <SVG icon={`navigation/portal/footer/footer-${tab.key}${equalString(tab.key, activeKey) ? '-selected' : ''}`} size={20} color={equalString(tab.key, activeKey) ? token.colorPrimary : undefined} />
+                                        <SVG icon={`navigation/portal/footer/footer-${tab.key}${equalString(tab.key, activeKey) ? '-selected' : ''}`}
+                                             size={20} color={equalString(tab.key, activeKey) ? token.colorPrimary : undefined} />
                                         <Text style={{fontSize: `${token.fontSizeXS}px`, lineHeight: '10px', color: (equalString(tab.key, activeKey) ? token.colorPrimary : undefined)}}>{tab.title}</Text>
                                     </Flex>
                                 </Flex>
