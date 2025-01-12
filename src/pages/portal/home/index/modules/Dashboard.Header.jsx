@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {equalString, isNullOrEmpty, organizationLogoSrc, setCookie, toBoolean} from "@/utils/Utils.jsx";
 import {useStyles} from ".././styles.jsx";
+import {cx} from 'antd-style';
 import {useApp} from "@/context/AppProvider.jsx";
 import {Ellipsis} from "antd-mobile";
 import apiService, {setRequestData} from "@/api/api.jsx";
@@ -159,7 +160,7 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
     
     return (
         <>
-            <div className={styles.headerDashboardBlock}>
+            <div className={cx(styles.headerDashboardBlock, 'safe-area-top-margin')}>
                 <Flex justify={'space-between'} align={'center'} onClick={() => setShowOrganizationDrawer(true)}>
                     <Flex gap={token.paddingLG} flex={1} align={'center'}>
                         <img src={imageSrc(authData?.LogoUrl, authData?.OrgId)} alt={authData?.OrgName}

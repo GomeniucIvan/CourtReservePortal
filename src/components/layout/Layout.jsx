@@ -280,7 +280,7 @@ function Layout() {
             </PaddingBlock>
         );
     }
-    
+
     return (
         <div className={styles.root}>
             {(!toBoolean(isFetching)) &&
