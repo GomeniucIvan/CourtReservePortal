@@ -15,3 +15,12 @@ export const saveCookie = (cookieName, value, minutes) => {
 export const getCookie = (cookieName) => {
     return Cookies.get(cookieName);
 }
+
+export const getCookieWithDefault = (cookieName, value) => {
+    let cookieValue = Cookies.get(cookieName);
+    if (isNullOrEmpty(cookieValue)) {
+        return value;
+    }
+    
+    return cookieValue;
+}

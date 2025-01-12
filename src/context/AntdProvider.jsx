@@ -1,7 +1,12 @@
 ﻿import { ConfigProvider, theme, App } from "antd";
 import {createContext, useContext, useEffect, useState} from "react";
-import {toBoolean} from "../utils/Utils.jsx";
+import {isNullOrEmpty, setCookie, toBoolean} from "../utils/Utils.jsx";
 import {fromLocalStorage, toLocalStorage} from "../storage/AppStorage.jsx";
+import {getCookie, getCookieWithDefault} from "@/utils/CookieUtils.jsx";
+import {
+    getGlobalSpGuideBaseColor,
+    getGlobalSpGuideTextColor,
+} from "@/utils/AppUtils.jsx";
 const AntdContext = createContext();
 
 export const useAntd = () => useContext(AntdContext);
@@ -9,35 +14,51 @@ export const useAntd = () => useContext(AntdContext);
 //theme.darkAlgorithm
 //theme.defaultAlgorithm,
 export const AntdProvider = ({ children }) => {
-    
-    //todo change from cookie
-    const [primaryColor, setPrimaryColor] = useState(fromLocalStorage('primary-color', '#873030'));
-    const [isDarkMode, setIsDarkMode] = useState(fromLocalStorage('darkmode', 'False'));
+    const [primaryColor, setPrimaryColor] = useState('#873030');
+    const [primaryTextColor, setPrimaryTextColor] = useState('#23ffd6');
+    const [isDarkMode, setIsDarkMode] = useState(toBoolean(fromLocalStorage('darkmode', 'false')));
 
+    useEffect(() => {
+        //primary color
+        let cookiePrimaryColor = getCookie('primary-color');
+        if (!isNullOrEmpty(cookiePrimaryColor)) {
+            setPrimaryColor(cookiePrimaryColor)
+        } else {
+            cookiePrimaryColor = getGlobalSpGuideBaseColor();
+            if (!isNullOrEmpty(cookiePrimaryColor)) {
+                setPrimaryColor(cookiePrimaryColor)
+            }
+        }
+        
+        //primary text color
+        let cookiePrimaryTextColor = getGlobalSpGuideTextColor();
+        if (!isNullOrEmpty(cookiePrimaryTextColor)) {
+            setPrimaryTextColor(cookiePrimaryTextColor)
+        }
+
+        const message = JSON.stringify({ type: 'updateMobileStatusBar', style: (isDarkMode ? 'light' : 'dark') });
+        if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(message);
+        }
+    }, []);
+    
     useEffect(() => {
         const message = JSON.stringify({ type: 'updateMobileStatusBar', style: (isDarkMode ? 'light' : 'dark') });
         if (window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(message);
         }
     }, [isDarkMode]);
-    
-    useEffect(() => {
-        if (primaryColor){
-            toLocalStorage('primary-color', primaryColor);
-        }
-
-    }, [primaryColor]);
 
     useEffect(() => {
         if (isDarkMode !== null) {
             toLocalStorage('darkmode', isDarkMode);
-            setIsDarkMode(isDarkMode);
+            setIsDarkMode(toBoolean(isDarkMode));
         }
     }, [isDarkMode]);
     
     let colorError = '#D32F2F';
     return (
-        <AntdContext.Provider value={{setPrimaryColor,setIsDarkMode, isDarkMode}}>
+        <AntdContext.Provider value={{setPrimaryColor, setIsDarkMode, isDarkMode}}>
             <App>
                 <ConfigProvider
                     wave={{ disabled: true }}
@@ -46,7 +67,7 @@ export const AntdProvider = ({ children }) => {
                         token: {
                             colorCourtReserve: '#34495E',
                             colorPrimary: primaryColor,
-                            colorOrgText: '#23ffd6',
+                            colorOrgText: primaryTextColor,
                             boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px',
                             headerActionHeight: 32,
                             borderRadiusSM: 8,

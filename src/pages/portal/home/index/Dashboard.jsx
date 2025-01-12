@@ -20,6 +20,7 @@ import {randomNumber} from "@/utils/NumberUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import * as React from "react";
 import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
+import {getGlobalDeviceId} from "@/utils/AppUtils.jsx";
 
 function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
@@ -54,7 +55,7 @@ function Dashboard() {
             }
         }
         
-        const deviceId = reactDeviceId;
+        const deviceId = getGlobalDeviceId();
         
         let dashboardData = await portalService.dashboardData(orgId,
             authData.CostTypeId,

@@ -66,6 +66,7 @@ function LayoutExtra() {
     }
 
     const handleColorSelect = (color) => {
+        setCookie('primary-color', color, 30);
         setPrimaryColor(color);
         setIsColorPickerOpen(false);
     }

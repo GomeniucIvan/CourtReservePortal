@@ -4,22 +4,20 @@ import {isNullOrEmpty, nullToEmpty} from "../utils/Utils.jsx";
 import {setClientUiCulture} from "../utils/DateUtils.jsx";
 import appService from "../api/app.jsx";
 import {useNavigate} from "react-router-dom";
-import {stringToJson} from "../utils/ListUtils.jsx";
 import {useAntd} from "./AntdProvider.jsx";
-import {useApp} from "./AppProvider.jsx";
 import {setRequestData} from "../api/api.jsx";
+import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({children}) => {
     const [orgId, setOrgId] = useState(null);
-    const [spGuideId, setSpGuideId] = useState('');
+    const [spGuideId, setSpGuideId] = useState(getGlobalSpGuideId());
     const [shouldLoadOrgData, setShouldLoadOrgData] = useState(true);
     const [authData, setAuthData] = useState(null);
     const navigate = useNavigate();
     const {setPrimaryColor} = useAntd();
-    const {setNavigationLinks} = useApp();
     
     const memberData = async () => {
         const memberData = fromAuthLocalStorage('memberData', {});
