@@ -133,7 +133,9 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
                                              preventFill={true}
                                              replaceColor={true}
                                              preventRects={false}
-                                             preventPaths={true} />
+                                             preventPaths={true}
+                                             pathFillColor={token.colorOrgText}
+                                        />
                                     </div>
                                 </Flex>
                             )

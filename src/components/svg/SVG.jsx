@@ -10,7 +10,8 @@ const SGV = ({ icon, color = 'black',
                  preventStroke = true, 
                  replaceColor = false,
                  preventPaths = false,
-                 preventRects = true}) => {
+                 preventRects = true,
+                 pathFillColor}) => {
     const {token} = useApp();
     
     if (equalString(color, 'black')) {
@@ -32,6 +33,12 @@ const SGV = ({ icon, color = 'black',
                 const paths = svg.querySelectorAll('path');
                 const rects = svg.querySelectorAll('rect');
 
+                if (!isNullOrEmpty(pathFillColor)) {
+                    paths.forEach(path => {
+                        path.setAttribute('fill', pathFillColor);
+                    });
+                }
+                
                 if (!preventPaths) {
                     paths.forEach(path => {
                         if (replaceColor){

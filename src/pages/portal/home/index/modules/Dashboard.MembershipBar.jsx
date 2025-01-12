@@ -30,14 +30,7 @@ const DashboardMembershipBar = ({dashboardData}) => {
                         let route = toRoute(ProfileRouteNames.PROFILE_PERSONAL_INFO, 'id', orgId);
                         navigate(route);
                     }}>
-                        <Flex justify={'center'} align={'center'}
-                              style={{
-                                  width: 48,
-                                  height: 48,
-                                  borderRadius: 50,
-                                  backgroundColor: token.colorPrimary,
-                                  color: token.colorOrgText,
-                              }}>
+                        <Flex justify={'center'} align={'center'} className={globalStyles.orgCircleMember}>
                             <Title level={1} className={cx(globalStyles.noSpace)}>{fullNameInitials(authData?.MemberFullName)}</Title>
                         </Flex>
                         

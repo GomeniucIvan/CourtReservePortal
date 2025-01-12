@@ -46,22 +46,26 @@ export const clearAllLocalStorage = () => {
     localStorage.clear();
 };
 
-export const setNavigationStorage = (orgId, mainMenu, moreMenu, listOrg, mainLinks) => {
-    toLocalStorage(`navigation_${orgId}`, mainMenu);
-    toLocalStorage(`morenavigation_${orgId}`, moreMenu);
-    toLocalStorage(`navigationorgs_${orgId}`, listOrg);
-    toLocalStorage(`navigation_mainlinks_${orgId}`, mainLinks);
+export const setNavigationStorage = (orgId, mainMenu, moreMenu, listOrg, mainLinks, allListItems) => {
+    toLocalStorage(`dashboard_main_navigation${orgId}`, mainMenu);
+    toLocalStorage(`dashboard_more_navigation${orgId}`, moreMenu);
+    toLocalStorage(`dashboard_organizations_${orgId}`, listOrg);
+    toLocalStorage(`dashboard_main_actions${orgId}`, mainLinks);
+    toLocalStorage(`dashboard_all_list${orgId}`, allListItems);
 };
 
 export const getNavigationStorage = (orgId) => {
-    return fromLocalStorage(`navigation_${orgId}`);
+    return fromLocalStorage(`dashboard_main_navigation${orgId}`);
 };
 export const getMoreNavigationStorage = (orgId) => {
-    return fromLocalStorage(`morenavigation_${orgId}`);
+    return fromLocalStorage(`dashboard_more_navigation${orgId}`);
 };
 export const getMemberOrgList = (orgId) => {
-    return fromLocalStorage(`navigationorgs_${orgId}`);
+    return fromLocalStorage(`dashboard_organizations_${orgId}`);
 };
 export const getDashboardMainLinks = (orgId) => {
-    return fromLocalStorage(`navigation_mainlinks_${orgId}`);
+    return fromLocalStorage(`dashboard_main_actions${orgId}`);
+};
+export const getDashboardAllLists = (orgId) => {
+    return fromLocalStorage(`dashboard_all_list${orgId}`);
 };

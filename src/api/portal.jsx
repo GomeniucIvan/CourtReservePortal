@@ -29,7 +29,8 @@ const portalService = {
                     dashboardData.Data.menu,
                     dashboardData.Data.more,
                     dashboardData.Data.listOrg,
-                    dashboardData.Data.mainLinks);
+                    dashboardData.Data.mainLinks,
+                    dashboardData.Data.allListItems);
             }
             
             return await portalService.organizationData(orgId);

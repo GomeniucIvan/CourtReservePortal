@@ -415,6 +415,10 @@ export const useStyles = createStyles(({ css, token }) => ({
       align-items: center;
       justify-content: center;
       line-height: 48px;
+       
+       .ant-typography {
+           color: ${token.colorOrgText};
+       }
    `,
     drawerCustomListItem: css`
         min-height: 60px !important;

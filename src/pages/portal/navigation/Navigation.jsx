@@ -6,7 +6,7 @@ import mockData from "@/mocks/navigation-data.json";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import {useParams} from "react-router-dom";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import {getMoreNavigationStorage, getNavigationStorage} from "@/storage/AppStorage.jsx";
+import {getDashboardAllLists, getMoreNavigationStorage, getNavigationStorage} from "@/storage/AppStorage.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {Flex, Skeleton} from "antd";
 import {emptyArray} from "@/utils/ListUtils.jsx";
@@ -21,7 +21,7 @@ function Navigation() {
     const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, setHeaderTitle, token} = useApp();
     const {orgId, authData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
-    const [links, setLinks] = useState(equalString(key, 'more') ? getMoreNavigationStorage(orgId) : getNavigationStorage(orgId));
+    const [links, setLinks] = useState(equalString(key, 'more') ? getMoreNavigationStorage(orgId) : getDashboardAllLists(orgId));
 
     const loadMyLeagues = async () => {
         let response =await appService.getRoute(apiRoutes.API4, `/app/Online/Utils/Member_GetRegisteredLeagues?orgId=${orgId}&memberId=${authData?.MemberId}`);

@@ -15,7 +15,7 @@ import {useStyles} from "./styles.jsx";
 import portalService from "@/api/portal.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 import {Flex, Skeleton} from "antd";
-import {emptyArray} from "@/utils/ListUtils.jsx";
+import {emptyArray, isValidJson} from "@/utils/ListUtils.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import * as React from "react";
@@ -34,13 +34,22 @@ function Dashboard() {
     const { styles } = useStyles();
     
     const loadDashboardData = async (refresh) => {
-        const cachedData = fromLocalStorage(`dashboardItems_${orgId}`);
-        
+        const cachedData = fromLocalStorage(`dashboarditems_${orgId}`);
+        let navigationType = getCookie("dashboard_navigationType");
+
         if (refresh) {
             setIsFetching(true);
         } else{
-            if (!isNullOrEmpty(cachedData)){
-                setDashboardData(JSON.parse(cachedData));
+            
+            if (isValidJson(cachedData)){
+                const parsedJsonData = JSON.parse(cachedData);
+                
+                setDashboardData(parsedJsonData);
+                let dashboardViewTypeToSet = parsedJsonData?.mobileDashboardView;
+                if (!isNullOrEmpty(navigationType)) {
+                    dashboardViewTypeToSet = navigationType;
+                }
+                setDashboardViewType(dashboardViewTypeToSet);
                 setIsFetching(false);
             }
         }
@@ -59,17 +68,14 @@ function Dashboard() {
             authData.OrgMemberFamilyId,
             null);
 
-        let navigationType = getCookie("dashboard_navigationType");
-        
-        let dashboardViewTypeToSet = dashboardData?.mobileDashboardView;
-        if (!isNullOrEmpty(navigationType)) {
-            dashboardViewTypeToSet = navigationType;
+
+        if (isNullOrEmpty(navigationType)) {
+            //if we already set from cookie no need to reset
+            setDashboardViewType(dashboardData?.mobileDashboardView);
         }
-        setDashboardViewType(dashboardViewTypeToSet);
-            
         setDashboardData(dashboardData);
         setAnnouncementsCount(dashboardData?.NewGlobalAnnouncementsCount || 0);
-        toLocalStorage(`dashboardItems_${orgId}`, JSON.stringify(dashboardData));
+        toLocalStorage(`dashboarditems_${orgId}`, JSON.stringify(dashboardData));
         setIsFetching(false);
     }
     

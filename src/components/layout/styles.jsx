@@ -48,6 +48,10 @@ export const useStyles = createStyles(({css, token}) => ({
                 border-radius: ${token.ribonBorderRadius}px;
             }
         }
+
+        .ant-btn-primary.ant-btn-color-primary.ant-btn-variant-solid{
+            color: ${token.colorOrgText};
+        }
     `,
     layoutExtra: css`
         position: absolute;

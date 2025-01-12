@@ -87,7 +87,6 @@ function RegistrationGuestBlock({formik,
         setLoading('SelectedReservationMembers', true);
         setLoading('ReservationGuests', true);
 
-        console.log(updatedGuests)
         setSelectedGuest(null);
 
         if (typeof reloadPlayers == 'function') {
@@ -169,14 +168,7 @@ function RegistrationGuestBlock({formik,
                                                       setSelectedGuest(guest);
                                                   }}>
                                                 <Flex gap={token.Custom.cardIconPadding}>
-                                                    <Flex justify={'center'} align={'center'}
-                                                          style={{
-                                                              width: 48,
-                                                              height: 48,
-                                                              borderRadius: 50,
-                                                              backgroundColor: token.colorPrimary,
-                                                              color: token.colorOrgText,
-                                                          }}>
+                                                    <Flex justify={'center'} align={'center'} className={globalStyles.orgCircleMember}>
                                                         <Title level={1} className={cx(globalStyles.noSpace)}>{fullNameInitials(fullName)}</Title>
                                                     </Flex>
 

@@ -18,7 +18,7 @@ import SwiperSlider from "@/components/swiperslider/SwiperSlider.jsx";
 
 const DashboardBookings = ({dashboardData, isFetching}) => {
     let bookings = stringToJson(dashboardData?.BookingsJson);
-    let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) && anyInList(bookings) || isFetching;
+    let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) || isFetching;
     const {globalStyles, token, setDynamicPages} = useApp();
     const navigate = useNavigate();
     const { t } = useTranslation('');

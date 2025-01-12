@@ -29,10 +29,6 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
     const {styles} = useStyles();
     const navigation = useNavigate();
 
-    if (!toBoolean(showLeaguesBlock) && !toBoolean(hideLeagues)) {
-        return '';
-    }
-
     useEffect(() => {
         if (!isNullOrEmpty(dashboardData)) {
             let myLeagues = stringToJson(dashboardData?.MyLeaguesDropdownJson);
