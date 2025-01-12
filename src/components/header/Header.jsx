@@ -12,7 +12,7 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {isLoading, headerRightIcons, headerTitle} = useApp();
+    const {isLoading, headerRightIcons, headerTitle, customHeader} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
 
@@ -54,6 +54,7 @@ const Header = forwardRef((props, ref) => {
     )
 
     let title = props.route?.title;
+    let isDashboardPage = toBoolean(props.route?.root);
     let useKey = true;
 
     if (isNullOrEmpty(title) && toBoolean(props.route?.header)) {
@@ -62,16 +63,25 @@ const Header = forwardRef((props, ref) => {
     }
     
     return (
-        <div style={{opacity: isNullOrEmpty(title) ? 0 : 1}}>
-            <NavBar onBack={backToPreviousPage} className={styles.header} right={isNullOrEmpty(headerRightIcons) ? null : right}>
-                {isLoading && <div className={styles.headerLoadingBar}></div>}
-                {!isNullOrEmpty(title) &&
-                    <>
-                        {useKey ? t(title) : title}
-                    </>
-                }
-            </NavBar>
-        </div>
+        <>
+            {(isDashboardPage && !isNullOrEmpty(customHeader)) &&
+                <div>{customHeader}</div>
+            }
+
+            {!isDashboardPage &&
+                <div style={{opacity: isNullOrEmpty(title) ? 0 : 1}}>
+                    <NavBar onBack={backToPreviousPage} className={styles.header}
+                            right={isNullOrEmpty(headerRightIcons) ? null : right}>
+                        {isLoading && <div className={styles.headerLoadingBar}></div>}
+                        {!isNullOrEmpty(title) &&
+                            <>
+                                {useKey ? t(title) : title}
+                            </>
+                        }
+                    </NavBar>
+                </div>
+            }
+        </>
     );
 })
 

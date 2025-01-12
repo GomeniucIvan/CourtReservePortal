@@ -20,6 +20,7 @@ export const AppProvider = ({ children }) => {
     const [availableHeight, setAvailableHeight] = useState(null);
     const [navigationLinks, setNavigationLinks] = useState([]);
     const [headerTitle, setHeaderTitle] = useState([]);
+    const [customHeader, setCustomHeader] = useState('');
     
     const globalStyles = stylesToUse.styles;
     const refreshData = () => setShouldFetch(true);
@@ -50,7 +51,9 @@ export const AppProvider = ({ children }) => {
             navigationLinks,
             setNavigationLinks,
             headerTitle,
-            setHeaderTitle
+            setHeaderTitle,
+            customHeader,
+            setCustomHeader,
         }}>
             
             {children}

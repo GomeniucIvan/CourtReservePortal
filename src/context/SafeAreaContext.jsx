@@ -1,9 +1,7 @@
 ﻿import React, {createContext, useContext, useEffect, useState} from 'react';
 import {SafeArea as AntSafeArea} from 'antd-mobile'
 import {useLocation} from "react-router-dom";
-import AppRoutes from "../routes/AppRoutes.jsx";
 import {theme} from "antd";
-import {match} from "path-to-regexp";
 import {toBoolean} from "../utils/Utils.jsx";
 import {locationCurrentRoute} from "@/utils/RouteUtils.jsx";
 
@@ -39,9 +37,6 @@ const SafeArea = ({children}) => {
 
     useEffect(() => {
         const top = document.body.getAttribute('data-safe-area-inset-top') || 0;
-        const bottom = document.body.getAttribute('data-safe-area-inset-bottom') || 0;
-        const left = document.body.getAttribute('data-safe-area-inset-left') || 0;
-        const right = document.body.getAttribute('data-safe-area-inset-right') || 0;
 
         const style = document.createElement('style');
         style.innerHTML = `
@@ -64,8 +59,8 @@ const SafeArea = ({children}) => {
             }
         };
     }, [location, currentRoute]);
-    
-    useEffect(() => {
+
+    const setSafeArea = () => {
         const top = document.body.getAttribute('data-safe-area-inset-top') || 0;
         const bottom = document.body.getAttribute('data-safe-area-inset-bottom') || 0;
         const left = document.body.getAttribute('data-safe-area-inset-left') || 0;
@@ -78,7 +73,7 @@ const SafeArea = ({children}) => {
                 left: parseInt(left),
                 right: parseInt(right),
             });
-            
+
             if (toBoolean(currentRoute?.fullHeight)) {
                 setSafeAreaInsetsCurrent({
                     top: 0,
@@ -95,6 +90,14 @@ const SafeArea = ({children}) => {
                 });
             }
         }
+    }
+    
+    useEffect(() => {
+        setSafeArea();
+    }, []);
+    
+    useEffect(() => {
+        setSafeArea();
     }, [location]);
 
     return (

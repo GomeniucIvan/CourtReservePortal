@@ -27,10 +27,9 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
     const [showInCelsius, setShowInCelsius] = useState(true);
     const [windMeasurements, setWindMeasurements] = useState('');
     const { styles } = useStyles();
-    const {token, globalStyles} = useApp();
+    const {token, globalStyles, setCustomHeader} = useApp();
     const {spGuideId, orgId, authData, setAuthData,setOrgId } = useAuth();
     const [loadingOrganizationId, setLoadingOrganizationId] = useState(null);
-    const [headerTopPosition, setHeaderTopPosition] = useState(12);
     const navigate = useNavigate();
     const {setPrimaryColor} = useAntd();
     
@@ -75,12 +74,40 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
         }
     }, [dashboardData]);
     
+    useEffect(() => {
+        setCustomHeader(<PaddingBlock>
+            <div className={cx(styles.headerDashboardBlock)}>
+                <Flex justify={'space-between'} align={'center'} onClick={() => setShowOrganizationDrawer(true)} flex={1}>
+                    <Flex gap={token.paddingLG} flex={1} align={'center'}>
+                        <img src={imageSrc(authData?.LogoUrl, authData?.OrgId)} alt={authData?.OrgName}
+                             style={{
+                                 maxHeight: '40px',
+                                 maxWidth: '72px',
+                                 //width: '100%',
+                                 height: 'auto',
+                                 objectFit: 'contain'
+                             }}/>
+
+                        <Flex vertical={true}>
+                            <Title level={3}> <Ellipsis direction='end' content={authData?.OrgName}/></Title>
+                            {(toBoolean(authData?.ShowLocation) && !isNullOrEmpty(authData?.OrgLocation)) &&
+                                <Ellipsis direction='end' content={'111'}/>}
+                        </Flex>
+                    </Flex>
+
+                    <SVG icon={'chevron-down-regular'} size={14}/>
+                </Flex>
+            </div>
+        </PaddingBlock>);
+
+    }, [authData])
+
     const WEATHER_TYPE = {
         temperature: 'temperature',
         rainPercentage: 'rainPercentage',
         wind: 'wind'
     }
-    
+
     const renderWeatherData = (type, value, unit) => {
         switch (type) {
             case WEATHER_TYPE.temperature:
@@ -97,7 +124,7 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
             case WEATHER_TYPE.rainPercentage:
                 return (
                     <Flex align={"center"} gap={4}>
-                        <SVG icon={'cloud-showers'} size={16} color={token.colorPrimary} />
+                        <SVG icon={'cloud-showers'} size={16} color={token.colorPrimary}/>
                         <Text className={styles.weatherHeaderText}>{value}%</Text>
                     </Flex>
                 );
@@ -160,28 +187,6 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
     
     return (
         <>
-            <div className={cx(styles.headerDashboardBlock, 'safe-area-top-margin')}>
-                <Flex justify={'space-between'} align={'center'} onClick={() => setShowOrganizationDrawer(true)}>
-                    <Flex gap={token.paddingLG} flex={1} align={'center'}>
-                        <img src={imageSrc(authData?.LogoUrl, authData?.OrgId)} alt={authData?.OrgName}
-                             style={{
-                                 maxHeight: '44px',
-                                 maxWidth: '72px',
-                                 //width: '100%',
-                                 height: 'auto',
-                                 objectFit: 'contain'
-                             }}/>
-
-                        <Flex vertical={true}>
-                            <Title level={3}> <Ellipsis direction='end' content={authData?.OrgName}/></Title>
-                            {(toBoolean(authData?.ShowLocation) && !isNullOrEmpty(authData?.OrgLocation)) && <Ellipsis direction='end' content={authData?.OrgLocation} />}
-                        </Flex>
-                    </Flex>
-
-                    <SVG icon={'chevron-down-regular'} size={14} />
-                </Flex>
-            </div>
-
             {!isReloadFetching &&
                 <Flex vertical={true} gap={token.paddingLG}>
                     {weather &&

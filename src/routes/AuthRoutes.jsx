@@ -13,7 +13,7 @@ import LoginUpdatePassword from "@portal/account/login/Login.UpdatePassword.jsx"
 import LoginForgotPassword from "@portal/account/login/Login.ForgotPassword.jsx";
 
 export const AuthRouteNames = {
-    LOGIN: '/login',
+    LOGIN: '/account/login',
     LOGIN_GET_STARTED: '/login-get-started',
     LOGIN_AUTHORIZE: '/login-authorize',
     LOGIN_CREATE_ACCOUNT: '/login-create',
@@ -32,7 +32,6 @@ const AuthRoutes = [
     {
         path: AuthRouteNames.LOGIN,
         element: <Login />,
-        root: true,
         unauthorized: true,
         fullHeight: true
     },

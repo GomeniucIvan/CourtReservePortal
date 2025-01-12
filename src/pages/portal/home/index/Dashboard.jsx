@@ -102,7 +102,7 @@ function Dashboard() {
     }, [authData]);
     
     return (
-        <div className={cx(styles.orgArea, 'safe-area-top')}>
+        <div>
             {/*<div className={globalStyles.safeAreaGlass}></div>*/}
 
             {isFetching &&

@@ -37,6 +37,10 @@ export const useStyles = createStyles(({ css, token }) => {
         footerSkeletonWrapper: css`
             padding-left: ${token.padding}px;
             padding-right: ${token.padding}px;
+            position: absolute;
+            bottom: 0;
+            width: calc(100% - ${token.padding * 2}px);
+            padding-bottom: var(--data-safe-area-inset-bottom-px, 0px);
         `
     };
 });

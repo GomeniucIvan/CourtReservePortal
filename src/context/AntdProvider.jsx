@@ -2,7 +2,7 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import {isNullOrEmpty, setCookie, toBoolean} from "../utils/Utils.jsx";
 import {fromLocalStorage, toLocalStorage} from "../storage/AppStorage.jsx";
-import {getCookie, getCookieWithDefault} from "@/utils/CookieUtils.jsx";
+import {getCookie} from "@/utils/CookieUtils.jsx";
 import {
     getGlobalSpGuideBaseColor,
     getGlobalSpGuideTextColor,
@@ -65,6 +65,7 @@ export const AntdProvider = ({ children }) => {
                     theme={{
                         algorithm: toBoolean(isDarkMode) ? theme.darkAlgorithm : theme.defaultAlgorithm,
                         token: {
+                            fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
                             colorCourtReserve: '#34495E',
                             colorPrimary: primaryColor,
                             colorOrgText: primaryTextColor,

@@ -34,8 +34,7 @@ const HomeRoutes = [
         index: true,
         path: HomeRouteNames.INDEX,
         element: <Dashboard />,
-        root: true,
-        fullHeight: true
+        root: true
     },
     {
         path: HomeRouteNames.SCHEDULER,

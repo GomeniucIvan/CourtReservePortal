@@ -23,6 +23,7 @@ import {ErrorBoundary} from "react-error-boundary";
 import {Toaster} from "react-hot-toast";
 import portalService from "@/api/portal.jsx";
 import {locationCurrentRoute} from "@/utils/RouteUtils.jsx";
+import {getGlobalRedirectUrl} from "@/utils/AppUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -43,7 +44,8 @@ function Layout() {
         refreshData,
         setAvailableHeight,
         isMockData,
-        setIsLoading
+        setIsLoading,
+        customHeader
     } = useApp();
 
     const {safeAreaInsets} = useSafeArea();
@@ -119,6 +121,15 @@ function Layout() {
             }
         }
 
+        if (equalString(location.pathname, '/MobileSso/AuthorizeAndRedirectApp')) {
+            let redirectUrl = getGlobalRedirectUrl();
+            if (isNullOrEmpty(redirectUrl)) {
+                navigate(HomeRouteNames.INDEX);
+            } else{
+                navigate(HomeRouteNames.INDEX);
+            }
+        }
+        
         loadPrimaryData()
     }, [location, navigate]);
 
@@ -127,9 +138,11 @@ function Layout() {
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
         let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsets?.top || 0) - (safeAreaInsets?.bottom || 0);
-
-        if (toBoolean(currentRoute?.fullHeight)) {
-            calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+        
+        if (!isFetching){
+            if (toBoolean(currentRoute?.fullHeight)) {
+                calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+            }
         }
 
         setAvailableHeight(calculatedMaxHeight);
@@ -283,14 +296,12 @@ function Layout() {
 
     return (
         <div className={styles.root}>
-            {(!toBoolean(isFetching)) &&
-                <div ref={headerRef}>
-                    <Header route={currentRoute}/>
-                </div>
-            }
+            <div ref={headerRef}>
+                <Header route={currentRoute}/>
+            </div>
 
             <div id={'page-body'} style={{
-                overflow: 'auto', 
+                overflow: 'auto',
                 height: `${maxHeight}px`,
                 overflowX: 'hidden'}}>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -305,7 +316,7 @@ function Layout() {
                         
                         {toBoolean(isFetching) ? (
                             <>
-                                <div className={'safe-area-top'}></div>
+                                {/*<div className={'safe-area-top'}></div>*/}
 
                                 <PaddingBlock topBottom={true}>
                                     <Flex vertical={true} gap={token.padding}>
@@ -341,7 +352,9 @@ function Layout() {
             </div>
 
             <div ref={footerRef}>
-                <Footer isFooterVisible={isFooterVisible} footerContent={footerContent} isFetching={isFetching}/>
+                <Footer isFooterVisible={isFooterVisible}
+                        footerContent={footerContent} 
+                        isFetching={isFetching}/>
             </div>
         </div>
     )

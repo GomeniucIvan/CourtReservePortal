@@ -1,10 +1,6 @@
 ﻿import { createStyles } from 'antd-style';
 
 export const useStyles = createStyles(({ css, token }) => ({
-    orgArea: css`
-
-    `,
-
     organizationContainer: css`
         transition: all 100ms ease-in-out;
         border-radius: 10px;
@@ -108,11 +104,10 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
     `,
     headerDashboardBlock: css`
-        position: absolute;
-        width: calc(100% - ${token.padding * 2}px);
-        z-index: 2;
-        background-color: ${token.colorBgBase};
-        top: 6px;
-        padding-bottom: 6px;
+        height: 45.8px; //same height like default header
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
     `
 }));

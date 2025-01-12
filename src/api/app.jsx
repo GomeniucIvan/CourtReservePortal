@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
         // 401 unauthorized
         if (error.response && error.response.status === 401) {
             clearAllLocalStorage();
-            window.location.href = '/login';
+            window.location.href = '/account/login';
         }
         return Promise.reject(error);
     }
