@@ -15,20 +15,19 @@ import {useTranslation} from "react-i18next";
 
 const {Paragraph, Link, Title} = Typography;
 
-function LoginGetStarted() {
-    const {setFormikData, isLoading, setIsLoading, isMockData, setIsFooterVisible, setFooterContent} = useApp();
+function LoginGetStarted({ mainFormik, onNewEmail, onEmailExists }) {
+    const {isLoading, setIsLoading, isMockData, setIsFooterVisible, setHeaderRightIcons, setHeaderTitleKey} = useApp();
     const { t } = useTranslation('login');
     const navigate = useNavigate();
-    
-    useEffect(() => {
-        setIsFooterVisible(false);
-        setFooterContent('');
-        setFormikData(null);
-    }, []);
 
+    useEffect(() => {
+        setHeaderRightIcons('');
+        setIsFooterVisible(false);
+        setHeaderTitleKey('gettingStarted')
+    }, []);
+    
     const startInitialValues = {
-        email: '',
-        isFromGetStarted: true
+        email: mainFormik?.value?.email
     };
 
     const startValidationSchema = Yup.object({
@@ -55,8 +54,7 @@ function LoginGetStarted() {
                     if (equalString(response.Data, 0)) {
                         if (isValidEmail(values.email)) {
                             //new email
-                            setFormikData(values);
-                            navigate(AuthRouteNames.LOGIN_CREATE_ACCOUNT);
+                            onNewEmail(values);
                         } else{
                             //invalid email
                             setStatus({email: t(`getStarted.form.emailNotFound`)});
@@ -71,8 +69,7 @@ function LoginGetStarted() {
                         }
                     } else if (equalString(response.Data, 1)) {
                         //exists
-                        setFormikData(values);
-                        navigate(AuthRouteNames.LOGIN_AUTHORIZE);
+                        onEmailExists(values);
                     }
                 } else {
                     ModalClose({

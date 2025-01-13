@@ -3,7 +3,6 @@ import * as Yup from "yup";
 import {useEffect, useState} from "react";
 import {Button, Flex, Skeleton, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
-import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 
 import {
     anyInList,
@@ -25,17 +24,17 @@ import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {genderList} from "@/utils/SelectUtils.jsx";
 import FormDateOfBirth from "@/form/formdateofbirth/FormDateOfBirth.jsx";
 import FormStateProvince from "@/form/formstateprovince/FormStateProvince.jsx";
-import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import {requiredMessage} from "@/utils/TranslateUtils.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {validateRatingCategories, validateUdfs} from "@/utils/ValidationUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
+import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
-function LoginAdditionalInfo() {
-    const {setFormikData, formikData, isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent} = useApp();
+function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
+    const {setFormikData, formikData, isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent, setHeaderTitleKey} = useApp();
     const [isFetching, setIsFetching] = useState(true);
     const [additionInfoData, setAdditionInfoData] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(false);
@@ -43,14 +42,7 @@ function LoginAdditionalInfo() {
     const {t} = useTranslation('login');
     const navigate = useNavigate();
 
-    const email = formikData?.email;
-    const password = formikData?.password;
-    const confirmPassword = formikData?.confirmPassword;
-    const selectedOrgId = formikData?.selectedOrgId;
-    const selectedOrgName = formikData?.selectedOrgName;
-    const selectedOrgFullAddress = formikData?.selectedOrgFullAddress;
-    const spGuideId = formikData?.spGuideId;
-
+    
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(<FooterBlock topBottom={true}>
@@ -62,62 +54,16 @@ function LoginAdditionalInfo() {
                 {t('additionalInfo.button.continue')}
             </Button>
         </FooterBlock>);
+        setHeaderTitleKey('loginAdditionalInfo');
     }, [isFetching, isLoading]);
 
     const initialValues = {
-        email: email,
-        password: password,
-        confirmPassword: confirmPassword,
-        selectedOrgId: selectedOrgId,
-        selectedOrgName: selectedOrgName,
-        selectedOrgFullAddress: selectedOrgFullAddress,
-        spGuideId: spGuideId,
-        uiCulture: '',
-        stripePublishableKey: '',
-        isUsingCollectJs: '',
-        showStatesDropdown: '',
-
-        firstName: '',
-        lastName: '',
-        streetAddress: '',
-        phoneNumber: '',
-        dateOfBirthString: '',
-        DateOfBirth: null, //(IV) uppercase first
-        membershipNumber: '',
-        gender: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        paymentProvider: null,
-        requireCardOnFile: false,
-        isDisclosuresRequired: false,
-        disclosures: '',
-        formIncludes: {},
-        paymentTypes: [],
-
-        RatingCategories: [],
-        Udfs: [],
+        ...mainFormik
     };
-
-    useEffect(() => {
-        if (isNullOrEmpty(email) ||
-            isNullOrEmpty(password) ||
-            isNullOrEmpty(confirmPassword) ||
-            isNullOrEmpty(selectedOrgId)){
-            navigate(AuthRouteNames.LOGIN);
-        }
-    }, []);
 
     const getValidationSchema = (signupForm) => {
         let schemaFields = {
-            firstName: Yup.string().required(requiredMessage(t, 'additionalInfo.form.firstName')),
-            lastName: Yup.string().required(requiredMessage(t, 'additionalInfo.form.lastName')),
-            email: Yup.string().required(requiredMessage(t, 'getStarted.form.email')),
-            password: Yup.string().required(requiredMessage(t, 'createAccount.form.password'))
-                .min(6, t(`createAccount.form.passwordMinLength`)),
-            confirmPassword: Yup.string().required(requiredMessage(t, 'createAccount.form.confirmPassword'))
-                .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
-            selectedOrgId:  Yup.string().required('Organization is required.')
+
         };
 
         if (signupForm) {
@@ -164,10 +110,9 @@ function LoginAdditionalInfo() {
                 let postModel = values;
                 postModel.customFields = values.Udfs;
                 postModel.ratingCategories = values.RatingCategories;
-                
+                onSignupSubmit(postModel);
                 setIsLoading(false);
-                setFormikData(postModel);
-                navigate(AuthRouteNames.LOGIN_MEMBERSHIP);
+
             }
         },
     });

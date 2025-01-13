@@ -14,24 +14,18 @@ import {ModalClose} from "@/utils/ModalUtils.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {useNavigate} from "react-router-dom";
 import {requiredMessage} from "@/utils/TranslateUtils.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
-
-function LoginRequestCode() {
-    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight} = useApp();
+function LoginRequestCode({mainFormik, onRequestCodeResult}) {
+    const {isLoading, setIsLoading, setIsFooterVisible, setFooterContent} = useApp();
+    const {spGuideId} = useAuth();
     const {t} = useTranslation('login');
-    const navigate = useNavigate();
-    
-    useEffect(() => {
-        setIsFooterVisible(false);
-        setFooterContent('');
-    }, []);
-
     
     const startInitialValues = {
-        email: formikData?.email,
-        spGuideId: nullToEmpty(formikData?.spGuideId),
+        email: mainFormik?.email,
+        spGuideId: nullToEmpty(spGuideId),
         secretKey: '',
         maskedEmail: ''
     };
@@ -49,7 +43,7 @@ function LoginRequestCode() {
             setIsLoading(true);
             
             const postModel = {
-                spGuideId: formikData?.values?.spGuideId,
+                spGuideId: nullToEmpty(spGuideId),
                 Email: values?.email,
                 IsVerificationProcess: true,
                 scope: 'login'
@@ -69,16 +63,7 @@ function LoginRequestCode() {
                     }
                 });
             } else {
-                let formikValues = {
-                    email: values.email,
-                    maskedEmail: result.EmailMasked,
-                    secretKey: result.SecretKey,
-                    spGuideId: values.spGuideId
-                }
-                
-                console.log(formikValues)
-                setFormikData(formikValues);
-                navigate(AuthRouteNames.LOGIN_VERIFICATION_CODE);
+                onRequestCodeResult(result);
             }
         },
     });

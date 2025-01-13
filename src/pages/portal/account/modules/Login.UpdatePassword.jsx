@@ -21,40 +21,34 @@ import portalService from "@/api/portal.jsx";
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
 
-function LoginUpdatePassword() {
+function LoginUpdatePassword({mainFormik, onSkipPasswordUpdate }) {
     const navigate = useNavigate();
     const {
         formikData,
         isLoading,
         setIsLoading,
-        setFormikData,
+        token,
         setIsFooterVisible,
-        globalStyles,
-        token
+        setHeaderTitleKey
     } = useApp();
     
-    const {setShouldLoadOrgData, setAuthorizationData} = useAuth();
+    const {setAuthorizationData, spGuideId} = useAuth();
 
-    const email = formikData?.email;
-    const secretKey = formikData?.secretKey;
-    const maskedEmail = formikData?.maskedEmail;
-    const spGuideId = formikData?.spGuideId;
-    const ssoKey = formikData?.ssoKey;
+    const email = mainFormik?.email;
+    const secretKey = mainFormik?.secretKey;
+    const maskedEmail = mainFormik?.maskedEmail;
+    const ssoKey = mainFormik?.ssoKey;
     const[isLogin, setIsLogin] = useState(false);
     const {t} = useTranslation('login');
-    
+
+
     useEffect(() => {
-        
-        if (isNullOrEmpty(email) ||
-            isNullOrEmpty(secretKey) ||
-            isNullOrEmpty(maskedEmail)){
-            navigate(AuthRouteNames.LOGIN);
-        }
+        setIsFooterVisible(false);
+        setHeaderTitleKey('loginUpdatePassword');
     }, []);
     
     const initialValues = {
         email: email,
-        spGuideId: spGuideId,
         secretKey: secretKey,
         maskedEmail: maskedEmail,
         password: '',
@@ -81,7 +75,7 @@ function LoginUpdatePassword() {
                 await setAuthorizationData(requestData.OrganizationData);
                 setIsLoading(false);
                 setIsLogin(false);
-                navigate(HomeRouteNames.INDEX);
+                onSkipPasswordUpdate();
             }
         }
 

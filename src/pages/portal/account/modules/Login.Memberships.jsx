@@ -9,64 +9,43 @@ import apiService from "@/api/api.jsx";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {cx} from "antd-style";
-import {countListItems, emptyArray} from "@/utils/ListUtils.jsx";
-import {Card, Ellipsis} from "antd-mobile";
-import {useStyles} from "./styles.jsx";
-import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import {Card} from "antd-mobile";
+import {useStyles} from "./../styles.jsx";
 import * as React from "react";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
-import {getMembershipText} from "@/utils/TranslateUtils.jsx";
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const {Text, Title, Link} = Typography;
 
-function LoginMemberships() {
-    const {formikData, setFormikData, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent} = useApp();
+function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
+    const {setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, setHeaderTitleKey} = useApp();
+    const {spGuideId} = useAuth();
     const {t} = useTranslation('login');
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
     const [memberships, setMemberships] = useState(null);
     const [viewMembership, setViewMembership] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(null);
-    
-    const email = formikData?.email;
-    const password = formikData?.password;
-    const confirmPassword = formikData?.confirmPassword;
-    const selectedOrgId = formikData?.selectedOrgId;
-    const skipReview = formikData?.skipReview;
-    const spGuideId = formikData?.spGuideId;
-    const { styles } = useStyles();
 
     useEffect(() => {
         setIsFooterVisible(false);
         setFooterContent('');
-
-        if (isNullOrEmpty(email) ||
-            isNullOrEmpty(password) ||
-            isNullOrEmpty(confirmPassword) ||
-            isNullOrEmpty(selectedOrgId)){
-            navigate(AuthRouteNames.LOGIN);
-        } else{
-            loadMemberships();   
-        }
+        setHeaderTitleKey('loginMembership');
     }, []);
+    
+    const { styles } = useStyles();
 
-    const getMembershipInitialValues = (incData) => {
-        let values = incData;
-        if (values){
-            values.selectedMembership = {};
-            values.selectedMembershipId = '';
-            values.reviewModalTitle = '';
-        }
-
-        return values;
-    }
+    useEffect(() => {
+        loadMemberships();
+    }, []);
 
     const loadMemberships = async () => {
         if (isNullOrEmpty(memberships)) {
             setIsFetching(true);
             setIsLoading(true);
-            const response = await apiService.get(`/api/create-account/membership-signup-form?orgId=${nullToEmpty(selectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
+            const response = await apiService.get(`/api/create-account/membership-signup-form?orgId=${nullToEmpty(mainFormik?.SelectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
 
             if (response.IsValid) {
                 setMemberships(response.Data);
@@ -82,21 +61,21 @@ function LoginMemberships() {
     });
 
     const formik = useFormik({
-        initialValues: getMembershipInitialValues(formikData),
         validationSchema: validationSchema,
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             let costType = values.selectedMembership;
+
+            onSkip(values);
             
-            if (costType && costType.OneFreePaymentOption && toBoolean(skipReview)) {
-                formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
-                formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
-                setShowReviewModal(true);
-            } else {
-                setFormikData(values);
-                navigate(AuthRouteNames.LOGIN_REVIEW);
-            }
+            // if (costType && costType.OneFreePaymentOption && toBoolean(skipReview)) {
+            //     formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
+            //     formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
+            //     setShowReviewModal(true);
+            // } else {
+            //    
+            // }
         },
     });
 
@@ -180,8 +159,7 @@ function LoginMemberships() {
                                                     }
 
                                                     <Button type='primary' onClick={() => {
-                                                        formik.setFieldValue('selectedMembership', membership);
-                                                        formik.submitForm();
+                                                        onMembershipSelect(membership)
                                                     }}>
                                                         {t(`membership.selectPlan`)}
                                                     </Button>
@@ -217,8 +195,7 @@ function LoginMemberships() {
                               </Button>
 
                               <Button type={'primary'} block onClick={() => {
-                                  formik.setFieldValue('selectedMembership', viewMembership);
-                                  formik.submitForm();
+                                  onMembershipSelect(viewMembership);
                               }}>
                                   {t(`membership.selectPlan`)}
                               </Button>

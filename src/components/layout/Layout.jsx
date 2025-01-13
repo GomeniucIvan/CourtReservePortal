@@ -109,10 +109,7 @@ function Layout() {
 
                 //not allow to access login pages
                 if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
-                    equalString(location.pathname, AuthRouteNames.LOGIN_GET_STARTED) ||
-                    //equalString(location.pathname, AuthRouteNames.LOGIN_ACCOUNT_VERIFICATION) ||
-                    equalString(location.pathname, HomeRouteNames.CR_STARTUP_URL) ||
-                    equalString(location.pathname, AuthRouteNames.LOGIN_VERIFICATION_CODE)) {
+                    equalString(location.pathname, AuthRouteNames.LOGIN_FORGOT_PASSWORD)) {
                     navigate(HomeRouteNames.INDEX);
                 }
 

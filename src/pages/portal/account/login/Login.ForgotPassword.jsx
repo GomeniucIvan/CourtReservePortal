@@ -17,26 +17,18 @@ import * as React from "react";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useTranslation} from "react-i18next";
 
-function LoginForgotPassword() {
+function LoginForgotPassword({  }) {
     const {
-        formikData,
         isLoading,
         setIsLoading,
-        setIsFooterVisible,
-        setHeaderRightIcons,
     } = useApp();
-    const email = formikData?.email;
+    
     const navigate = useNavigate();
     const {t} = useTranslation('login');
     
     const initialValues = {
-        email: email
+        email: '',
     };
-
-    useEffect(() => {
-        setHeaderRightIcons('');
-        setIsFooterVisible(false);
-    }, []);
 
     const validationSchema = Yup.object({
         email: Yup.string().required(t('common:requiredMessage', {label: t('forgotPassword.email')}))
@@ -68,8 +60,8 @@ function LoginForgotPassword() {
                 return; 
             }
 
-            pNotify(result.message)
-            navigate(AuthRouteNames.LOGIN_AUTHORIZE);
+            pNotify(result.message);
+            navigate(AuthRouteNames.LOGIN)
             setIsLoading(false);
         },
     });

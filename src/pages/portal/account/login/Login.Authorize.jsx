@@ -1,38 +1,36 @@
 import {useNavigate} from "react-router-dom";
 import {useApp} from "@/context/AppProvider.jsx";
-import {Button, Divider, Flex, theme, Typography} from "antd";
+import {Button, Divider, Flex, Typography} from "antd";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {useEffect} from "react";
 import FormInput from "@/form/input/FormInput.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-
-const {Title, Link, Text, Paragraph} = Typography;
-const {useToken} = theme;
 import PageForm from "@/form/pageform/PageForm.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import apiService, {setBearerToken, setRequestData} from "@/api/api.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import apiService, {setRequestData} from "@/api/api.jsx";
+import {equalString, toBoolean} from "@/utils/Utils.jsx";
 import {ModalClose} from "@/utils/ModalUtils.jsx";
 import appService from "@/api/app.jsx";
 import {useTranslation} from "react-i18next";
 import portalService from "@/api/portal.jsx";
 
-function LoginAuthorize() {
+const {Title, Link, Text, Paragraph} = Typography;
+
+function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
     const {
-        formikData,
         isLoading,
         setIsLoading,
         setIsFooterVisible,
         setHeaderRightIcons,
         globalStyles,
-        setFormikData,
-        token
+        token,
+        setHeaderTitleKey,
     } = useApp();
+    
     const {spGuideId, setAuthorizationData} = useAuth();
-    const email = formikData?.email;
-    const isFromGetStarted = toBoolean(formikData?.isFromGetStarted);
+    const email = mainFormik?.email;
     const navigate = useNavigate();
     const {t} = useTranslation('login');
     
@@ -44,6 +42,7 @@ function LoginAuthorize() {
     useEffect(() => {
         setHeaderRightIcons('');
         setIsFooterVisible(false);
+        setHeaderTitleKey('loginAuthorize')
     }, []);
 
     const validationSchema = Yup.object({
@@ -123,11 +122,8 @@ function LoginAuthorize() {
     });
 
     const navigateToRequestACode = () => {
-        setFormikData({
-            email: formik?.values?.email
-        });
-        
-        navigate(AuthRouteNames.LOGIN_REQUEST_CODE)
+        mainFormik.setFieldsValue('email', formik?.values?.email);
+        onRequestACode();
     }
     
     return (
@@ -154,9 +150,6 @@ function LoginAuthorize() {
 
                     <Flex justify={"start"} className={globalStyles.inputBottomLink}>
                         <Link style={{fontWeight: 600}} onClick={() => {
-                            setFormikData({
-                                email: formik?.values?.email
-                            })
                             navigate(AuthRouteNames.LOGIN_FORGOT_PASSWORD);
                         }}>
                             {t('authorize.forgotPassword')}

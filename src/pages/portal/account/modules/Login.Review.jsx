@@ -2,13 +2,10 @@ import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
 import React, {useEffect, useState} from "react";
 import {Button, Checkbox, Divider, Flex, Skeleton, Typography} from 'antd';
-import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {
     anyInList,
-    equalString,
-    focus,
     isNullOrEmpty,
-    isValidEmail, moreThanOneInList,
+    moreThanOneInList,
     oneListItem,
     toBoolean
 } from "@/utils/Utils.jsx";
@@ -21,7 +18,6 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import FormSelect from "@/form/formselect/FormSelect.jsx";
 import FormPaymentProfile from "@/form/formpaymentprofile/FormPaymentProfile.jsx";
-import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
@@ -29,25 +25,21 @@ import {setFormikError, validatePaymentProfile} from "@/utils/ValidationUtils.js
 import FormCheckbox from "@/form/formcheckbox/FomCheckbox.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
+import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
-function LoginReview() {
-    const {formikData, setFormikData, setIsLoading, setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
+function LoginReview({mainFormik}) {
+    const {formikData, setIsFooterVisible, setFooterContent, token, globalStyles, setHeaderTitleKey} = useApp();
     const { t } = useTranslation('login');
-    const navigate = useNavigate();
     const [paymentFrequencyCost, setPaymentFrequencyCost] = useState(null);
     const [selectedMembershipRequirePayment, setSelectedMembershipRequirePayment] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
 
-    const email = formikData?.email;
-    const password = formikData?.password;
-    const confirmPassword = formikData?.confirmPassword;
-    const selectedOrgId = formikData?.selectedOrgId;
-    const isDisclosuresRequired = formikData?.isDisclosuresRequired;
-    const selectedMembership = formikData?.selectedMembership;
+    const isDisclosuresRequired = mainFormik?.values?.isDisclosuresRequired;
+    const selectedMembership = mainFormik?.values?.selectedMembership;
     
     useEffect(() => {
         setIsFooterVisible(true);
@@ -60,25 +52,19 @@ function LoginReview() {
                 {t('review.button.continue')}
             </Button>
         </FooterBlock>);
+        setHeaderTitleKey('loginReview');
         
         setIsFetching(false);
 
-        if (isNullOrEmpty(email) ||
-            isNullOrEmpty(password) ||
-            isNullOrEmpty(confirmPassword) ||
-            isNullOrEmpty(selectedOrgId)){
-            navigate(AuthRouteNames.LOGIN);
-        } else{
-            if (selectedMembership) {
-                let paymentFrequencyValue = null;
-                if (!isNullOrEmpty(selectedMembership) && anyInList(selectedMembership?.DetailedPaymentOptions)) {
-                    if (oneListItem(selectedMembership.DetailedPaymentOptions)) {
-                        paymentFrequencyValue = selectedMembership.DetailedPaymentOptions[0].Value;
-                    }
+        if (selectedMembership) {
+            let paymentFrequencyValue = null;
+            if (!isNullOrEmpty(selectedMembership) && anyInList(selectedMembership?.DetailedPaymentOptions)) {
+                if (oneListItem(selectedMembership.DetailedPaymentOptions)) {
+                    paymentFrequencyValue = selectedMembership.DetailedPaymentOptions[0].Value;
                 }
-
-                formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
             }
+
+            mainFormik.setFieldValue("paymentFrequency", paymentFrequencyValue);
         }
     }, []);
 
@@ -106,10 +92,10 @@ function LoginReview() {
         isDisclosuresRequired: isDisclosuresRequired
     };
 
-    const getMembershipInitialValues = (incData) => {
+    const getMembershipInitialValues = () => {
         return  {
             ...initialValues,
-            ...incData,
+            ...mainFormik,
         };
     }
 
@@ -126,7 +112,7 @@ function LoginReview() {
     }
     
     const formik = useCustomFormik({
-        initialValues: getMembershipInitialValues(formikData),
+        initialValues: getMembershipInitialValues(),
         validationSchema: validationSchema(),
         validation: () => {
             //card details

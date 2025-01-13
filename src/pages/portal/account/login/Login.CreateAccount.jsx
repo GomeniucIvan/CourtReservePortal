@@ -13,28 +13,23 @@ import {useTranslation} from "react-i18next";
 
 const {Paragraph, Link, Title} = Typography;
 
-function LoginCreateAccount() {
-    const {setFormikData, isLoading, setIsLoading, formikData, setIsFooterVisible, setFooterContent} = useApp();
-    const email = formikData?.email;
+function LoginCreateAccount({onCreateSubmit, mainFormik}) {
+    const {isLoading, setIsLoading, formikData, setIsFooterVisible, setFooterContent, setHeaderTitleKey} = useApp();
+    const email = mainFormik?.values?.email;
     const {t} = useTranslation('login');
     const navigate = useNavigate();
 
     useEffect(() => {
         setIsFooterVisible(false);
         setFooterContent('');
+        setHeaderTitleKey('loginCreateAccount')
     }, []);
-
+    
     const initialValues = {
         email: email,
         password: '',
         confirmPassword: ''
     };
-
-    useEffect(() => {
-        if (isNullOrEmpty(email)){
-            navigate(AuthRouteNames.LOGIN_GET_STARTED);
-        }
-    }, []);
 
     const validationSchema = Yup.object({
         email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')})),
@@ -52,6 +47,8 @@ function LoginCreateAccount() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
+            onCreateSubmit(values);
+            
             setFormikData(values);
             navigate(AuthRouteNames.LOGIN_ORGANIZATION);
             

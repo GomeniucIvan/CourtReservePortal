@@ -12,7 +12,7 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {isLoading, headerRightIcons, headerTitle, customHeader} = useApp();
+    const {isLoading, headerRightIcons, headerTitle, customHeader, headerTitleKey} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
 
@@ -60,6 +60,13 @@ const Header = forwardRef((props, ref) => {
     if (isNullOrEmpty(title) && toBoolean(props.route?.header)) {
         title = headerTitle;
         useKey = false;
+    }
+
+    console.log(headerTitleKey);
+    
+    if (isNullOrEmpty(title) && !isNullOrEmpty(headerTitleKey)) {
+        title = headerTitleKey;
+        useKey = true;
     }
     
     return (

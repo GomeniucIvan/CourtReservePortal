@@ -13,31 +13,30 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import apiService, {setRequestData} from "@/api/api.jsx";
 import * as React from "react";
 import {useTranslation} from "react-i18next";
-import {useStyles} from "./styles.jsx";
+import {useStyles} from "./../styles.jsx";
 
 const {Paragraph, Title, Text} = Typography;
-const {useToken} = theme;
 
-function LoginVerificationCode() {
+function LoginVerificationCode({mainFormik, onPasswordVerify}) {
     const navigate = useNavigate();
     const { t } = useTranslation('login');
     const {
-        formikData,
         isLoading,
         setIsLoading,
-        setFormikData,
         setIsFooterVisible,
-        globalStyles
+        globalStyles,
+        setHeaderTitleKey
     } = useApp();
-    const {setShouldLoadOrgData, setAuthorizationData} = useAuth();
+    
+    const {spGuideId} = useAuth();
     const [resendCodeDisabled, setResendCodeDisabled] = useState(true);
     const {styles} = useStyles();
     
-    const email = formikData?.email;
+    const email = mainFormik?.email;
 
     const sendVerificationCode = async () => {
         setResendCodeDisabled(true);
-        const response = await apiService.post(`/api/account-verification/request-code?initialAuthCode=${formikData.secretKey}&spGuideId=${formikData.spGuideId}`);
+        const response = await apiService.post(`/api/account-verification/request-code?initialAuthCode=${mainFormik.secretKey}&spGuideId=${mainFormik.spGuideId}`);
 
         setTimeout(function(){
             setResendCodeDisabled(false);
@@ -46,12 +45,9 @@ function LoginVerificationCode() {
     
     useEffect(() => {
         setIsFooterVisible(false);
-
-        if (isNullOrEmpty(email)) {
-            navigate(AuthRouteNames.LOGIN);
-        } else{
-            sendVerificationCode();
-        }
+        setHeaderTitleKey('verificationCode');
+        
+        sendVerificationCode();
         
         setTimeout(function(){
             setResendCodeDisabled(false);
@@ -79,20 +75,19 @@ function LoginVerificationCode() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            const response = await apiService.post(`/api/account-verification/verify-code?initialAuthCode=${formikData.secretKey}&code=${values.passcode}&spGuideId=${formikData.spGuideId}`);
+            const response = await apiService.post(`/api/account-verification/verify-code?initialAuthCode=${mainFormik.secretKey}&code=${values.passcode}&spGuideId=${spGuideId}`);
             setIsLoading(false);
 
             if (response.IsValid) {
                 let formikValues = {
                     email: values.email,
                     ssoKey: response.Data.SsoKey,
-                    spGuideId: formikData.spGuideId,
-                    secretKey: formikData.secretKey,
-                    maskedEmail: formikData?.maskedEmail
+                    secretKey: mainFormik.secretKey,
+                    maskedEmail: mainFormik?.maskedEmail
                 };
                 
-                setFormikData(formikValues);
-                navigate(AuthRouteNames.LOGIN_UPDATE_PASSWORD);
+                onPasswordVerify(formikValues)
+
             } else {
                 ModalClose({
                     content: response.Message,
@@ -121,7 +116,7 @@ function LoginVerificationCode() {
                 <Paragraph>
                     <div
                         dangerouslySetInnerHTML={{
-                            __html: t(`verificationCode.description`, { email: formikData?.maskedEmail }),
+                            __html: t(`verificationCode.description`, { email: mainFormik?.maskedEmail }),
                         }}
                     />
                 </Paragraph>

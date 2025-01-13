@@ -14,15 +14,17 @@ import {countListItems, emptyArray} from "@/utils/ListUtils.jsx";
 import InfiniteScroll from "@/components/infinitescroll/InfiniteScroll.jsx";
 import * as React from "react";
 import {Card, Ellipsis} from "antd-mobile";
-import {useStyles} from "./styles.jsx";
+import {useStyles} from "./../styles.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
-import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const {Text, Title} = Typography;
 
-function LoginSearchOrganization() {
-    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight} = useApp();
+function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
+    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight, setHeaderTitleKey} = useApp();
+    const {spGuideId} = useAuth();
+    
     const {t} = useTranslation('login');
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(false);
@@ -34,10 +36,10 @@ function LoginSearchOrganization() {
     const [showSelectedOrganization, setShowSelectedOrganization] = useState(false);
     const [showNoOrganizations, setShowNoOrganizations] = useState(false);
 
-    const email = formikData?.email;
-    const password = formikData?.password;
-    const confirmPassword = formikData?.confirmPassword;
-    const spGuideId = formikData?.spGuideId;
+    const email = mainFormik?.email;
+    const password = mainFormik?.password;
+    const confirmPassword = mainFormik?.confirmPassword;
+
     const { styles } = useStyles();
     const headerRef = useRef();
 
@@ -54,6 +56,7 @@ function LoginSearchOrganization() {
                 {t('searchOrganization.button.continue')}
             </Button>
         </FooterBlock>);
+        setHeaderTitleKey('loginOrganization')
     }, []);
 
     const initialValues = {
@@ -64,16 +67,7 @@ function LoginSearchOrganization() {
         selectedOrgId: '',
         selectedOrgName: '',
         selectedOrgFullAddress: '',
-        
     };
-
-    useEffect(() => {
-        if (isNullOrEmpty(email) || 
-            isNullOrEmpty(password) || 
-            isNullOrEmpty(confirmPassword)){
-            navigate(AuthRouteNames.LOGIN);
-        }
-    }, []);
 
     const fixHeaderItems = () => {
         if (headerRef.current) {
@@ -103,9 +97,8 @@ function LoginSearchOrganization() {
             formikValues.selectedOrgId = selectedOrganization.Id;
             formikValues.selectedOrgName = selectedOrganization.Name;
             formikValues.selectedOrgFullAddress = selectedOrganization.FullAddress;
-            setFormikData(formikValues);
 
-            navigate(AuthRouteNames.LOGIN_ADDITIONAL_INFO);
+            onOrganizationSelect(formikValues);
 
             setIsLoading(false);
         },

@@ -11,7 +11,7 @@ import PageForm from "@/form/pageform/PageForm.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 
 function LoginAccountIdentification() {
-    const { formikData, isLoading, setIsLoading, setFormikData, setIsFooterVisible, setFooterContent, globalStyles } = useApp();
+    const { formikData, isLoading, setIsLoading, setIsFooterVisible, setFooterContent } = useApp();
     const navigate = useNavigate();
 
     const initialValues = {

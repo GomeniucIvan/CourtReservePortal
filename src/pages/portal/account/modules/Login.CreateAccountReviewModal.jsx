@@ -18,7 +18,6 @@ import {isNonUsCulture} from "@/utils/DateUtils.jsx";
 import Modal from "@/components/modal/Modal.jsx";
 import appService from "@/api/app.jsx";
 import {useNavigate} from "react-router-dom";
-import apiService, {setRequestData} from "@/api/api.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
