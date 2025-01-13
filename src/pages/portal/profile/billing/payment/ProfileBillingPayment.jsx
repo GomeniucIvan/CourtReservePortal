@@ -20,6 +20,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function ProfileBillingPayment({}) {
     const navigate = useNavigate();
@@ -81,10 +82,11 @@ function ProfileBillingPayment({}) {
            
         },
     });
+
+    const {setHeaderRightIcons} = useHeader();
     
     const {
         setIsFooterVisible,
-        setHeaderRightIcons,
         setFooterContent,
         shouldFetch,
         resetFetch,

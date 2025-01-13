@@ -13,7 +13,6 @@ export const AppProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isMockData, setIsMockData] = useState(false);
     const [dynamicPages, setDynamicPages] = useState([]);
-    const [headerRightIcons, setHeaderRightIcons] = useState(null);
     const stylesToUse = useStyles();
     const { token } = useToken();
     const [shouldFetch, setShouldFetch] = useState(false);
@@ -21,7 +20,6 @@ export const AppProvider = ({ children }) => {
     const [navigationLinks, setNavigationLinks] = useState([]);
     const [headerTitle, setHeaderTitle] = useState('');
     const [customHeader, setCustomHeader] = useState('');
-    const [headerTitleKey, setHeaderTitleKey] = useState('');
     
     const globalStyles = stylesToUse.styles;
     const refreshData = () => setShouldFetch(true);
@@ -42,8 +40,6 @@ export const AppProvider = ({ children }) => {
             token,
             dynamicPages,
             setDynamicPages,
-            setHeaderRightIcons,
-            headerRightIcons,
             shouldFetch, 
             refreshData,
             resetFetch,
@@ -54,9 +50,7 @@ export const AppProvider = ({ children }) => {
             headerTitle,
             setHeaderTitle,
             customHeader,
-            setCustomHeader,
-            headerTitleKey,
-            setHeaderTitleKey,
+            setCustomHeader
         }}>
             
             {children}

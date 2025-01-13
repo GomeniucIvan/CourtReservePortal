@@ -25,7 +25,6 @@ import LoginRequestCode from "@portal/account/modules/Login.RequestCode.jsx";
 
 function Login() {
     const navigate = useNavigate();
-    const {setIsFooterVisible, token, setHeaderRightIcons, globalStyles, setFormikData} = useApp();
     const {logout, spGuideId} = useAuth();
     const [isFromGetStarted, setIsFromGetStarted] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
@@ -98,7 +97,7 @@ function Login() {
 
     const navigateToStep = (step, isBack) => {
         if (isBack) {
-            
+
         } else{
             formik.setFieldValue('step', step);
         }
@@ -121,9 +120,12 @@ function Login() {
             }
 
             {equalString(formik?.values?.step, 'authorize') &&
-                <LoginAuthorize onRequestACode={() => { navigateToStep('request-code') }}
-                                mainFormik={formik}
+                <LoginAuthorize mainFormik={formik}
                                 isFromGetStarted={isFromGetStarted}
+                                onRequestACode={(formValues) => {
+                                    formik.setFieldValue('email', formValues?.email);
+                                    navigateToStep('request-code')
+                                }}
                 />
             }
 
@@ -139,7 +141,7 @@ function Login() {
                                  }}
                 />
             }
-            
+
             {equalString(formik?.values?.step, 'create-account') &&
                 <LoginCreateAccount mainFormik={formik}
                                     onCreateSubmit={(accValues) => {
@@ -177,18 +179,18 @@ function Login() {
 
             {equalString(formik?.values?.step, 'memberships') &&
                 <LoginMemberships mainFormik={formik}
-                                     onSkip={() =>{
-                                         navigateToStep('review')
-                                     }}
-                                     onMembershipSelect={(costType) => {
-                                         if (costType && costType.OneFreePaymentOption) {
-                                             formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
-                                             formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
-                                             setShowReviewModal(true);
-                                         } else {
-                                             navigateToStep('review');
-                                         }
-                                     }}
+                                  onSkip={() =>{
+                                      navigateToStep('review')
+                                  }}
+                                  onMembershipSelect={(costType) => {
+                                      if (costType && costType.OneFreePaymentOption) {
+                                          formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
+                                          formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
+                                          setShowReviewModal(true);
+                                      } else {
+                                          navigateToStep('review');
+                                      }
+                                  }}
                 />
             }
 

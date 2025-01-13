@@ -26,6 +26,7 @@ import Modal from "@/components/modal/Modal.jsx";
 import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
 import DisclosuresPartial from "@portal/home/disclosure/DisclosuresPartial.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
@@ -42,9 +43,10 @@ function EventRegistration({fullRegistration}) {
     const [selectedReservationIds, setSelectedReservationIds] = useState([]);
     const [disclosureSubmitting, setDisclosureSubmitting] = useState(false);
 
+    const {setHeaderRightIcons} = useHeader();
+    
     const {
         setIsFooterVisible,
-        setHeaderRightIcons,
         setFooterContent,
         isLoading,
         setIsLoading,

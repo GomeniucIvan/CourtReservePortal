@@ -26,11 +26,13 @@ import FormCheckbox from "@/form/formcheckbox/FomCheckbox.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginReview({mainFormik}) {
-    const {formikData, setIsFooterVisible, setFooterContent, token, globalStyles, setHeaderTitleKey} = useApp();
+    const {setHeaderTitleKey} = useHeader();
+    const {formikData, setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
     const { t } = useTranslation('login');
     const [paymentFrequencyCost, setPaymentFrequencyCost] = useState(null);
     const [selectedMembershipRequirePayment, setSelectedMembershipRequirePayment] = useState(false);

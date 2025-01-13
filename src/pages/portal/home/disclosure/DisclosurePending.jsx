@@ -8,7 +8,6 @@ import {useApp} from "@/context/AppProvider.jsx";
 function DisclosurePending({scope}) {
     const navigate = useNavigate();
     const {orgId} = useAuth();
-    const{isLoading, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setIsLoading, token, setFooterContent, globalStyles} = useApp();
     
     let readUrl = `/app/Online/Disclosures/Pending?id=${orgId}&scope=${scope}`;
     

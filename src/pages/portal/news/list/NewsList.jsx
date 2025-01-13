@@ -14,14 +14,15 @@ import {Ellipsis} from "antd-mobile";
 import {imageSrc} from "@/utils/ImageUtils.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title}  = Typography ;
 
 function NewsList() {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
-
-    const{setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles} = useApp();
     const [news, setNews] = useState([]);
     const {orgId} = useAuth();
 

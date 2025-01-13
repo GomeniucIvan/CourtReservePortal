@@ -30,11 +30,13 @@ import {validateRatingCategories, validateUdfs} from "@/utils/ValidationUtils.js
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
-    const {setFormikData, formikData, isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent, setHeaderTitleKey} = useApp();
+    const {setHeaderTitleKey} = useHeader();
+    const {setFormikData, formikData, isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
     const [isFetching, setIsFetching] = useState(true);
     const [additionInfoData, setAdditionInfoData] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(false);

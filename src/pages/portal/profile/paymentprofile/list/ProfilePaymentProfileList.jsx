@@ -11,14 +11,15 @@ import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
 import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title, Text} = Typography;
 
 function ProfilePaymentProfileList() {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
     const [paymentProfiles, setPaymentProfiles] = useState([]);
-
-    const{isLoading, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setIsLoading, token, setFooterContent, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{isLoading, setIsFooterVisible, shouldFetch, resetFetch, setIsLoading, token, setFooterContent, globalStyles} = useApp();
     const {orgId} = useAuth();
     const {t} = useTranslation('');
     const {styles} = useStyles();

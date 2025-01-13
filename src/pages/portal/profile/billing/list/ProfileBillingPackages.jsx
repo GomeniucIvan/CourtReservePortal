@@ -13,6 +13,7 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title} = Typography
 
@@ -23,11 +24,11 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
         availableHeight,
         isMockData,
         setIsFooterVisible,
-        setHeaderRightIcons,
         setFooterContent
     } = useApp();
     
     const {orgId} = useAuth();
+    const {setHeaderRightIcons} = useHeader();
     
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
     const [selectedSegmentTab, setSelectedSegmentTab] = useState(selectedTabStorage('billing_packages', 'current'));

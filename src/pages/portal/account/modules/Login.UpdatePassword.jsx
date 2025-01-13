@@ -17,19 +17,20 @@ import {requiredMessage} from "@/utils/TranslateUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {useTranslation} from "react-i18next";
 import portalService from "@/api/portal.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
 
 function LoginUpdatePassword({mainFormik, onSkipPasswordUpdate }) {
     const navigate = useNavigate();
+    const {setHeaderTitleKey} = useHeader();
     const {
         formikData,
         isLoading,
         setIsLoading,
         token,
-        setIsFooterVisible,
-        setHeaderTitleKey
+        setIsFooterVisible
     } = useApp();
     
     const {setAuthorizationData, spGuideId} = useAuth();

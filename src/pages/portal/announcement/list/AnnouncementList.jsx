@@ -10,13 +10,14 @@ import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function AnnouncementList() {
     const navigate = useNavigate();
     const { styles } = useStyles();
     const [isFetching, setIsFetching] = useState(true);
-    
-    const{isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{isMockData, setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles} = useApp();
     const [announcements, setAnnouncements] = useState([]);
     const {orgId} = useAuth();
     

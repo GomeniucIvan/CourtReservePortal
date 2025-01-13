@@ -21,16 +21,18 @@ import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import ListFilter from "@/components/filter/ListFilter.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
 function EventList({filter}) {
+
+    const {setHeaderRightIcons} = useHeader();
     
     const {
         isMockData,
         setIsFooterVisible,
         setDynamicPages,
-        setHeaderRightIcons,
         globalStyles,
         token,
         shouldFetch,

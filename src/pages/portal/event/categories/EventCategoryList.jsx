@@ -12,6 +12,7 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {Ellipsis} from "antd-mobile";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title} = Typography;
 
 function EventCategoryList() {
@@ -19,8 +20,8 @@ function EventCategoryList() {
     const [isFetching, setIsFetching] = useState(true);
     const [categories, setCategories] = useState([]);
     const { styles } = useStyles();
-    
-    const{setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles} = useApp();
     const {orgId} = useAuth();
     
     const loadData = async (refresh) => {

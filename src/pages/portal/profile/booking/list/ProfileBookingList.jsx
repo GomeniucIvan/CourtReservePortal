@@ -25,15 +25,16 @@ import FormRangePicker from "@/form/formrangepicker/FormRangePicker.jsx";
 import {bookingTypes, filterDates} from "@/utils/SelectUtils.jsx";
 import HeaderSearch from "@/components/header/HeaderSearch.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
 function ProfileBookingList() {
     const navigate = useNavigate();
-
+    const {setHeaderRightIcons} = useHeader();
+    
     const {
         setIsFooterVisible,
-        setHeaderRightIcons,
         resetFetch,
         isMockData,
         globalStyles,

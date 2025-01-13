@@ -19,6 +19,7 @@ import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import {dateTimeToFormat, dateTimeToTimes} from "@/utils/DateUtils.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
@@ -33,10 +34,11 @@ function EventDetails() {
     const [additionalDates, setAdditionalDates] = useState(null);
     const [additionalDatesLoading, setAdditionalDatesLoading] = useState(false);
     const buttonStyles = useStyles().styles;
+
+    const {setHeaderRightIcons} = useHeader();
     
     let {
         setIsFooterVisible,
-        setHeaderRightIcons,
         isMockData,
         shouldFetch, 
         resetFetch,

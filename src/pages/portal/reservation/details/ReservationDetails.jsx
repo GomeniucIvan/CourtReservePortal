@@ -17,6 +17,7 @@ import FormTextarea from "@/form/formtextarea/FormTextArea.jsx";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {pNotify} from "@/components/notification/PNotify.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
@@ -26,9 +27,10 @@ function ProfileBookingDetails() {
     const {t} = useTranslation('');
     const [showCancelReservation, setShowCancelReservation] = useState(false);
 
+    const {setHeaderRightIcons} = useHeader();
+    
     const {
         setIsFooterVisible,
-        setHeaderRightIcons,
         setFooterContent,
         resetFetch,
         isMockData,

@@ -5,6 +5,7 @@ import {AuthProvider} from "./AuthProvider.jsx";
 import { ErrorBoundary } from 'react-error-boundary';
 import MessageModalProvider from "@/context/MessageModalProvider.jsx";
 import { theme } from "antd";
+import {HeaderProvider} from "@/context/HeaderProvider.jsx";
 const { useToken } = theme;
 
 export const GlobalContext = ({ children }) => {
@@ -33,13 +34,15 @@ export const GlobalContext = ({ children }) => {
         <AntdProvider>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <AppProvider>
-                    <AuthProvider>
-                        <SafeArea>
-                            <MessageModalProvider>
-                                {children}
-                            </MessageModalProvider>
-                        </SafeArea>
-                    </AuthProvider>
+                    <HeaderProvider>
+                        <AuthProvider>
+                            <SafeArea>
+                                <MessageModalProvider>
+                                    {children}
+                                </MessageModalProvider>
+                            </SafeArea>
+                        </AuthProvider>
+                    </HeaderProvider>
                 </AppProvider>
             </ErrorBoundary>
         </AntdProvider>

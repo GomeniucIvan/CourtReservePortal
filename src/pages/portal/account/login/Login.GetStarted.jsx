@@ -12,14 +12,17 @@ import PageForm from "@/form/pageform/PageForm.jsx";
 import apiService, {getBearerToken, setBearerToken} from "@/api/api.jsx";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginGetStarted({ mainFormik, onNewEmail, onEmailExists }) {
-    const {isLoading, setIsLoading, isMockData, setIsFooterVisible, setHeaderRightIcons, setHeaderTitleKey} = useApp();
+    const {setHeaderTitleKey} = useHeader();
+    const {isLoading, setIsLoading, isMockData, setIsFooterVisible } = useApp();
     const { t } = useTranslation('login');
     const navigate = useNavigate();
-
+    const {setHeaderRightIcons} = useHeader();
+    
     useEffect(() => {
         setHeaderRightIcons('');
         setIsFooterVisible(false);

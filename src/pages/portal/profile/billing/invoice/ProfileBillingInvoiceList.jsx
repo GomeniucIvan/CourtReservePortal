@@ -10,15 +10,15 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import * as React from "react";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {cx} from "antd-style";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title} = Typography;
 
 function ProfileBillingInvoiceList({selectedTab, tabsHeight}) {
-    
+    const {setHeaderRightIcons} = useHeader();
     const {
         token,
         globalStyles,
         setIsFooterVisible,
-        setHeaderRightIcons,
         availableHeight,
         setFooterContent
     } = useApp();

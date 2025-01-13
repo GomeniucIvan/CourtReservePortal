@@ -7,12 +7,14 @@ import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {Flex, Skeleton, Typography} from "antd";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Text} = Typography;
 
 function MemberGroupDetails() {
     const navigate = useNavigate();
     const [groups, setGroups] = useState({});
-    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setHeaderTitle, setFooterContent, availableHeight, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderTitle, setFooterContent, availableHeight, globalStyles} = useApp();
     const {orgId} = useAuth();
     const [isFetching, setIsFetching] = useState(true);
     const location = useLocation();

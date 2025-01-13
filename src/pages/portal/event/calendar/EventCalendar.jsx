@@ -24,9 +24,11 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {saveCookie} from "@/utils/CookieUtils.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import ListFilter from "@/components/filter/ListFilter.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function EventCalendar() {
-    const {setHeaderRightIcons, globalStyles, setIsFooterVisible, setFooterContent, token} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {globalStyles, setIsFooterVisible, setFooterContent, token} = useApp();
     const [showFilter, setShowFilter] = useState(false);
     const [selectedView, setSelectedView] = useState('');
     const {availableHeight, isMockData} = useApp();

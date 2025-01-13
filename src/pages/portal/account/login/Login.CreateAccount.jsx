@@ -10,11 +10,13 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import PageForm from "@/form/pageform/PageForm.jsx";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginCreateAccount({onCreateSubmit, mainFormik}) {
-    const {isLoading, setIsLoading, formikData, setIsFooterVisible, setFooterContent, setHeaderTitleKey} = useApp();
+    const {setHeaderTitleKey} = useHeader();
+    const {isLoading, setIsLoading, formikData, setIsFooterVisible, setFooterContent } = useApp();
     const email = mainFormik?.values?.email;
     const {t} = useTranslation('login');
     const navigate = useNavigate();

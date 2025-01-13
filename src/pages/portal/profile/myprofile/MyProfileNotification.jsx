@@ -12,6 +12,7 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useNavigate} from "react-router-dom";
 import * as React from "react";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Column} = Table;
 const {Text} = Typography;
@@ -28,12 +29,13 @@ function MyProfileNotification({selectedTab}) {
     const [showText, setShowText] = useState(false);
     const {t} = useTranslation('');
     const navigate = useNavigate();
+
+    const {setHeaderRightIcons} = useHeader();
     
     const {
         setIsLoading,
         isMockData,
         setIsFooterVisible,
-        setHeaderRightIcons,
         setFooterContent,
         isLoading,
         token,

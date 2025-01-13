@@ -47,6 +47,7 @@ import ReservationRegistrationMiscItems from "./ReservationRegistration.MiscItem
 import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.TermsAndCondition.jsx";
 import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -59,12 +60,13 @@ function ReservationRegistration() {
     const {dataItem, start, end, customSchedulerId} = location.state || {};
     const {t} = useTranslation('');
 
+    const {setHeaderRightIcons} = useHeader();
+    
     const {
         isMockData,
         setIsFooterVisible,
         shouldFetch,
         resetFetch,
-        setHeaderRightIcons,
         setIsLoading,
         globalStyles,
         token,

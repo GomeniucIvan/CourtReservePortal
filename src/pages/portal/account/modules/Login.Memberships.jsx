@@ -16,11 +16,13 @@ import * as React from "react";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Text, Title, Link} = Typography;
 
 function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
-    const {setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, setHeaderTitleKey} = useApp();
+    const {setHeaderTitleKey} = useHeader();
+    const {setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent } = useApp();
     const {spGuideId} = useAuth();
     const {t} = useTranslation('login');
     const navigate = useNavigate();

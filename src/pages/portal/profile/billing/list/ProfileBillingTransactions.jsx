@@ -23,9 +23,11 @@ import FormInputsDateInterval from "@/form/input/FormInputsDateInterval.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {subtractDateDays} from "@/utils/DateUtils.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function ProfileBillingTransactions({selectedTab, tabsHeight}) {
-    const {token, globalStyles, availableHeight, isMockData, setIsFooterVisible, setHeaderRightIcons, setFooterContent} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {token, globalStyles, availableHeight, isMockData, setIsFooterVisible, setFooterContent} = useApp();
     const {orgId} = useAuth();
     const navigate = useNavigate();
     

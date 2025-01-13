@@ -18,11 +18,13 @@ import {useStyles} from "./../styles.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Text, Title} = Typography;
 
 function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
-    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight, setHeaderTitleKey} = useApp();
+    const {setHeaderTitleKey} = useHeader();
+    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight} = useApp();
     const {spGuideId} = useAuth();
     
     const {t} = useTranslation('login');

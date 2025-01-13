@@ -13,15 +13,17 @@ import {Card, List} from "antd-mobile";
 import {cx} from "antd-style";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
 function ProfileStringingList() {
     const navigate = useNavigate();
 
+    const {setHeaderRightIcons} = useHeader();
+    
     const {
         setIsFooterVisible,
-        setHeaderRightIcons,
         resetFetch,
         isMockData,
         globalStyles,

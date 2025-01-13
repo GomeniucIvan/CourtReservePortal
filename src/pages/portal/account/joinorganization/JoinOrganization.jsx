@@ -4,12 +4,14 @@ import {Button, Carousel, Flex, Typography} from "antd";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import React, {useEffect} from "react";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title, Text, Paragraph, Link} = Typography;
 
 function JoinOrganization() {
     let {orgId, memberId} = useParams();
     const navigate = useNavigate();
-    const {setIsFooterVisible, token, setHeaderRightIcons, globalStyles, setFooterContent} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {setIsFooterVisible, setFooterContent} = useApp();
 
     useEffect(() => {
         setIsFooterVisible(true);

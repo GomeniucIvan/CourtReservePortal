@@ -12,14 +12,15 @@ import {getQueryParameter} from "@/utils/RouteUtils.jsx";
 import {imageSrc} from "@/utils/ImageUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title} = Typography;
 
 function NewsDetails() {
     const navigate = useNavigate();
     const { styles } = useStyles();
     const location = useLocation();
-
-    const{setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading} = useApp();
     const [newsItem, setNewsItem] = useState(null);
     const {orgId} = useAuth();
     const newsId = getQueryParameter(location, "newsId");

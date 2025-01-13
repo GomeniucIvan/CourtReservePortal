@@ -14,18 +14,19 @@ import apiService, {setRequestData} from "@/api/api.jsx";
 import * as React from "react";
 import {useTranslation} from "react-i18next";
 import {useStyles} from "./../styles.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Paragraph, Title, Text} = Typography;
 
 function LoginVerificationCode({mainFormik, onPasswordVerify}) {
     const navigate = useNavigate();
     const { t } = useTranslation('login');
+    const {setHeaderTitleKey} = useHeader();
     const {
         isLoading,
         setIsLoading,
         setIsFooterVisible,
-        globalStyles,
-        setHeaderTitleKey
+        globalStyles
     } = useApp();
     
     const {spGuideId} = useAuth();

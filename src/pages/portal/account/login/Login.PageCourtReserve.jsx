@@ -11,10 +11,12 @@ import SVG from "@/components/svg/SVG.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useTranslation} from "react-i18next";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title, Text, Paragraph, Link} = Typography;
 
 function LoginCourtReserve({ onGetStartedClick, onLoginClick }) {
-    const {token, globalStyles, setIsFooterVisible, setHeaderRightIcons, setHeaderTitleKey} = useApp();
+    const {setHeaderRightIcons, setHeaderTitleKey} = useHeader();
+    const {token, globalStyles, setIsFooterVisible } = useApp();
     const {t} = useTranslation('login');
 
     useEffect(() => {

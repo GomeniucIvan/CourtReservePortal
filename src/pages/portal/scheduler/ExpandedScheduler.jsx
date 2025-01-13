@@ -21,9 +21,11 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import dayjs from "dayjs";
 import apiService from "@/api/api.jsx";
 import {saveCookie} from "@/utils/CookieUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function ExpandedScheduler() {
-    const {availableHeight, setIsFooterVisible, setFooterContent, setHeaderRightIcons, isMockData, token, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {availableHeight, setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
     const {orgId} = useAuth();
     
     const hideReserveButtonsOnAdminSchedulers = false;

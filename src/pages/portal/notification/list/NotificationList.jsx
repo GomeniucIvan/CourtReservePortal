@@ -16,12 +16,14 @@ import {useStyles} from "./styles.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function NotificationList({}) {
     const [searchText, setSearchText] = useState('');
     const [isFetching, setIsFetching] = useState(true);
     const [notifications, setNotifications] = useState([]);
-    const{setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading, globalStyles, setDynamicPages} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles, setDynamicPages} = useApp();
     const {orgId} = useAuth();
     const navigate = useNavigate();
     const {styles} = useStyles();

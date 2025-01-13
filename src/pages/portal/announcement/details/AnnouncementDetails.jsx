@@ -11,13 +11,15 @@ import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useTranslation} from "react-i18next";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title} = Typography;
 
 function AnnouncementDetails() {
     let {id} = useParams();
     const navigate = useNavigate();
     const {styles} = useStyles();
-    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setHeaderTitle, setFooterContent} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderTitle, setFooterContent} = useApp();
     const [isFetching, setIsFetching] = useState(true);
     
     const {orgId} = useAuth();

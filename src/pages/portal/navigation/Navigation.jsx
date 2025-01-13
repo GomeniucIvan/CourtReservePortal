@@ -14,11 +14,13 @@ import {Swiper} from "antd-mobile";
 import SVG from "@/components/svg/SVG.jsx";
 import * as React from "react";
 import appService, {apiRoutes} from "@/api/app.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function Navigation() {
     const { nodeId } = useParams();
     const key = equalString(nodeId, 19) ? 'more' : '';
-    const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, setHeaderTitle, token} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {setIsFooterVisible, setFooterContent, setHeaderTitle, token} = useApp();
     const {orgId, authData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
     const [links, setLinks] = useState(equalString(key, 'more') ? getMoreNavigationStorage(orgId) : getDashboardAllLists(orgId));

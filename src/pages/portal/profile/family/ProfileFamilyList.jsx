@@ -35,14 +35,16 @@ import Barcode from "react-barcode";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Text} = Typography;
 
 function ProfileFamilyList() {
     const navigate = useNavigate();
+    const {setHeaderRightIcons} = useHeader();
+    
     const {
         setIsFooterVisible,
-        setHeaderRightIcons,
         setFooterContent,
         shouldFetch,
         resetFetch,

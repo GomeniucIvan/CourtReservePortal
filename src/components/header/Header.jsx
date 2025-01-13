@@ -1,6 +1,6 @@
 ﻿import {useStyles} from "./styles.jsx";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
-import {getLastFromHistory, pushToHistory} from "../../toolkit/HistoryStack.js";
+import {getLastFromHistory, pushToHistory} from "@/toolkit/HistoryStack.js";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {useApp} from "../../context/AppProvider.jsx";
 import {NavBar} from "antd-mobile";
@@ -8,11 +8,13 @@ import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {authMember} from "../../storage/AppStorage.jsx";
 import {useTranslation} from "react-i18next";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {isLoading, headerRightIcons, headerTitle, customHeader, headerTitleKey} = useApp();
+    const {headerRightIcons, headerTitleKey} = useHeader();
+    const {isLoading, headerTitle, customHeader } = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
 

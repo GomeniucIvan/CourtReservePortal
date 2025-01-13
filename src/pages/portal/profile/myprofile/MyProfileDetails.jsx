@@ -26,6 +26,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();
@@ -33,8 +34,8 @@ function MyProfileDetails({selectedTab}) {
     const {t} = useTranslation('');
     const [isFetching, setIsFetching] = useState(true);
     let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
-    
-    const {setIsFooterVisible, setHeaderRightIcons, setFooterContent, isLoading, setIsLoading} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const {setIsFooterVisible, setFooterContent, isLoading, setIsLoading} = useApp();
     const {orgId, authData} = useAuth();
     const {token} = useApp();
     const recaptchaRef = useRef(null);

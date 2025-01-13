@@ -8,13 +8,14 @@ import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import BrowserBlock from "@/components/browserblock/BrowserBlock.jsx";
 import {currentBaseUrl, getQueryParameter} from "@/utils/RouteUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title} = Typography;
 
 function NotificationDetails() {
     const navigate = useNavigate();
     const location = useLocation();
-
-    const{setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading} = useApp();
     const [notification, setNotification] = useState(null);
     const {orgId} = useAuth();
     const historyId = getQueryParameter(location, "pushNotificationHistoryId");

@@ -15,6 +15,7 @@ import portalService from "@/api/portal.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import CenterModal from "@/components/modal/CenterModal.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
@@ -22,7 +23,9 @@ function ProfileMyOrganizationList() {
     const navigate = useNavigate();
     let { orgId, spGuideId, setAuthorizationData } = useAuth();
     const [isFetching, setIsFetching] = useState(true);
-    const{setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, token, setIsLoading, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    
+    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles} = useApp();
     const [selectedTab, setSelectedTab] = useState(selectedTabStorage('organizations-list', 'active'));
     const [loadingOrganization, setLoadingOrganization] = useState(null);
     const [primaryOrganizationDataModal, setPrimaryOrganizationDataModal] = useState(null);

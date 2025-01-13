@@ -15,18 +15,18 @@ import {ModalClose} from "@/utils/ModalUtils.jsx";
 import appService from "@/api/app.jsx";
 import {useTranslation} from "react-i18next";
 import portalService from "@/api/portal.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Link, Text, Paragraph} = Typography;
 
 function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
+    const {setHeaderRightIcons, setHeaderTitleKey} = useHeader();
     const {
         isLoading,
         setIsLoading,
         setIsFooterVisible,
-        setHeaderRightIcons,
         globalStyles,
-        token,
-        setHeaderTitleKey,
+        token
     } = useApp();
     
     const {spGuideId, setAuthorizationData} = useAuth();
@@ -122,8 +122,7 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
     });
 
     const navigateToRequestACode = () => {
-        mainFormik.setFieldsValue('email', formik?.values?.email);
-        onRequestACode();
+        onRequestACode(formik?.values);
     }
     
     return (

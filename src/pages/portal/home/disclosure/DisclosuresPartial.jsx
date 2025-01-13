@@ -18,14 +18,15 @@ import {DownloadOutlined} from "@ant-design/icons";
 import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "@/utils/FileUtils.jsx";
 import EmptyBlock, {emptyBlockTypes} from "@/components/emptyblock/EmptyBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Title, Text} = Typography;
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 
 
 const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal, disclosureData, navigate, isFormSubmit}, ref) => {
     const [isFetching, setIsFetching] = useState(true);
-
-    const{isLoading, setIsFooterVisible, shouldFetch, resetFetch, setHeaderRightIcons, setIsLoading, token, setFooterContent, globalStyles} = useApp();
+    const {setHeaderRightIcons} = useHeader();
+    const{isLoading, setIsFooterVisible, shouldFetch, resetFetch, setIsLoading, token, setFooterContent, globalStyles} = useApp();
     const [modelData, setModelData] = useState(null);
     const [membersData, setMembersData] = useState(null);
     const [selectedWaiverToSign, setSelectedWaiverToSign] = useState(null);
