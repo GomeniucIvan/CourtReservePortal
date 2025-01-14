@@ -19,9 +19,9 @@ import {costDisplay} from "@/utils/CostUtils.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {ModalRemove} from "@/utils/ModalUtils.jsx";
 import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
 import Sticky from "@/components/sticky/Sticky.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 
 const {Title, Text} = Typography;
 
@@ -114,15 +114,30 @@ function ReservationRegistrationPlayers({formik,
     }
 
     const removePlayer = (player) => {
-        ModalRemove({
-            content: `Are you sure you want to remove ${player.FirstName} ${player.LastName}?`,
-            showIcon: false,
-            onRemove: (e) => {
-                setReservationMembers(reservationMembers.filter(
-                    member => member.OrgMemberId !== player.OrgMemberId
-                ));
-                setShouldRebindPlayers(true);
-            }
+        displayMessageModal({
+            title: 'Remove',
+            html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                <Text>{`Are you sure you want to remove ${player.FirstName} ${player.LastName}?`}</Text>
+
+                <Flex vertical={true} gap={token.padding}>
+                    <Button block={true} danger={true} type={'primary'} onClick={() => {
+                        setReservationMembers(reservationMembers.filter(
+                            member => member.OrgMemberId !== player.OrgMemberId
+                        ));
+                        setShouldRebindPlayers(true);
+                        onClose();
+                    }}>
+                        Remove
+                    </Button>
+
+                    <Button block={true} onClick={() => {
+                        onClose();
+                    }}>
+                        Close
+                    </Button>
+                </Flex>
+            </Flex>,
+            type: "warning",
         })
     }
 

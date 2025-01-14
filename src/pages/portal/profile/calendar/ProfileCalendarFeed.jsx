@@ -1,16 +1,16 @@
-﻿import {useEffect, useState} from "react";
+﻿import React, {useEffect, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {e} from "@/utils/TranslateUtils.jsx";
+import {e, eReplace} from "@/utils/TranslateUtils.jsx";
 import {Button, Flex, Skeleton, Typography} from "antd";
 import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {copyToClipboard, toBoolean} from "@/utils/Utils.jsx";
-import {ModalConfirm, ModalDelete} from "@/utils/ModalUtils.jsx";
 import {useTranslation} from "react-i18next";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useNavigate} from "react-router-dom";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 
 const {Title, Link} = Typography;
 
@@ -64,21 +64,35 @@ function ProfileCalendarFeed() {
                     </Button>
 
                     <Button block type={'primary'} ghost loading={isLoading} onClick={() => {
-                        ModalConfirm({
-                            content: t('profile.calendar.emailLinkDescription'),
-                            showIcon: false,
-                            onConfirm: (e) => {
-                                setIsLoading(true);
-                                appService.post(`/app/Online/MyProfile/SendEmailWithIcalLink?id=${orgId}&iCalLink=${calendarUrl}`).then(r => {
-                                    if (toBoolean(r.IsValid)){
-                                        pNotify(t('profile.calendar.successfullyEmailed'))
-                                    }else{
-                                        pNotify(t?.Message, 'error')
-                                    }
+                        displayMessageModal({
+                            title: 'Email Calendar',
+                            html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                                <Text>{t('profile.calendar.emailLinkDescription')}</Text>
 
-                                    setIsLoading(false);
-                                })
-                            }
+                                <Flex vertical={true} gap={token.padding}>
+                                    <Button block={true} type={'primary'} onClick={() => {
+                                        setIsLoading(true);
+                                        appService.post(`/app/Online/MyProfile/SendEmailWithIcalLink?id=${orgId}&iCalLink=${calendarUrl}`).then(r => {
+                                            if (toBoolean(r.IsValid)){
+                                                pNotify(t('profile.calendar.successfullyEmailed'))
+                                            } else {
+                                                pNotify(t?.Message, 'error')
+                                            }
+                                            onClose();
+                                            setIsLoading(false);
+                                        })
+                                    }}>
+                                        Confirm
+                                    </Button>
+
+                                    <Button block={true} onClick={() => {
+                                        onClose();
+                                    }}>
+                                        Close
+                                    </Button>
+                                </Flex>
+                            </Flex>,
+                            type: "info",
                         })
                     }}>
                         {t('profile.calendar.emailLink')}

@@ -15,3 +15,7 @@ export const getMembershipText = (selectedMembershipName) => {
 export const e = (string) => {
     return string;
 }
+
+export const eReplace = (string) => {
+    return string;
+}

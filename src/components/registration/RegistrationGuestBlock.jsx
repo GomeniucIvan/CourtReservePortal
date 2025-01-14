@@ -13,7 +13,6 @@ import FormInput from "../../form/input/FormInput.jsx";
 import FormSelect from "../../form/formselect/FormSelect.jsx";
 import InlineBlock from "../inlineblock/InlineBlock.jsx";
 import {Button, Card, Divider, Flex, Skeleton, Typography} from "antd";
-import {ModalRemove} from "../../utils/ModalUtils.jsx";
 import React, {useState} from "react";
 import {cx} from "antd-style";
 import {costDisplay} from "../../utils/CostUtils.jsx";
@@ -22,6 +21,7 @@ import SVG from "../svg/SVG.jsx";
 import FormCustomFields from "../../form/formcustomfields/FormCustomFields.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
 import {emptyArray} from "../../utils/ListUtils.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 const {Title, Text, Link} = Typography;
 
 function RegistrationGuestBlock({formik, 
@@ -309,13 +309,28 @@ function RegistrationGuestBlock({formik,
                                     ghost
                                     htmlType={'button'}
                                     onClick={() => {
-                                        ModalRemove({
-                                            content: 'Are you sure you want to remove Guest?',
-                                            showIcon: false,
-                                            onRemove: (e) => {
-                                                removeGuest();
-                                            }
-                                        });
+                                        displayMessageModal({
+                                            title: 'Remove',
+                                            html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                                                <Text>{'Are you sure you want to remove Guest?'}</Text>
+
+                                                <Flex vertical={true} gap={token.padding}>
+                                                    <Button block={true} danger={true} type={'primary'} onClick={() => {
+                                                        removeGuest();
+                                                        onClose();
+                                                    }}>
+                                                        Remove
+                                                    </Button>
+
+                                                    <Button block={true} onClick={() => {
+                                                        onClose();
+                                                    }}>
+                                                        Close
+                                                    </Button>
+                                                </Flex>
+                                            </Flex>,
+                                            type: "warning",
+                                        })
                                     }}>
                                 Remove
                             </Button>

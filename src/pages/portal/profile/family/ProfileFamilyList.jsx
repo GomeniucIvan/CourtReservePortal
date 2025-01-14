@@ -22,7 +22,6 @@ import {Ellipsis} from "antd-mobile";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
-import {ModalDelete} from "@/utils/ModalUtils.jsx";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
@@ -36,6 +35,8 @@ import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {eReplace} from "@/utils/TranslateUtils.jsx";
 
 const {Text} = Typography;
 
@@ -198,12 +199,27 @@ function ProfileFamilyList() {
 
                                                 <DeleteOutlined key="delete"
                                                                 onClick={() => {
-                                                                    ModalDelete({
-                                                                        content: `Are you sure you want to delete <b>${familyMember.FullName}</b>?`,
-                                                                        showIcon: false,
-                                                                        onDelete: (e) => {
-                                                                            deleteFamilyMember(familyMember);
-                                                                        }
+                                                                    displayMessageModal({
+                                                                        title: eReplace("Member Delete"),
+                                                                        html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                                                                            <Text>Are you sure you want to delete <b>{familyMember.FullName}</b>?</Text>
+
+                                                                            <Flex vertical={true} gap={token.padding}>
+                                                                                <Button block={true} danger={true} type={'primary'} onClick={() => {
+                                                                                    deleteFamilyMember(familyMember);
+                                                                                    onClose();
+                                                                                }}>
+                                                                                    Delete
+                                                                                </Button>
+
+                                                                                <Button block={true} onClick={() => {
+                                                                                    onClose();
+                                                                                }}>
+                                                                                    Close
+                                                                                </Button>
+                                                                            </Flex>
+                                                                        </Flex>,
+                                                                        type: "warning",
                                                                     })
                                                                 }}/>,
                                             ];

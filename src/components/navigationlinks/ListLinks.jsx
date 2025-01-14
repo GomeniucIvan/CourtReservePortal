@@ -8,7 +8,6 @@ import {e} from "../../utils/TranslateUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {ModalDelete, ModalLogout} from "../../utils/ModalUtils.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 import {setPage, toRoute} from "../../utils/RouteUtils.jsx";

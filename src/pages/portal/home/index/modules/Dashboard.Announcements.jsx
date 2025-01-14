@@ -4,7 +4,7 @@ import {Ellipsis} from 'antd-mobile'
 import {Card} from 'antd-mobile'
 import {cx} from "antd-style";
 import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
@@ -15,10 +15,10 @@ import EntityCard from "@/components/entitycard/EntityCard.jsx";
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
-import {ModalRemove} from "@/utils/ModalUtils.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import IframeContent from "@/components/iframecontent/IframeContent.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 
 const {Text, Title} = Typography;
 
@@ -129,12 +129,27 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
                           maxHeightVh={80}
                           customFooter={<Flex gap={token.padding}>
                               <Button type={'primary'} danger block onClick={() => {
-                                  ModalRemove({
-                                      content: t('announcement.dashboardRemove', { title: selectedAnnouncement?.Title }),
-                                      showIcon: false,
-                                      onRemove: (e) => {
-                                          removeAnnouncementFromDashboard(selectedAnnouncement);
-                                      }
+                                  displayMessageModal({
+                                      title: 'Remove',
+                                      html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                                          <Text>{t('announcement.dashboardRemove', { title: selectedAnnouncement?.Title })}</Text>
+
+                                          <Flex vertical={true} gap={token.padding}>
+                                              <Button block={true} danger={true} type={'primary'} onClick={() => {
+                                                  removeAnnouncementFromDashboard(selectedAnnouncement);
+                                                  onClose();
+                                              }}>
+                                                  Remove
+                                              </Button>
+
+                                              <Button block={true} onClick={() => {
+                                                  onClose();
+                                              }}>
+                                                  Close
+                                              </Button>
+                                          </Flex>
+                                      </Flex>,
+                                      type: "warning",
                                   })
                               }}>
                                   {t('remove')}

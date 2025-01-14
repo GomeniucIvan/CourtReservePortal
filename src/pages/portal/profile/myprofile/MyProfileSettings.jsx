@@ -2,7 +2,6 @@
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Flex, Skeleton} from "antd";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
-import {ModalDelete} from "@/utils/ModalUtils.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {useState} from "react";
 import appService from "@/api/app.jsx";
@@ -10,6 +9,8 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {useNavigate} from "react-router-dom";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {eReplace} from "@/utils/TranslateUtils.jsx";
 
 function MyProfileSettings({}) {
     const navigate = useNavigate();
@@ -60,12 +61,27 @@ function MyProfileSettings({}) {
                 <FormInputDisplay label={'Version'} value={1.28}/>
 
                 <Button type={'primary'} danger block loading={isDeletingAccount} onClick={() => {
-                    ModalDelete({
-                        content: deleteMessageBlock(),
-                        showIcon: false,
-                        onDelete: (e) => {
-                           deleteAccountPost();
-                        }
+                    displayMessageModal({
+                        title: eReplace("Member Delete"),
+                        html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                            {deleteMessageBlock()}
+
+                            <Flex vertical={true} gap={token.padding}>
+                                <Button block={true} danger={true} type={'primary'} onClick={() => {
+                                    deleteAccountPost();
+                                    onClose();
+                                }}>
+                                    Delete
+                                </Button>
+
+                                <Button block={true} onClick={() => {
+                                    onClose();
+                                }}>
+                                    Close
+                                </Button>
+                            </Flex>
+                        </Flex>,
+                        type: "warning",
                     })
                 }}>
                     Delete Account

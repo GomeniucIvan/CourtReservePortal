@@ -4,17 +4,12 @@ const { Text } = Typography;
 import {useApp} from "../../context/AppProvider.jsx";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Card} from "antd";
-import {e} from "../../utils/TranslateUtils.jsx";
 import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {ModalDelete, ModalLogout} from "../../utils/ModalUtils.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
 import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
-import {ProfileRouteNames} from "../../routes/ProfileRoutes.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
-import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import React from "react";
 import {openMobileExternalBrowser} from "@/utils/MobileUtils.jsx";
 
