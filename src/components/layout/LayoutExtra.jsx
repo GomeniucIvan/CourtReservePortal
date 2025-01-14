@@ -246,7 +246,7 @@ function LayoutExtra() {
                             <Button shape="circle"
                                     className={styles.colorOption}
                                     onClick={() => {
-                                        updateDashboardType(2);
+                                        setSelectedPrimaryPageType(1);
                                     }}>
                                 <SVG icon={'circle-sharp-solid'} size={16}/>
                             </Button>
@@ -254,17 +254,9 @@ function LayoutExtra() {
                             <Button shape="circle"
                                     className={styles.colorOption}
                                     onClick={() => {
-                                        updateDashboardType(3);
+                                        setSelectedPrimaryPageType(2);
                                     }}>
-                                <SVG icon={'grid-2-light'} size={16}/>
-                            </Button>
-
-                            <Button shape="circle"
-                                    className={styles.colorOption}
-                                    onClick={() => {
-                                        updateDashboardType(4);
-                                    }}>
-                                <SVG icon={'grid-sharp-light'} size={16}/>
+                                <SVG icon={'event-courts'} size={16}/>
                             </Button>
                         </div>
                     )}

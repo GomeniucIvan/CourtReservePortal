@@ -176,7 +176,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
                                     <Skeleton.Button active={true} block
                                                      style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
                                     <Skeleton.Button active={true} block style={{height: `${token.Input.controlHeight}px`}}/>
-                                </Flex>F
+                                </Flex>
                             </div>
                         ))}
                     </Flex>

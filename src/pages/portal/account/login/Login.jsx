@@ -240,14 +240,17 @@ function Login() {
             {equalString(formik?.values?.step, 'memberships') &&
                 <LoginMemberships mainFormik={formik}
                                   onSkip={() =>{
+                                      formik.setFieldValue('selectedMembership', {})
+                                      formik.setFieldValue('selectedMembershipId', '')
                                       navigateToStep('review')
                                   }}
                                   onMembershipSelect={(costType) => {
                                       if (costType && costType.OneFreePaymentOption) {
-                                          formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
                                           formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
                                           setShowReviewModal(true);
                                       } else {
+                                          formik.setFieldValue('selectedMembership', costType)
+                                          formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
                                           navigateToStep('review');
                                       }
                                   }}

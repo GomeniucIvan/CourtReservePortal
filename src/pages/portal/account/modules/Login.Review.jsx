@@ -43,6 +43,8 @@ function LoginReview({mainFormik}) {
     const isDisclosuresRequired = mainFormik?.values?.isDisclosuresRequired;
     const selectedMembership = mainFormik?.values?.selectedMembership;
     
+    console.log(selectedMembership)
+    
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(<FooterBlock topBottom={true}>

@@ -4,6 +4,7 @@ import EventRoutes from "./EventRoutes.jsx";
 import ProfileRoutes from "./ProfileRoutes.jsx";
 import AccountRoutes from "./AccountRoutes.jsx";
 import LeagueRoutes from "@/routes/LeagueRoutes.jsx";
+import DevRoutes from "@/routes/DevRoutes.jsx";
 
 const AppRoutes = [
     ...AccountRoutes,
@@ -12,6 +13,7 @@ const AppRoutes = [
     ...EventRoutes,
     ...ProfileRoutes,
     ...LeagueRoutes,
+    ...DevRoutes,
 ];
 
 export default AppRoutes;
