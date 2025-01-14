@@ -74,17 +74,13 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
     const fixHeaderItems = () => {
         if (headerRef.current) {
             setBodyHeight(availableHeight - headerRef.current.offsetHeight - 8); //added padding for description search
-        } else{
+        } else {
 
         }
     }
 
     const validationSchema = Yup.object({
-        email: Yup.string().required(t(`getStarted.form.emailRequired`)),
-        password: Yup.string().required(t(`createAccount.form.passwordRequired`))
-            .min(6, t(`createAccount.form.passwordMinLength`)),
-        confirmPassword: Yup.string().required(t(`createAccount.form.confirmPasswordRequired`))
-            .oneOf([Yup.ref('password'), null], t(`createAccount.form.passwordMatch`)),
+
     });
 
     const formik = useFormik({

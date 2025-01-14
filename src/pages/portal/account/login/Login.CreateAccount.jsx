@@ -48,12 +48,7 @@ function LoginCreateAccount({onCreateSubmit, mainFormik}) {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-
             onCreateSubmit(values);
-            
-            setFormikData(values);
-            navigate(AuthRouteNames.LOGIN_ORGANIZATION);
-            
             setIsLoading(false);
         },
     });

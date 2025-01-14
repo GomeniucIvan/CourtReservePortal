@@ -47,7 +47,7 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
         if (isNullOrEmpty(memberships)) {
             setIsFetching(true);
             setIsLoading(true);
-            const response = await apiService.get(`/api/create-account/membership-signup-form?orgId=${nullToEmpty(mainFormik?.SelectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
+            const response = await apiService.get(`/api/create-account/membership-signup-form?orgId=${nullToEmpty(mainFormik?.values?.selectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
 
             if (response.IsValid) {
                 setMemberships(response.Data);

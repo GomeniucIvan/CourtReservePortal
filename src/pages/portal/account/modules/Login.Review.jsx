@@ -32,7 +32,7 @@ const {Paragraph, Link, Title} = Typography;
 
 function LoginReview({mainFormik}) {
     const {setHeaderTitleKey} = useHeader();
-    const {formikData, setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
+    const {setIsFooterVisible, setFooterContent, token} = useApp();
     const { t } = useTranslation('login');
     const [paymentFrequencyCost, setPaymentFrequencyCost] = useState(null);
     const [selectedMembershipRequirePayment, setSelectedMembershipRequirePayment] = useState(false);
@@ -86,7 +86,7 @@ function LoginReview({mainFormik}) {
         card_routingNumber: '',
         card_accountNumber: '',
         card_savePaymentProfile: false,
-        card_country: orgCardCountryCode(formikData?.UiCulture),
+        card_country: orgCardCountryCode(mainFormik?.UiCulture),
         
         paymentFrequency: '',
         disclosureAgree: false,

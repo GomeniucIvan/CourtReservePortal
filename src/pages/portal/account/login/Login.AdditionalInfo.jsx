@@ -31,19 +31,19 @@ import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
     const {setHeaderTitleKey} = useHeader();
-    const {setFormikData, formikData, isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
+    const {spGuideId} = useAuth();
+    const {isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
     const [isFetching, setIsFetching] = useState(true);
     const [additionInfoData, setAdditionInfoData] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [skipReviewAndMemberships, setSkipReviewAndMemberships] = useState(false);
     const {t} = useTranslation('login');
-    const navigate = useNavigate();
-
     
     useEffect(() => {
         setIsFooterVisible(true);
@@ -123,7 +123,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
         setIsFetching(true);
         setIsLoading(true);
 
-        const response = await apiService.get(`/api/create-account/signup-form?orgId=${nullToEmpty(formik?.values?.selectedOrgId)}&spGuideId=${nullToEmpty(formik?.values?.spGuideId)}`);
+        const response = await apiService.get(`/api/create-account/signup-form?orgId=${nullToEmpty(mainFormik?.values?.selectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
         if (toBoolean(response?.IsValid)){
             const data = response.Data;
             setAdditionInfoData(data);

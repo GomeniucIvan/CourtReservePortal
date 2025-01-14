@@ -231,7 +231,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                 <PaddingBlock>
                     <Title level={4} style={{paddingBottom: token.padding}}>
                         {!isNullOrEmpty(values?.reviewModalTitle) ? 
-                            (<>{values?.reviewModalTitle}</>):(
+                            (<div style={{fontWeight: 'initial'}} dangerouslySetInnerHTML={{__html: values?.reviewModalTitle}}/>):(
                             <>{t('review.confirmMessage')}</>
                         )}
                     </Title>

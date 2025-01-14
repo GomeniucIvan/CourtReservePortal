@@ -23,6 +23,7 @@ import LoginAdditionalInfo from "@portal/account/login/Login.AdditionalInfo.jsx"
 import LoginRequestCode from "@portal/account/modules/Login.RequestCode.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {logDebug} from "@/utils/ConsoleUtils.jsx";
 
 function Login() {
     const navigate = useNavigate();
@@ -36,6 +37,8 @@ function Login() {
     const {t} = useTranslation('login');
 
     const navigateToStep = useCallback((step, isBack) => {
+        logDebug(`navigateToStep ${step}`);
+        
         if (isBack) {
             setNavigationSteps((prevSteps) => {
                 const lastNavigationPage = prevSteps[prevSteps.length - 2];
@@ -172,7 +175,7 @@ function Login() {
                                     onCreateSubmit={(accValues) => {
                                         formik.setFieldValue('password', accValues.password);
                                         formik.setFieldValue('confirmPassword', accValues.confirmPassword);
-                                        navigateToStep('login-organization')  }}
+                                        navigateToStep('organizations')  }}
 
                 />
             }
@@ -202,24 +205,7 @@ function Login() {
                 />
             }
 
-            {equalString(formik?.values?.step, 'memberships') &&
-                <LoginMemberships mainFormik={formik}
-                                  onSkip={() =>{
-                                      navigateToStep('review')
-                                  }}
-                                  onMembershipSelect={(costType) => {
-                                      if (costType && costType.OneFreePaymentOption) {
-                                          formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
-                                          formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
-                                          setShowReviewModal(true);
-                                      } else {
-                                          navigateToStep('review');
-                                      }
-                                  }}
-                />
-            }
-
-            {equalString(formik?.values?.step, 'signup') &&
+            {equalString(formik?.values?.step, 'sign-up') &&
                 <LoginAdditionalInfo mainFormik={formik}
                                      onSignupSubmit={(formValues) => {
                                          formik.setValues({
@@ -251,6 +237,23 @@ function Login() {
                 />
             }
 
+            {equalString(formik?.values?.step, 'memberships') &&
+                <LoginMemberships mainFormik={formik}
+                                  onSkip={() =>{
+                                      navigateToStep('review')
+                                  }}
+                                  onMembershipSelect={(costType) => {
+                                      if (costType && costType.OneFreePaymentOption) {
+                                          formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
+                                          formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
+                                          setShowReviewModal(true);
+                                      } else {
+                                          navigateToStep('review');
+                                      }
+                                  }}
+                />
+            }
+            
             {equalString(formik?.values?.step, 'review') &&
                 <LoginReview mainFormik={formik} />
             }

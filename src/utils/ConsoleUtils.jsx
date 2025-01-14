@@ -41,7 +41,9 @@ export const logSuccess = (message) => {
     console.log(`%c${consoleIcons.success} ${message}`, styles.green);
 };
 
-
+export const logDebug = (message) => {
+    console.log(`%c${consoleIcons.debug} ${message}`, styles.green);
+};
 export const logInfo = (message) => {
     console.log(`%c${consoleIcons.success}`, styles.blue)
     console.log(message);
