@@ -12,7 +12,6 @@ import {getQueryParameter} from "@/utils/RouteUtils.jsx";
 
 function ProfileBilling({tabKey}) {
     const location = useLocation();
-    const {setHeaderTitle} = useApp();
     const page = getQueryParameter(location, "page");
     let tabToShow = tabKey;
     

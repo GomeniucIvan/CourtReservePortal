@@ -18,8 +18,8 @@ function AnnouncementDetails() {
     let {id} = useParams();
     const navigate = useNavigate();
     const {styles} = useStyles();
-    const {setHeaderRightIcons} = useHeader();
-    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderTitle, setFooterContent} = useApp();
+    const {setHeaderRightIcons, setHeaderTitle} = useHeader();
+    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setFooterContent} = useApp();
     const [isFetching, setIsFetching] = useState(true);
     
     const {orgId} = useAuth();

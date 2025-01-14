@@ -19,8 +19,8 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 function Navigation() {
     const { nodeId } = useParams();
     const key = equalString(nodeId, 19) ? 'more' : '';
-    const {setHeaderRightIcons} = useHeader();
-    const {setIsFooterVisible, setFooterContent, setHeaderTitle, token} = useApp();
+    const {setHeaderRightIcons, setHeaderTitle} = useHeader();
+    const {setIsFooterVisible, setFooterContent, token} = useApp();
     const {orgId, authData} = useAuth();
     const [isFetching, setIsFetching] = useState(false);
     const [links, setLinks] = useState(equalString(key, 'more') ? getMoreNavigationStorage(orgId) : getDashboardAllLists(orgId));

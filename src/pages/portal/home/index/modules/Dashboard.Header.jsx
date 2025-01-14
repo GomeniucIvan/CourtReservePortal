@@ -18,6 +18,7 @@ import {useAntd} from "@/context/AntdProvider.jsx";
 import {toAuthLocalStorage} from "@/storage/AppStorage.jsx";
 import {setClientUiCulture} from "@/utils/DateUtils.jsx";
 import {isValidJson} from "@/utils/ListUtils.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 const {Text, Title} = Typography;
 
 const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) => {
@@ -27,7 +28,8 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
     const [showInCelsius, setShowInCelsius] = useState(true);
     const [windMeasurements, setWindMeasurements] = useState('');
     const { styles } = useStyles();
-    const {token, globalStyles, setCustomHeader} = useApp();
+    const {setCustomHeader} = useHeader();
+    const {token, globalStyles} = useApp();
     const {spGuideId, orgId, authData, setAuthData,setOrgId } = useAuth();
     const [loadingOrganizationId, setLoadingOrganizationId] = useState(null);
     const navigate = useNavigate();

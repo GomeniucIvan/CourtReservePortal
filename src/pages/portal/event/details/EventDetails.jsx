@@ -35,7 +35,7 @@ function EventDetails() {
     const [additionalDatesLoading, setAdditionalDatesLoading] = useState(false);
     const buttonStyles = useStyles().styles;
 
-    const {setHeaderRightIcons} = useHeader();
+    const {setHeaderRightIcons, setHeaderTitle} = useHeader();
     
     let {
         setIsFooterVisible,
@@ -45,8 +45,7 @@ function EventDetails() {
         setFooterContent,
         token,
         globalStyles,
-        setDynamicPages,
-        setHeaderTitle
+        setDynamicPages
     } = useApp();
 
     const loadData = async (refresh) => {

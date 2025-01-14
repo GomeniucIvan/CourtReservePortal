@@ -13,8 +13,8 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {headerRightIcons, headerTitleKey} = useHeader();
-    const {isLoading, headerTitle, customHeader } = useApp();
+    const {headerRightIcons, headerTitleKey, customHeader} = useHeader();
+    const {isLoading, headerTitle } = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
 

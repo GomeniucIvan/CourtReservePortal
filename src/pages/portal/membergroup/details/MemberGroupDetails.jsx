@@ -13,8 +13,8 @@ const {Text} = Typography;
 function MemberGroupDetails() {
     const navigate = useNavigate();
     const [groups, setGroups] = useState({});
-    const {setHeaderRightIcons} = useHeader();
-    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setHeaderTitle, setFooterContent, availableHeight, globalStyles} = useApp();
+    const {setHeaderRightIcons, setHeaderTitle} = useHeader();
+    const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setFooterContent, availableHeight, globalStyles} = useApp();
     const {orgId} = useAuth();
     const [isFetching, setIsFetching] = useState(true);
     const location = useLocation();
