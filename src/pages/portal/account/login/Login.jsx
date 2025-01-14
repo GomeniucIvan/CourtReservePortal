@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useApp} from "@/context/AppProvider.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
@@ -12,7 +12,6 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import LoginCreateAccount from "@portal/account/login/Login.CreateAccount.jsx";
 import LoginGetStarted from "@portal/account/login/Login.GetStarted.jsx";
-import LoginForgotPassword from "@portal/account/login/Login.ForgotPassword.jsx";
 import {getMembershipText} from "@/utils/TranslateUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import LoginMemberships from "@portal/account/modules/Login.Memberships.jsx";
@@ -23,16 +22,38 @@ import LoginReview from "@portal/account/modules/Login.Review.jsx";
 import LoginAdditionalInfo from "@portal/account/login/Login.AdditionalInfo.jsx";
 import LoginRequestCode from "@portal/account/modules/Login.RequestCode.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 function Login() {
     const navigate = useNavigate();
     const {logout, spGuideId} = useAuth();
     const [isFromGetStarted, setIsFromGetStarted] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
-
+    const [navigationSteps, setNavigationSteps] = useState([]);
+    const { setOnBack } = useHeader();
+    
     const location = useLocation();
     const {t} = useTranslation('login');
 
+    const navigateToStep = useCallback((step, isBack) => {
+        if (isBack) {
+            setNavigationSteps((prevSteps) => {
+                const lastNavigationPage = prevSteps[prevSteps.length - 2];
+                if (isNullOrEmpty(lastNavigationPage)){
+                    formik.setFieldValue('step', 'initial');
+                } else{
+                    formik.setFieldValue('step', lastNavigationPage);
+                }
+                return prevSteps.slice(0, -1);
+            });
+        } else {
+            setNavigationSteps((prevSteps) => {
+                formik.setFieldValue('step', step);
+                return [...prevSteps, step];
+            });
+        }
+    }, []);
+    
     useEffect(() => {
         if (equalString(location.pathname, AuthRouteNames.LOGIN)) {
             //should clear organization data on logout
@@ -96,14 +117,17 @@ function Login() {
         }
     });
 
-    const navigateToStep = (step, isBack) => {
-        if (isBack) {
 
-        } else{
-            formik.setFieldValue('step', step);
-        }
-    }
 
+    useEffect(() => {
+        setOnBack(() => () => {
+            navigateToStep('', true);
+        });
+
+        // Cleanup: Reset `onBack` when the component unmounts
+        return () => setOnBack(null);
+    }, [setOnBack, navigateToStep]);
+    
     return (
         <>
             {equalString(formik?.values?.step, 'initial') &&

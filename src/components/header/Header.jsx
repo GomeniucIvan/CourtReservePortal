@@ -13,7 +13,7 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {headerRightIcons, headerTitleKey, customHeader} = useHeader();
+    const {headerRightIcons, headerTitleKey, customHeader, onBack} = useHeader();
     const {isLoading, headerTitle } = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
@@ -42,11 +42,7 @@ const Header = forwardRef((props, ref) => {
     };
 
     const backToPreviousPage = () => {
-        if (props.onBack) {
-            props.onBack();
-        } else {
-            navigateBack();
-        }
+        onBack();
     }
 
     const right = (

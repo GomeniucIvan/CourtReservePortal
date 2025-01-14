@@ -11,7 +11,8 @@ export const HeaderProvider = ({ children }) => {
     const [headerTitle, setHeaderTitle] = useState('');
     const [customHeader, setCustomHeader] = useState('');
     const [headerTitleKey, setHeaderTitleKey] = useState('');
-
+    const [onBack, setOnBack] = useState(null); // Add state for the `onBack` function
+    
     return (
         <HeaderContext.Provider value={{
             setHeaderRightIcons,
@@ -22,6 +23,8 @@ export const HeaderProvider = ({ children }) => {
             setCustomHeader,
             headerTitleKey,
             setHeaderTitleKey,
+            onBack,
+            setOnBack,
         }}>
 
             {children}
