@@ -106,11 +106,13 @@ function LoginUpdatePassword({mainFormik, onSkipPasswordUpdate }) {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={1}>{t(`updatePassword.title`)}</Title>
+                <Flex vertical={true} gap={token.paddingXS}>
+                    <Title level={1}>{t(`updatePassword.title`)}</Title>
 
-                <Paragraph>
-                    {t(`updatePassword.description`, {email: formikData?.maskedEmail})}
-                </Paragraph>
+                    <Paragraph>
+                        {t(`updatePassword.description`, {email: formikData?.maskedEmail})}
+                    </Paragraph>
+                </Flex>
 
                 <PageForm formik={formik}>
                     <FormInput label={t(`updatePassword.form.password`)}

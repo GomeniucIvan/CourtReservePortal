@@ -43,8 +43,6 @@ function LoginReview({mainFormik}) {
     const isDisclosuresRequired = mainFormik?.values?.isDisclosuresRequired;
     const selectedMembership = mainFormik?.values?.selectedMembership;
     
-    console.log(selectedMembership)
-    
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(<FooterBlock topBottom={true}>
@@ -187,20 +185,22 @@ function LoginReview({mainFormik}) {
                     {!isNullOrEmpty(selectedMembership) &&
                         <>
                             <PaddingBlock onlyTop={true}>
-                                <FormInputDisplay label={t(`review.membership`)} value={selectedMembership?.Name}/>
+                                <Flex vertical={true} gap={token.padding}>
+                                    <FormInputDisplay label={t(`review.membership`)} value={selectedMembership?.Name}/>
 
-                                {anyInList(selectedMembership?.DetailedPaymentOptions) &&
-                                    <FormSelect
-                                        formik={formik}
-                                        name='paymentFrequency'
-                                        label={t(`review.form.paymentFrequency`)}
-                                        options={selectedMembership?.DetailedPaymentOptions}
-                                        required={moreThanOneInList(selectedMembership?.DetailedPaymentOptions)}
-                                        disabled={oneListItem(selectedMembership?.DetailedPaymentOptions)}
-                                        propText='Text'
-                                        propValue='Value'
-                                    />
-                                }
+                                    {anyInList(selectedMembership?.DetailedPaymentOptions) &&
+                                        <FormSelect
+                                            formik={formik}
+                                            name='paymentFrequency'
+                                            label={t(`review.form.paymentFrequency`)}
+                                            options={selectedMembership?.DetailedPaymentOptions}
+                                            required={moreThanOneInList(selectedMembership?.DetailedPaymentOptions)}
+                                            disabled={oneListItem(selectedMembership?.DetailedPaymentOptions)}
+                                            propText='Text'
+                                            propValue='Value'
+                                        />
+                                    }
+                                </Flex>
                             </PaddingBlock>
                         </>
                     }
@@ -211,29 +211,33 @@ function LoginReview({mainFormik}) {
                     
                     {(selectedMembershipRequirePayment || toBoolean(formik?.values?.requireCardOnFile)) &&
                         <PaddingBlock onlyBottom={true}>
-                            <Title level={1}>{t(`review.paymentProfileBilling`)}</Title>
+                            <Flex vertical={true} gap={token.paddingXS}>
+                                <Title level={1}>{t(`review.paymentProfileBilling`)}</Title>
 
-                            <Paragraph>
-                                {t(`review.paymentProfileBillingDescription`)}
-                            </Paragraph>
-                            
-                            <FormPaymentProfile formik={formik}
-                                                isPaymentProfile={false}
-                                                includeCustomerDetails={true}
-                                                allowToSavePaymentProfile={false}
-                                                showStatesDropdown={toBoolean(formik?.values?.showStatesDropdown)}
-                                                uiCulture={formik?.values?.uiCulture}
-                                                hideFields={{
-                                                    address2: true,
-                                                    phoneNumber: true
-                                                }}
-                                                paymentProviderData={{
-                                                    PaymentProvider: formik?.values?.paymentProvider,
-                                                    StripePublishableKey: formik?.values?.stripePublishableKey,
-                                                    IsUsingCollectJs: formik?.values?.isUsingCollectJs,
-                                                }}
-                                                paymentTypes={formik?.values?.paymentTypes}
-                            />
+                                <Paragraph>
+                                    {t(`review.paymentProfileBillingDescription`)}
+                                </Paragraph>
+                            </Flex>
+
+                            <Flex vertical={true} gap={token.padding}>
+                                <FormPaymentProfile formik={formik}
+                                                    isPaymentProfile={false}
+                                                    includeCustomerDetails={true}
+                                                    allowToSavePaymentProfile={false}
+                                                    showStatesDropdown={toBoolean(formik?.values?.showStatesDropdown)}
+                                                    uiCulture={formik?.values?.uiCulture}
+                                                    hideFields={{
+                                                        address2: true,
+                                                        phoneNumber: true
+                                                    }}
+                                                    paymentProviderData={{
+                                                        PaymentProvider: formik?.values?.paymentProvider,
+                                                        StripePublishableKey: formik?.values?.stripePublishableKey,
+                                                        IsUsingCollectJs: formik?.values?.isUsingCollectJs,
+                                                    }}
+                                                    paymentTypes={formik?.values?.paymentTypes}
+                                />
+                            </Flex>
                         </PaddingBlock>
                     }
                     
@@ -267,7 +271,7 @@ function LoginReview({mainFormik}) {
                                 <IframeContent content={formik?.values?.disclosures} id={'login-disclosure'}/>
                             }
                         </PaddingBlock>
-                    </DrawerBottom>
+                    </DrawerBottom>s
                     
                     <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
                 </>

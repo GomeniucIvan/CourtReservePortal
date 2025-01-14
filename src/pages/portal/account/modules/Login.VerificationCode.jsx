@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useApp} from "@/context/AppProvider.jsx";
-import {theme, Typography, Col, Row, Button, Form} from "antd";
+import {theme, Typography, Col, Row, Button, Form, Flex} from "antd";
 import PasscodeInput from "@/form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
@@ -25,7 +25,8 @@ function LoginVerificationCode({mainFormik, onPasswordVerify}) {
         isLoading,
         setIsLoading,
         setIsFooterVisible,
-        globalStyles
+        globalStyles,
+        token
     } = useApp();
     
     const {spGuideId} = useAuth();
@@ -111,15 +112,17 @@ function LoginVerificationCode({mainFormik, onPasswordVerify}) {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={1}>{t(`verificationCode.title`)}</Title>
+                <Flex vertical={true} gap={token.paddingXS}>
+                    <Title level={1}>{t(`verificationCode.title`)}</Title>
 
-                <Paragraph>
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: t(`verificationCode.description`, { email: mainFormik?.maskedEmail }),
-                        }}
-                    />
-                </Paragraph>
+                    <Paragraph>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: t(`verificationCode.description`, { email: mainFormik?.maskedEmail }),
+                            }}
+                        />
+                    </Paragraph>
+                </Flex>
 
                 <Form
                     layout={'vertical'}

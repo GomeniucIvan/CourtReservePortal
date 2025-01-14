@@ -1,5 +1,5 @@
 import {useApp} from "@/context/AppProvider.jsx";
-import {Button, Typography} from 'antd';
+import {Button, Flex, Typography} from 'antd';
 import {useTranslation} from "react-i18next";
 import * as React from "react";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
@@ -17,7 +17,7 @@ import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 const {Paragraph, Link, Title} = Typography;
 
 function LoginRequestCode({mainFormik, onRequestCodeResult}) {
-    const {isLoading, setIsLoading, setIsFooterVisible, setFooterContent} = useApp();
+    const {isLoading, setIsLoading, token} = useApp();
     const {spGuideId} = useAuth();
     const {t} = useTranslation('login');
     
@@ -69,11 +69,13 @@ function LoginRequestCode({mainFormik, onRequestCodeResult}) {
 
     return (
         <PaddingBlock topBottom={true}>
-            <Title level={1}>{t(`requestCode.title`)}</Title>
+            <Flex vertical={true} gap={token.paddingXS}>
+                <Title level={1}>{t(`requestCode.title`)}</Title>
 
-            <Paragraph>
-                {t(`requestCode.description`)}
-            </Paragraph>
+                <Paragraph>
+                    {t(`requestCode.description`)}
+                </Paragraph>
+            </Flex>
 
             <PageForm
                 formik={formik}>

@@ -2,7 +2,7 @@ import {useFormik} from 'formik';
 import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect} from "react";
-import {Button, Typography} from 'antd';
+import {Button, Flex, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
 import {equalString, focus, isNullOrEmpty, isValidEmail, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
@@ -18,9 +18,8 @@ const {Paragraph, Link, Title} = Typography;
 
 function LoginGetStarted({ mainFormik, onNewEmail, onEmailExists }) {
     const {setHeaderTitleKey} = useHeader();
-    const {isLoading, setIsLoading, isMockData, setIsFooterVisible } = useApp();
+    const {isLoading, setIsLoading, isMockData, setIsFooterVisible, token } = useApp();
     const { t } = useTranslation('login');
-    const navigate = useNavigate();
     const {setHeaderRightIcons} = useHeader();
     
     useEffect(() => {
@@ -93,14 +92,15 @@ function LoginGetStarted({ mainFormik, onNewEmail, onEmailExists }) {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={1}>{t(`getStarted.title`)}</Title>
+                <Flex vertical={true} gap={token.paddingXS}>
+                    <Title level={1}>{t(`getStarted.title`)}</Title>
 
-                <Paragraph>
-                    {t(`getStarted.description`)}
-                </Paragraph>
+                    <Paragraph>
+                        {t(`getStarted.description`)}
+                    </Paragraph>
+                </Flex>
 
-                <PageForm
-                    formik={startFormik}>
+                <PageForm formik={startFormik}>
                     <FormInput label={t(`getStarted.form.email`)}
                                formik={startFormik}
                                name='email'

@@ -2,7 +2,7 @@ import {useFormik} from 'formik';
 import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect} from "react";
-import {Button, Typography} from 'antd';
+import {Button, Flex, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {equalString, focus, isNullOrEmpty, isValidEmail, toBoolean} from "@/utils/Utils.jsx";
@@ -16,7 +16,7 @@ const {Paragraph, Link, Title} = Typography;
 
 function LoginCreateAccount({onCreateSubmit, mainFormik}) {
     const {setHeaderTitleKey} = useHeader();
-    const {isLoading, setIsLoading, formikData, setIsFooterVisible, setFooterContent } = useApp();
+    const {isLoading, setIsLoading, formikData, setIsFooterVisible, setFooterContent, token } = useApp();
     const email = mainFormik?.values?.email;
     const {t} = useTranslation('login');
     const navigate = useNavigate();
@@ -56,11 +56,13 @@ function LoginCreateAccount({onCreateSubmit, mainFormik}) {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={1}>{t(`createAccount.title`)}</Title>
+                <Flex vertical={true} gap={token.paddingXS}>
+                    <Title level={1}>{t(`createAccount.title`)}</Title>
 
-                <Paragraph>
-                    {t(`createAccount.description`)}
-                </Paragraph>
+                    <Paragraph>
+                        {t(`createAccount.description`)}
+                    </Paragraph>
+                </Flex>
 
                 <PageForm formik={formik}>
                     <FormInput label={t(`getStarted.form.email`)}

@@ -1,6 +1,9 @@
-﻿import {Form} from "antd";
+﻿import {Flex, Form} from "antd";
+import {useApp} from "@/context/AppProvider.jsx";
 
 function PageForm({children, formik}) {
+    const {token } = useApp();
+    
     return (
         <Form
             layout={'vertical'}
@@ -13,7 +16,9 @@ function PageForm({children, formik}) {
             }}
             initialValues={{ layout: 'vertical' }}
         >
-            {children}
+            <Flex vertical={true} gap={token.padding}>
+                {children}
+            </Flex>
         </Form>
     )
 }

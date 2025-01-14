@@ -136,25 +136,17 @@ function Login() {
             {equalString(formik?.values?.step, 'initial') &&
                 <>
                     {!isNullOrEmpty(spGuideId) &&
-                        <LoginCourtReserve onGetStartedClick={() => {setIsFromGetStarted(true); navigateToStep('get-started'); }}
-                                           onLoginClick={() => {setIsFromGetStarted(false); navigateToStep('authorize') }} />
+                        <LoginSpGuide onGetStartedClick={() => {setIsFromGetStarted(true);  navigateToStep('get-started') }}
+                                      onLoginClick={() => { setIsFromGetStarted(false);navigateToStep('authorize') }} />
+                        
+
                     }
 
                     {isNullOrEmpty(spGuideId) &&
-                        <LoginSpGuide onGetStartedClick={() => {setIsFromGetStarted(true);  navigateToStep('get-started') }}
-                                      onLoginClick={() => { setIsFromGetStarted(false);navigateToStep('authorize') }} />
+                        <LoginCourtReserve onGetStartedClick={() => {setIsFromGetStarted(true); navigateToStep('get-started'); }}
+                                           onLoginClick={() => {setIsFromGetStarted(false); navigateToStep('authorize') }} />
                     }
                 </>
-            }
-
-            {equalString(formik?.values?.step, 'authorize') &&
-                <LoginAuthorize mainFormik={formik}
-                                isFromGetStarted={isFromGetStarted}
-                                onRequestACode={(formValues) => {
-                                    formik.setFieldValue('email', formValues?.email);
-                                    navigateToStep('request-code')
-                                }}
-                />
             }
 
             {equalString(formik?.values?.step, 'get-started') &&
@@ -167,6 +159,16 @@ function Login() {
                                      formik.setFieldValue('email', formValues.email);
                                      navigateToStep('authorize')
                                  }}
+                />
+            }
+            
+            {equalString(formik?.values?.step, 'authorize') &&
+                <LoginAuthorize mainFormik={formik}
+                                isFromGetStarted={isFromGetStarted}
+                                onRequestACode={(formValues) => {
+                                    formik.setFieldValue('email', formValues?.email);
+                                    navigateToStep('request-code')
+                                }}
                 />
             }
 
