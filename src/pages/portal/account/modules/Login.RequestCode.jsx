@@ -10,11 +10,9 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import apiService from "@/api/api.jsx";
 import {equalString, focus, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
-import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
-import {useNavigate} from "react-router-dom";
-import {requiredMessage} from "@/utils/TranslateUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -54,14 +52,15 @@ function LoginRequestCode({mainFormik, onRequestCodeResult}) {
             setIsLoading(false);
             
             if (equalString(result.Status, 0)){
-                ModalClose({
-                    title: 'Password',
-                    content: 'Email not found in system.',
-                    showIcon: false,
-                    onOk: () => {
+                displayMessageModal({
+                    title: "Email Verification",
+                    html: (onClose) => 'Email not found in system.',
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
                         focus('email');
-                    }
-                });
+                    },
+                })
             } else {
                 onRequestCodeResult(result);
             }

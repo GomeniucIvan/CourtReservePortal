@@ -12,13 +12,14 @@ import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import SignatureCanvas from 'react-signature-canvas'
 import {pNotify} from "@/components/notification/PNotify.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import { Document,pdfjs } from 'react-pdf';
 import {DownloadOutlined} from "@ant-design/icons";
 import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "@/utils/FileUtils.jsx";
 import EmptyBlock, {emptyBlockTypes} from "@/components/emptyblock/EmptyBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 const {Title, Text} = Typography;
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 
@@ -98,11 +99,13 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                     if (disclosure.AllowToSign && !isNullOrEmpty(disclosure.ReadAgreementMessage) && !disclosure.AcceptAgreement && allDisclosuresAccepted) {
                         allDisclosuresAccepted = false;
 
-                        ModalClose({
-                            title: '',
-                            content: t('disclosure.shouldAgree', { name: disclosure.Name }),
-                            showIcon: false,
-                        });
+                        displayMessageModal({
+                            title: "Agreement Requirement",
+                            html: (onClose) => t('disclosure.shouldAgree', { name: disclosure.Name }),
+                            type: "warning",
+                            buttonType: modalButtonType.DEFAULT_CLOSE,
+                            onClose: () => {},
+                        })
                     }
                 });
             });
@@ -126,10 +129,16 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                 } else{
                     setIsLoading(false);
                     isFormSubmit(false);
-                    ModalClose({
-                        content: r.Message,
-                        showIcon: false
-                    });
+
+                    displayMessageModal({
+                        title: "Server error",
+                        html: (onClose) => r.Message,
+                        type: "error",
+                        buttonType: modalButtonType.DEFAULT_CLOSE,
+                        onClose: () => {
+                            
+                        },
+                    })
                 }
             })
         },

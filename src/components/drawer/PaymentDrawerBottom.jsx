@@ -9,7 +9,8 @@ import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import SVG from "../svg/SVG.jsx";
 import {costDisplay} from "../../utils/CostUtils.jsx";
 import {cx} from "antd-style";
-import {ModalClose} from "../../utils/ModalUtils.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Title, Text} = Typography;
 
@@ -189,13 +190,13 @@ const PaymentDrawerBottom = forwardRef(({
 
                                         <Flex align={'center'} gap={4} onClick={() => {
                                             if (toBoolean(paymentData?.requireOnlinePayment)) {
-                                                ModalClose({
-                                                    content: `After registration you have ${isNullOrEmpty(paymentData?.holdTimeForReservation) ? '15' : paymentData?.holdTimeForReservation} minutes to pay before your registration will be canceled.`,
-                                                    showIcon: false,
-                                                    onOk: () => {
-
-                                                    }
-                                                });
+                                                displayMessageModal({
+                                                    title: "Payment Information",
+                                                    html: (onClose) => `After registration you have ${isNullOrEmpty(paymentData?.holdTimeForReservation) ? '15' : paymentData?.holdTimeForReservation} minutes to pay before your registration will be canceled.`,
+                                                    type: "info",
+                                                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                                                    onClose: () => {},
+                                                })
                                             }
                                         }}>
 

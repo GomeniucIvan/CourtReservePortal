@@ -11,11 +11,12 @@ import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import apiService, {setRequestData} from "@/api/api.jsx";
 import {equalString, toBoolean} from "@/utils/Utils.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import appService from "@/api/app.jsx";
 import {useTranslation} from "react-i18next";
 import portalService from "@/api/portal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Title, Link, Text, Paragraph} = Typography;
 
@@ -67,12 +68,13 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
             const loginResponse = await apiService.post('/api/create-account/login', postModel);
 
             if (!toBoolean(loginResponse?.IsValid)) {
-                ModalClose({
-                    title: 'Login Error',
-                    content: loginResponse.Message,
-                    showIcon: false,
-                    onOk: () => {}
-                });
+                displayMessageModal({
+                    title: "Login Error",
+                    html: (onClose) => loginResponse.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {},
+                })
                 setIsLoading(false);
                 return; 
             }
@@ -80,12 +82,13 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
             const resultData = loginResponse.Data;
 
             if (equalString(resultData.LoginStatus, 0)) {
-                ModalClose({
-                    title: 'User Not Found',
-                    content: `<b>${values.email}</b> does not exist on our system, would you like to create a new account?`,
-                    showIcon: false,
-                    onOk: () => {}
-                });
+                displayMessageModal({
+                    title: "User Not Found",
+                    html: (onClose) => `<b>${values.email}</b> does not exist on our system, would you like to create a new account?`,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {},
+                })
                 setIsLoading(false);
                 return;
             }
@@ -99,12 +102,13 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
                 const loginApiResponse = await appService.post('/app/Online/Account/Login', loginModel);
 
                 if (!toBoolean(loginApiResponse?.IsValid)) {
-                    ModalClose({
-                        title: 'Login Error',
-                        content: loginApiResponse.Message,
-                        showIcon: false,
-                        onOk: () => {}
-                    });
+                    displayMessageModal({
+                        title: "Login Error",
+                        html: (onClose) => loginApiResponse.Message,
+                        type: "error",
+                        buttonType: modalButtonType.DEFAULT_CLOSE,
+                        onClose: () => {},
+                    })
                     setIsLoading(false);
                     return;  
                 }
@@ -128,61 +132,63 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
     return (
         <>
             <PaddingBlock topBottom={true}>
-                <Title level={3} style={{paddingBottom: token.paddingSM}}>{t('authorize.title')}</Title>
+               <Flex vertical={true} gap={token.padding}>
+                   <Title level={3} style={{paddingBottom: token.paddingSM}}>{t('authorize.title')}</Title>
 
-                <PageForm formik={formik}>
-                    <FormInput label={t('authorize.form.email')}
-                               formik={formik}
-                               disabled={isFromGetStarted}
-                               required={!isFromGetStarted}
-                               name='email'
-                               placeholder={t('authorize.form.emailPlaceholder')}
-                    />
+                   <PageForm formik={formik}>
+                       <FormInput label={t('authorize.form.email')}
+                                  formik={formik}
+                                  disabled={isFromGetStarted}
+                                  required={!isFromGetStarted}
+                                  name='email'
+                                  placeholder={t('authorize.form.emailPlaceholder')}
+                       />
 
-                    <FormInput label={t('authorize.form.password')}
-                               formik={formik}
-                               className={globalStyles.formNoBottomPadding}
-                               name='password'
-                               placeholder={t('authorize.form.passwordPlaceholder')}
-                               required={true}
-                    />
+                       <FormInput label={t('authorize.form.password')}
+                                  formik={formik}
+                                  className={globalStyles.formNoBottomPadding}
+                                  name='password'
+                                  placeholder={t('authorize.form.passwordPlaceholder')}
+                                  required={true}
+                       />
 
-                    <Flex justify={"start"} className={globalStyles.inputBottomLink}>
-                        <Link style={{fontWeight: 600}} onClick={() => {
-                            navigate(AuthRouteNames.LOGIN_FORGOT_PASSWORD);
-                        }}>
-                            {t('authorize.forgotPassword')}
-                        </Link>
-                    </Flex>
+                       <Flex justify={"start"} className={globalStyles.inputBottomLink}>
+                           <Link style={{fontWeight: 600}} onClick={() => {
+                               navigate(AuthRouteNames.LOGIN_FORGOT_PASSWORD);
+                           }}>
+                               {t('authorize.forgotPassword')}
+                           </Link>
+                       </Flex>
 
-                    <Button type="primary"
-                            block
-                            htmlType="submit"
-                            loading={isLoading}
-                            onClick={formik.handleSubmit}>
-                        {t('authorize.button.continue')}
-                    </Button>
+                       <Button type="primary"
+                               block
+                               htmlType="submit"
+                               loading={isLoading}
+                               onClick={formik.handleSubmit}>
+                           {t('authorize.button.continue')}
+                       </Button>
 
-                    <Divider><Text style={{verticalAlign: 'top', color: token.colorTextSecondary}}>or</Text></Divider>
+                       <Divider><Text style={{verticalAlign: 'top', color: token.colorTextSecondary}}>or</Text></Divider>
 
-                    <Button htmlType="button"
-                            block
-                            onClick={navigateToRequestACode}
-                            disabled={isLoading}>
-                        {t('authorize.button.requestACode')}
-                    </Button>
+                       <Button htmlType="button"
+                               block
+                               onClick={navigateToRequestACode}
+                               disabled={isLoading}>
+                           {t('authorize.button.requestACode')}
+                       </Button>
 
-                    <Paragraph className={'sm-padding'}>
-                        {t(`getStarted.continueAgree`)}{' '}
-                        <Link href="https://cr1.io/-1" target="_blank">
-                            {t(`getStarted.termAndService`)}{' '}
-                        </Link>
-                        {t(`getStarted.and`)}{' '}
-                        <Link href="https://cr1.io/-2" target="_blank">
-                            {t(`getStarted.privacyPolicy`)}
-                        </Link>
-                    </Paragraph>
-                </PageForm>
+                       <Paragraph className={'sm-padding'}>
+                           {t(`getStarted.continueAgree`)}{' '}
+                           <Link href="https://cr1.io/-1" target="_blank">
+                               {t(`getStarted.termAndService`)}{' '}
+                           </Link>
+                           {t(`getStarted.and`)}{' '}
+                           <Link href="https://cr1.io/-2" target="_blank">
+                               {t(`getStarted.privacyPolicy`)}
+                           </Link>
+                       </Paragraph>
+                   </PageForm>
+               </Flex>
             </PaddingBlock>
         </>
     )

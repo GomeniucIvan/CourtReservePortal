@@ -11,11 +11,12 @@ const {Title, Link, Text, Paragraph} = Typography;
 import PageForm from "@/form/pageform/PageForm.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {equalString, toBoolean} from "@/utils/Utils.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import appService from "@/api/app.jsx";
 import * as React from "react";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useTranslation} from "react-i18next";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 function LoginForgotPassword({  }) {
     const {
@@ -50,12 +51,13 @@ function LoginForgotPassword({  }) {
             let result = await appService.post('/app/Account/ForgotPasswordNoT', postModel);
             
             if (!toBoolean(result?.IsValid)) {
-                ModalClose({
-                    title: 'Error',
-                    content: result.Message,
-                    showIcon: false,
-                    onOk: () => {}
-                });
+                displayMessageModal({
+                    title: "Error",
+                    html: (onClose) => result.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {},
+                })
                 setIsLoading(false);
                 return; 
             }

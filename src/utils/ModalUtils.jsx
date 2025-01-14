@@ -119,30 +119,3 @@ export const ModalLogout = (data) => {
     })
 }
 
-export const ModalClose = (data) => {
-    Modal.show({
-        content: (
-            <div
-                dangerouslySetInnerHTML={{
-                    __html: data.content
-                }}
-            />
-        ),
-        closeOnAction: true,
-        onAction: (e) => {
-            if (equalString(e?.key, 'close')) {
-                if (typeof data.onClose == "function"){
-                    data.onClose(e);
-                }
-            }
-        },
-        actions: [
-            {
-                key: 'close',
-                text: 'Close',
-                primary: true,
-            }
-        ],
-    })
-}
-

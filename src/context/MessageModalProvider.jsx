@@ -26,6 +26,8 @@ const MessageModalProvider = ({ children }) => {
             {children}
             <CenterModal data={modal.data} 
                          show={modal.isVisible}
+                         buttonType={modal.data?.buttonType}
+                         type={modal.data?.type}
                          onClose={closeModal} 
                          title={typeof modal.data?.title === "function" ? modal.data?.title() : modal.data?.title}
                          children={typeof modal.data?.html === "function" ? modal.data.html(closeModal) : modal.data?.html} />

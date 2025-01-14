@@ -8,24 +8,40 @@ import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import SVG from "@/components/svg/SVG.jsx";
 import {equalString, isNullOrEmpty, setCookie} from "@/utils/Utils.jsx";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 import portalService from "@/api/portal.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import toast from "react-hot-toast";
 import appService from "@/api/app.jsx";
+import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 
 function LayoutExtra() {
     const { isMockData } = useApp();
     const { orgId } = useAuth();
+    const location = useLocation();
     const { styles } = useStyles();
     const {setPrimaryColor, setIsDarkMode, isDarkMode} = useAntd();
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
     const [isLanguageOpened, setIsLanguageOpened] = useState(false);
     const [isDashboardTypeOpened, setIsDashboardTypeOpened] = useState(false);
     const [selectedDashboardType, setSelectedDashboardType] = useState('empty-set-sharp-regular');
+    const [isPrimaryPageTypeOpened, setIsPrimaryPageTypeOpened] = useState(false);
+    const [selectedPrimaryPageType, setSelectedPrimaryPageType] = useState('empty-set-sharp-regular');
+    
+    
+    //based on route
+    const [showDashboardType, setShowDashboardType] = useState(false);
+    const [showPrimaryPageType, setShowPrimaryPageType] = useState(false);
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setShowDashboardType(equalString(location.pathname, HomeRouteNames.INDEX));
+        setShowPrimaryPageType(equalString(location.pathname, AuthRouteNames.LOGIN));
+
+    }, [location.pathname]);
 
     const updateDashboardDType = (type) => {
         let currentDashboardTypeIcon = 'empty-set-sharp-regular';
@@ -98,7 +114,7 @@ function LayoutExtra() {
             navigate(HomeRouteNames.INDEX);
         }
     }
-    
+
     return (
         <div className={cx(styles.layoutExtra)}>
             <div className={styles.languagePickerContainer}>
@@ -180,39 +196,80 @@ function LayoutExtra() {
                     </div>
                 )}
             </div>
+            
+            {showDashboardType &&
+                <div className={styles.dashboardTypeContainer}>
+                    <Button shape="circle" onClick={() => {
+                        setIsDashboardTypeOpened(!isDashboardTypeOpened)
+                    }}>
+                        <SVG icon={selectedDashboardType} size={16}/>
+                    </Button>
+                    {isDashboardTypeOpened && (
+                        <div className={styles.dashboardTypes}>
+                            <Button shape="circle"
+                                    className={styles.colorOption}
+                                    onClick={() => {
+                                        updateDashboardType(2);
+                                    }}>
+                                <SVG icon={'list-regular'} size={16}/>
+                            </Button>
 
-            <div className={styles.dashboardTypeContainer}>
-                <Button shape="circle" onClick={() => {setIsDashboardTypeOpened(!isDashboardTypeOpened)}}>
-                    <SVG icon={selectedDashboardType} size={16} />
-                </Button>
-                {isDashboardTypeOpened && (
-                    <div className={styles.dashboardTypes}>
-                        <Button shape="circle"
-                                className={styles.colorOption}
-                                onClick={() => {
-                                    updateDashboardType(2);
-                                }}>
-                            <SVG icon={'list-regular'} size={16} />
-                        </Button>
+                            <Button shape="circle"
+                                    className={styles.colorOption}
+                                    onClick={() => {
+                                        updateDashboardType(3);
+                                    }}>
+                                <SVG icon={'grid-2-light'} size={16}/>
+                            </Button>
 
-                        <Button shape="circle"
-                                className={styles.colorOption}
-                                onClick={() => {
-                                    updateDashboardType(3);
-                                }}>
-                            <SVG icon={'grid-2-light'} size={16} />
-                        </Button>
+                            <Button shape="circle"
+                                    className={styles.colorOption}
+                                    onClick={() => {
+                                        updateDashboardType(4);
+                                    }}>
+                                <SVG icon={'grid-sharp-light'} size={16}/>
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            }
 
-                        <Button shape="circle"
-                                className={styles.colorOption}
-                                onClick={() => {
-                                    updateDashboardType(4);
-                                }}>
-                            <SVG icon={'grid-sharp-light'} size={16} />
-                        </Button>
-                    </div>
-                )}
-            </div>
+            {showPrimaryPageType &&
+                <div className={styles.dashboardTypeContainer}>
+                    <Button shape="circle" onClick={() => {
+                        setIsPrimaryPageTypeOpened(!isPrimaryPageTypeOpened)
+                    }}>
+                        <SVG icon={selectedPrimaryPageType} size={16}/>
+                    </Button>
+                    {isPrimaryPageTypeOpened && (
+                        <div className={styles.dashboardTypes}>
+                            <Button shape="circle"
+                                    className={styles.colorOption}
+                                    onClick={() => {
+                                        updateDashboardType(2);
+                                    }}>
+                                <SVG icon={'circle-sharp-solid'} size={16}/>
+                            </Button>
+
+                            <Button shape="circle"
+                                    className={styles.colorOption}
+                                    onClick={() => {
+                                        updateDashboardType(3);
+                                    }}>
+                                <SVG icon={'grid-2-light'} size={16}/>
+                            </Button>
+
+                            <Button shape="circle"
+                                    className={styles.colorOption}
+                                    onClick={() => {
+                                        updateDashboardType(4);
+                                    }}>
+                                <SVG icon={'grid-sharp-light'} size={16}/>
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            }
         </div>
     )
 }

@@ -4,8 +4,6 @@ import * as Yup from "yup";
 import {useEffect} from "react";
 import {Button, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
-import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import {equalString, focus, isNullOrEmpty, isValidEmail, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import PageForm from "@/form/pageform/PageForm.jsx";
@@ -13,6 +11,8 @@ import apiService, {getBearerToken, setBearerToken} from "@/api/api.jsx";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -61,28 +61,30 @@ function LoginGetStarted({ mainFormik, onNewEmail, onEmailExists }) {
                         } else{
                             //invalid email
                             setStatus({email: t(`getStarted.form.emailNotFound`)});
-                            ModalClose({
+                            displayMessageModal({
                                 title: t(`getStarted.form.emailNotFound`),
-                                content: t(`getStarted.form.emailNotFoundDescription`),
-                                showIcon: false,
-                                onOk: () => {
+                                html: (onClose) => t(`getStarted.form.emailNotFoundDescription`),
+                                type: "error",
+                                buttonType: modalButtonType.DEFAULT_CLOSE,
+                                onClose: () => {
                                     focus('email');
-                                }
-                            });
+                                },
+                            })
                         }
                     } else if (equalString(response.Data, 1)) {
                         //exists
                         onEmailExists(values);
                     }
                 } else {
-                    ModalClose({
+                    displayMessageModal({
                         title: 'Error',
-                        content: response.Message,
-                        showIcon: false,
-                        onOk: () => {
+                        html: (onClose) => response.Message,
+                        type: "error",
+                        buttonType: modalButtonType.DEFAULT_CLOSE,
+                        onClose: () => {
                             focus('email');
-                        }
-                    });
+                        },
+                    })
                 }
             }
         },

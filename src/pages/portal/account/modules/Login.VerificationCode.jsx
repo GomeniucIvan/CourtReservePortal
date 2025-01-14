@@ -5,9 +5,6 @@ import {theme, Typography, Col, Row, Button, Form} from "antd";
 import PasscodeInput from "@/form/passcode/FormPasscodeInput.jsx";
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {equalString, focus, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import apiService, {setRequestData} from "@/api/api.jsx";
@@ -15,6 +12,8 @@ import * as React from "react";
 import {useTranslation} from "react-i18next";
 import {useStyles} from "./../styles.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Paragraph, Title, Text} = Typography;
 
@@ -90,13 +89,13 @@ function LoginVerificationCode({mainFormik, onPasswordVerify}) {
                 onPasswordVerify(formikValues)
 
             } else {
-                ModalClose({
-                    content: response.Message,
-                    showIcon: false,
-                    onOk: () => {
-                        
-                    }
-                });
+                displayMessageModal({
+                    title: "Response error",
+                    html: (onClose) => response.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {},
+                })
             }
         },
     });

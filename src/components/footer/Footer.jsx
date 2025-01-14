@@ -11,12 +11,13 @@ import { cx } from 'antd-style';
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import {getDashboardMainLinks, getNavigationStorage} from "@/storage/AppStorage.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {any} from "prop-types";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Text} = Typography;
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
@@ -69,13 +70,13 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
             navigate(route);
         } else if(equalString(key, 'calendar')){
             if (hideEventsCalendar) {
-                ModalClose({
-                    content: 'The organization does not provide access to this feature.',
-                    showIcon: false,
-                    onClose: () => {
-
-                    }
-                });
+                displayMessageModal({
+                    title: "No access",
+                    html: (onClose) => 'The organization does not provide access to this feature.',
+                    type: "info",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {},
+                })
             } else {
                 let route = toRoute(EventRouteNames.EVENT_CALENDAR, 'id', orgId);
                 navigate(route);

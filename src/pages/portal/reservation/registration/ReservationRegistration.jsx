@@ -29,14 +29,12 @@ import {
 } from "@/utils/DateUtils.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {useTranslation} from "react-i18next";
-import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {
     validateReservationGuests,
     validateReservationMatchMaker,
     validateUdfs
 } from "@/utils/ValidationUtils.jsx";
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
@@ -48,6 +46,8 @@ import ReservationRegistrationTermsAndCondition from "./ReservationRegistration.
 import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -173,10 +173,6 @@ function ReservationRegistration() {
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            console.log(formik)
-
-
-            console.log(values)
 
             let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
             if (toBoolean(response?.IsValid)){
@@ -206,14 +202,16 @@ function ReservationRegistration() {
                 setIsLoading(false);
             } else{
                 setIsLoading(false);
-                
-                ModalClose({
-                    content: response.Message,
-                    showIcon: false,
+
+                displayMessageModal({
+                    title: "Error",
+                    html: (onClose) => response.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
                     onClose: () => {
 
-                    }
-                });
+                    },
+                })
             }
         },
     });

@@ -3,7 +3,6 @@ import {useRef} from "react";
 import {Descriptions, Divider, Typography} from 'antd';
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import ReCAPTCHA from 'react-google-recaptcha';
-import {ModalClose} from "@/utils/ModalUtils.jsx";
 import {
     anyInList,
     equalString,
@@ -24,6 +23,8 @@ import {getConfigValue} from "@/config/WebConfig.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import portalService from "@/api/portal.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const {Title} = Typography;
 
@@ -162,13 +163,13 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
             navigate(AuthRouteNames.LOGIN);
         }
         else{
-            ModalClose({
-                content: response.Message,
-                showIcon: false,
-                onOk: () => {
-
-                }
-            });
+            displayMessageModal({
+                title: "Create Account Error",
+                html: (onClose) => response.Message,
+                type: "error",
+                buttonType: modalButtonType.DEFAULT_CLOSE,
+                onClose: () => {},
+            })
             setIsLoading(false);
         }
     }
