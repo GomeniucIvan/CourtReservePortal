@@ -26,7 +26,7 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const {token, globalStyles} = useApp();
     const {orgId, authData} = useAuth();
     const [activeKey, setActiveKey] = useState('home');
-    const footerRef = useRef();
+    const footerRef = useRef(null);
     const location = useLocation();
     const [footerHeight, setFooterHeight] = useState();
     const [showReserveDrawer, setShowReserveDrawer] = useState(false);
@@ -47,7 +47,35 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         if (showReserveDrawer) {
             setShowReserveDrawer(false);         
         }
+        
+        let currentLocation = location.pathname;
+
+        if (isNullOrEmpty(currentLocation) || equalString(currentLocation, HomeRouteNames.INDEX)) {
+            setActiveKey('home');
+        } else if (!isNullOrEmpty(currentLocation)) {
+            if (currentLocation.toLowerCase().includes('calendar/events')) {
+                setActiveKey('calendar');
+            } else if (currentLocation.toLowerCase().includes('notification/list')) {
+                setActiveKey('alerts');
+            } else if (currentLocation.toLowerCase().includes('portal/navigate')) {
+                setActiveKey('more');
+            }
+        }
     }, [location]);
+    
+    useEffect(() => {
+        let currentLocation = location.pathname;
+        
+        if (!isNullOrEmpty(currentLocation)) {
+            if (currentLocation.toLowerCase().includes('calendar/events')) {
+                setActiveKey('calendar');
+            } else if (currentLocation.toLowerCase().includes('notification/list')) {
+                setActiveKey('alerts');
+            } else if (currentLocation.toLowerCase().includes('portal/navigate')) {
+                setActiveKey('more');
+            }
+        }
+    }, [])
     
     const onTabBarChange = (key) => {
         if (isFetching){

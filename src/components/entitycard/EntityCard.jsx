@@ -38,9 +38,7 @@ const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
                 </PaddingBlock>
             }
 
-            <PaddingBlock>
-                {children}
-            </PaddingBlock>
+            {children}
         </Flex>
     )
 }

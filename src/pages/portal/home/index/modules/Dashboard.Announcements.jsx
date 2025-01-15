@@ -1,6 +1,6 @@
 ﻿import {useStyles} from ".././styles.jsx";
 import {Typography, Badge, Flex, Button} from "antd";
-import {Ellipsis} from 'antd-mobile'
+import {Ellipsis, ErrorBlock, Swiper} from 'antd-mobile'
 import {Card} from 'antd-mobile'
 import {cx} from "antd-style";
 import {useNavigate} from "react-router-dom";
@@ -8,8 +8,8 @@ import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
-import {stringToJson} from "@/utils/ListUtils.jsx";
-import {anyInList, isNullOrEmpty, textFromHTML, toBoolean} from "@/utils/Utils.jsx";
+import {countListItems, stringToJson} from "@/utils/ListUtils.jsx";
+import {anyInList, isNullOrEmpty, oneListItem, textFromHTML, toBoolean} from "@/utils/Utils.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import EntityCard from "@/components/entitycard/EntityCard.jsx";
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
@@ -19,6 +19,7 @@ import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import SwiperSlider from "@/components/swiperslider/SwiperSlider.jsx";
 
 const {Text, Title} = Typography;
 
@@ -106,21 +107,32 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
                         <CardSkeleton type={SkeletonEnum.DASHBOARD_ANNOUNCEMENT} count={1} marginBottom={true}/>
                      </SlickSlider>
                 }
-                {(!isFetching && anyInList(announcements)) &&
-                    <SlickSlider afterChange={handleAfterChange}>
-                        {announcements.map((globalAnn, index) => (
-                            <div key={index}>
-                                {toBoolean(globalAnn.IsUrgent) ? (
-                                    <Badge.Ribbon text={t('urgent')} color="red" className={globalStyles.urgentRibbon}>
-                                        {announcementCard(globalAnn, true)}
-                                    </Badge.Ribbon>
-                                ) : (
-                                    <>{announcementCard(globalAnn)}</>
-                                )}
-                            </div>
-                        ))}
-                    </SlickSlider>
-                }
+
+                {(!isFetching && anyInList(announcements)) ? (
+                    <SwiperSlider count={countListItems(announcements)}>
+                        {announcements.map((globalAnn, index) => {
+                            const isLastItem = index === announcements.length - 1;
+                            const isOneItem = oneListItem(announcements);
+
+                            return (
+                                <Swiper.Item key={index}
+                                             className={cx((!isOneItem && !isLastItem) && globalStyles.swiperItem, (!isOneItem && isLastItem) && globalStyles.swiperLastItem)}>
+                                    <>
+                                        {toBoolean(globalAnn.IsUrgent) ? (
+                                            <Badge.Ribbon text={t('urgent')} color="red" className={globalStyles.urgentRibbon}>
+                                                {announcementCard(globalAnn, true)}
+                                            </Badge.Ribbon>
+                                        ) : (
+                                            <>{announcementCard(globalAnn)}</>
+                                        )}
+                                    </>
+                                </Swiper.Item>
+                            )
+                        })}
+                    </SwiperSlider>
+                ) : (
+                    <ErrorBlock status='empty' title='You dont signup to any reservation' description={''} />
+                )}
             </EntityCard>
 
             <DrawerBottom showDrawer={!isNullOrEmpty(selectedAnnouncement)}
