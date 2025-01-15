@@ -246,7 +246,7 @@ function Layout() {
             .adm-mask {
                 background: ${token?.Custom?.workingTheme == 'dark' ? 'rgb(77 77 77 / 67%) !important' : 'initial'}
             }
-            .ant-app {
+            body {
                 background-color: ${token.colorBgContainer};
             }
             .magic-dots.slick-dots li.slick-active button::before{

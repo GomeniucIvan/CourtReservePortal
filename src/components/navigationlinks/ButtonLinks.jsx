@@ -12,6 +12,7 @@ import {setPage, toRoute} from "../../utils/RouteUtils.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import React from "react";
 import {openMobileExternalBrowser} from "@/utils/MobileUtils.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 
 function ButtonLinks({links}) {
     const {token, setDynamicPages, globalStyles, } = useApp();
@@ -29,8 +30,31 @@ function ButtonLinks({links}) {
                                 <Col span={12} key={index}>
                                     <Card className={styles.cardButton}
                                           onClick={() => {
+                                              console.log(link)
                                               if (toBoolean(link.TargetBlank)) {
-                                                  openMobileExternalBrowser(link.Url);
+                                                  displayMessageModal({
+                                                      title: "External Link",
+                                                      html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                                                          <Text>{'You are about to leave our platform and access an external website. Open external link?'}</Text>
+
+                                                          <Flex vertical={true} gap={token.padding}>
+                                                              <Button block={true} type={'primary'} onClick={() => {
+                                                                  openMobileExternalBrowser(link.Url);
+                                                                  onClose();
+                                                              }}>
+                                                                  Open
+                                                              </Button>
+
+                                                              <Button block={true} onClick={() => {
+                                                                  onClose();
+                                                              }}>
+                                                                  Close
+                                                              </Button>
+                                                          </Flex>
+                                                      </Flex>,
+                                                      type: "warning",
+                                                      onClose: () => {},
+                                                  })
                                               } else if (anyInList(link.Childrens)) {
                                                   let route = toRoute(HomeRouteNames.NAVIGATE, 'id', orgId);
                                                   route = toRoute(route, 'nodeId', link.Item);

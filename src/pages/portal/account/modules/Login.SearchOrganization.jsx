@@ -38,9 +38,9 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
     const [showSelectedOrganization, setShowSelectedOrganization] = useState(false);
     const [showNoOrganizations, setShowNoOrganizations] = useState(false);
 
-    const email = mainFormik?.email;
-    const password = mainFormik?.password;
-    const confirmPassword = mainFormik?.confirmPassword;
+    const email = mainFormik?.values?.email;
+    const password = mainFormik?.values?.password;
+    const confirmPassword = mainFormik?.values?.confirmPassword;
 
     const { styles } = useStyles();
     const headerRef = useRef();

@@ -17,60 +17,50 @@ const {Title, Text, Paragraph, Link} = Typography;
 function LoginSpGuide({ onGetStartedClick, onLoginClick }) {
     const navigate = useNavigate();
     const {setHeaderRightIcons, setHeaderTitleKey} = useHeader();
-    const {token, globalStyles, setIsFooterVisible} = useApp();
+    const {token, globalStyles, setIsFooterVisible, availableHeight} = useApp();
     const {t} = useTranslation('login');
-
+    const [dashboardType, setDashboardType] = useState('default-block');
+    
     useEffect(() => {
         setIsFooterVisible(false);
         setHeaderRightIcons('');
         setHeaderTitleKey('');
     }, []);
+
+    useEffect(() => {
+        // Set background image for body
+        document.body.style.backgroundImage = "url('https://tgcstorage.blob.core.windows.net/subscription-plus-oldcoast7411/oldcoast7411_splash-ocp.png')";
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        document.body.style.backgroundPosition = 'center';
+
+        // Cleanup on unmount
+        return () => {
+            document.body.style.backgroundImage = '';
+            document.body.style.backgroundSize = '';
+            document.body.style.backgroundRepeat = '';
+            document.body.style.backgroundPosition = '';
+        };
+    }, []);
     
     return (
-        <div style={{
-            backgroundImage: `url(https://tgcstorage.blob.core.windows.net/subscription-plus-oldcoast7411/oldcoast7411_splash-ocp.png)`,
-        }}>
-            <PaddingBlock topBottom={true}>
-                <Flex vertical={true} justify={'space-between'} gap={token.padding} style={{paddingTop: `calc(${token.padding}px + 5%)`}}>
-
-                    <Flex justify={'center'}>
-                        <SVG preventFill={true} icon={'court-reserve'} style={'width: 210px'} />
-                    </Flex>
-
-                    <Swiper autoplay={false} className={globalStyles.swiper}>
-                        {emptyArray(4).map((item, index) => (
-                            <Swiper.Item key={index}>
-                                <Title style={{fontSize: '30px'}} level={1} className={globalStyles.textCenter}>{t(`slide${index+1}Text`)} </Title>
-                                <Flex align={'center'} justify={'center'}>
-                                    <Text style={{fontSize: '20px'}} className={globalStyles.textCenter}>{t(`slide${index+1}Description`)}</Text>
-                                </Flex>
-
-                                <Flex style={{height: '440px'}} vertical={true} justify={'center'}>
-                                    <SVG icon={`login-slide-${index+1}`} preventFill={true} style={'max-height: 80vh;width:100%'} replaceColor={true}/>
-                                </Flex>
-                            </Swiper.Item>
-                        ))}
-                    </Swiper>
-
-                    <Flex vertical={true} gap={token.padding}>
-                        <Button type="primary"
-                                className={styles.loginButton}
-                                block
-                                onClick={onGetStartedClick}>
-                            {t(`button.getStarted`)}
-                        </Button>
-
-                        <Paragraph className={globalStyles.textCenter}>
-                            {t(`haveAnAccount`)}
-
-                            <Link style={{ fontWeight: 600 }} onClick={onLoginClick}>
-                                {' '}{t(`link.login`)}
-                            </Link>
-                        </Paragraph>
-                    </Flex>
-                </Flex>
-            </PaddingBlock>
-        </div>
+        <>
+            {equalString(dashboardType, 'default-block') &&
+                <PaddingBlock topBottom={true}>
+                    <div style={{height: `${availableHeight}px`}}>
+                        <Flex vertical={true} justify={'end'} style={{height: '100%'}}>
+                           <Flex vertical={true} align={'center'} style={{paddingBottom: '50px'}} gap={22}>
+                               <Button type={'primary'} block={true} onClick={onGetStartedClick}>Get Started</Button>
+                               <Flex vertical={true} gap={4} align={'center'}>
+                                   <Text>Already have an account? <b onClick={onLoginClick}>LOG IN</b></Text>
+                                   <Text style={{fontSize: `${token.fontSizeXS}px`}}>Powered by CourtReserve</Text>
+                               </Flex>
+                           </Flex>
+                        </Flex>
+                    </div>
+                </PaddingBlock>
+            }
+        </>
     )
 }
 

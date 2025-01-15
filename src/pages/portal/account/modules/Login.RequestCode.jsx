@@ -30,7 +30,7 @@ function LoginRequestCode({mainFormik, onRequestCodeResult}) {
     }, []);
     
     const startInitialValues = {
-        email: mainFormik?.email,
+        email: mainFormik?.values?.email,
         spGuideId: nullToEmpty(spGuideId),
         secretKey: '',
         maskedEmail: ''

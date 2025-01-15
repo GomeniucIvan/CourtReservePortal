@@ -10,8 +10,7 @@ const AuthRoutes = [
     {
         path: AuthRouteNames.LOGIN,
         element: <Login />,
-        unauthorized: true,
-        fullHeight: true
+        unauthorized: true
     },
     {
         path: AuthRouteNames.LOGIN_FORGOT_PASSWORD,

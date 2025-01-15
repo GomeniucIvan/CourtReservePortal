@@ -369,7 +369,8 @@ const FormDateOfBirth = React.forwardRef(({
                                style={{
                                    width: '350px',
                                    textAlign: 'center',
-                                   color: token.colorTextLightSolid,
+                                   color: token.colorOrgText,
+                                   paddingLeft: '6px !important',
                                    fontWeight: 600,
                                    backgroundColor: token.colorPrimary
                                }}

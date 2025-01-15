@@ -16,6 +16,7 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import React from "react";
 import {openMobileExternalBrowser} from "@/utils/MobileUtils.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 function ListLinks({links, className, classNameLi, hideChevron, announcementsCount}) {
     const {token, setDynamicPages, globalStyles, } = useApp();
@@ -60,8 +61,31 @@ function ListLinks({links, className, classNameLi, hideChevron, announcementsCou
                               key={index}
                               className={classNameLi}
                               onClick={() => {
-                                  if (toBoolean(link.BlankLink)) {
-                                      openMobileExternalBrowser(link.Url);
+                                  console.log(link)
+                                  if (toBoolean(link.TargetBlank)) {
+                                      displayMessageModal({
+                                          title: "External Link",
+                                          html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                                              <Text>{'You are about to leave our platform and access an external website. Open external link?'}</Text>
+
+                                              <Flex vertical={true} gap={token.padding}>
+                                                  <Button block={true} type={'primary'} onClick={() => {
+                                                      openMobileExternalBrowser(link.Url);
+                                                      onClose();
+                                                  }}>
+                                                      Open
+                                                  </Button>
+
+                                                  <Button block={true} onClick={() => {
+                                                      onClose();
+                                                  }}>
+                                                      Close
+                                                  </Button>
+                                              </Flex>
+                                          </Flex>,
+                                          type: "warning",
+                                          onClose: () => {},
+                                      })
                                   } else if (equalString(38, link.Item)) {
                                       //logout
                                       onLogoutClick();

@@ -86,7 +86,7 @@ function LoginReview({mainFormik}) {
         card_routingNumber: '',
         card_accountNumber: '',
         card_savePaymentProfile: false,
-        card_country: orgCardCountryCode(mainFormik?.UiCulture),
+        card_country: orgCardCountryCode(mainFormik?.values?.UiCulture),
         
         paymentFrequency: '',
         disclosureAgree: false,

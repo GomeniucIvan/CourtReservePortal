@@ -118,7 +118,7 @@ function LoginVerificationCode({mainFormik, onPasswordVerify}) {
                     <Paragraph>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: t(`verificationCode.description`, { email: mainFormik?.maskedEmail }),
+                                __html: t(`verificationCode.description`, { email: mainFormik?.values?.maskedEmail }),
                             }}
                         />
                     </Paragraph>

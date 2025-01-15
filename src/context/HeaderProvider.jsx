@@ -11,6 +11,7 @@ export const HeaderProvider = ({ children }) => {
     const [headerTitle, setHeaderTitle] = useState('');
     const [customHeader, setCustomHeader] = useState('');
     const [headerTitleKey, setHeaderTitleKey] = useState('');
+    const [hideHeader, setHideHeader] = useState(false);
     const [onBack, setOnBack] = useState(null); // Add state for the `onBack` function
     
     return (
@@ -25,6 +26,8 @@ export const HeaderProvider = ({ children }) => {
             setHeaderTitleKey,
             onBack,
             setOnBack,
+            hideHeader,
+            setHideHeader,
         }}>
 
             {children}

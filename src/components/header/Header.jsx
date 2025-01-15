@@ -13,7 +13,7 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {headerRightIcons, headerTitleKey, customHeader, onBack, headerTitle} = useHeader();
+    const {headerRightIcons, headerTitleKey, customHeader, onBack, headerTitle, hideHeader} = useHeader();
     const {isLoading} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
@@ -59,6 +59,9 @@ const Header = forwardRef((props, ref) => {
     let isDashboardPage = toBoolean(props.route?.root);
     let useKey = true;
 
+    if (toBoolean(hideHeader)) {
+        return (<></>)
+    }
 
     if (isNullOrEmpty(title) && toBoolean(props.route?.header)) {
         title = headerTitle;
@@ -69,7 +72,7 @@ const Header = forwardRef((props, ref) => {
         title = headerTitleKey;
         useKey = true;
     }
-    
+
     return (
         <>
             {(isDashboardPage && !isNullOrEmpty(customHeader)) &&

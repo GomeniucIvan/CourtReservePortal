@@ -31,7 +31,7 @@ function Login() {
     const [isFromGetStarted, setIsFromGetStarted] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [navigationSteps, setNavigationSteps] = useState([]);
-    const { setOnBack } = useHeader();
+    const { setOnBack, setHideHeader } = useHeader();
     
     const location = useLocation();
     const {t} = useTranslation('login');
@@ -120,7 +120,9 @@ function Login() {
         }
     });
 
-
+    useEffect(() => {
+        setHideHeader(equalString(formik?.values?.step,'initial'));
+    }, [formik?.values?.step]);
 
     useEffect(() => {
         setOnBack(() => () => {

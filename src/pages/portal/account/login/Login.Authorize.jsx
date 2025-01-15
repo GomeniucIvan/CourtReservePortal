@@ -31,7 +31,7 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
     } = useApp();
     
     const {spGuideId, setAuthorizationData} = useAuth();
-    const email = mainFormik?.email;
+    const email = mainFormik?.mainFormik?.email;
     const navigate = useNavigate();
     const {t} = useTranslation('login');
     
