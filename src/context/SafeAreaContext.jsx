@@ -2,8 +2,10 @@
 import {SafeArea as AntSafeArea} from 'antd-mobile'
 import {useLocation} from "react-router-dom";
 import {theme} from "antd";
-import {toBoolean} from "../utils/Utils.jsx";
+import {isNullOrEmpty, setCookie, toBoolean} from "../utils/Utils.jsx";
 import {locationCurrentRoute} from "@/utils/RouteUtils.jsx";
+import {getCookie} from "@/utils/CookieUtils.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
 
 const SafeAreaContext = createContext();
 export const useSafeArea = () => useContext(SafeAreaContext);
@@ -61,11 +63,32 @@ const SafeArea = ({children}) => {
     }, [location, currentRoute]);
 
     const setSafeArea = () => {
-        const top = document.body.getAttribute('data-safe-area-inset-top') || 0;
-        const bottom = document.body.getAttribute('data-safe-area-inset-bottom') || 0;
-        const left = document.body.getAttribute('data-safe-area-inset-left') || 0;
-        const right = document.body.getAttribute('data-safe-area-inset-right') || 0;
+        let safeArea = {
+            top: document.body.getAttribute('data-safe-area-inset-top') || 0,
+            bottom: document.body.getAttribute('data-safe-area-inset-bottom') || 0,
+            left: document.body.getAttribute('data-safe-area-inset-left') || 0,
+            right: document.body.getAttribute('data-safe-area-inset-right') || 0,
+        };
 
+        let cookieSafeArea = getCookie('data-safe-area-data');
+        let isCookie = false;
+        if (!isNullOrEmpty(cookieSafeArea)) {
+            let cookieData = JSON.parse(cookieSafeArea);
+            if (isNullOrEmpty(safeArea.top) || safeArea.top === 0) {
+                safeArea = { ...cookieData };
+                isCookie = true;
+            }
+        }
+
+        if (safeArea.top !== 0 && !isCookie) {
+            setCookie('data-safe-area-data', JSON.stringify(safeArea), 120);
+        }
+
+        let top = safeArea.top;
+        let bottom = safeArea.bottom;
+        let left = safeArea.left;
+        let right = safeArea.right;
+        
         if (top && bottom && left && right) {
             setSafeAreaInsets({
                 top: parseInt(top),

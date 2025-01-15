@@ -19,6 +19,7 @@ import {toAuthLocalStorage} from "@/storage/AppStorage.jsx";
 import {setClientUiCulture} from "@/utils/DateUtils.jsx";
 import {isValidJson} from "@/utils/ListUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {reactNavigateToMainRoute} from "@/utils/MobileUtils.jsx";
 const {Text, Title} = Typography;
 
 const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) => {
@@ -172,8 +173,9 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
         
         //navigate will not reload required information like request data
         //navigate(HomeRouteNames.INDEX);
-        
-        window.location.reload();
+
+        //react native webview function
+        reactNavigateToMainRoute();
     } 
     
     const changeViewingOrganization = async (selectedOrg) => {

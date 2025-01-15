@@ -66,9 +66,10 @@ function Navigation() {
                 } else {
                     //3rd level not update new links
                     //we should reset links
-                    let cacheLinks = getNavigationStorage(orgId);
+                    let cacheLinks = getDashboardAllLists(orgId);
                     const parentNode = cacheLinks.find((link) => equalString(link.Item, nodeId));
-                    if (parentNode){
+                    
+                    if (parentNode) {
                         setLinks(parentNode.Childrens);
                         setHeaderTitle(parentNode.Text)
                     }

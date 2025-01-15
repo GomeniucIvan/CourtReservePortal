@@ -36,6 +36,15 @@ export const openMobileExternalBrowser = (url) => {
     if (window.ReactNativeWebView) {
         const message = JSON.stringify({ type: 'open_browser', url: url });
         window.ReactNativeWebView.postMessage(message);
+    } else {
+        //in case is not react native should open
+        window.open(url, "_blank", "noopener,noreferrer");
+    }
+}
+
+export const reactNavigateToMainRoute = () => {
+    if (window.ReactNativeWebView){
+        const message = JSON.stringify({ type: 'FlutterNavToMainUrl' });
         window.ReactNativeWebView.postMessage(message);
     }
 }

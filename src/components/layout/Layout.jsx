@@ -24,6 +24,9 @@ import {Toaster} from "react-hot-toast";
 import portalService from "@/api/portal.jsx";
 import {locationCurrentRoute} from "@/utils/RouteUtils.jsx";
 import {getGlobalRedirectUrl} from "@/utils/AppUtils.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
+import {getCookie} from "@/utils/CookieUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -36,6 +39,8 @@ function Layout() {
     const [isFetching, setIsFetching] = useState(true);
     const [maxHeight, setMaxHeight] = useState(0);
     
+    const {customHeader, headerTitle, headerTitleKey} = useHeader();
+    
     const {
         footerContent,
         isFooterVisible,
@@ -44,8 +49,7 @@ function Layout() {
         refreshData,
         setAvailableHeight,
         isMockData,
-        setIsLoading,
-        customHeader
+        setIsLoading
     } = useApp();
 
     const {safeAreaInsets} = useSafeArea();
@@ -134,9 +138,36 @@ function Layout() {
         const windowHeight = window.innerHeight;
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
-        let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsets?.top || 0) - (safeAreaInsets?.bottom || 0);
         
-        if (!isFetching){
+        //on application keyboard open not sure why safeAreaInsets always return 0
+        let safeAreaInsetsTop = safeAreaInsets?.top || 0;
+        let safeAreaInsetsBottom = safeAreaInsets?.bottom || 0;
+        
+        if (safeAreaInsetsTop === 0) {
+            let cookieSafeArea = getCookie('data-safe-area-data');
+            if (!isNullOrEmpty(cookieSafeArea)) {
+                let cookieParsedData = JSON.parse(cookieSafeArea);
+                let cookieSafeAreaTopValue = cookieParsedData?.top;
+                if (!isNullOrEmpty(cookieSafeAreaTopValue) && parseInt(cookieSafeAreaTopValue) > 0) {
+                    safeAreaInsetsTop = cookieSafeAreaTopValue;
+                }
+            }
+        }
+
+        if (safeAreaInsetsBottom === 0) {
+            let cookieSafeArea = getCookie('data-safe-area-data');
+            if (!isNullOrEmpty(cookieSafeArea)) {
+                let cookieParsedData = JSON.parse(cookieSafeArea);
+                let cookieSafeAreaTopValue = cookieParsedData?.bottom;
+                if (!isNullOrEmpty(cookieSafeAreaTopValue) && parseInt(cookieSafeAreaTopValue) > 0) {
+                    safeAreaInsetsBottom = cookieSafeAreaTopValue;
+                }
+            }
+        }
+        
+        let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsetsTop) - (safeAreaInsetsBottom);
+        
+        if (!isFetching) {
             if (toBoolean(currentRoute?.fullHeight)) {
                 calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
             }
@@ -148,7 +179,7 @@ function Layout() {
 
     useEffect(() => {
         calculateMaxHeight();
-    }, [isFooterVisible, footerContent, footerRef.current, headerRef.current]);
+    }, [isFooterVisible, footerContent, footerRef.current, headerRef.current, customHeader, headerTitle, headerTitleKey]);
 
     useEffect(() => {
         setTimeout(function(){

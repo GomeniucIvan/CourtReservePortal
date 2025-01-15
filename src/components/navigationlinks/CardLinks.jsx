@@ -28,8 +28,7 @@ function    CardLinks({links}) {
                         <Col span={8} key={index}>
                             <Card className={styles.cardPrimary}
                                   onClick={() => {
-                                      console.log(link)
-                                      if (toBoolean(link.BlankLink)) {
+                                      if (toBoolean(link.TargetBlank)) {
                                           openMobileExternalBrowser(link.Url);
                                       } else if (anyInList(link.Childrens)) {
                                           let route = toRoute(HomeRouteNames.NAVIGATE, 'id', orgId);
