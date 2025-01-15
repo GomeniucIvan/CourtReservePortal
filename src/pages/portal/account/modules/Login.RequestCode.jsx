@@ -13,13 +13,21 @@ import {equalString, focus, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
 function LoginRequestCode({mainFormik, onRequestCodeResult}) {
-    const {isLoading, setIsLoading, token} = useApp();
+    const {setHeaderRightIcons, setHeaderTitleKey } = useHeader();
+    const {isLoading, setIsLoading, token, setIsFooterVisible } = useApp();
     const {spGuideId} = useAuth();
     const {t} = useTranslation('login');
+
+    useEffect(() => {
+        setHeaderRightIcons('');
+        setIsFooterVisible(false);
+        setHeaderTitleKey('loginRequestCode')
+    }, []);
     
     const startInitialValues = {
         email: mainFormik?.email,

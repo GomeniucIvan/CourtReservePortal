@@ -144,49 +144,53 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
                                   placeholder={t('authorize.form.emailPlaceholder')}
                        />
 
-                       <FormInput label={t('authorize.form.password')}
-                                  formik={formik}
-                                  className={globalStyles.formNoBottomPadding}
-                                  name='password'
-                                  placeholder={t('authorize.form.passwordPlaceholder')}
-                                  required={true}
-                       />
+                       <Flex vertical={true}>
+                           <FormInput label={t('authorize.form.password')}
+                                      formik={formik}
+                                      className={globalStyles.formNoBottomPadding}
+                                      name='password'
+                                      placeholder={t('authorize.form.passwordPlaceholder')}
+                                      required={true}
+                           />
 
-                       <Flex justify={"start"} className={globalStyles.inputBottomLink}>
-                           <Link style={{fontWeight: 600}} onClick={() => {
-                               navigate(AuthRouteNames.LOGIN_FORGOT_PASSWORD);
-                           }}>
-                               {t('authorize.forgotPassword')}
-                           </Link>
+                           <Flex justify={"start"} className={globalStyles.inputBottomLink}>
+                               <Link style={{fontWeight: 600}} onClick={() => {
+                                   navigate(AuthRouteNames.LOGIN_FORGOT_PASSWORD);
+                               }}>
+                                   {t('authorize.forgotPassword')}
+                               </Link>
+                           </Flex>
                        </Flex>
 
-                       <Button type="primary"
-                               block
-                               htmlType="submit"
-                               loading={isLoading}
-                               onClick={formik.handleSubmit}>
-                           {t('authorize.button.continue')}
-                       </Button>
+                       <Flex vertical={true}>
+                           <Button type="primary"
+                                   block
+                                   htmlType="submit"
+                                   loading={isLoading}
+                                   onClick={formik.handleSubmit}>
+                               {t('authorize.button.continue')}
+                           </Button>
 
-                       <Divider><Text style={{verticalAlign: 'top', color: token.colorTextSecondary}}>or</Text></Divider>
+                           <Divider><Text style={{verticalAlign: 'top', color: token.colorTextSecondary}}>or</Text></Divider>
 
-                       <Button htmlType="button"
-                               block
-                               onClick={navigateToRequestACode}
-                               disabled={isLoading}>
-                           {t('authorize.button.requestACode')}
-                       </Button>
+                           <Button htmlType="button"
+                                   block
+                                   onClick={navigateToRequestACode}
+                                   disabled={isLoading}>
+                               {t('authorize.button.requestACode')}
+                           </Button>
 
-                       <Paragraph className={'sm-padding'}>
-                           {t(`getStarted.continueAgree`)}{' '}
-                           <Link href="https://cr1.io/-1" target="_blank">
-                               {t(`getStarted.termAndService`)}{' '}
-                           </Link>
-                           {t(`getStarted.and`)}{' '}
-                           <Link href="https://cr1.io/-2" target="_blank">
-                               {t(`getStarted.privacyPolicy`)}
-                           </Link>
-                       </Paragraph>
+                           <Paragraph className={'sm-padding'}>
+                               {t(`getStarted.continueAgree`)}{' '}
+                               <Link href="https://cr1.io/-1" target="_blank">
+                                   {t(`getStarted.termAndService`)}{' '}
+                               </Link>
+                               {t(`getStarted.and`)}{' '}
+                               <Link href="https://cr1.io/-2" target="_blank">
+                                   {t(`getStarted.privacyPolicy`)}
+                               </Link>
+                           </Paragraph>
+                       </Flex>
                    </PageForm>
                </Flex>
             </PaddingBlock>

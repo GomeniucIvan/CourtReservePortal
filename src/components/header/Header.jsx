@@ -42,7 +42,11 @@ const Header = forwardRef((props, ref) => {
     };
 
     const backToPreviousPage = () => {
-        onBack();
+        if (typeof onBack === 'function') {
+            onBack();
+        } else {
+            navigateBack();
+        }
     }
 
     const right = (

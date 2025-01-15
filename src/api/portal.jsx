@@ -1,4 +1,4 @@
-import {encodeParamsObject, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {encodeParamsObject, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import appService from "@/api/app.jsx";
 import apiService, {loadBearerToken, setRequestData} from "@/api/api.jsx";
 import {setNavigationStorage} from "@/storage/AppStorage.jsx";
@@ -7,7 +7,7 @@ import {getCookie} from "@/utils/CookieUtils.jsx";
 
 const portalService = {
     frictLogin: async (navigate, ssoKey, secretKey, spGuideId) => {
-        return await appService.get(navigate, `/app/MobileSso/FrictLogin?ssoKey=${ssoKey}&initialAuthCode=${secretKey}&spGuideId=${spGuideId}&loaded=true`)
+        return await appService.get(navigate, `/app/MobileSso/FrictLogin?ssoKey=${ssoKey}&initialAuthCode=${secretKey}&spGuideId=${nullToEmpty(spGuideId)}&loaded=true`)
     },
     navigationData: async (navigate, orgId) => {
         let navigationType = getCookie("dashboard_navigationType");

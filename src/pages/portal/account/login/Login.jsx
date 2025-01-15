@@ -182,19 +182,6 @@ function Login() {
                 />
             }
 
-            {equalString(formik?.values?.step, 'request-code') &&
-                <LoginRequestCode mainFormik={formik}
-                                  onSkip={() =>{navigateToStep('review')}}
-                                  onRequestCodeResult={(accValues) => {
-                                      formik.setFieldValue('secretKey', accValues.SecretKey);
-                                      formik.setFieldValue('maskedEmail', accValues.EmailMasked);
-                                      navigateToStep('verification-code')  }}
-
-                />
-            }
-
-
-
             {equalString(formik?.values?.step, 'organizations') &&
                 <LoginSearchOrganization mainFormik={formik}
                                          onOrganizationSelect={(formValues) => {
@@ -263,6 +250,17 @@ function Login() {
                 <LoginReview mainFormik={formik} />
             }
 
+            {equalString(formik?.values?.step, 'request-code') &&
+                <LoginRequestCode mainFormik={formik}
+                                  onSkip={() =>{navigateToStep('review')}}
+                                  onRequestCodeResult={(accValues) => {
+                                      formik.setFieldValue('secretKey', accValues.SecretKey);
+                                      formik.setFieldValue('maskedEmail', accValues.EmailMasked);
+                                      navigateToStep('verification-code')  }}
+
+                />
+            }
+            
             {equalString(formik?.values?.step, 'verification-code') &&
                 <LoginVerificationCode mainFormik={formik}
                                        onPasswordVerify={(formValues) => {

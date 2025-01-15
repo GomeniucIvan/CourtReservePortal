@@ -14,6 +14,7 @@ import {useStyles} from "./../styles.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {nullToEmpty} from "@/utils/Utils.jsx";
 
 const {Paragraph, Title, Text} = Typography;
 
@@ -33,11 +34,11 @@ function LoginVerificationCode({mainFormik, onPasswordVerify}) {
     const [resendCodeDisabled, setResendCodeDisabled] = useState(true);
     const {styles} = useStyles();
     
-    const email = mainFormik?.email;
+    const email = mainFormik?.values?.email;
 
     const sendVerificationCode = async () => {
         setResendCodeDisabled(true);
-        const response = await apiService.post(`/api/account-verification/request-code?initialAuthCode=${mainFormik.secretKey}&spGuideId=${mainFormik.spGuideId}`);
+        const response = await apiService.post(`/api/account-verification/request-code?initialAuthCode=${mainFormik?.values?.secretKey}&spGuideId=${nullToEmpty(spGuideId)}`);
 
         setTimeout(function(){
             setResendCodeDisabled(false);
@@ -61,7 +62,6 @@ function LoginVerificationCode({mainFormik, onPasswordVerify}) {
     };
 
     const validationSchema = Yup.object({
-        email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')})),
         passcode: Yup.string()
             .required(t('common:requiredMessage', {label: t('verificationCode.form.passcode')}))
             .min(6, 'Passcode must be exactly 6 characters.')
@@ -76,15 +76,15 @@ function LoginVerificationCode({mainFormik, onPasswordVerify}) {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            const response = await apiService.post(`/api/account-verification/verify-code?initialAuthCode=${mainFormik.secretKey}&code=${values.passcode}&spGuideId=${spGuideId}`);
+            const response = await apiService.post(`/api/account-verification/verify-code?initialAuthCode=${mainFormik?.values?.secretKey}&code=${values.passcode}&spGuideId=${spGuideId}`);
             setIsLoading(false);
 
             if (response.IsValid) {
                 let formikValues = {
                     email: values.email,
                     ssoKey: response.Data.SsoKey,
-                    secretKey: mainFormik.secretKey,
-                    maskedEmail: mainFormik?.maskedEmail
+                    secretKey: mainFormik?.values?.secretKey,
+                    maskedEmail: mainFormik?.values?.maskedEmail
                 };
                 
                 onPasswordVerify(formikValues)
