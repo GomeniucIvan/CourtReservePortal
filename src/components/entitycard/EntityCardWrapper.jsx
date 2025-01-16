@@ -3,12 +3,12 @@ import {useNavigate} from "react-router-dom";
 import {toBoolean} from "../../utils/Utils.jsx";
 const { Title } = Typography;
 const { useToken } = theme;
-import {useStyles} from "./EntityCard.styles.jsx";
+import {useStyles} from "./styles.jsx";
 import { cx } from 'antd-style';
 import { useTranslation } from 'react-i18next';
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 
-const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
+const EntityCardWrapper = ({children, title, onClick, addPadding, isFetching}) => {
     const { token } = useToken();
     const navigate = useNavigate();
     const { styles } = useStyles();
@@ -43,4 +43,4 @@ const EntityCard = ({children, title, onClick, addPadding, isFetching}) => {
     )
 }
 
-export default EntityCard;
+export default EntityCardWrapper;

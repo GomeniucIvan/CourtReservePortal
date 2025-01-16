@@ -11,7 +11,7 @@ import {useApp} from "@/context/AppProvider.jsx";
 import {countListItems, stringToJson} from "@/utils/ListUtils.jsx";
 import {anyInList, isNullOrEmpty, oneListItem, textFromHTML, toBoolean} from "@/utils/Utils.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
-import EntityCard from "@/components/entitycard/EntityCard.jsx";
+import EntityCardWrapper from "@/components/entitycard/EntityCardWrapper.jsx";
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
@@ -101,7 +101,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
 
     return (
         <>
-            <EntityCard title={t('announcement.title')} link={'/announcement/list'} isFetching={isFetching} addPadding={true}>
+            <EntityCardWrapper title={t('announcement.title')} link={'/announcement/list'} isFetching={isFetching} addPadding={true}>
                 {isFetching &&
                     <SlickSlider>
                         <CardSkeleton type={SkeletonEnum.DASHBOARD_ANNOUNCEMENT} count={1} marginBottom={true}/>
@@ -133,7 +133,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
                 ) : (
                     <ErrorBlock status='empty' title='You dont signup to any reservation' description={''} />
                 )}
-            </EntityCard>
+            </EntityCardWrapper>
 
             <DrawerBottom showDrawer={!isNullOrEmpty(selectedAnnouncement)}
                           closeDrawer={() => setSelectedAnnouncement(null)}

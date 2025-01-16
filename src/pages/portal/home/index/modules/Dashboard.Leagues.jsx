@@ -1,6 +1,6 @@
 ﻿import {useEffect, useRef, useState} from "react";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import EntityCard from "@/components/entitycard/EntityCard.jsx";
+import EntityCardWrapper from "@/components/entitycard/EntityCardWrapper.jsx";
 import ModernDashboardLeaguesDates from "./Dashboard.LeagueDates.jsx";
 import {Input, Menu, Typography} from "antd";
 import {DownOutline} from "antd-mobile-icons";
@@ -56,7 +56,7 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
 
 
     return (
-        <EntityCard title={'Leagues'} link={'/leagues'} isFetching={isFetching} addPadding={true}>
+        <EntityCardWrapper title={'Leagues'} link={'/leagues'} isFetching={isFetching} addPadding={true}>
 
             {isFetching &&
                 <SlickSlider>
@@ -122,7 +122,7 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
             }
 
 
-        </EntityCard>
+        </EntityCardWrapper>
     );
 };
 

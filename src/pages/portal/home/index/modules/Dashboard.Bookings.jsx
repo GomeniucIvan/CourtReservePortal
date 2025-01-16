@@ -1,6 +1,6 @@
 ﻿import {anyInList, isNullOrEmpty, oneListItem, toBoolean} from "@/utils/Utils.jsx";
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
-import EntityCard from "@/components/entitycard/EntityCard.jsx";
+import EntityCardWrapper from "@/components/entitycard/EntityCardWrapper.jsx";
 import {Badge, Button, Flex, Tag, Typography} from "antd";
 import {Card, Ellipsis, ErrorBlock} from "antd-mobile";
 import {cx} from "antd-style";
@@ -64,7 +64,7 @@ const DashboardBookings = ({dashboardData, isFetching}) => {
     }
     
     return (
-        <EntityCard title={t('booking.myBookings')} link={ProfileRouteNames.BOOKING_LIST} isFetching={isFetching} addPadding={true}>
+        <EntityCardWrapper title={t('booking.myBookings')} link={ProfileRouteNames.BOOKING_LIST} isFetching={isFetching} addPadding={true}>
             {isFetching &&
                 <SlickSlider>
                     <CardSkeleton type={SkeletonEnum.RESERVATION} count={1} marginBottom={true}/>
@@ -96,7 +96,7 @@ const DashboardBookings = ({dashboardData, isFetching}) => {
             ) : (
                 <ErrorBlock status='empty' title='You dont signup to any reservation' description={''} />
             )}
-        </EntityCard>
+        </EntityCardWrapper>
     );
 };
 
