@@ -1,6 +1,5 @@
 ﻿import {Flex, Skeleton, theme, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
-import {toBoolean} from "../../utils/Utils.jsx";
 const { Title } = Typography;
 const { useToken } = theme;
 import {useStyles} from "./styles.jsx";

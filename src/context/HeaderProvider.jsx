@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from 'react';
-import {useStyles} from '../assets/globalStyles.jsx';
 import {theme} from "antd";
 const { useToken } = theme;
 const HeaderContext = createContext(null);

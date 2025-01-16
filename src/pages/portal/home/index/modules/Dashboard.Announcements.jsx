@@ -20,6 +20,7 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import SwiperSlider from "@/components/swiperslider/SwiperSlider.jsx";
+import EntityEmptyBlock from "@/components/entitycard/EntityEmptyBlock.jsx";
 
 const {Text, Title} = Typography;
 
@@ -131,7 +132,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
                         })}
                     </SwiperSlider>
                 ) : (
-                    <ErrorBlock status='empty' title='You dont signup to any reservation' description={''} />
+                    <EntityEmptyBlock text='You have no new announcements' height={144} />
                 )}
             </EntityCardWrapper>
 

@@ -50,6 +50,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
     `,
     cardButton: css`
+        border-color: ${token.colorBorder};
         .ant-card-body {
             padding: 18px;
         }

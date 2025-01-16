@@ -30,7 +30,7 @@ function ButtonLinks({links}) {
                                 <Col span={12} key={index}>
                                     <Card className={styles.cardButton}
                                           onClick={() => {
-                                              console.log(link)
+
                                               if (toBoolean(link.TargetBlank)) {
                                                   displayMessageModal({
                                                       title: "External Link",

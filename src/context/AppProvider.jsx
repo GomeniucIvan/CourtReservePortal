@@ -1,5 +1,5 @@
 ﻿import { createContext, useContext, useState } from 'react';
-import {useStyles} from '../assets/globalStyles.jsx';
+import {useStyles} from '@/styles/globalStyles.jsx';
 import {theme} from "antd";
 const { useToken } = theme;
 const AppContext = createContext();

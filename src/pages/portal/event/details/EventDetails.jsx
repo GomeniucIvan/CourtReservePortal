@@ -6,20 +6,19 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Card, Flex, Skeleton, Tabs, Tag, Typography} from "antd";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
-import {useStyles} from '@/assets/buttonStyles.jsx';
 import {cx} from "antd-style";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import {any} from "prop-types";
 import {isNullOrEmptyHtmlCode} from "@/utils/HtmlUtils.jsx";
 import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import {dateTimeToFormat, dateTimeToTimes} from "@/utils/DateUtils.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 
 const {Title, Text} = Typography;
 
@@ -33,7 +32,7 @@ function EventDetails() {
     const [buttonsCount, setButtonsCount] = useState(0);
     const [additionalDates, setAdditionalDates] = useState(null);
     const [additionalDatesLoading, setAdditionalDatesLoading] = useState(false);
-    const buttonStyles = useStyles().styles;
+    const {buttonStyles} = useCombinedStyles();
 
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
     

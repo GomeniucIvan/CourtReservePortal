@@ -1,6 +1,6 @@
 ﻿import { createStyles } from 'antd-style';
 
-export const useStyles = createStyles(({ css, token }) => ({
+export const bStyles = createStyles(({ css, token }) => ({
     buttonYellow: css`
       background-color: #d6d605;
       color: black;
