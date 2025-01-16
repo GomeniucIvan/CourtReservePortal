@@ -39,17 +39,21 @@ function Layout() {
     const [isFetching, setIsFetching] = useState(true);
     const [maxHeight, setMaxHeight] = useState(0);
     
+    //used only for ios keyboard open
+    const [isPrevIsFooterVisible, setIsPrevIsFooterVisible] = useState(false);
+    
     const {customHeader, headerTitle, headerTitleKey} = useHeader();
     
     const {
         footerContent,
         isFooterVisible,
+        setIsFooterVisible,
         dynamicPages,
         token,
         refreshData,
         setAvailableHeight,
         isMockData,
-        setIsLoading
+        setIsLoading,
     } = useApp();
 
     const {safeAreaInsets} = useSafeArea();
@@ -134,7 +138,7 @@ function Layout() {
         loadPrimaryData()
     }, [location, navigate]);
 
-    const calculateMaxHeight = () => {
+    const calculateMaxHeight = (iosKeyboardHeight) => {
         const windowHeight = window.innerHeight;
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
@@ -165,7 +169,10 @@ function Layout() {
             }
         }
         
-        let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsetsTop) - (safeAreaInsetsBottom);
+        let isIosKeyboardOpen = !isNullOrEmpty(iosKeyboardHeight) && iosKeyboardHeight > 0;
+        let isIosKeyboardClose = equalString(iosKeyboardHeight, -1);
+        
+        let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsetsTop) - (isIosKeyboardOpen ? safeAreaInsetsBottom : 0 );
         
         if (!isFetching) {
             if (toBoolean(currentRoute?.fullHeight)) {
@@ -173,10 +180,70 @@ function Layout() {
             }
         }
 
+        if (isIosKeyboardOpen) {
+            calculatedMaxHeight = calculatedMaxHeight - iosKeyboardHeight;
+        }
+        
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
+
+        if (isIosKeyboardOpen) {
+            if (!equalString(isFooterVisible, isPrevIsFooterVisible)) {
+                setIsPrevIsFooterVisible(isFooterVisible)
+            }
+
+            setIsFooterVisible(false);
+
+            //scroll into view
+            handleIphoneInputFocus();
+        }
+        
+        if (isIosKeyboardClose) {
+            if (!equalString(isFooterVisible, isPrevIsFooterVisible)) {
+                setIsFooterVisible(isPrevIsFooterVisible);
+            }
+        }
     };
 
+    const handleIphoneInputFocus = () => {
+        const activeElement = document.activeElement; // Get the currently focused element
+        if (
+            activeElement &&
+            (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA")
+        ) {
+            const rect = activeElement.getBoundingClientRect();
+            const isVisible =
+                rect.top >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+
+            if (!isVisible) {
+                activeElement.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+    };
+    
+    useEffect(() => {
+        // Define the function to handle keyboard show event
+        window.onReactNativeKeyboardShow = (isIOS, keyboardHeight) => {
+            if (isIOS) {
+                calculateMaxHeight(keyboardHeight);
+            }
+        };
+
+        // Define the function to handle keyboard hide event
+        window.onReactNativeKeyboardHide = (isIOS) => {
+            if (isIOS) {
+                calculateMaxHeight(-1);
+            }
+        };
+
+        // Cleanup on unmount
+        return () => {
+            delete window.onReactNativeKeyboardShow;
+            delete window.onReactNativeKeyboardHide;
+        };
+    }, []);
+    
     useEffect(() => {
         calculateMaxHeight();
     }, [isFooterVisible, footerContent, footerRef.current, headerRef.current, customHeader, headerTitle, headerTitleKey]);

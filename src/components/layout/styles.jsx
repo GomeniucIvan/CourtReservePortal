@@ -49,7 +49,7 @@ export const useStyles = createStyles(({css, token}) => ({
             }
         }
 
-        .ant-btn-primary.ant-btn-color-primary.ant-btn-variant-solid{
+        .ant-btn-primary.ant-btn-color-primary.ant-btn-variant-solid:not(.ant-btn-background-ghost) {
             color: ${token.colorOrgText};
         }
         
