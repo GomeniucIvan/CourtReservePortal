@@ -20,6 +20,7 @@ let enableDebug = !isProduction;
 //enableDebug = true;
 
 export default defineConfig({
+    base: '/ClientApp/dist/',
     plugins: [
         react(),
 
@@ -89,6 +90,9 @@ export default defineConfig({
         },
         rollupOptions: {
             output: {
+                entryFileNames: 'assets/[name]-[hash].js',
+                chunkFileNames: 'assets/[name]-[hash].js',
+                assetFileNames: 'assets/[name]-[hash][extname]',
                 manualChunks(id) {
                     if (id.includes('node_modules')) {
                         return 'modules';
