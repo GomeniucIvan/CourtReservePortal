@@ -4,8 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "bump:patch": "npm version patch",
+    "bump:minor": "npm version minor",
+    "bump:major": "npm version major",
     "dev": "npm run generate-manifest && vite",
-    "build": "npm run generate-manifest && vite build",
+    "build": "npm run generate-manifest && npm run bump:patch && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "generate-manifest": "node scripts/generate-svg-manifest.js"

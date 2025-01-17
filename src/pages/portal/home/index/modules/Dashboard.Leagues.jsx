@@ -55,6 +55,10 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
     }, [myLeaguesDropdown]);
 
 
+    if (!showLeaguesBlock) {
+        return (<></>)
+    }
+    
     return (
         <EntityCardWrapper title={'Leagues'} link={'/leagues'} isFetching={isFetching} addPadding={true}>
 

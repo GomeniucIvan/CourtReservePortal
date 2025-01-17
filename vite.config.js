@@ -1,7 +1,9 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import * as dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 dotenv.config();
 let appUrl = process.env.VITE_APP_URL;
@@ -37,6 +39,36 @@ export default defineConfig({
                 },
             },
         },
+
+        // Generate version.json based on build chunk hash
+        {
+            name: 'generate-version',
+            apply: 'build',
+            writeBundle(options, bundle) {
+                const distPath = path.resolve(__dirname, 'dist');
+
+                // Collect hashes from chunks
+                const hashes = Object.keys(bundle)
+                    .filter((fileName) => bundle[fileName].type === 'chunk')
+                    .map((fileName) => bundle[fileName].fileName);
+
+                // Generate a combined hash for the build
+                const hash = crypto
+                    .createHash('md5')
+                    .update(hashes.join(''))
+                    .digest('hex')
+                    .slice(0, 8); // Use first 8 characters for brevity
+
+                // Create version.json
+                const versionData = { version: hash };
+                fs.writeFileSync(
+                    path.resolve(distPath, 'version.json'),
+                    JSON.stringify(versionData, null, 2)
+                );
+
+                console.log('version.json generated:', versionData);
+            },
+        },
     ],
     resolve: {
         alias: {
@@ -59,11 +91,10 @@ export default defineConfig({
             output: {
                 manualChunks(id) {
                     if (id.includes('node_modules')) {
-                        return id
-                            .toString()
-                            .split('node_modules/')[1]
-                            .split('/')[0]
-                            .toString();
+                        return 'modules';
+                    }
+                    if (id.includes('SGVExpensiveComponent')) {
+                        return 'sgv-component';
                     }
                 },
             },
