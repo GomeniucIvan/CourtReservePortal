@@ -41,6 +41,10 @@ export const logSuccess = (message) => {
     console.log(`%c${consoleIcons.success} ${message}`, styles.green);
 };
 
+export const logCritical = (message) => {
+    console.log(`%c${consoleIcons.critical} ${message}`, styles.green);
+};
+
 export const logDebug = (message) => {
     console.log(`%c${consoleIcons.debug} ${message}`, styles.green);
 };

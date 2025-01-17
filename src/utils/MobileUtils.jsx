@@ -49,4 +49,11 @@ export const reactNavigateToMainRoute = () => {
     }
 }
 
+export const reactNativeWebViewReload = () => {
+    if (window.ReactNativeWebView){
+        const message = JSON.stringify({ type: 'ReactNativeReload' });
+        window.ReactNativeWebView.postMessage(message);
+    }
+}
+
 window.reactActivateStatus = reactActivateStatus;

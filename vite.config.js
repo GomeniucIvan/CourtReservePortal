@@ -20,7 +20,6 @@ let enableDebug = !isProduction;
 //enableDebug = true;
 
 export default defineConfig({
-    base: '/ClientApp/dist/',
     plugins: [
         react(),
 

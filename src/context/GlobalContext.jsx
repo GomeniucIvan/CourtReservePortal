@@ -6,6 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import MessageModalProvider from "@/context/MessageModalProvider.jsx";
 import { theme } from "antd";
 import {HeaderProvider} from "@/context/HeaderProvider.jsx";
+import LayoutBackgroundReload from "@/components/layout/LayoutBackgroundReload.jsx";
 const { useToken } = theme;
 
 export const GlobalContext = ({ children }) => {
@@ -38,7 +39,9 @@ export const GlobalContext = ({ children }) => {
                         <AuthProvider>
                             <SafeArea>
                                 <MessageModalProvider>
-                                    {children}
+                                    <LayoutBackgroundReload>
+                                        {children}
+                                    </LayoutBackgroundReload>
                                 </MessageModalProvider>
                             </SafeArea>
                         </AuthProvider>
