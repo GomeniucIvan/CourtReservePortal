@@ -18,6 +18,7 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {any} from "prop-types";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {getCookie} from "@/utils/CookieUtils.jsx";
 
 const {Text} = Typography;
 const Footer = ({isFooterVisible, footerContent, isFetching}) => {
@@ -146,6 +147,7 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
         return (<>{footerContent}</>)
     }
 
+    
     const footerComponent = () => {
         return (
             <>
@@ -188,9 +190,19 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     }
     
     if (isFetching) {
+        
+        let skeletonSafeAreaBottom = 0;
+        let cookieSafeArea = getCookie('data-safe-area-data');
+        if (!isNullOrEmpty(cookieSafeArea)) {
+            let cookieData = JSON.parse(cookieSafeArea);
+            if (!isNullOrEmpty(cookieData)) {
+                skeletonSafeAreaBottom = cookieData?.bottom || 0;
+            }
+        }
+        
         return (
             <>
-                <Flex style={{height: `${footerHeight}px`}} 
+                <Flex style={{height: `${footerHeight}px`, paddingBottom: `${skeletonSafeAreaBottom}px`}} 
                       gap={token.padding}
                       className={cx(styles.footer, styles.footerSkeletonWrapper)}
                       align="center" 

@@ -30,6 +30,9 @@ export const useStyles = createStyles(({ css, token }) => ({
         min-height: 176px;
     `,
     emptyText: css`
-        color: ${token.colorTetriaty};
+        color: ${token.colorSecondary};
+    `,
+    emptyCard: css`
+        background-color: ${token.colorBgLayout};
     `
 }));

@@ -17,7 +17,8 @@ function FooterBlock({ children, topBottom = false, leftRight = true, onlyBottom
         <div
             style={{
                 ...style,
-                padding: `${paddingTop}px ${paddingLeftRight}px ${paddingBottom}px ${paddingLeftRight}px`
+                padding: `${paddingTop}px ${paddingLeftRight}px ${paddingBottom}px ${paddingLeftRight}px`,
+                backgroundColor: token.colorBgBase
             }}
         >
             {children}

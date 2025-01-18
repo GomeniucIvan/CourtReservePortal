@@ -66,8 +66,10 @@ function    CardLinks({links}) {
                                 <Text className={styles.cardName}>
                                     <Ellipsis direction='end' rows={2} content={link.Text}/>
                                 </Text>
-                                <Text disabled className={styles.cardType}>
-                                    {e(link.Type)}
+                                <Text className={styles.cardType} style={{fontSize: `${token.fontSizeSM}px`, color: token.colorSecondary}}>
+                                    {toBoolean(link.TargetBlank) &&
+                                        <>External link</>
+                                    }
                                 </Text>
 
                                 <div className={styles.bottomBg} />

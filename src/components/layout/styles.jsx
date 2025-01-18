@@ -5,7 +5,8 @@ export const useStyles = createStyles(({css, token}) => ({
         margin: 0;
         padding: 0;
         overflow: hidden;
-
+        -webkit-overflow-scrolling: touch;
+        
         form {
             .ant-btn {
                 margin: ${token.paddingXS}px 0px;
@@ -144,4 +145,9 @@ export const useStyles = createStyles(({css, token}) => ({
         align-items: center;
         justify-content: space-around;
     `,
+    pageBody: css`
+        -webkit-overflow-scrolling: touch;
+        overflow: auto;
+        overflow-x: hidden;
+    `
 }));

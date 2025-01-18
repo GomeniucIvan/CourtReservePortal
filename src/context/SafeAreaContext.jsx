@@ -132,7 +132,7 @@ const SafeArea = ({children}) => {
                 <div style={{paddingLeft: `${safeAreaCurrent.left}px`, paddingRight: `${safeAreaCurrent.right}px`}}>
                     {children}
                 </div>
-                <div style={{paddingBottom: `${safeAreaCurrent.bottom}px`}}>
+                <div style={{paddingBottom: `${safeAreaCurrent.bottom}px`,backgroundColor: token.colorBgBase }}>
                     <AntSafeArea position="bottom"/>
                 </div>
             </>

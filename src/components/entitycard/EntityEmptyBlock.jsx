@@ -20,7 +20,7 @@ const EntityEmptyBlock = ({text, height}) => {
 
     return (
         <PaddingBlock>
-            <Card className={cx(globalStyles.card)}>
+            <Card className={cx(globalStyles.card, styles.emptyCard)}>
                 <Flex align={'center'} justify={'center'} className={styles.emptyFlexBlock} style={{height: `${height}px`}}>
                     <Text className={styles.emptyText}>{text}</Text>
                 </Flex>

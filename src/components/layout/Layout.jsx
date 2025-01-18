@@ -40,8 +40,8 @@ function Layout() {
     const [maxHeight, setMaxHeight] = useState(0);
     
     //used only for ios keyboard open
-    const [isPrevIsFooterVisible, setIsPrevIsFooterVisible] = useState(false);
-    
+    const [isPrevIsFooterVisible, setIsPrevIsFooterVisible] = useState(null);
+    const [iosKeyboardHeight, setIosKeyboardHeight] = useState(null);
     const {customHeader, headerTitle, headerTitleKey} = useHeader();
     
     const {
@@ -82,7 +82,7 @@ function Layout() {
             currentRoute = AppRoutes.find(route => route.path === replacePath);
         }
     }
-
+    
     useEffect(() => {
         const loadPrimaryData = async () => {
             let authData = await memberData();
@@ -126,7 +126,7 @@ function Layout() {
             }
         }
 
-        if (equalString(location.pathname, '/MobileSso/AuthorizeAndRedirectApp')) {
+        if (equalString(location.pathname, '/MobileSso/AuthorizeAndRedirectApp') || equalString(location.pathname, '/MobileSso/AuthorizeAndRedirect')) {
             let redirectUrl = getGlobalRedirectUrl();
             if (isNullOrEmpty(redirectUrl)) {
                 navigate(HomeRouteNames.INDEX);
@@ -137,8 +137,8 @@ function Layout() {
         
         loadPrimaryData()
     }, [location, navigate]);
-
-    const calculateMaxHeight = (iosKeyboardHeight) => {
+    
+    const calculateMaxHeight = () => {
         const windowHeight = window.innerHeight;
         const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
         const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
@@ -162,26 +162,21 @@ function Layout() {
             let cookieSafeArea = getCookie('data-safe-area-data');
             if (!isNullOrEmpty(cookieSafeArea)) {
                 let cookieParsedData = JSON.parse(cookieSafeArea);
-                let cookieSafeAreaTopValue = cookieParsedData?.bottom;
-                if (!isNullOrEmpty(cookieSafeAreaTopValue) && parseInt(cookieSafeAreaTopValue) > 0) {
-                    safeAreaInsetsBottom = cookieSafeAreaTopValue;
+                let cookieSafeAreaBottomValue = cookieParsedData?.bottom;
+                if (!isNullOrEmpty(cookieSafeAreaBottomValue) && parseInt(cookieSafeAreaBottomValue) > 0) {
+                    safeAreaInsetsBottom = cookieSafeAreaBottomValue;
                 }
             }
         }
         
-        let isIosKeyboardOpen = !isNullOrEmpty(iosKeyboardHeight) && iosKeyboardHeight > 0;
-        let isIosKeyboardClose = equalString(iosKeyboardHeight, -1);
+        let isIosKeyboardOpen = !isNullOrEmpty(iosKeyboardHeight) && parseInt(iosKeyboardHeight) > 0;
         
-        let calculatedMaxHeight = windowHeight - headerHeight - footerHeight - (safeAreaInsetsTop) - (isIosKeyboardOpen ? safeAreaInsetsBottom : 0 );
-        
+        let calculatedMaxHeight = windowHeight - headerHeight - safeAreaInsetsTop - footerHeight - safeAreaInsetsBottom;
+            
         if (!isFetching) {
             if (toBoolean(currentRoute?.fullHeight)) {
                 calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
             }
-        }
-
-        if (isIosKeyboardOpen) {
-            calculatedMaxHeight = calculatedMaxHeight - iosKeyboardHeight;
         }
         
         setAvailableHeight(calculatedMaxHeight);
@@ -195,16 +190,19 @@ function Layout() {
             setIsFooterVisible(false);
 
             //scroll into view
-            handleIphoneInputFocus();
+            //handleIphoneInputFocus();
         }
         
-        if (isIosKeyboardClose) {
-            if (!equalString(isFooterVisible, isPrevIsFooterVisible)) {
-                setIsFooterVisible(isPrevIsFooterVisible);
-            }
+        if (equalString(iosKeyboardHeight, -1)) {
+            setIsFooterVisible(true);
+            setIosKeyboardHeight(null);
         }
     };
 
+    useEffect(() => {
+        calculateMaxHeight();
+    }, [isFooterVisible, footerContent, footerRef.current, headerRef.current, customHeader, headerTitle, headerTitleKey]);
+    
     const handleIphoneInputFocus = () => {
         const activeElement = document.activeElement; // Get the currently focused element
         if (
@@ -226,15 +224,17 @@ function Layout() {
         // Define the function to handle keyboard show event
         window.onReactNativeKeyboardShow = (isIOS, keyboardHeight) => {
             if (isIOS) {
-                calculateMaxHeight(keyboardHeight);
+                // if (!equalString(iosKeyboardHeight, keyboardHeight)) {
+                //     setIosKeyboardHeight(keyboardHeight);
+                // }
             }
         };
 
         // Define the function to handle keyboard hide event
         window.onReactNativeKeyboardHide = (isIOS) => {
-            if (isIOS) {
-                calculateMaxHeight(-1);
-            }
+            // if (isIOS) {
+            //     setIosKeyboardHeight(-1);
+            // }
         };
 
         // Cleanup on unmount
@@ -243,10 +243,6 @@ function Layout() {
             delete window.onReactNativeKeyboardHide;
         };
     }, []);
-    
-    useEffect(() => {
-        calculateMaxHeight();
-    }, [isFooterVisible, footerContent, footerRef.current, headerRef.current, customHeader, headerTitle, headerTitleKey]);
 
     useEffect(() => {
         setTimeout(function(){
@@ -254,19 +250,20 @@ function Layout() {
             calculateMaxHeight();
         }, 50)
 
-        window.addEventListener('resize', calculateMaxHeight);
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', calculateMaxHeight);
-            window.visualViewport.addEventListener('scroll', calculateMaxHeight);
-        }
-
-        return () => {
-            window.removeEventListener('resize', calculateMaxHeight);
-            if (window.visualViewport) {
-                window.visualViewport.removeEventListener('resize', calculateMaxHeight);
-                window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
-            }
-        };
+        //not working on ios
+        // window.addEventListener('resize', calculateMaxHeight);
+        // if (window.visualViewport) {
+        //     window.visualViewport.addEventListener('resize', calculateMaxHeight);
+        //     window.visualViewport.addEventListener('scroll', calculateMaxHeight);
+        // }
+        //
+        // return () => {
+        //     window.removeEventListener('resize', calculateMaxHeight);
+        //     if (window.visualViewport) {
+        //         window.visualViewport.removeEventListener('resize', calculateMaxHeight);
+        //         window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
+        //     }
+        // };
     }, []);
     
     useEffect(() => {
@@ -287,10 +284,15 @@ function Layout() {
                 --adm-color-text: ${token.colorText};
                 background-color: ${token.colorBgContainer};
             }
+            html {
+                overflow: hidden;
+            }
             body{
                 margin: 0px;
+                background-color: ${token.colorBgContainer};
+                overflow: hidden;
+                overscroll-behavior: none;
             }
-           
            .adm-nav-bar-back {
                 padding: 0px;
            }
@@ -312,9 +314,6 @@ function Layout() {
             }
             .adm-mask {
                 background: ${token?.Custom?.workingTheme == 'dark' ? 'rgb(77 77 77 / 67%) !important' : 'initial'}
-            }
-            body {
-                background-color: ${token.colorBgContainer};
             }
             .magic-dots.slick-dots li.slick-active button::before{
                 color: ${token.colorPrimary} !important;
@@ -395,10 +394,9 @@ function Layout() {
                 <Header route={currentRoute}/>
             </div>
 
-            <div id={'page-body'} style={{
-                overflow: 'auto',
-                height: `${maxHeight}px`,
-                overflowX: 'hidden'}}>
+            <div id={'page-body'} 
+                 className={styles.pageBody}
+                 style={{height: `${maxHeight}px`}}>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <>
                         <LayoutExtra/>

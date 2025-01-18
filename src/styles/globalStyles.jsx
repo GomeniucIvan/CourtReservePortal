@@ -300,6 +300,8 @@ export const useStyles = createStyles(({ css, token }) => ({
       
       .adm-index-bar-anchor-title {
          font-weight: bold;
+          background-color: ${token.colorBgLayout};
+          z-index: 2;
       }
 
       .adm-list-item{
