@@ -31,7 +31,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                                                  allowToSavePaymentProfile,
                                                  showStatesDropdown,
                                                  uiCulture,
-                                                 paymentProviderData = {},
+                                                 orgData = {},
                                                  hideFields = {
                                                      address2: false,
                                                      phoneNumber: false
@@ -60,9 +60,9 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     const {authData} = useAuth();
     const {token, globalStyles} = useApp();
 
-    let paymentProvider = authData?.PaymentProvider || paymentProviderData?.PaymentProvider;
-    let stripeKey = authData?.StripePublishableKey || paymentProviderData?.StripePublishableKey;
-    let isUsingCollectJs = authData?.IsUsingCollectJs || paymentProviderData?.IsUsingCollectJs;
+    let paymentProvider = orgData?.PaymentProvider;
+    let stripeKey = orgData?.StripePublishableKey;
+    let isUsingCollectJs = orgData?.IsUsingCollectJs;
 
     const [fieldValidity, setFieldValidity] = useState({
         ccnumber: false,

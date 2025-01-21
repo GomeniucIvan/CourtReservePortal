@@ -8,6 +8,7 @@ import {cx} from "antd-style";
 import {useTranslation} from "react-i18next";
 import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 import {logFormikErrors} from "../../utils/ConsoleUtils.jsx";
+import SVG from "@/components/svg/SVG.jsx";
 
 const FormInput = ({ label,
                        formik,
@@ -38,6 +39,7 @@ const FormInput = ({ label,
     const isRequired = toBoolean(required);
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const [showErrorIcon, setShowErrorIcon] = useState(false);
     const {styles} = useStyles();
 
     const inputRef = useRef(null);
@@ -94,38 +96,86 @@ const FormInput = ({ label,
 
         value = applyMask(value, mask);
 
-        if (!isNullOrEmpty(mask)){
-            if (inputRef.current) {
-                inputRef.current.value = value;
+        if (equalString(name, 'phoneNumber')) {
+            handlePhoneNumberInputChange(event);
+        } else {
+            if (!isNullOrEmpty(mask)){
+                if (inputRef.current) {
+                    inputRef.current.value = value;
+                }
             }
+            else if (onlyDigits) {
+                value = value.replace(/[^\d]/g, '');
+
+                if (props.maxLength && value.length > props.maxLength) {
+                    value = value.slice(0, props.maxLength);
+                }
+
+                if (inputRef.current) {
+                    inputRef.current.value = value;
+                }
+            }
+
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+
+            timeoutRef.current = setTimeout(() => {
+                if (typeof onInput === 'function') {
+                    onInput(event.target.value);
+                }
+
+                if (formik) {
+                    formik.setFieldValue(name, value, false);
+                }
+            }, onInputTimeout);
         }
-        else if (onlyDigits) {
-            value = value.replace(/[^\d]/g, '');
-
-            if (props.maxLength && value.length > props.maxLength) {
-                value = value.slice(0, props.maxLength);
-            }
-
-            if (inputRef.current) {
-                inputRef.current.value = value;
-            }
-        }
-
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-
-        timeoutRef.current = setTimeout(() => {
-            if (typeof onInput === 'function') {
-                onInput(event.target.value);
-            }
-
-            if (formik) {
-                formik.setFieldValue(name, value, false);
-            }
-        }, onInputTimeout);
     };
 
+    const handlePhoneNumberInputChange = (event) => {
+        let { value } = event.target;
+        const valueOrig = value;
+        value = value.replace(/[^0-9\+\-\(\)\s]/g, '');
+        const plusCount = (value.match(/\+/g) || []).length;
+        if (plusCount > 1) {
+            value = value.replace(/\+/g, (match, offset) => {
+                return offset === value.indexOf('+') ? match : '';
+            });
+        }
+        const openBracketCount = (value.match(/\(/g) || []).length;
+        if (openBracketCount > 1) {
+            value = value.replace(/\(/g, (match, offset) => {
+                return offset === value.indexOf('(') ? match : '';
+            });
+        }
+        const closeBracketCount = (value.match(/\)/g) || []).length;
+        if (closeBracketCount > 1) {
+            value = value.replace(/\)/g, (match, offset) => {
+                return offset === value.indexOf(')') ? match : '';
+            });
+        }
+        if (/--+/g.test(value)) {
+            value = value.replace(/-+/g, '-');
+        }
+        const invalidSequence = plusCount > 1 || openBracketCount > 1 || closeBracketCount > 1 || /--+/g.test(valueOrig);
+        if (/[^\d\+\-\(\)\s]/.test(valueOrig) || invalidSequence) {
+            setShowErrorIcon(true);
+            setTimeout(() => {
+                setShowErrorIcon(false);
+            }, 100);
+        } else {
+            setShowErrorIcon(false);
+        }
+        event.target.value = value;
+        if (typeof onInput === 'function') {
+            onInput(event);
+        }
+
+        if (formik) {
+            formik.setFieldValue(name, value, false);
+        }
+    };
+    
     const handeInputFocus = () => {
         setIsFocused(true);
     };
@@ -185,6 +235,7 @@ const FormInput = ({ label,
                             autoComplete="off"
                             spellCheck="false"
                             ref={inputRef}
+                            suffix={equalString(name, 'phoneNumber') ? <div style={{opacity: (showErrorIcon ? 1 : 0)}}><SVG size={18} preventFill={true} icon={'alert-triangle'} /></div> : undefined}
                             placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                             status={toBoolean(hasError) ? 'error' : ''}
                             type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}

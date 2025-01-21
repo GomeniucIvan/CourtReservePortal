@@ -27,6 +27,7 @@ import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {CardConstants} from "@/constants/CardConstants.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -39,6 +40,7 @@ function LoginReview({mainFormik}) {
     const [isFetching, setIsFetching] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
+    const [paymentInfoData, setPaymentInfoData] = useState(null);
 
     const isDisclosuresRequired = mainFormik?.values?.isDisclosuresRequired;
     const selectedMembership = mainFormik?.values?.selectedMembership;
@@ -57,41 +59,16 @@ function LoginReview({mainFormik}) {
         setHeaderTitleKey('loginReview');
         
         setIsFetching(false);
-
-        if (selectedMembership) {
-            let paymentFrequencyValue = null;
-            if (!isNullOrEmpty(selectedMembership) && anyInList(selectedMembership?.DetailedPaymentOptions)) {
-                if (oneListItem(selectedMembership.DetailedPaymentOptions)) {
-                    paymentFrequencyValue = selectedMembership.DetailedPaymentOptions[0].Value;
-                }
-            }
-
-            mainFormik.setFieldValue("paymentFrequency", paymentFrequencyValue);
-        }
     }, []);
 
     const initialValues = {
-        card_firstName: '',
-        card_lastName: '',
-        card_streetAddress: '',
-        card_streetAddress2: '',
-        card_city: '',
-        card_state: '',
-        card_zipCode: '',
-        card_phoneNumber: '',
-        card_number: '',//--from here
-        card_expiryDate: '',
-        card_securityCode: '',
-        card_accountType: '',
-        card_routingNumber: '',
-        card_accountNumber: '',
-        card_savePaymentProfile: false,
+        ...CardConstants,
         card_country: orgCardCountryCode(mainFormik?.values?.UiCulture),
-        
         paymentFrequency: '',
         disclosureAgree: false,
         hiddenFortisTokenId: '',
-        isDisclosuresRequired: isDisclosuresRequired
+        isDisclosuresRequired: isDisclosuresRequired,
+        disclosures: []
     };
 
     const getMembershipInitialValues = () => {
@@ -119,7 +96,7 @@ function LoginReview({mainFormik}) {
         validation: () => {
             //card details
             let formikPaymentFrequency = formik?.values?.paymentFrequency;
-            const isMembershipRequirePayment = membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(formik?.values?.requireCardOnFile);
+            const isMembershipRequirePayment = (membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(formik?.values?.requireCardOnFile));
             let isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment);
             
             let isValidForm = true;
@@ -137,6 +114,43 @@ function LoginReview({mainFormik}) {
             setShowReviewModal(true);
         },
     });
+
+    useEffect(() => {
+        if (selectedMembership) {
+            let paymentFrequencyValue = null;
+
+            if (!isNullOrEmpty(selectedMembership) && anyInList(selectedMembership?.Prices)) {
+                if (oneListItem(selectedMembership.Prices)) {
+                    paymentFrequencyValue = selectedMembership.Prices[0].CostTypeFrequency;
+                }
+            }
+
+            formik.setFieldValue('card_accountType', 1);
+            formik.setFieldValue('card_segmentAccountType', 1);
+            formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
+            formik.setFieldTouched("paymentFrequency", true, false);
+        }
+
+        if (anyInList(selectedMembership?.DisclosuresToSign)) {
+            let disclosuresToSign = selectedMembership?.DisclosuresToSign.map((disclosure) => {
+                return {
+                    ...disclosure,
+                    AcceptAgreement: isNullOrEmpty(disclosure.ReadAgreementMessage),
+                    Status: ''
+                };
+            });
+
+            formik.setFieldValue('disclosures', disclosuresToSign);
+        }
+
+        setPaymentInfoData({
+            showSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck),
+            allowCreditCard: toBoolean(selectedMembership?.AllowCreditCard),
+            allowECheck: toBoolean(selectedMembership?.AllowECheck),
+            allowSaveCreditCardProfile: toBoolean(selectedMembership?.AllowSaveCreditCardProfile),
+            selectedSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck) ? 'Credit Card' : (toBoolean(selectedMembership?.AllowECheck) ? 'eCheck' : 'Credit Card')
+        })
+    }, []);
     
     useEffect(() => {
         if (!isNullOrEmpty(formik?.values)){
@@ -146,7 +160,6 @@ function LoginReview({mainFormik}) {
             const paymentFrequencyCost = membershipPaymentFrequencyCost(selectedMembership, selectedPaymentFrequency);
             setPaymentFrequencyCost(paymentFrequencyCost);
             setSelectedMembershipRequirePayment(toBoolean(isMembershipRequirePayment));
-
         }
     }, [formik?.values]);
     
@@ -188,16 +201,16 @@ function LoginReview({mainFormik}) {
                                 <Flex vertical={true} gap={token.padding}>
                                     <FormInputDisplay label={t(`review.membership`)} value={selectedMembership?.Name}/>
 
-                                    {anyInList(selectedMembership?.DetailedPaymentOptions) &&
+                                    {anyInList(selectedMembership?.Prices) &&
                                         <FormSelect
                                             formik={formik}
                                             name='paymentFrequency'
                                             label={t(`review.form.paymentFrequency`)}
-                                            options={selectedMembership?.DetailedPaymentOptions}
-                                            required={moreThanOneInList(selectedMembership?.DetailedPaymentOptions)}
-                                            disabled={oneListItem(selectedMembership?.DetailedPaymentOptions)}
-                                            propText='Text'
-                                            propValue='Value'
+                                            options={selectedMembership?.Prices}
+                                            required={moreThanOneInList(selectedMembership?.Prices)}
+                                            disabled={oneListItem(selectedMembership?.Prices)}
+                                            propText='FullPriceDisplay'
+                                            propValue='CostTypeFrequency'
                                         />
                                     }
                                 </Flex>
@@ -230,11 +243,7 @@ function LoginReview({mainFormik}) {
                                                         address2: true,
                                                         phoneNumber: true
                                                     }}
-                                                    paymentProviderData={{
-                                                        PaymentProvider: formik?.values?.paymentProvider,
-                                                        StripePublishableKey: formik?.values?.stripePublishableKey,
-                                                        IsUsingCollectJs: formik?.values?.isUsingCollectJs,
-                                                    }}
+                                                    paymentProviderData={paymentInfoData}
                                                     paymentTypes={formik?.values?.paymentTypes}
                                 />
                             </Flex>
@@ -268,7 +277,7 @@ function LoginReview({mainFormik}) {
                     >
                         <PaddingBlock>
                             {!isNullOrEmpty(formik?.values?.disclosures) &&
-                                <IframeContent content={formik?.values?.disclosures} id={'login-disclosure'}/>
+                                <></>
                             }
                         </PaddingBlock>
                     </DrawerBottom>

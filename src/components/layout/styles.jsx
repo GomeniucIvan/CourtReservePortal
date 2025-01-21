@@ -21,16 +21,16 @@ export const useStyles = createStyles(({css, token}) => ({
             width: 100%;
         }
 
-        .ant-input,
-        .ant-select:not(.ant-select-multiple) .ant-select-selector {
-            padding-left: ${token.inputLeftPadding}px !important;
-        }
-        .ant-select.ant-select-multiple .ant-select-selection-placeholder {
-            padding-left: ${token.inputLeftPadding-6}px !important;
-        }
-        .ant-input-password{
-            padding-left: 0px;
-        }
+        // .ant-input,
+        // .ant-select:not(.ant-select-multiple) .ant-select-selector {
+        //     padding-left: 4px !important;
+        // }
+        // .ant-select.ant-select-multiple .ant-select-selection-placeholder {
+        //     padding-left: ${token.inputLeftPadding-6}px !important;
+        // }
+        // .ant-input-password{
+        //     padding-left: 4px;
+        // }
         
         .no-margin {
             margin: 0px !important;
