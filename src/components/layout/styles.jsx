@@ -47,6 +47,9 @@ export const useStyles = createStyles(({css, token}) => ({
         .ant-select-multiple {
             .ant-select-selection-item {
                 border-radius: ${token.ribonBorderRadius}px;
+                margin-left: ${token.paddingXS}px;
+                height: 30px;
+                line-height: 30px;
             }
         }
 

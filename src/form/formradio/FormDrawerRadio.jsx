@@ -1,4 +1,4 @@
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Checkbox, Radio, Typography} from 'antd';
 import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
@@ -49,7 +49,7 @@ const FormDrawerRadio = ({
             <div className={styles.drawerRadioGroup}>
                 {options.map((option, index) => {
 
-                    const isChecked = multiSelectedValues.includes(option[propValue]);
+                    const isChecked = anyInList(multiSelectedValues) ? multiSelectedValues.includes(option[propValue]) : false;
 
                     return (
                         <div key={`${name}_${option[propValue]}_${index}`} className={styles.radioItem}>

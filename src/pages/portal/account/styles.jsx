@@ -23,7 +23,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         line-height: 16px;
     `,
   membershipCard: css`
-    box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+    box-shadow: none;
     
     .adm-card-body {
       padding: 0px;
@@ -65,6 +65,11 @@ export const useStyles = createStyles(({ css, token }) => ({
     
     &:disabled{
       opacity: 0.6;
+    }
+  `,
+  pricingButton: css`
+    span {
+      color: ${token.colorPrimary};
     }
   `
 }));

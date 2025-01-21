@@ -3,7 +3,7 @@ import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useRef, useState} from "react";
 import {Button, Descriptions, Divider, Empty, Flex, Input, Skeleton, Tag, Typography} from 'antd';
-import {anyInList, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, isNullOrEmpty, moreThanOneInList, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import apiService from "@/api/api.jsx";
 import {useNavigate} from "react-router-dom";
@@ -17,6 +17,8 @@ import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import SVG from "@/components/svg/SVG.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 
 const {Text, Title, Link} = Typography;
 
@@ -28,7 +30,6 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
     const [memberships, setMemberships] = useState(null);
-    const [viewMembership, setViewMembership] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(null);
 
     useEffect(() => {
@@ -47,10 +48,10 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
         if (isNullOrEmpty(memberships)) {
             setIsFetching(true);
             setIsLoading(true);
-            const response = await apiService.get(`/api/create-account/membership-signup-form?orgId=${nullToEmpty(mainFormik?.values?.selectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
+            const response = await apiService.get(`/api/membership-member-portal/get-list?orgId=${nullToEmpty(mainFormik?.values?.selectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}&checkHasWaiverToSign=true&flowName=mobile-create-account`);
 
             if (response.IsValid) {
-                setMemberships(response.Data);
+                setMemberships(response.MembershipsData);
             }
 
             setIsFetching(false);
@@ -59,7 +60,7 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
     }
 
     const validationSchema = Yup.object({
-        email: Yup.string().required(t('common:requiredMessage', {label: t('getStarted.form.email')}))
+       
     });
 
     const formik = useFormik({
@@ -81,6 +82,51 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
         },
     });
 
+    const princingOptionModalHtml = (membership, onClose) => {
+        
+        
+        return(
+            <Flex vertical={true} gap={24}>
+                <Flex vertical={true} gap={12}>
+                    {!isNullOrEmpty(membership.Name) && 
+                        <Text style={{color: token.colorSecondary}}>{membership.Name}</Text>
+                    }
+
+                    {!isNullOrEmpty(membership?.InitiationFeePriceDisplay) &&
+                        <Text level={3}>{membership?.InitiationFeePriceDisplay} Initiation Fee</Text>
+                    }
+
+                    {anyInList(membership?.Prices) &&
+                        <>
+                            {membership?.Prices.map((price, index) => {
+                                return (
+                                    <Flex key={index}>
+                                        <Title level={3}>{price.PriceDisplay}{' '}</Title>
+                                        <Text>/ {price.FrequencyDisplay}</Text>
+                                    </Flex>
+                                )
+                            })}
+                        </>
+                    }
+                </Flex>
+                <Flex vertical={true} gap={8}>
+                    <Button type='primary'
+                            block={true}
+                            onClick={() => {
+                                onMembershipSelect(membership);
+                                onClose();
+                            }}>
+                        {membership.ButtonName}
+                    </Button>
+
+                    <Button block={true} onClick={onClose}>
+                        Close
+                    </Button>
+                </Flex>
+            </Flex>
+        )
+    }
+    
     return (
         <PaddingBlock topBottom={true}>
             {isFetching &&
@@ -106,78 +152,94 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
                                     <Card key={index}
                                           className={cx(globalStyles.card,
                                               globalStyles.noPadding,
-                                              styles.membershipCard,
-                                              (toBoolean(membership?.IsFull) || toBoolean(membership?.AllowedForFamilies)) && styles.membershipWithTags )}>
+                                              styles.membershipCard)}>
 
                                         <PaddingBlock topBottom={true}>
-                                            <Flex align={'center'} vertical={true}>
-                                                {(toBoolean(membership?.IsFull) || toBoolean(membership?.AllowedForFamilies)) &&
-                                                    <Flex gap="4px" className={styles.membershipTags}>
-                                                        {membership.IsFull &&
-                                                            <Tag color="#f50" className={globalStyles.tag}>{t(`membership.full`)}</Tag>
-                                                        }
+                                            <Flex vertical={true} gap={token.paddingLG}>
+                                                <Flex vertical={true} gap={token.paddingLG}>
+                                                    {anyInList(membership?.Badges) &&
+                                                        <Flex gap="4px 0" wrap>
+                                                            {membership.Badges.map((badge, index) => {
+                                                                return (
+                                                                    <Tag key={index}
+                                                                         className={globalStyles.tag}
+                                                                         style={{ 
+                                                                             backgroundColor: badge.BackgroundColor,
+                                                                             borderColor: badge.BackgroundColor,
+                                                                             color: badge.TextColor }}>
+                                                                        {badge.BadgeName}
+                                                                    </Tag>
+                                                                )
+                                                            })}
+                                                        </Flex>
+                                                    }
 
-                                                        {membership.AllowedForFamilies &&
-                                                            <Tag color="#108ee9" className={globalStyles.tag}>{t(`membership.familyMembership`)}</Tag>
+                                                    <Flex vertical={true} gap={token.paddingXS}>
+                                                        <Title level={3}>{membership?.Name}</Title>
+                                                        {!isNullOrEmpty(membership?.EffectiveDatesDisplay) &&
+                                                            <Text className={token.colorTextSecondary}>{membership?.EffectiveDatesDisplay}</Text>
                                                         }
                                                     </Flex>
+                                                </Flex>
+
+                                                <Divider className={globalStyles.noMargin} />
+
+                                                {anyInList(membership?.Prices) ?
+                                                    (<Flex gap={4} align={'end'}>
+                                                        <Title level={1}>{membership?.Prices?.[0]?.PriceDisplay}</Title>
+                                                        <Text>{' '} / {membership?.Prices?.[0]?.FrequencyDisplay}</Text>
+                                                    </Flex>) : (<Title level={1}>Free</Title>)
                                                 }
 
-                                                <Title level={4}>{membership?.Name}</Title>
-
-                                                {!isNullOrEmpty(membership?.EffectiveFromDateDisplay) &&
-                                                    <Text>{t('membership.effective', {date: membership.EffectiveFromDateDisplay})}</Text>
+                                                {moreThanOneInList(membership?.Prices) &&
+                                                    <>
+                                                        <Button color="default"
+                                                                onClick={() => {displayMessageModal({
+                                                                    title: "Pricing Option(s)",
+                                                                    html: (onClose) => princingOptionModalHtml(membership, onClose),
+                                                                    onClose: () => {},
+                                                                })}}
+                                                                className={styles.pricingButton}
+                                                                variant="filled">
+                                                            +{membership?.Prices?.length - 1} Pricing Option(s)
+                                                        </Button>
+                                                    </>
                                                 }
 
-                                                {toBoolean(membership?.IsFree) &&
-                                                    <Title level={1}>{t(`membership.free`)}</Title>
-                                                }
-                                                {!toBoolean(membership?.IsFree) &&
-                                                    <Title level={1}>
-                                                        <div dangerouslySetInnerHTML={{__html: membership?.StartingPriceHtml}}/>
-                                                    </Title>
+                                                {(!isNullOrEmpty(membership?.Description) || anyInList(membership?.Features)) &&
+                                                    <>
+                                                        <Divider className={globalStyles.noMargin} />
+
+                                                        <Flex vertical={true} gap={token.paddingLG}>
+                                                            {!isNullOrEmpty(membership?.Description) &&
+                                                                <Text>
+                                                                    {membership?.Description}
+                                                                </Text>
+                                                            }
+
+                                                            {anyInList(membership?.Features) && (
+                                                                <Flex vertical={true} gap={token.paddingSM}>
+                                                                    {membership.Features?.map((feature, index) => (
+                                                                        <Flex key={index} gap={8} align={'center'}>
+                                                                            <SVG icon="circle-check-regular" size={16} replaceColor={true} />
+                                                                            <span>{feature.FeatureDescription}</span>
+                                                                        </Flex>
+                                                                    ))}
+                                                                </Flex>
+                                                            )}
+                                                        </Flex>
+                                                    </>
                                                 }
 
-                                                {!isNullOrEmpty(membership?.InitiationFeeDisplay) &&
-                                                    <Text level={1} style={{fontSize: `${token.fontSizeSM}px`}}>
-                                                        {t('membership.initiationFee', {price: membership.InitiationFeeDisplay})}
-                                                    </Text>
-                                                }
-
-                                                {toBoolean(membership?.IsRestrictByAge) &&
-                                                    <Tag color="warning" className={globalStyles.tag}> {t(`membership.ageRestrictionMessage`)}</Tag>
-                                                }
+                                                <Button type='primary'
+                                                        block={true}
+                                                        onClick={() => {
+                                                            onMembershipSelect(membership)
+                                                        }}>
+                                                    {membership.ButtonName}
+                                                </Button>
                                             </Flex>
                                         </PaddingBlock>
-                                        <div className={styles.membershipFooterBlock}>
-                                            <PaddingBlock topBottom={true}>
-                                                <Flex vertical={true} gap={token.paddingSM}>
-                                                    {!isNullOrEmpty(membership?.Description) &&
-                                                        <Flex justify={'center'}>
-                                                            <Text style={{fontSize: `${token.fontSizeSM}px`}}>
-                                                                {membership.Description}
-                                                            </Text>
-                                                        </Flex>
-                                                    }
-
-                                                    <Button type='primary' onClick={() => {
-                                                        onMembershipSelect(membership)
-                                                    }}>
-                                                        {t(`membership.selectPlan`)}
-                                                    </Button>
-
-                                                    {!isNullOrEmpty(membership?.ShowAdditionalDetails) &&
-                                                        <Flex justify={'center'}>
-                                                            <Link underline onClick={() => {
-                                                                setViewMembership(membership);
-                                                            }}>
-                                                                {t(`membership.seeDetails`)}
-                                                            </Link>
-                                                        </Flex>
-                                                    }
-                                                </Flex>
-                                            </PaddingBlock>
-                                        </div>
                                     </Card>
                                 )
                             })}
@@ -185,86 +247,6 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
                     )}
                 </>
             }
-
-            <DrawerBottom showDrawer={!isNullOrEmpty(viewMembership)}
-                          closeDrawer={() => setViewMembership(null)}
-                          showButton={true}
-                          customFooter={<Flex gap={token.padding}>
-                              <Button block onClick={() => {
-                                  setViewMembership(null);
-                              }}>
-                                  {t(`searchOrganization.drawer.close`)}
-                              </Button>
-
-                              <Button type={'primary'} block onClick={() => {
-                                  onMembershipSelect(viewMembership);
-                              }}>
-                                  {t(`membership.selectPlan`)}
-                              </Button>
-                          </Flex>}
-                          label={viewMembership?.Name}>
-
-                <PaddingBlock>
-                    {!isNullOrEmpty(viewMembership?.EffectiveFromDateDisplay) &&
-                        <Text>
-                            {t('membership.effective', {date: viewMembership.EffectiveFromDateDisplay})}
-                        </Text>
-                    }
-
-                    {!isNullOrEmpty(viewMembership?.PaymentOptionsBrDisplay) &&
-                        <>
-                            <Title level={4}>
-                                {t(`membership.paymentOptions`)}
-                            </Title>
-
-                            <div style={{
-                                fontSize: `${token.fontSize}px`,
-                                paddingTop: `${token.paddingSM}px`,
-                                paddingBottom: `${token.paddingSM}px`
-                            }}>
-                                <div dangerouslySetInnerHTML={{__html: viewMembership?.PaymentOptionsBrDisplay}}/>
-
-                                {!isNullOrEmpty(viewMembership.InitiationFeeDisplay) &&
-                                    <div>
-                                        (+ {t('membership.initiationFee', {price: viewMembership.InitiationFeeDisplay})})
-                                    </div>
-                                }
-                            </div>
-                        </>
-                    }
-
-                    {!isNullOrEmpty(viewMembership?.Description) &&
-                        <Text style={{
-                            fontSize: `${token.fontSizeSM}px`, 
-                            paddingBottom: `${token.paddingSM}px`,
-                            color: `${token.colorSecondary}`,
-                            display: 'block'
-                        }}>
-                            {viewMembership.Description}
-                        </Text>
-                    }
-
-                    {toBoolean(viewMembership?.IsRestrictByAge) &&
-                        <div>
-                            <Tag color="warning" className={globalStyles.tag}> {t(`membership.ageRestrictionMessage`)}</Tag>
-                        </div>
-                    }
-
-                    {anyInList(viewMembership?.Features) &&
-                        <>
-                            <Divider style={{margin: `${token.paddingSM}px 0px`}} />
-                            
-                            {viewMembership.Features.filter(feature => feature.trim() !== '').map((feature, index) => {
-                                return (
-                                    <Text key={index}>
-                                        {feature}
-                                    </Text>
-                                );
-                            })}
-                        </>
-                    }
-                </PaddingBlock>
-            </DrawerBottom>
 
             <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
         </PaddingBlock>

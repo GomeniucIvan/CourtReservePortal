@@ -60,12 +60,23 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
     }, [isFetching, isLoading]);
 
     const initialValues = {
-        ...mainFormik
+        ...mainFormik,
+        firstName: '',
+        lastName: '',
+        streetAddress: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        phoneNumber: '',
+        dateOfBirthString: '',
+        membershipNumber: '',
+        gender: '',
     };
 
     const getValidationSchema = (signupForm) => {
         let schemaFields = {
-
+            firstName: Yup.string().required(t('common:requiredMessage', {label: t('additionalInfo.form.firstName')}) ),
+            lastName: Yup.string().required(t('common:requiredMessage', {label: t('additionalInfo.form.lastName')})),
         };
 
         if (signupForm) {
@@ -186,8 +197,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
             {(!isFetching && !isNullOrEmpty(additionInfoData)) &&
                 <PaddingBlock topBottom={true}>
 
-                    <PageForm
-                        formik={formik}>
+                    <PageForm formik={formik}>
                         <FormInput label={t(`additionalInfo.form.firstName`)}
                                    formik={formik}
                                    name='firstName'

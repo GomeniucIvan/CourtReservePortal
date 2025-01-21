@@ -271,7 +271,7 @@ function LoginReview({mainFormik}) {
                                 <IframeContent content={formik?.values?.disclosures} id={'login-disclosure'}/>
                             }
                         </PaddingBlock>
-                    </DrawerBottom>s
+                    </DrawerBottom>
                     
                     <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
                 </>
