@@ -19,7 +19,6 @@ const FormSwitch = ({ formik, name, label, disabled, rows = 1, tooltip }) => {
     }
 
     const onRowClick = () => {
-        console.log(2)
         if (toBoolean(disabled) && !isNullOrEmpty(tooltip)) {
             pNotify(tooltip, 'info');
         }

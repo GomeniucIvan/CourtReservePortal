@@ -24,6 +24,7 @@ import LoginRequestCode from "@portal/account/modules/Login.RequestCode.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {logDebug} from "@/utils/ConsoleUtils.jsx";
+import LoginMembershipDetails from "@portal/account/modules/Login.MembershipDetails.jsx";
 
 function Login() {
     const navigate = useNavigate();
@@ -32,13 +33,14 @@ function Login() {
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [navigationSteps, setNavigationSteps] = useState([]);
     const { setOnBack, setHideHeader } = useHeader();
-    
+    const [signupData, setSignupData] = useState(null);
+
     const location = useLocation();
     const {t} = useTranslation('login');
 
     const navigateToStep = useCallback((step, isBack) => {
         logDebug(`navigateToStep ${step}`);
-        
+
         if (isBack) {
             setNavigationSteps((prevSteps) => {
                 const lastNavigationPage = prevSteps[prevSteps.length - 2];
@@ -56,7 +58,7 @@ function Login() {
             });
         }
     }, []);
-    
+
     useEffect(() => {
         if (equalString(location.pathname, AuthRouteNames.LOGIN)) {
             //should clear organization data on logout
@@ -132,7 +134,7 @@ function Login() {
         // Cleanup: Reset `onBack` when the component unmounts
         return () => setOnBack(null);
     }, [setOnBack, navigateToStep]);
-    
+
     return (
         <>
             {equalString(formik?.values?.step, 'initial') &&
@@ -140,7 +142,7 @@ function Login() {
                     {!isNullOrEmpty(spGuideId) &&
                         <LoginSpGuide onGetStartedClick={() => {setIsFromGetStarted(true);  navigateToStep('get-started') }}
                                       onLoginClick={() => { setIsFromGetStarted(false);navigateToStep('authorize') }} />
-                        
+
 
                     }
 
@@ -163,7 +165,7 @@ function Login() {
                                  }}
                 />
             }
-            
+
             {equalString(formik?.values?.step, 'authorize') &&
                 <LoginAuthorize mainFormik={formik}
                                 isFromGetStarted={isFromGetStarted}
@@ -198,7 +200,7 @@ function Login() {
 
             {equalString(formik?.values?.step, 'sign-up') &&
                 <LoginAdditionalInfo mainFormik={formik}
-                                     onSignupSubmit={(formValues) => {
+                                     onSignupSubmit={(formValues, signData) => {
                                          formik.setValues({
                                              ...formik.values,
                                              skipReview: formValues.skipReview,
@@ -222,9 +224,14 @@ function Login() {
                                              }
                                          });
 
-                                         navigateToStep('memberships');
-                                     }}
+                                         setSignupData(signData);
 
+                                         if (signData && toBoolean(signData?.RequireMembershipOnSignUpForm)) {
+                                             navigateToStep('memberships');
+                                         } else {
+                                             navigateToStep('review');
+                                         }
+                                     }}
                 />
             }
 
@@ -242,14 +249,18 @@ function Login() {
                                       } else {
                                           formik.setFieldValue('selectedMembership', costType)
                                           formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
-                                          navigateToStep('review');
+                                          navigateToStep('membership-details');
                                       }
                                   }}
                 />
             }
-            
+
+            {equalString(formik?.values?.step, 'membership-details') &&
+                <LoginMembershipDetails mainFormik={formik} />
+            }
+
             {equalString(formik?.values?.step, 'review') &&
-                <LoginReview mainFormik={formik} />
+                <LoginReview mainFormik={formik} signupData={signupData}/>
             }
 
             {equalString(formik?.values?.step, 'request-code') &&
@@ -262,7 +273,7 @@ function Login() {
 
                 />
             }
-            
+
             {equalString(formik?.values?.step, 'verification-code') &&
                 <LoginVerificationCode mainFormik={formik}
                                        onPasswordVerify={(formValues) => {

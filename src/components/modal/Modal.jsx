@@ -19,6 +19,7 @@ function Modal({ children,
                    hideFooter,
                    dangerConfirm = false,
                    showConfirmButton = false,
+                   customFooter,
                    rootClass,
                    confirmButtonText = 'Confirm'}) {
     const { token } = useApp();
@@ -44,7 +45,11 @@ function Modal({ children,
                     {children}
                 </div>
 
-                {!hideFooter &&
+                {!isNullOrEmpty(customFooter) &&
+                    <>{customFooter}</>
+                }
+                
+                {(!hideFooter && isNullOrEmpty(customFooter)) &&
                     <PaddingBlock topBottom={true}>
                         <Flex align={'center'} justify={'space-between'} gap={token.padding}>
                             <Button type={showConfirmButton ? 'default' : 'primary'} disabled={loading} block onClick={onClose}>Close</Button>

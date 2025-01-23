@@ -28,10 +28,11 @@ import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {CardConstants} from "@/constants/CardConstants.jsx";
+import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
-function LoginReview({mainFormik}) {
+function LoginReview({mainFormik, signupData}) {
     const {setHeaderTitleKey} = useHeader();
     const {setIsFooterVisible, setFooterContent, token} = useApp();
     const { t } = useTranslation('login');
@@ -42,8 +43,9 @@ function LoginReview({mainFormik}) {
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
     const [paymentInfoData, setPaymentInfoData] = useState(null);
 
-    const isDisclosuresRequired = mainFormik?.values?.isDisclosuresRequired;
     const selectedMembership = mainFormik?.values?.selectedMembership;
+    
+    console.log(signupData)
     
     useEffect(() => {
         setIsFooterVisible(true);
@@ -67,7 +69,6 @@ function LoginReview({mainFormik}) {
         paymentFrequency: '',
         disclosureAgree: false,
         hiddenFortisTokenId: '',
-        isDisclosuresRequired: isDisclosuresRequired,
         disclosures: []
     };
 
@@ -101,7 +102,7 @@ function LoginReview({mainFormik}) {
             
             let isValidForm = true;
             
-            if (isDisclosuresRequired && !toBoolean(formik?.values?.disclosureAgree)) {
+            if (signupData && !isNullOrEmpty(signupData.Disclosures) && toBoolean(signupData.IsDisclosuresRequired)) {
                 setFormikError(t, formik, 'disclosureAgree', null, t('review.form.disclosureAgreeRequired'))
                 isValidForm = false;
             }
@@ -195,7 +196,7 @@ function LoginReview({mainFormik}) {
 
             {!isFetching &&
                 <>
-                    {!isNullOrEmpty(selectedMembership) &&
+                    {!isNullOrEmpty(selectedMembership?.Name) &&
                         <>
                             <PaddingBlock onlyTop={true}>
                                 <Flex vertical={true} gap={token.padding}>
@@ -218,7 +219,7 @@ function LoginReview({mainFormik}) {
                         </>
                     }
 
-                    {(!isNullOrEmpty(selectedMembership) && (selectedMembershipRequirePayment || toBoolean(formik?.values?.requireCardOnFile))) &&
+                    {(!isNullOrEmpty(selectedMembership?.Name) && (selectedMembershipRequirePayment || toBoolean(formik?.values?.requireCardOnFile))) &&
                         <Divider />
                     }
                     
@@ -250,37 +251,18 @@ function LoginReview({mainFormik}) {
                         </PaddingBlock>
                     }
                     
-                    {toBoolean(isDisclosuresRequired) &&
+                    {(signupData && !isNullOrEmpty(signupData.Disclosures) && toBoolean(signupData.IsDisclosuresRequired)) &&
                         <PaddingBlock>
-                            <FormCheckbox label={''}
-                                          formik={formik}
-                                          name={'disclosureAgree'}
-                                          text={t('review.form.disclosureAgree')}
-                                          description={t('review.form.disclosureAgreeDescription')}
-                                          descriptionClick={() => setShowTermAndCondition(true)}/>
+                            <FormDisclosures formik={formik} disclosureHtml={signupData.Disclosures} dateTimeDisplay={signupData.WaiverSignedOnDateTimeDisplay}/>
+                            
+                            {/*<FormCheckbox label={''}*/}
+                            {/*              formik={formik}*/}
+                            {/*              name={'disclosureAgree'}*/}
+                            {/*              text={t('review.form.disclosureAgree')}*/}
+                            {/*              description={t('review.form.disclosureAgreeDescription')}*/}
+                            {/*              descriptionClick={() => setShowTermAndCondition(true)}/>*/}
                         </PaddingBlock>
                     }
-
-                    <DrawerBottom
-                        showDrawer={showTermAndCondition}
-                        showButton={true}
-                        customFooter={<Flex gap={token.padding}>
-                            <Button type={'primary'} block onClick={() => {
-                                setShowTermAndCondition(false)
-                            }}>
-                                {t('common:close')}
-                            </Button>
-                        </Flex>}
-                        closeDrawer={() => setShowTermAndCondition(false)}
-                        label={t('review.form.disclosureAgreeDescription')}
-                        onConfirmButtonClick={() => setShowTermAndCondition(false)}
-                    >
-                        <PaddingBlock>
-                            {!isNullOrEmpty(formik?.values?.disclosures) &&
-                                <></>
-                            }
-                        </PaddingBlock>
-                    </DrawerBottom>
                     
                     <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
                 </>

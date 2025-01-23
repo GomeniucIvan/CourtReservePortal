@@ -123,7 +123,8 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
                 let postModel = values;
                 postModel.customFields = values.Udfs;
                 postModel.ratingCategories = values.RatingCategories;
-                onSignupSubmit(postModel);
+                
+                onSignupSubmit(postModel, additionInfoData);
                 setIsLoading(false);
 
             }
