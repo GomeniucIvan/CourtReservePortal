@@ -13,12 +13,13 @@ import {cx} from "antd-style";
 import {countListItems, emptyArray} from "@/utils/ListUtils.jsx";
 import InfiniteScroll from "@/components/infinitescroll/InfiniteScroll.jsx";
 import * as React from "react";
-import {Card, Ellipsis} from "antd-mobile";
+import {Card, Ellipsis, ErrorBlock} from "antd-mobile";
 import {useStyles} from "./../styles.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import SVG from "@/components/svg/SVG.jsx";
 
 const {Text, Title} = Typography;
 
@@ -154,7 +155,7 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
                         <FormInput label={t('searchOrganization.form.search')}
                                    placeholder={t(`searchOrganization.form.searchPlaceholder`)}
                                    description={t(`searchOrganization.form.searchDescription`)}
-                                   onInputTimeout={400}
+                                   onInputTimeout={1000}
                                    className={'no-margin'}
                                    onInput={(e) => {
                                        setSearchValue(e);
@@ -178,7 +179,18 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
                 }
 
                 {showNoOrganizations &&
-                    <Empty />
+                    <PaddingBlock onlyBottom={true}>
+                        <ErrorBlock
+                            image='https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg'
+                            style={{
+                                '--image-height': '150px',
+                                paddingTop: '10vh'
+                            }}
+                            title={'No any organizations found.'}
+                            description={' TODO find image for that'}
+                        >
+                        </ErrorBlock>
+                    </PaddingBlock>
                 }
 
                 {anyInList(organizations) &&

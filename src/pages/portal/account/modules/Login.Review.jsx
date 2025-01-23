@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import React, {useEffect, useState} from "react";
 import {Button, Checkbox, Divider, Flex, Skeleton, Typography} from 'antd';
 import {
-    anyInList,
+    anyInList, equalString,
     isNullOrEmpty,
     moreThanOneInList,
     oneListItem,
@@ -45,8 +45,6 @@ function LoginReview({mainFormik, signupData}) {
 
     const selectedMembership = mainFormik?.values?.selectedMembership;
     
-    console.log(signupData)
-    
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(<FooterBlock topBottom={true}>
@@ -63,13 +61,22 @@ function LoginReview({mainFormik, signupData}) {
         setIsFetching(false);
     }, []);
 
+    console.log(mainFormik)
+    
     const initialValues = {
         ...CardConstants,
         card_country: orgCardCountryCode(mainFormik?.values?.UiCulture),
         paymentFrequency: '',
         disclosureAgree: false,
         hiddenFortisTokenId: '',
-        disclosures: []
+        disclosures: [],
+        card_firstName: mainFormik?.values?.firstName,
+        card_lastName: mainFormik?.values?.lastName,
+        card_streetAddress: mainFormik?.values?.streetAddress,
+        card_city: mainFormik?.values?.city,
+        card_state: mainFormik?.values?.state,
+        card_zipCode: mainFormik?.values?.zipCode,
+        card_phoneNumber: mainFormik?.values?.phoneNumber,
     };
 
     const getMembershipInitialValues = () => {
@@ -97,7 +104,7 @@ function LoginReview({mainFormik, signupData}) {
         validation: () => {
             //card details
             let formikPaymentFrequency = formik?.values?.paymentFrequency;
-            const isMembershipRequirePayment = (membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(formik?.values?.requireCardOnFile));
+            const isMembershipRequirePayment = (membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(signupData.RequireCardOnFile));
             let isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment);
             
             let isValidForm = true;
@@ -126,7 +133,7 @@ function LoginReview({mainFormik, signupData}) {
                 }
             }
 
-            formik.setFieldValue('card_accountType', 1);
+            formik.setFieldValue('card_accountType', '1');
             formik.setFieldValue('card_segmentAccountType', 1);
             formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
             formik.setFieldTouched("paymentFrequency", true, false);
@@ -145,11 +152,12 @@ function LoginReview({mainFormik, signupData}) {
         }
 
         setPaymentInfoData({
-            showSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck),
-            allowCreditCard: toBoolean(selectedMembership?.AllowCreditCard),
-            allowECheck: toBoolean(selectedMembership?.AllowECheck),
-            allowSaveCreditCardProfile: toBoolean(selectedMembership?.AllowSaveCreditCardProfile),
-            selectedSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck) ? 'Credit Card' : (toBoolean(selectedMembership?.AllowECheck) ? 'eCheck' : 'Credit Card')
+            ...signupData,
+            ShowSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck),
+            AllowCreditCard: toBoolean(selectedMembership?.AllowCreditCard),
+            AllowECheck: toBoolean(selectedMembership?.AllowECheck),
+            AllowSaveCreditCardProfile: toBoolean(selectedMembership?.AllowSaveCreditCardProfile),
+            SelectedSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck) ? 'Credit Card' : (toBoolean(selectedMembership?.AllowECheck) ? 'eCheck' : 'Credit Card')
         })
     }, []);
     
@@ -175,6 +183,18 @@ function LoginReview({mainFormik, signupData}) {
             }
         }
     }, [formik?.values?.paymentFrequency])
+    
+    const visibleSeparatorByKey = (key) => {
+        let isMembershipVisible = !isNullOrEmpty(selectedMembership?.Name);
+        let isBillingVisible = (selectedMembershipRequirePayment || toBoolean(signupData.RequireCardOnFile));
+        let isAgreementsVisible = (signupData && !isNullOrEmpty(signupData.Disclosures) && toBoolean(signupData.IsDisclosuresRequired));
+        
+        if (equalString(key, 'membership-billing')) {
+            return isMembershipVisible && isBillingVisible;
+        } else if (equalString(key, 'billing-disclosure')){
+            return (isMembershipVisible || isBillingVisible) && isAgreementsVisible;
+        }
+    }
     
     return (
         <>
@@ -219,48 +239,47 @@ function LoginReview({mainFormik, signupData}) {
                         </>
                     }
 
-                    {(!isNullOrEmpty(selectedMembership?.Name) && (selectedMembershipRequirePayment || toBoolean(formik?.values?.requireCardOnFile))) &&
+                    {visibleSeparatorByKey('membership-billing') &&
                         <Divider />
                     }
                     
-                    {(selectedMembershipRequirePayment || toBoolean(formik?.values?.requireCardOnFile)) &&
-                        <PaddingBlock onlyBottom={true}>
-                            <Flex vertical={true} gap={token.paddingXS}>
-                                <Title level={1}>{t(`review.paymentProfileBilling`)}</Title>
+                    {(selectedMembershipRequirePayment || toBoolean(signupData.RequireCardOnFile)) &&
+                        <>
+                            <PaddingBlock onlyTop={!visibleSeparatorByKey('membership-billing')}>
+                                <Flex vertical={true} gap={token.paddingXS}>
+                                    <Title level={1}>{t(`review.paymentProfileBilling`)}</Title>
 
-                                <Paragraph>
-                                    {t(`review.paymentProfileBillingDescription`)}
-                                </Paragraph>
-                            </Flex>
+                                    <Paragraph>
+                                        {t(`review.paymentProfileBillingDescription`)}
+                                    </Paragraph>
+                                </Flex>
 
-                            <Flex vertical={true} gap={token.padding}>
-                                <FormPaymentProfile formik={formik}
-                                                    isPaymentProfile={false}
-                                                    includeCustomerDetails={true}
-                                                    allowToSavePaymentProfile={false}
-                                                    showStatesDropdown={toBoolean(formik?.values?.showStatesDropdown)}
-                                                    uiCulture={formik?.values?.uiCulture}
-                                                    hideFields={{
-                                                        address2: true,
-                                                        phoneNumber: true
-                                                    }}
-                                                    paymentProviderData={paymentInfoData}
-                                                    paymentTypes={formik?.values?.paymentTypes}
-                                />
-                            </Flex>
-                        </PaddingBlock>
+                                <Flex vertical={true} gap={token.padding}>
+                                    <FormPaymentProfile formik={formik}
+                                                        isPaymentProfile={false}
+                                                        includeCustomerDetails={true}
+                                                        allowToSavePaymentProfile={false}
+                                                        showStatesDropdown={toBoolean(signupData.ShowStatesDropdown)}
+                                                        uiCulture={signupData.UiCulture}
+                                                        hideFields={{
+                                                            address2: true,
+                                                            phoneNumber: true
+                                                        }}
+                                                        paymentProviderData={paymentInfoData}
+                                                        paymentTypes={signupData.PaymentTypes}
+                                    />
+                                </Flex>
+                            </PaddingBlock>
+                        </>
+                    }
+
+                    {visibleSeparatorByKey('billing-disclosure') &&
+                        <Divider />
                     }
                     
                     {(signupData && !isNullOrEmpty(signupData.Disclosures) && toBoolean(signupData.IsDisclosuresRequired)) &&
-                        <PaddingBlock>
+                        <PaddingBlock topBottom={!visibleSeparatorByKey('billing-disclosure')}>
                             <FormDisclosures formik={formik} disclosureHtml={signupData.Disclosures} dateTimeDisplay={signupData.WaiverSignedOnDateTimeDisplay}/>
-                            
-                            {/*<FormCheckbox label={''}*/}
-                            {/*              formik={formik}*/}
-                            {/*              name={'disclosureAgree'}*/}
-                            {/*              text={t('review.form.disclosureAgree')}*/}
-                            {/*              description={t('review.form.disclosureAgreeDescription')}*/}
-                            {/*              descriptionClick={() => setShowTermAndCondition(true)}/>*/}
                         </PaddingBlock>
                     }
                     

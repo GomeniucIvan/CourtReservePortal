@@ -7,7 +7,6 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import {useTranslation} from "react-i18next";
 import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
-import {logFormikErrors} from "../../utils/ConsoleUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 
 const FormInput = ({ label,
@@ -61,7 +60,6 @@ const FormInput = ({ label,
 
     const applyMask = (value, pattern) => {
         if (!pattern) return value;
-
 
         const cleanValue = value.replace(/\D+/g, '');
         let maskedValue = '';
@@ -188,7 +186,7 @@ const FormInput = ({ label,
     }
 
     return (
-        <div className={cx(globalStyles.formBlock, className, styles.input)}>
+        <div className={cx(globalStyles.formBlock, className, styles.inputWrap)}>
             <label htmlFor={name} className={globalStyles.globalLabel}>
                 {label}
                 {isRequired &&
@@ -220,7 +218,7 @@ const FormInput = ({ label,
                             placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                             status={toBoolean(hasError) ? 'error' : ''}
                             type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
-                            className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
+                            className={cx(`form-control`, isFocused && 'item-focus', styles.input)}/>
                     ) :
                     (<Input
                             {...props}
@@ -239,7 +237,7 @@ const FormInput = ({ label,
                             placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                             status={toBoolean(hasError) ? 'error' : ''}
                             type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
-                            className={`form-control ${isFocused ? 'item-focus' : ''}`}/>
+                            className={cx(`form-control`, isFocused && 'item-focus', styles.input)}/>
                     )}
             </div>
 

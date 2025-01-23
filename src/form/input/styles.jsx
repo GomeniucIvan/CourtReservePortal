@@ -1,8 +1,12 @@
 ﻿import { createStyles } from 'antd-style';
 
 export const useStyles = createStyles(({ css, token }) => ({
-    input: css`
+    inputWrap: css`
         color: ${token.colorText};
+    `,
+
+    input: css`
+        padding-left: 10px;
     `,
     inputFilled: css`
         color: ${token.colorTextDisabled};

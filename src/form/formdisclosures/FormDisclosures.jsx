@@ -1,5 +1,12 @@
 import {Button, Checkbox, Descriptions, Divider, Flex, Radio, Skeleton, Typography} from 'antd';
-import {anyInList, calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {
+    anyInList,
+    calculateSkeletonLabelWidth,
+    equalString,
+    focus,
+    isNullOrEmpty,
+    toBoolean
+} from "../../utils/Utils.jsx";
 import FormInput from "../input/FormInput.jsx";
 import FormTextArea from "../formtextarea/FormTextArea.jsx";
 import FormSelect from "../formselect/FormSelect.jsx";
@@ -17,22 +24,18 @@ import {isCanadaCulture} from "@/utils/OrganizationUtils.jsx";
 import {isNonUsCulture} from "@/utils/DateUtils.jsx";
 import ReCAPTCHA from "react-google-recaptcha";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
+import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
     const [showCheckboxModal, setShowCheckboxModal] = useState(false);
     const [agreementIndexToShow, setAgreementIndexToShow] = useState(null);
-    const [checkboxError, setCheckboxError] = useState('');
     const [currentStep, setCurrentStep] = useState(0);
     const sigCanvasRef = useRef(null);
     const {token} = useApp();
     const {styles} = useStyles();
-    
-    useEffect(() => {
-        if (toBoolean(formik?.values?.disclosureAgree)) {
-            setCheckboxError('');
-        }
 
-    }, [formik?.values?.disclosureAgree])
 
     const displayCheckboxDescriptionWithStatus = (itemHasError) => {
         let status = <Text>Please review and agree to this organization's terms of use.</Text>;
@@ -66,7 +69,7 @@ const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
                 <Flex vertical={true} gap={token.paddingXXL}>
 
                     <Title level={1}>Agreements</Title>
-                    
+
                     <Flex vertical={true} gap={token.padding}>
                         {!isNullOrEmpty(disclosureHtml) &&
                             <Flex vertical={true} gap={20} className={styles.disclosureCard}>
@@ -82,16 +85,35 @@ const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
 
                                 <Modal show={showCheckboxModal}
                                        onClose={() => {setShowCheckboxModal(false)}}
-                                       customFooter={<Flex vertical={true} gap={8}>
-                                           <FormSwitch formik={formik} name={'disclosureAgree'} label={'I have read and agreed to the Terms and Conditions above'} rows={2} />
-                                           
-                                           <Button type={'primary'} onClick={() => {setShowCheckboxModal(false)}} block={true}>
-                                               Confirm
-                                           </Button>
-                                       </Flex>}
+                                       customFooter={<PaddingBlock topBottom={true}>
+                                           <Flex vertical={true} gap={8}>
+                                               <Flex vertical={true} gap={4}>
+                                                   <FormSwitch formik={formik} name={'disclosureAgree'} label={'I have read and agreed to the Terms and Conditions above'} rows={2} />
+                                               </Flex>
+                                               <Button type={'primary'} onClick={() => {
+                                                   if (toBoolean(formik?.values?.disclosureAgree)) {
+                                                       setShowCheckboxModal(false)
+                                                   } else {
+                                                       displayMessageModal({
+                                                           title: 'Error',
+                                                           html: (onClose) => 'Please review the Agreements section.',
+                                                           type: "warning",
+                                                           buttonType: modalButtonType.DEFAULT_CLOSE,
+                                                           onClose: () => {
+                                                             
+                                                           },
+                                                       })
+                                                   }
+                                               }} block={true}>
+                                                   Confirm
+                                               </Button>
+                                           </Flex>
+                                       </PaddingBlock>}
                                        title={'Terms and Conditions'}>
 
-                                    <IframeContent content={disclosureHtml} id={'login-disclosure'}/>
+                                    <PaddingBlock>
+                                        <IframeContent content={disclosureHtml} id={'login-disclosure'}/>
+                                    </PaddingBlock>
                                 </Modal>
                             </Flex>
                         }

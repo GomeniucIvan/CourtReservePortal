@@ -44,7 +44,7 @@ function ProfileBillingPayment({}) {
         card_number: '',//--from here
         card_expiryDate: '',
         card_securityCode: '',
-        card_accountType: 1,
+        card_accountType: '1',
         card_routingNumber: '',
         card_accountNumber: '',
         card_savePaymentProfile: false,

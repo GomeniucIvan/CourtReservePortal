@@ -64,18 +64,20 @@ const FormPaymentProfileCardConnect = React.forwardRef(({ formik}, ref) => {
                         marginLeft: token.Form.marginXXS
                     }}>*</span>
                 </label>
-
-                <iframe
-                    id="tokenFrame"
-                    name="tokenFrame"
-                    src={`${tokenizerUrl}?invalidinputevent=true&tokenizewheninactive=true&inactivityto=2500&css=${encodedCssCardConnect}`}
-                    frameBorder="0"
-                    scrolling="no"
-                    style={{
-                        width: '100%',
-                        height: '40px'
-                    }}
-                />
+                {/*NOT SURE WHY IS NOT WORKING WITHOUT ZINDEX 999*/}
+                <div style={{position: 'relative', zIndex: 999}}>
+                    <iframe
+                        id="tokenFrame"
+                        name="tokenFrame"
+                        src={`${tokenizerUrl}?invalidinputevent=true&tokenizewheninactive=true&inactivityto=2500&css=${encodedCssCardConnect}`}
+                        frameBorder="0"
+                        scrolling="no"
+                        style={{
+                            width: '100%',
+                            height: '40px'
+                        }}
+                    />
+                </div>
 
                 {validationMessage ?
                     (<Paragraph style={{

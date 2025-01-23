@@ -79,12 +79,7 @@ function Login() {
         selectedOrgFullAddress: '',
         secretKey: '',
         maskedEmail: '',
-
-        uiCulture: '',
-        stripePublishableKey: '',
-        isUsingCollectJs: '',
-        showStatesDropdown: '',
-
+        
         firstName: '',
         lastName: '',
         streetAddress: '',
@@ -96,12 +91,8 @@ function Login() {
         city: '',
         state: '',
         zipCode: '',
-        paymentProvider: null,
-        requireCardOnFile: false,
-        isDisclosuresRequired: false,
         disclosures: '',
         formIncludes: {},
-        paymentTypes: [],
 
         RatingCategories: [],
         Udfs: [],
@@ -204,17 +195,22 @@ function Login() {
                                          formik.setValues({
                                              ...formik.values,
                                              skipReview: formValues.skipReview,
-                                             uiCulture: formValues.uiCulture,
-                                             requireCardOnFile: formValues.RequireCardOnFile,
-                                             paymentTypes: formValues.PaymentTypes,
                                              disclosures: formValues.Disclosures,
-                                             isDisclosuresRequired: formValues.IsDisclosuresRequired,
-                                             paymentProvider: formValues.paymentProvider,
-                                             stripePublishableKey: formValues.stripePublishableKey,
-                                             isUsingCollectJs: formValues.isUsingCollectJs,
-                                             showStatesDropdown: formValues.showStatesDropdown,
                                              RatingCategories: formValues.RatingCategories,
                                              Udfs: formValues.Udfs,
+
+                                             firstName: formValues.firstName,
+                                             lastName: formValues.lastName,
+                                             streetAddress: formValues.streetAddress,
+                                             phoneNumber: formValues.phoneNumber,
+                                             dateOfBirthString: formValues.dateOfBirthString,
+                                             DateOfBirth: formValues.DateOfBirth,
+                                             membershipNumber: formValues.membershipNumber,
+                                             gender: formValues.gender,
+                                             city: formValues.city,
+                                             state: formValues.state,
+                                             zipCode: formValues.zipCode,
+                                             
                                              formIncludes: {
                                                  IncludePhoneNumber: toBoolean(formValues.IncludePhoneNumber),
                                                  IncludeGender: toBoolean(formValues.IncludeGender),
