@@ -1,4 +1,5 @@
 import {isNullOrEmpty} from "./Utils.jsx";
+import {logCritical} from "@/utils/ConsoleUtils.jsx";
 
 export function isFileType(fileName, fileType) {
     if (isNullOrEmpty(fileName) || isNullOrEmpty(fileType)) return false;
@@ -11,9 +12,13 @@ export function isFileType(fileName, fileType) {
 
 export const getPdfFileDataUrl = async (url) => {
     try {
-        const response = await fetch(url);
+        const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+        const proxiedUrl = `${proxyUrl}${url}`;
+        
+        const response = await fetch(proxiedUrl);
 
         if (!response.ok) {
+            logCritical(`Failed to fetch PDF: ${response.statusText}`)
             //throw new Error(`Failed to fetch PDF: ${response.statusText}`);
         }
 

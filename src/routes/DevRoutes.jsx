@@ -15,6 +15,7 @@ import DevForm from "@/pages/dev/DevForm.jsx";
 import DevModals from "@/pages/dev/DevModals.jsx";
 import DevCards from "@/pages/dev/DevCards.jsx";
 import DevOther from "@/pages/dev/DevOther.jsx";
+import DevAgreements from "@/pages/dev/DevAgreements.jsx";
 
 const {Text} = Typography;
 
@@ -28,6 +29,7 @@ export const DevRouteNames = {
     DEV_FORM: '/dev/form',
     DEV_OTHER: '/dev/other',
     DEV_MODALS: '/dev/modals',
+    DEV_AGREEMENTS: '/dev/agreements',
     DEV_CARDS: '/dev/cards',
 };
 
@@ -84,6 +86,12 @@ const DevRoutes = [
         path: DevRouteNames.DEV_MODALS,
         element: <DevModals />,
         title: 'Modals',
+        unauthorized: true,
+    },
+    {
+        path: DevRouteNames.DEV_AGREEMENTS,
+        element: <DevAgreements />,
+        title: 'Agreements',
         unauthorized: true,
     },
     {

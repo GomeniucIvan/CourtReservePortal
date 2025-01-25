@@ -20,20 +20,13 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const {Title, Text} = Typography;
 import {useStyles} from "./styles.jsx";
 import Modal from "@/components/modal/Modal.jsx";
-import {isCanadaCulture} from "@/utils/OrganizationUtils.jsx";
-import {isNonUsCulture} from "@/utils/DateUtils.jsx";
-import ReCAPTCHA from "react-google-recaptcha";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
-import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import DisclosureBlock from "@/components/disclosureBlock/DisclosureBlock.jsx";
 
 const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
     const [showCheckboxModal, setShowCheckboxModal] = useState(false);
-    const [agreementIndexToShow, setAgreementIndexToShow] = useState(null);
-    const [currentStep, setCurrentStep] = useState(0);
-    const sigCanvasRef = useRef(null);
     const {token} = useApp();
     const {styles} = useStyles();
 

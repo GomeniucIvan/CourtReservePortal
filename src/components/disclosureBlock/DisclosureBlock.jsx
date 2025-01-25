@@ -15,8 +15,7 @@ import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {cx} from 'antd-style';
-import BrowserBlock from "@/components/browserblock/BrowserBlock.jsx";
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs`;
 
 const {Text, Title} = Typography;
 
@@ -46,7 +45,7 @@ function DisclosureBlock({disclosure,
             const fetchPdf = async () => {
                 const base64String = await getPdfFileDataUrl(selectedWaiverToView.FullPath);
                 if (base64String) {
-                    setPdfDataUrl(`data:application/pdf;base64,${base64String}`);
+                    //setPdfDataUrl(`data:application/pdf;base64,${base64String}`);
                 }
             };
 
@@ -187,15 +186,6 @@ function DisclosureBlock({disclosure,
                 {t('disclosure.viewWaiverButton', {name: disclosure.Name})}
             </Button>
             
-            {/*{!isNullOrEmpty(disclosure.ReadAgreementMessage) &&*/}
-            {/*    <Checkbox*/}
-            {/*        checked={disclosure.AcceptAgreement}*/}
-            {/*        onChange={handleReadAgreementCheckboxChange}*/}
-            {/*    >*/}
-            {/*        {disclosure.ReadAgreementMessage}*/}
-            {/*    </Checkbox>*/}
-            {/*}*/}
-            
             {/*INSTRUCTIONS*/}
             <DrawerBottom showDrawer={instructionsIndexToShow}
                           maxHeightVh={60}
@@ -268,12 +258,12 @@ function DisclosureBlock({disclosure,
 
                     <Flex gap={token.padding}>
                         {equalString(selectedWaiverToView?.ContentType, 2) &&
-                            <Button type="primary" block icon={<DownloadOutlined />} onClick={() => {openPdfInNewTab(selectedWaiverToView?.FullPath)}}>
+                            <Button type="default" block icon={<DownloadOutlined />} onClick={() => {openPdfInNewTab(selectedWaiverToView?.FullPath)}}>
                                 {t('disclosure.downloadFile')}
                             </Button>
                         }
 
-                        <Button type={'primary'} 
+                        <Button type={ 'primary'} 
                                 block 
                                 onClick={() => {
                                     if (!isNullOrEmpty(disclosure.ReadAgreementMessage)) {

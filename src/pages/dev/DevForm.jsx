@@ -1,6 +1,6 @@
 ﻿import React, {useState, useEffect, useRef} from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {Row, Col, Card, Typography, message, Flex, Segmented, Divider} from "antd";
+import {Row, Col, Card, Typography, message, Flex, Segmented, Divider, Button} from "antd";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {Ellipsis} from "antd-mobile";
@@ -73,21 +73,15 @@ function DevForm() {
 
             checkbox: false,
             checkboxDescription: true,
-            disclosures: [
-                {RuleInstructions: 'RuleInstructions Text1', Id: '1', Name: 'Name 1', DisclosureText: 'DisclosureText 1', SignatureDataUrl: ''},
-                {RuleInstructions: 'RuleInstructions Text2', Id: '2', Name: 'Name 2', DisclosureText: 'DisclosureText 2', SignatureDataUrl: ''},
-                {RuleInstructions: 'RuleInstructions Text3', Id: '3', Name: 'Name 3', DisclosureText: 'DisclosureText 3 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 3', SignatureDataUrl: ''},
-                {RuleInstructions: 'RuleInstructions Text4', Id: '4', Name: 'Name 4', DisclosureText: 'DisclosureText 4 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 4', SignatureDataUrl: ''},
-            ],
-            signFirstName: 'Mike',
-            signLastName: 'Jackson',
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
 
         },
     });
     
-    
+    const validateDisclosures = () => {
+        
+    }
     
     return (
         <PaddingBlock topBottom={true}>
@@ -156,13 +150,6 @@ function DevForm() {
             <Divider />
 
             <InstructionBlock instructions={'Some instruction to test display of'} />
-            
-            <Divider />
-            <div>
-                Disclosures
-
-                <FormDisclosures formik={formik} disclosureHtml={'Disclosure Html Body for test'} dateTimeDisplay={'Fake Time 12:00PM'}/>
-            </div>
         </PaddingBlock>
     );
 }
