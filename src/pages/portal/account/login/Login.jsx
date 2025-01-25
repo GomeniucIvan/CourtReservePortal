@@ -50,11 +50,6 @@ function Login() {
                 if (isNullOrEmpty(lastNavigationPage)){
                     formik.setFieldValue('step', 'initial');
                 } else{
-                    if (equalString(lastNavigationPage, 'organizations')) {
-                        setPrimaryColor(token.colorCourtReserve);
-                        setPrimaryTextColor('#FFFFFF');
-                    }
-
                     formik.setFieldValue('step', lastNavigationPage);
                 }
                 return prevSteps.slice(0, -1);
@@ -123,6 +118,11 @@ function Login() {
 
     useEffect(() => {
         setHideHeader(equalString(formik?.values?.step,'initial'));
+
+        if (equalString(formik?.values?.step, 'organizations') || equalString(formik?.values?.step, 'initial')) {
+            setPrimaryColor(token.colorCourtReserve);
+            setPrimaryTextColor('#FFFFFF');
+        }
     }, [formik?.values?.step]);
 
     useEffect(() => {
