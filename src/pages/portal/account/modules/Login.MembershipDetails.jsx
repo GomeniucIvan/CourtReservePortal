@@ -1,19 +1,39 @@
 import {useEffect, useState} from "react";
-import {Flex, Skeleton, Tag, Typography} from 'antd';
+import {Button, Divider, Flex, Skeleton, Tag, Typography} from 'antd';
 import * as React from "react";
-import {anyInList, isNullOrEmpty} from "@/utils/Utils.jsx";
+import {anyInList, isNullOrEmpty, nullToEmpty} from "@/utils/Utils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import ExpanderBlock from "@/components/expanderblock/ExpanderBlock.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import apiService from "@/api/api.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {useHeader} from "@/context/HeaderProvider.jsx";
+import {useTranslation} from "react-i18next";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const {Text, Title} = Typography;
 
-function LoginMembershipDetails({ mainFormik }) {
-const [isFetching, setIsFetching] = useState(true);
-const [membership, setMembership] = useState(null);
-    const {token, globalStyles} = useApp();
+function LoginMembershipDetails({ mainFormik, isLastStep, onNext }) {
+    const [isFetching, setIsFetching] = useState(true);
+    const [membership, setMembership] = useState(null);
+    const {isLoading, globalStyles, token, setIsFooterVisible, setFooterContent } = useApp();
+    const {setHeaderTitleKey} = useHeader();
+    const {t} = useTranslation('login');
+
+    useEffect(() => {
+        setIsFooterVisible(true);
+        setFooterContent(<FooterBlock topBottom={true}>
+            <Button type="primary"
+                    block
+                    htmlType="submit"
+                    disabled={isFetching}
+                    onClick={onNext}>
+                {isLastStep ? 'Create Account' : t('additionalInfo.button.continue')}
+            </Button>
+        </FooterBlock>);
+        setHeaderTitleKey('loginMembershipDetails');
+    }, [isFetching, isLoading]);
 
     const loadMembershipData = async () => {
         const response = await apiService.get(`/api/membership-member-portal/get-list?orgId=${nullToEmpty(mainFormik?.values?.selectedOrgId)}&membershipId=${mainFormik?.values?.selectedMembershipId}&flowName=review-and-finalize`);
@@ -38,7 +58,7 @@ const [membership, setMembership] = useState(null);
     useEffect(() => {
         loadMembershipData();
     }, [])
-    
+
     return (
         <>
             {isFetching &&
@@ -56,9 +76,9 @@ const [membership, setMembership] = useState(null);
             }
 
             {!isFetching &&
-                <div>
-                    <div>
-                        <div>
+                <PaddingBlock topBottom={true}>
+                    <Flex vertical={true} gap={token.padding}>
+                        <Flex vertical={true} gap={token.paddingLG}>
                             {anyInList(membership?.Badges) &&
                                 <Flex gap="4px 0" wrap>
                                     {membership.Badges.map((badge, index) => {
@@ -68,89 +88,93 @@ const [membership, setMembership] = useState(null);
                                                  style={{
                                                      backgroundColor: badge.BackgroundColor,
                                                      borderColor: badge.BackgroundColor,
-                                                     color: badge.TextColor
-                                                 }}>{badge.BadgeName}</Tag>
+                                                     color: badge.TextColor }}>
+                                                {badge.BadgeName}
+                                            </Tag>
                                         )
                                     })}
                                 </Flex>
                             }
 
-                            <Flex vertical={true} gap={4}>
-                                <Text>{membership?.Name}</Text>
-                                <Text className={token.colorTextSecondary}>{membership?.EffectiveDatesDisplay}</Text>
+                            <Flex vertical={true} gap={token.paddingXS}>
+                                <Title level={3}>{membership?.Name}</Title>
+                                {!isNullOrEmpty(membership?.EffectiveDatesDisplay) &&
+                                    <Text className={token.colorTextSecondary}>{membership?.EffectiveDatesDisplay}</Text>
+                                }
                             </Flex>
-                        </div>
-                    </div>
+                        </Flex>
 
-                    {(!isNullOrEmpty(membership?.Description) || anyInList(membership?.Features)) &&
-                        <div>
-                            <div>
-                                General
-                            </div>
+                        <Divider className={globalStyles.noMargin} />
+                        
+                        <Flex vertical={true} gap={token.paddingSM}>
+                            <Title level={4}>Pricing Option(s)</Title>
 
-                            <Flex vertical={true} gap={12}>
-                                {!isNullOrEmpty(membership?.Description) &&
-                                    <div>
-                                        {membership?.Description}
-                                    </div>
+                            <Flex vertical={true} gap={token.paddingXS}>
+                                {!isNullOrEmpty(membership?.InitiationFeePriceDisplay) &&
+                                    <Text>{membership?.InitiationFeePriceDisplay} Initiation Fee</Text>
                                 }
 
-                                {anyInList(membership?.Features) && (
-                                    <Flex vertical={true} gap={8}>
-                                        {membership.Features?.map((feature, index) => (
-                                            <Flex key={index} gap={12}>
-                                                <SVG icon="checked-icon" size={16} replaceColor={true}/>
-                                                <span>{feature.FeatureDescription}</span>
-                                            </Flex>
-                                        ))}
-                                    </Flex>
-                                )}
+                                {anyInList(membership?.Prices) ?
+                                    (<>
+                                        {membership?.Prices.map((price, index) => {
+                                            return (
+                                                <Flex key={index} gap={4} align={'center'}>
+                                                    <Flex align={'end'}>
+                                                        <Title level={1}>{price?.PriceDisplay}</Title>
+                                                        <Text>{' '} / {price?.FrequencyDisplay}</Text>
+                                                    </Flex>
+                                                </Flex>
+                                            )
+                                        })}
+                                    </>) : (<Title level={1}>Free</Title>)
+                                }
                             </Flex>
-                        </div>
-                    }
+                        </Flex>
 
-                    {anyInList(membership?.AdditionalFeatures) &&
-                        <ExpanderBlock title='Additional Benefits'>
-                            <Flex vertical={true} gap={12}>
-                                {anyInList(membership?.AdditionalFeatures) && (
-                                    <Flex vertical={true} gap={8}>
-                                        {membership.AdditionalFeatures?.map((feature, index) => (
-                                            <Flex key={index} gap={12}>
-                                                <SVG icon="checked-icon" size={16} replaceColor={true}/>
-                                                <span>{feature.FeatureDescription}</span>
-                                            </Flex>
-                                        ))}
-                                    </Flex>
-                                )}
+                        {((!isNullOrEmpty(membership?.Description) || anyInList(membership?.Features)) || anyInList(membership?.AdditionalFeatures))&&
+                            <Divider className={globalStyles.noMargin} />
+                        }
+                        
+                        {(!isNullOrEmpty(membership?.Description) || anyInList(membership?.Features)) &&
+                            <Flex vertical={true} gap={token.paddingSM}>
+                                <Title level={4}>General</Title>
+                                
+                                <Flex vertical={true} gap={token.paddingLG}>
+                                    {!isNullOrEmpty(membership?.Description) &&
+                                        <Text>
+                                            {membership?.Description}
+                                        </Text>
+                                    }
+
+                                    {anyInList(membership?.Features) && (
+                                        <Flex vertical={true} gap={token.paddingSM}>
+                                            {membership.Features?.map((feature, index) => (
+                                                <Flex key={index} gap={8} align={'center'}>
+                                                    <SVG icon="circle-check-regular" size={16} replaceColor={true} />
+                                                    <span>{feature.FeatureDescription}</span>
+                                                </Flex>
+                                            ))}
+                                        </Flex>
+                                    )}
+                                </Flex>
                             </Flex>
-                        </ExpanderBlock>
-                    }
-
-                    <div>
-                        <div>
-                            Pricing Option(s)
-                        </div>
-
-                        {!isNullOrEmpty(membership?.InitiationFeePriceDisplay) &&
-                            <Text>{membership?.InitiationFeePriceDisplay} Initiation Fee</Text>
                         }
 
-                        {anyInList(membership?.Prices) ? (
-                            <>
-                                {membership?.Prices.map((price, index) => {
-                                    return (
-                                        <Flex key={index} gap={5} align={'center'}>
-                                            <Title level={1}>{price?.PriceDisplay}</Title>
-                                            <Text>{' '} / {price?.FrequencyDisplay}</Text>
+                        {anyInList(membership?.AdditionalFeatures) &&
+                            <ExpanderBlock title='Additional Benefits'>
+                                <Flex vertical={true} gap={token.paddingSM}>
+                                    {membership.AdditionalFeatures?.map((feature, index) => (
+                                        <Flex key={index} gap={8} align={'center'}>
+                                            <SVG icon="circle-check-regular" size={16} replaceColor={true} />
+                                            <span>{feature.FeatureDescription}</span>
                                         </Flex>
-                                    )
-                                })}
-                            </>
-                        ) : (
-                            <Text level={1}>Free</Text>
-                        )}
-                    </div>
-                </div>
+                                    ))}
+                                </Flex>
+                            </ExpanderBlock>
+                        }
+                    </Flex>
+
+                </PaddingBlock>
             }
         </>
     )

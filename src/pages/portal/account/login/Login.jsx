@@ -3,7 +3,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {useApp} from "@/context/AppProvider.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {useTranslation} from "react-i18next";
 import LoginCourtReserve from "@portal/account/login/Login.PageCourtReserve.jsx";
 import LoginSpGuide from "@portal/account/login/Login.PageSpGuide.jsx";
@@ -37,7 +37,7 @@ function Login() {
     const [signupData, setSignupData] = useState(null);
     const {setPrimaryColor, setPrimaryTextColor} = useAntd();
     const {token} = useApp();
-    
+
     const location = useLocation();
     const {t} = useTranslation('login');
 
@@ -54,7 +54,7 @@ function Login() {
                         setPrimaryColor(token.colorCourtReserve);
                         setPrimaryTextColor('#FFFFFF');
                     }
-                    
+
                     formik.setFieldValue('step', lastNavigationPage);
                 }
                 return prevSteps.slice(0, -1);
@@ -87,7 +87,7 @@ function Login() {
         selectedOrgFullAddress: '',
         secretKey: '',
         maskedEmail: '',
-        
+
         firstName: '',
         lastName: '',
         streetAddress: '',
@@ -134,6 +134,13 @@ function Login() {
         return () => setOnBack(null);
     }, [setOnBack, navigateToStep]);
 
+    const isMembershipDetailsLastStep = () => {
+        let formikSelectedMembership = formik?.values?.selectedMembership;
+        let membershipNotRequireReviewStep = (formikSelectedMembership && formikSelectedMembership.OneFreePaymentOption && !anyInList(formikSelectedMembership?.DisclosuresToSign));
+        let isReviewNext = toBoolean(signupData?.IsDisclosuresRequired) || toBoolean(signupData?.RequireCardOnFile);
+        return membershipNotRequireReviewStep && !isReviewNext;
+    }
+    
     return (
         <>
             {equalString(formik?.values?.step, 'initial') &&
@@ -188,13 +195,13 @@ function Login() {
             {equalString(formik?.values?.step, 'organizations') &&
                 <LoginSearchOrganization mainFormik={formik}
                                          onOrganizationSelect={(formValues) => {
-                                             
+
                                              formik.setFieldValue('selectedOrgId', formValues.selectedOrgId);
                                              formik.setFieldValue('selectedOrgName', formValues.selectedOrgName);
                                              formik.setFieldValue('selectedOrgFullAddress', formValues.selectedOrgFullAddress);
                                              setPrimaryColor(formValues.BaseBackgroundColor);
                                              setPrimaryTextColor(formValues.BaseTextColor);
-                                             
+
                                              navigateToStep('sign-up');
                                          }}
 
@@ -222,7 +229,7 @@ function Login() {
                                              city: formValues.city,
                                              state: formValues.state,
                                              zipCode: formValues.zipCode,
-                                             
+
                                              formIncludes: {
                                                  IncludePhoneNumber: toBoolean(formValues.IncludePhoneNumber),
                                                  IncludeGender: toBoolean(formValues.IncludeGender),
@@ -234,10 +241,14 @@ function Login() {
 
                                          setSignupData(signData);
 
-                                         if (signData && toBoolean(signData?.RequireMembershipOnSignUpForm)) {
+                                         let isMembershipNext = signData && (toBoolean(signData.RequireMembershipOnSignUpForm) || (toBoolean(signData.HasAnyMemberships) && !toBoolean(signData.IsOneMembershipAndIsDefault)));
+                                         if (isMembershipNext) {
                                              navigateToStep('memberships');
-                                         } else {
+                                         } else if (toBoolean(signupForm?.IsDisclosuresRequired) || toBoolean(signupForm?.RequireCardOnFile)) {
                                              navigateToStep('review');
+                                         } else {
+                                             formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before creating your account.` )
+                                             setShowReviewModal(true);
                                          }
                                      }}
                 />
@@ -248,23 +259,30 @@ function Login() {
                                   onSkip={() =>{
                                       formik.setFieldValue('selectedMembership', {})
                                       formik.setFieldValue('selectedMembershipId', '')
-                                      navigateToStep('review')
+                                      navigateToStep('review');
                                   }}
                                   onMembershipSelect={(costType) => {
-                                      if (costType && costType.OneFreePaymentOption) {
-                                          formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
-                                          setShowReviewModal(true);
-                                      } else {
-                                          formik.setFieldValue('selectedMembership', costType)
-                                          formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
-                                          navigateToStep('membership-details');
-                                      }
+                                      console.log(costType);
+                                      formik.setFieldValue('selectedMembership', costType)
+                                      formik.setFieldValue('selectedMembershipId', costType.Id)
+                                      navigateToStep('membership-details');
                                   }}
                 />
             }
 
             {equalString(formik?.values?.step, 'membership-details') &&
-                <LoginMembershipDetails mainFormik={formik} />
+                <LoginMembershipDetails 
+                    mainFormik={formik}
+                    lastStep={isMembershipDetailsLastStep()}
+                    onNext={(formikValues) => {
+                        if (isMembershipDetailsLastStep()) {
+                            formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(formik?.values?.selectedMembership?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
+                            setShowReviewModal(true);
+                        } else {
+                            navigateToStep('review');
+                        }
+                    }}
+                />
             }
 
             {equalString(formik?.values?.step, 'review') &&
