@@ -9,6 +9,7 @@ import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useTranslation} from "react-i18next";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 
 const {Paragraph} = Typography;
 
@@ -300,6 +301,7 @@ const FormDateOfBirth = React.forwardRef(({
                         <div key={index} style={{width: '100%'}}>
                             {equalString(item, 'day') &&
                                 <Select
+                                    {...addCypressTag('dob_day')}
                                     placeholder={'Day'}
                                     value={isNullOrEmpty(selectedDay) ? undefined : selectedDay}
                                     open={false}
@@ -321,6 +323,7 @@ const FormDateOfBirth = React.forwardRef(({
 
                             {equalString(item, 'month') &&
                                 <Select
+                                    {...addCypressTag('dob_month')}
                                     placeholder='Month'
                                     value={isNullOrEmpty(selectedMonth) ? undefined : selectedMonth}
                                     open={false}
@@ -342,6 +345,7 @@ const FormDateOfBirth = React.forwardRef(({
 
                             {equalString(item, 'year') &&
                                 <Select
+                                    {...addCypressTag('dob_year')}
                                     placeholder={'Year'}
                                     value={isNullOrEmpty(selectedYear) ? undefined : selectedYear}
                                     open={false}

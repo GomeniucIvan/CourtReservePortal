@@ -27,6 +27,7 @@ import {getGlobalRedirectUrl} from "@/utils/AppUtils.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
+import {getConfigValue} from "@/config/WebConfig.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -133,6 +134,11 @@ function Layout() {
             } else{
                 navigate(HomeRouteNames.INDEX);
             }
+        }
+
+        const isDebugMode = getConfigValue('IsDebugMode');
+        if (!isNullOrEmpty(location.pathname) && location.pathname.startsWith('/dev/') && !isDebugMode) {
+            navigate(HomeRouteNames.NOT_FOUND);
         }
         
         loadPrimaryData()

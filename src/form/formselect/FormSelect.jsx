@@ -7,6 +7,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
 import {useTranslation} from "react-i18next";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 
 const {Paragraph} = Typography;
 
@@ -119,6 +120,7 @@ const FormSelect = forwardRef(({
 
                     <Select
                         {...props}
+                        {...addCypressTag(name)}
                         ref={selectRef}
                         placeholder={innerPlaceholder}
                         value={isNullOrEmpty(field.value) ? undefined : field.value}

@@ -5,6 +5,7 @@ import {Ellipsis} from "antd-mobile";
 import React, {useEffect, useState} from "react";
 import {cx} from "antd-style";
 import {pNotify} from "../../components/notification/PNotify.jsx";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 const {Text} = Typography;
 
 const FormSwitch = ({ formik, name, label, disabled, rows = 1, tooltip }) => {
@@ -37,6 +38,7 @@ const FormSwitch = ({ formik, name, label, disabled, rows = 1, tooltip }) => {
             </Text>
 
             <Switch {...field} disabled={disabled}
+                    {...addCypressTag(name)}
                     checked={toBoolean(field?.value)}
                     onChange={onCheckboxChangeClick} />
         </Flex>

@@ -16,6 +16,8 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import toast from "react-hot-toast";
 import appService from "@/api/app.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
+import {getConfigValue} from "@/config/WebConfig.jsx";
+import {DevRouteNames} from "@/routes/DevRoutes.jsx";
 
 function LayoutExtra() {
     const { isMockData } = useApp();
@@ -29,7 +31,7 @@ function LayoutExtra() {
     const [selectedDashboardType, setSelectedDashboardType] = useState('empty-set-sharp-regular');
     const [isPrimaryPageTypeOpened, setIsPrimaryPageTypeOpened] = useState(false);
     const [selectedPrimaryPageType, setSelectedPrimaryPageType] = useState('empty-set-sharp-regular');
-    
+    const isDebugMode = getConfigValue('IsDebugMode');
     
     //based on route
     const [showDashboardType, setShowDashboardType] = useState(false);
@@ -260,6 +262,17 @@ function LayoutExtra() {
                             </Button>
                         </div>
                     )}
+                </div>
+            }
+
+            {isDebugMode &&
+                <div className={styles.dashboardTypeContainer}>
+                    <Button shape="circle" onClick={() => {
+                        navigate(DevRouteNames.DEV_ALL);
+                    }}>
+                        <SVG icon={'pincode'} size={16}/>
+                    </Button>
+                    
                 </div>
             }
         </div>

@@ -25,6 +25,7 @@ const FormPaymentProfileStripe = React.forwardRef(({ stripeCardElementRef,
 
     const hidePostalCode = false;
     const workingFontFamily = 'Inter'; //cshtml
+    const {token, globalStyles} = useApp();
     
     useEffect(() => {
         const loadAndInitializeStripe = async () => {
@@ -73,7 +74,7 @@ const FormPaymentProfileStripe = React.forwardRef(({ stripeCardElementRef,
                             }
                         },
                         invalid: {
-                            color: '#fa755a',
+                            color: token.Form.colorError,
                             iconColor: '#9fa19c'
                         }
                     },
@@ -102,19 +103,28 @@ const FormPaymentProfileStripe = React.forwardRef(({ stripeCardElementRef,
     return (
         <>
             <div className={`react-form-block`}>
-                <label htmlFor='card_number' className={`required-label`}>Card Number</label>
+                <label htmlFor='card_number' className={globalStyles.globalLabel}>
+                    Card Number
+                    <span style={{color: token.Form.labelRequiredMarkColor, marginLeft: token.Form.marginXXS}}>*</span>
+                </label>
                 <span className='p-relative'>
                             <div ref={stripeCardElementRef} style={{
                                 border: '1px solid #dfdfdf',
                                 borderRadius: '8px',
                                 paddingTop: '12px',
-                                paddingLeft: '10px'
+                                paddingLeft: '10px',
+                                height: '26px'
                             }}>
 
                             </div>
                         </span>
                 {validationMessage &&
-                    <div className='form-invalid'>{validationMessage}</div>
+                    <Paragraph style={{
+                        color: token.Form.colorError,
+                        marginLeft: token.Form.labelColonMarginInlineStart
+                    }}>
+                        {validationMessage}
+                    </Paragraph>
                 }
             </div>
         </>

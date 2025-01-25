@@ -29,7 +29,6 @@ function    CardLinks({links}) {
                         <Col span={8} key={index}>
                             <Card className={styles.cardPrimary}
                                   onClick={() => {
-                                      console.log(link)
                                       if (toBoolean(link.TargetBlank)) {
                                           displayMessageModal({
                                               title: "External Link",

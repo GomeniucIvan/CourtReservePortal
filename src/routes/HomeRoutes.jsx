@@ -10,10 +10,12 @@ import NewsList from "@portal/news/list/NewsList.jsx";
 import NewsDetails from "@portal/news/details/NewsDetails.jsx";
 import ProfileMyOrganizationList from "@portal/profile/organizations/list/ProfileMyOrganizationList.jsx";
 import NotificationDetails from "@portal/notification/details/NotificationDetails.jsx";
+import NotFoundPage from "@portal/home/403/NotFoundPage.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
     INDEX: '/',
+    NOT_FOUND: '/403',
     SCHEDULER: '/online/reservations/bookings/:id',
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/online/announcement/index/:id`,
@@ -98,6 +100,13 @@ const HomeRoutes = [
         element: <ProfileMyOrganizationList />,
         title: 'organizationList',
         header: true
+    },
+    {
+        path: HomeRouteNames.NOT_FOUND,
+        element: <NotFoundPage />,
+        title: 'notFound',
+        header: true,
+        unauthorized: true
     }
 ];
 

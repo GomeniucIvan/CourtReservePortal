@@ -8,6 +8,7 @@ import {cx} from "antd-style";
 import {useTranslation} from "react-i18next";
 import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 import SVG from "@/components/svg/SVG.jsx";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 
 const FormInput = ({ label,
                        formik,
@@ -202,6 +203,7 @@ const FormInput = ({ label,
                     (<Input.Password
                             {...props}
                             {...field}
+                            {...addCypressTag(name)}
                             onInput={handleInputChange}
                             disabled={disabled}
                             onFocus={handeInputFocus}
@@ -223,6 +225,7 @@ const FormInput = ({ label,
                     (<Input
                             {...props}
                             {...field}
+                            {...addCypressTag(name)}
                             onInput={handleInputChange}
                             disabled={disabled}
                             onFocus={handeInputFocus}

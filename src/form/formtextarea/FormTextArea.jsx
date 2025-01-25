@@ -1,7 +1,8 @@
 import {Input, Typography} from 'antd';
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
-import {toBoolean} from "../../utils/Utils.jsx";
+import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 const { TextArea } = Input;
 const { Paragraph } = Typography;
 
@@ -36,8 +37,9 @@ const FormTextarea = ({ formik, name, rows = 3, max = null, placeholder = '',isR
             </label>
             <TextArea
                 {...field}
-                showCount
-                maxLength={max}
+                {...addCypressTag(name)}
+                showCount={(isNullOrEmpty(max) || max === 0) ? false : true}
+                maxLength={(isNullOrEmpty(max) || max === 0) ? undefined : max}
                 onChange={onChange}
                 onBlur={() => formik.setFieldTouched(name, true)}
                 placeholder={placeholder}

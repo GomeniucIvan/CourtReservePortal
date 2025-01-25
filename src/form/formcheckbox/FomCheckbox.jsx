@@ -2,6 +2,7 @@ import {Checkbox, Flex, Typography} from "antd";
 import React from "react";
 import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 
 const {Paragraph} = Typography;
 
@@ -39,7 +40,13 @@ const FormCheckbox = ({label, text, formik, name, description, descriptionClick}
                 }
 
                 <Flex align={'center'}>
-                    <Checkbox className={globalStyles.checkboxWithLink} defaultChecked={toBoolean(field?.value)} onChange={(e) => {formik.setFieldValue(name, e.target.checked)}}>{text}</Checkbox>
+                    <Checkbox className={globalStyles.checkboxWithLink}
+                              {...addCypressTag(name)}
+                              defaultChecked={toBoolean(field?.value)}
+                              onChange={(e) => {formik.setFieldValue(name, e.target.checked)}}>
+                        {text}
+                    </Checkbox>
+                    
                     {!isNullOrEmpty(description) &&
                         <>
                             {isNullOrEmpty(descriptionClick) ? (

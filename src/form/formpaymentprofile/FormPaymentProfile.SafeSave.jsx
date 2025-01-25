@@ -2,6 +2,8 @@ import React, {useRef, useState, useEffect} from 'react';
 import {Flex, Skeleton, Typography} from 'antd';
 import {isNullOrEmpty, equalString, toBoolean} from "../../utils/Utils.jsx";
 import FormInput from "../input/FormInput.jsx";
+import {useApp} from "@/context/AppProvider.jsx";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 const { Paragraph } = Typography;
 
 const FormPaymentProfileSafeSave = React.forwardRef(({ formik,
@@ -17,6 +19,8 @@ const FormPaymentProfileSafeSave = React.forwardRef(({ formik,
                                                          isUsingCollectJsLoading
                                                      }, ref) => {
 
+    const {token} = useApp();
+    
     useEffect(() => {
         const loadAndInitializeCollectSafeSave = (isEcheck) => {
             setIsUsingCollectJsLoading(true);
@@ -60,6 +64,7 @@ const FormPaymentProfileSafeSave = React.forwardRef(({ formik,
             document.body.appendChild(script);
 
             script.onload = () => {
+                
                 const config = {
                     "variant": "inline",
                     "tokenizationKey": stripeKey,
@@ -181,11 +186,20 @@ const FormPaymentProfileSafeSave = React.forwardRef(({ formik,
                 <>
                     {toBoolean(isUsingCollectJsLoading) &&
                         <>
-                            <Skeleton.Input active={true} block={true} style={{width: '100%'}}/>
+                            <Flex vertical={true} gap={8}>
+                                <Skeleton.Button active={true} block style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
+                                <Skeleton.Button active={true} block style={{height: token.Input.controlHeight}}/>
+                            </Flex>
 
                             <Flex gap={token.padding}>
-                                <Skeleton.Input active={true} block={true} style={{width: '100%'}}/>
-                                <Skeleton.Input active={true} block={true} style={{width: '100%'}}/>
+                                <Flex vertical={true} gap={8} flex={1}>
+                                    <Skeleton.Button active={true} block style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
+                                    <Skeleton.Button active={true} block style={{height: token.Input.controlHeight}}/>
+                                </Flex>
+                                <Flex vertical={true} gap={8} flex={1}>
+                                    <Skeleton.Button active={true} block style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
+                                    <Skeleton.Button active={true} block style={{height: token.Input.controlHeight}}/>
+                                </Flex>
                             </Flex>
                         </>
                     }
