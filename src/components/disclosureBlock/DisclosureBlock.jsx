@@ -1,5 +1,5 @@
 ﻿import {useStyles} from "./styles.jsx";
-import {Button, Card, Checkbox, Flex, Skeleton, Typography, Upload} from "antd";
+import {Button, Card, Checkbox, Flex, Skeleton, Switch, Typography, Upload} from "antd";
 import {useApp} from "../../context/AppProvider.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import IframeContent from "@/components/iframecontent/IframeContent.jsx";
@@ -15,6 +15,8 @@ import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {cx} from 'antd-style';
+import {Ellipsis} from "antd-mobile";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs`;
 
 const {Text, Title} = Typography;
@@ -28,7 +30,7 @@ function DisclosureBlock({disclosure,
                              onSign,
                              onClear,
                              dateTimeDisplay,
-                             handleReadAgreementCheckboxChange
+                             onAcceptAgreementChange
 }) {
     const {globalStyles, token} = useApp();
     const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
@@ -118,6 +120,8 @@ function DisclosureBlock({disclosure,
         }
     };
     
+    console.log(formik?.values)
+    
     return (
         <>
             {!isNullOrEmpty(disclosure?.RuleInstructions) &&
@@ -126,7 +130,7 @@ function DisclosureBlock({disclosure,
                 </Button>
             }
 
-            <Flex className={cx(globalStyles.waiverUploadFlex,!isNullOrEmpty(disclosure.SignatureDataUrl) && globalStyles.waiverUploadSigned )}
+            <Flex className={cx(globalStyles.waiverUploadFlex)}
                   vertical={true}
                   gap={token.Custom.buttonPadding}
                   onClick={() => {
@@ -183,7 +187,7 @@ function DisclosureBlock({disclosure,
                     block
                     onClick={() => {setSelectedWaiverToView(disclosure)}}
                     htmlType="button">
-                {t('disclosure.viewWaiverButton', {name: disclosure.Name})}
+                {!isNullOrEmpty(disclosure?.ReadAgreementMessage) ? t('disclosure.viewWaiverButton', {name: disclosure.Name}) : `View ${disclosure.Name}` }
             </Button>
             
             {/*INSTRUCTIONS*/}
@@ -244,16 +248,20 @@ function DisclosureBlock({disclosure,
                 closeDrawer={() => {
                     setSelectedWaiverToView(null)
                 }}
-                label={selectedWaiverToView?.Name}
+                label={disclosure?.Name}
                 maxHeightVh={80}
                 showButton={true}
                 customFooter={<Flex vertical={true} gap={token.paddingMD}>
-                    {!isNullOrEmpty(selectedWaiverToView?.ReadAgreementMessage) &&
-                        <FormSwitch formik={formik}
-                                    name={`test`}
-                                    rows={2}
-                                    checked={toBoolean(selectedWaiverToView?.AcceptAgreement)}
-                                    label={'By signing I agree to the terms and conditions of this Membership Agreement'} />
+                    {!isNullOrEmpty(disclosure?.ReadAgreementMessage) &&
+                        <Flex justify={"space-between"} align={"center"} style={{height: 44}}>
+                            <Text onClick={() => {onAcceptAgreementChange(!disclosure?.AcceptAgreement)}}>
+                                <Ellipsis direction='end' rows={2} content={'By signing I agree to the terms and conditions of this Membership Agreement'}/>
+                            </Text>
+
+                            <Switch {...addCypressTag(`disclosure_${disclosure?.Id}`)}
+                                    checked={toBoolean(disclosure?.AcceptAgreement)}
+                                    onChange={onAcceptAgreementChange} />
+                        </Flex>
                     }
 
                     <Flex gap={token.padding}>
@@ -267,7 +275,7 @@ function DisclosureBlock({disclosure,
                                 block 
                                 onClick={() => {
                                     if (!isNullOrEmpty(disclosure.ReadAgreementMessage)) {
-                                        if (toBoolean(disclosure.ReadAgreementMessage)) {
+                                        if (disclosure?.AcceptAgreement) {
                                             setSelectedWaiverToView(null)
                                         } else {
                                             displayMessageModal({

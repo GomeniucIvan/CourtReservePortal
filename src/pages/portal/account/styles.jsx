@@ -71,5 +71,11 @@ export const useStyles = createStyles(({ css, token }) => ({
     span {
       color: ${token.colorPrimary};
     }
-  `
+  `,
+  membershipReviewCard: css`
+        padding: ${token.paddingLG}px ${token.padding}px;
+        background-color: ${token.colorBgLayout};
+        border: 1px solid ${token.colorBorder};
+        border-radius: ${token.borderRadius}px;
+        `
 }));

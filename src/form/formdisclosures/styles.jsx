@@ -6,5 +6,8 @@ export const useStyles = createStyles(({ css, token }) => ({
         border-radius: ${token.borderRadius}px;
         border: 1px solid ${token.colorBorder};
         padding: ${token.padding}px;
+    `,
+    errorBlock: css`
+        border: 1px solid ${token.colorError};
     `
 }));

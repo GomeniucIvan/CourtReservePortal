@@ -29,7 +29,7 @@ function LoginMembershipDetails({ mainFormik, isLastStep, onNext }) {
                     htmlType="submit"
                     disabled={isFetching}
                     onClick={onNext}>
-                {isLastStep ? 'Create Account' : t('additionalInfo.button.continue')}
+                {isLastStep ? 'Create Account' : 'Review & Finalize'}
             </Button>
         </FooterBlock>);
         setHeaderTitleKey('loginMembershipDetails');

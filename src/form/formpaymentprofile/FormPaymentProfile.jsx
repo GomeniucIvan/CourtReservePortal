@@ -1,5 +1,5 @@
 import React, {useRef, useState, forwardRef, useImperativeHandle, useEffect} from 'react';
-import {Flex, Skeleton, Typography} from 'antd';
+import {Divider, Flex, Segmented, Skeleton, Typography} from 'antd';
 import { FortisPaymentType_Ach, FortisPaymentType_CreditCard, PAYMENT_FORTIS_SOURCE_CreateMember, PAYMENT_FORTIS_SOURCE_CreatePaymentProfileAdmin, PAYMENT_FORTIS_SOURCE_CreatePaymentProfilePortal, PAYMENT_FORTIS_SOURCE_POS, PAYMENT_FORTIS_SOURCE_PayTransactionAdmin, PAYMENT_FORTIS_SOURCE_PortalPayment, PAYMENT_FORTIS_SOURCE_PortalRequestAccess, PaymentProfileAccountType_Card, TransactionPaymentTypeEnum_CreditCardSwipe } from './FormPaymentProfile_Contants.jsx';
 import {isNullOrEmpty, equalString, toBoolean, focus, anyInList} from "../../utils/Utils.jsx";
 import {getConfigValue} from "../../config/WebConfig.jsx";
@@ -18,7 +18,7 @@ import FormPaymentProfileCardConnect from "@/form/formpaymentprofile/FormPayment
 import FormPaymentProfileStripe from "@/form/formpaymentprofile/FormPaymentProfile.Stripe.jsx";
 import FormPaymentProfileSafeSave from "@/form/formpaymentprofile/FormPaymentProfile.SafeSave.jsx";
 import FormPaymentProfileECheck from "@/form/formpaymentprofile/FormPaymentProfile.ECheck.jsx";
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 
 let resolvePaymentRequest, rejectPaymentRequest;
 
@@ -26,37 +26,34 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                                                  paymentTypes,
                                                  convenienceFeeObj,
                                                  paymentFrequencyCost,
-                                                 setBtnIsLoading,
-                                                 includeCustomerDetails,
-                                                 sourcePage,
-                                                 calculateTotalToPay,
-                                                 joinOrgId,
                                                  isPaymentProfile,
                                                  allowToSavePaymentProfile,
-                                                 showStatesDropdown,
-                                                 uiCulture,
                                                  paymentProviderData = {},
+                                                 showBillingInformation = true,
                                                  hideFields = {
-                                                     address2: false,
-                                                     phoneNumber: false
-                                                 },
-                                                 onAccountTypeChange}, ref) => {
+                                                     firstLastName: true,
+                                                     address2: true,
+                                                     phoneNumber: true,
+                                                     accountType: true
+                                                 }}, ref) => {
 
     const [validationMessage, setValidationMessage] = useState('');
     const [stripe, setStripe] = useState(null);
     const [stripeCardElement, setStripeCardElement] = useState(null);
     const [showECheckDetails, setShowECheckDetails] = useState(false);
     const [showCardDetails, setShowCardDetails] = useState(false);
-    const [convinienceFeeText, setConvinienceFeeText] = useState('');
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
-
+    const [selectedSegmentType, setSelectedSegmentType] = useState('');
+    
     const stripeCardElementRef = useRef(null);
     const [validationMessages, setValidationMessages] = useState({});
-    const {token} = useApp();
+    const {token, globalStyles} = useApp();
 
     let paymentProvider = paymentProviderData?.PaymentProvider;
     let stripeKey = paymentProviderData?.StripePublishableKey;
     let isUsingCollectJs = paymentProviderData?.IsUsingCollectJs;
+    let uiCulture = paymentProviderData?.UiCulture;
+    let showStatesDropdown = toBoolean(paymentProviderData?.ShowStatesDropdown);
 
     const [fieldValidity, setFieldValidity] = useState({
         ccnumber: false,
@@ -225,176 +222,182 @@ const FormPaymentProfile = React.forwardRef(({ formik,
             };
         }
     }));
-    
-    //conv fee
-    useEffect(() => {
-        checkConvinienceFeeDisplay(formik?.values?.card_accountType);
-    }, [paymentFrequencyCost, formik?.values?.card_accountType])
+
+    // if (isNullOrEmpty(paymentTypes)) {
+    //     paymentTypes = [];
+    // }
+
+    // const accountTypeChange = (selectedValue) => {
+    //     setShowCardDetails(equalString(selectedValue, 1));
+    //     setShowECheckDetails(equalString(selectedValue, 2));
+    // }
+    //
+    // useEffect(() => {
+    //     if (!isNullOrEmpty(formik?.values?.card_accountType)){
+    //         accountTypeChange(formik?.values?.card_accountType);
+    //     }
+    // }, [])
+    //
+    // useEffect(() => {
+    //     let accType = formik?.values?.card_accountType;
+    //     accountTypeChange(accType);
+    // }, [formik?.values?.card_accountType]);
 
     useEffect(() => {
-        if (!isNullOrEmpty(formik?.values?.card_accountType)){
-            accountTypeChange(formik?.values?.card_accountType, true);
-        }
-    }, [])
-
-    if (isNullOrEmpty(paymentTypes)) {
-        paymentTypes = [];
-    }
-
-    const checkConvinienceFeeDisplay = (selectedAccountType) => {
-        let clearConvinienceFeeText = true;
-
-        if (equalString(selectedAccountType, 1) && !isNullOrEmpty(convenienceFeeObj) && paymentFrequencyCost) {
-            if (paymentFrequencyCost > 0) {
-                clearConvinienceFeeText = false;
-                setConvinienceFeeText(`A CONVENIENCE FEE OF ${convenienceFeeObj.convenienceFeePercent}% WILL BE ADDED TO YOUR TOTAL CREDIT CARD PURCHASE`)
-            }
-        }
-
-        if (clearConvinienceFeeText) {
-            setConvinienceFeeText('');
-        }
-    }
-
-    const accountTypeChange = (selectedValue, isInitialCall) => {
-        setShowCardDetails(equalString(selectedValue, 1));
-        setShowECheckDetails(equalString(selectedValue, 2));
-        checkConvinienceFeeDisplay(selectedValue);
-
-        if (!isInitialCall){
-            if (typeof onAccountTypeChange === 'function') {
-                onAccountTypeChange(selectedValue);
-            }
-        }
-
-        if (equalString(paymentProvider, 4)) {
-            //showFortisPaymentForm();
-        }
-    }
-
-    useEffect(() => {
-        let accType = formik?.values?.card_accountType;
-        accountTypeChange(accType);
-    }, [formik?.values?.card_accountType]);
+        setSelectedSegmentType(paymentProviderData?.SelectedSegment);
+    }, [paymentProviderData?.SelectedSegment]);
     
     return (
-        <>
-            <FormSelect
-                formik={formik}
-                name='card_accountType'
-                label='Account Type'
-                options={paymentTypes}
-                required={true}
-                propText='Text'
-                propValue='Value' />
-
-            {(showCardDetails && !isNullOrEmpty(convinienceFeeText)) &&
-                <div className='form-invalid' style={{ marginTop: '-16px', paddingBottom: '16px' }}>{convinienceFeeText}</div>
-            }
-
-            {showECheckDetails &&
-                <>
-                    <FormPaymentProfileECheck formik={formik} 
-                                              isUsingCollectJs={isUsingCollectJs}
-                                              validationMessages={validationMessages} 
-                                              isUsingCollectJsLoading={isUsingCollectJsLoading} />
-                </>
-            }
-
-            {(showCardDetails && toBoolean(includeCustomerDetails)) &&
-                <>
-                    <FormInput label="First Name"
-                               formik={formik}
-                               required={true}
-                               name='card_firstName'
-                    />
-                    <FormInput label="Last Name"
-                               formik={formik}
-                               required={true}
-                               name='card_lastName'
-                    />
-                </>
+        <Flex vertical={true} gap={token.padding}>
+            {(anyInList(paymentTypes) && !toBoolean(hideFields?.accountType)) &&
+                <FormSelect
+                    formik={formik}
+                    name='card_accountType'
+                    label='Account Type'
+                    options={paymentTypes}
+                    required={true}
+                    propText='Text'
+                    propValue='Value' />
             }
             
-            {/*CARD CONNECT*/}
-            {(equalString(paymentProvider, 1) && showCardDetails) &&
-               <FormPaymentProfileCardConnect formik={formik} />
-            }
-
-            {/*STRIPE*/}
-            {(equalString(paymentProvider, 2) && showCardDetails) &&
-                <FormPaymentProfileStripe stripeCardElementRef={stripeCardElementRef}
-                                          stripeKey={stripeKey}
-                                          setStripeCardElement={setStripeCardElement}
-                                          setStripe={setStripe}
-                                          setValidationMessage={setValidationMessage}
-                                          validationMessage={validationMessage} />
-            }
-
-            {/*SAFESAVE*/}
-            {(equalString(paymentProvider, 3) && showCardDetails) &&
-                <FormPaymentProfileSafeSave formik={formik} 
-                                            isUsingCollectJs={isUsingCollectJs}
-                                            stripeKey={stripeKey}
-                                            validationMessages={validationMessages}
-                                            setFieldValidity={setFieldValidity}
-                                            setValidationMessages={setValidationMessages}
-                                            resolvePaymentRequest={resolvePaymentRequest}
-                                            rejectPaymentRequest={rejectPaymentRequest}
-                                            setIsUsingCollectJsLoading={setIsUsingCollectJsLoading}
-                                            isUsingCollectJsLoading={isUsingCollectJsLoading}
-                                            isEcheck={isEcheck}
-                />
-            }
-
-            {(equalString(paymentProvider, 4) && showCardDetails) &&
+            {showBillingInformation &&
                 <>
-                   
-                </>
-            }
+                    <Flex vertical={true} gap={token.paddingLG}>
+                        <Title level={3}>Billing Information</Title>
 
-            {(showCardDetails && toBoolean(includeCustomerDetails)) &&
-                <>
-                    <FormInput label="Street Address"
-                               formik={formik}
-                               name='card_streetAddress' />
+                        <Flex gap={token.padding} vertical={true}>
+                            {!toBoolean(hideFields?.firstLastName) &&
+                                <>
+                                    <FormInput label="First Name"
+                                               formik={formik}
+                                               required={true}
+                                               name='card_firstName'
+                                    />
 
-                    {!toBoolean(hideFields?.address2) &&
-                        <FormInput label="Street Address2"
-                                   formik={formik}
-                                   name='card_streetAddress2' />
-                    }
+                                    <FormInput label="Last Name"
+                                               formik={formik}
+                                               required={true}
+                                               name='card_lastName'
+                                    />
+                                </>
+                            }
+                            
+                            <FormInput label="Street Address"
+                                       formik={formik}
+                                       name='card_streetAddress' />
 
-                    <FormInput label="City"
-                               formik={formik}
-                               name='card_city' />
+                            {!toBoolean(hideFields?.address2) &&
+                                <FormInput label="Street Address2"
+                                           formik={formik}
+                                           name='card_streetAddress2' />
+                            }
 
-                    <Flex gap={token.padding}>
-                        <FormStateProvince formik={formik}
-                                           dropdown={toBoolean(showStatesDropdown)}
-                                           uiCulture={uiCulture}
-                                           name='card_state'
-                        />
+                            <FormInput label="City"
+                                       formik={formik}
+                                       name='card_city' />
 
-                        <FormInput label={isNonUsCulture() ? 'Postal Code' : 'Zip Code'}
-                                   formik={formik}
-                                   name='card_zipCode' />
+                            <Flex gap={token.padding}>
+                                <FormStateProvince formik={formik}
+                                                   dropdown={toBoolean(showStatesDropdown)}
+                                                   uiCulture={uiCulture}
+                                                   name='card_state'
+                                />
+
+                                <FormInput label={isNonUsCulture() ? 'Postal Code' : 'Zip Code'}
+                                           formik={formik}
+                                           name='card_zipCode' />
+                            </Flex>
+
+                            {!toBoolean(hideFields?.phoneNumber) &&
+                                <FormInput label={'Phone Number'}
+                                           formik={formik}
+                                           name='card_phoneNumber' />
+                            }
+
+                            {equalString(paymentProvider, 1) &&
+                                <FormSelect
+                                    formik={formik}
+                                    name='card_country'
+                                    label='Country'
+                                    options={getAllCountries()}
+                                    required={true}
+                                    propText='Name'
+                                    propValue='Code'/>
+                            }
+                        </Flex>
                     </Flex>
-
-                    {!toBoolean(hideFields?.phoneNumber) &&
-                        <FormInput label={'Phone Number'}
-                                   formik={formik}
-                                   name='card_phoneNumber' />
-                    }
                 </>
             }
 
-            {(showCardDetails && allowToSavePaymentProfile) &&
-                <FormSwitch label={'Save Payment Profile'}
-                            formik={formik}
-                            name={'card_savePaymentProfile'}/>
+            {showBillingInformation &&
+                <Divider className={globalStyles.noMargin} />
             }
-        </>
+            
+            <>
+                <Flex vertical={true} gap={token.paddingLG}>
+                    <Title level={3}>Payment Information</Title>
+
+                    <Flex vertical={true} gap={token.padding}>
+                        {(toBoolean(paymentProviderData?.ShowSegment)) &&
+                            <Segmented options={['Credit Card', 'eCheck']}
+                                       defaultValue={selectedSegmentType}
+                                       block
+                                       onChange={(e) => { setSelectedSegmentType(e) }} />
+                        }
+                        
+                        {(equalString(selectedSegmentType, 'eCheck')) &&
+                            <>
+                                <FormPaymentProfileECheck formik={formik}
+                                                          isUsingCollectJs={isUsingCollectJs}
+                                                          validationMessages={validationMessages}
+                                                          isUsingCollectJsLoading={isUsingCollectJsLoading} />
+                            </>
+                        }
+
+                        {(equalString(selectedSegmentType, 'Credit Card')) &&
+                            <>
+                                {/*CARD CONNECT*/}
+                                {(equalString(paymentProvider, 1)) &&
+                                    <FormPaymentProfileCardConnect formik={formik} />
+                                }
+
+                                {/*STRIPE*/}
+                                {(equalString(paymentProvider, 2)) &&
+                                    <FormPaymentProfileStripe stripeCardElementRef={stripeCardElementRef}
+                                                              stripeKey={stripeKey}
+                                                              setStripeCardElement={setStripeCardElement}
+                                                              setStripe={setStripe}
+                                                              setValidationMessage={setValidationMessage}
+                                                              validationMessage={validationMessage} />
+                                }
+
+                                {/*SAFESAVE*/}
+                                {(equalString(paymentProvider, 3)) &&
+                                    <FormPaymentProfileSafeSave formik={formik}
+                                                                isUsingCollectJs={isUsingCollectJs}
+                                                                stripeKey={stripeKey}
+                                                                validationMessages={validationMessages}
+                                                                setFieldValidity={setFieldValidity}
+                                                                setValidationMessages={setValidationMessages}
+                                                                resolvePaymentRequest={resolvePaymentRequest}
+                                                                rejectPaymentRequest={rejectPaymentRequest}
+                                                                setIsUsingCollectJsLoading={setIsUsingCollectJsLoading}
+                                                                isUsingCollectJsLoading={isUsingCollectJsLoading}
+                                                                isEcheck={isEcheck}
+                                    />
+                                }
+
+                                {(allowToSavePaymentProfile) &&
+                                    <FormSwitch label={'Save Payment Profile'}
+                                                formik={formik}
+                                                name={'card_savePaymentProfile'}/>
+                                }
+                            </>
+                        }
+                    </Flex>
+                </Flex>
+            </>
+        </Flex>
     );
 })
 

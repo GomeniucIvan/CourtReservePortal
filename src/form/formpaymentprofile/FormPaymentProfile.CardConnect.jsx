@@ -118,15 +118,6 @@ const FormPaymentProfileCardConnect = React.forwardRef(({ formik}, ref) => {
                            max={9999}
                 />
             </Flex>
-
-            <FormSelect
-                formik={formik}
-                name='card_country'
-                label='Country'
-                options={getAllCountries()}
-                required={true}
-                propText='Name'
-                propValue='Code'/>
         </>
     );
 })

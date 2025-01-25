@@ -534,3 +534,23 @@ export const validateDateOfBirth = (t, formik) => {
 
     return true;
 }
+
+export const validateDisclosures = (t, formik, orgSignup) => {
+    let isValid = true;
+    
+    if (anyInList(formik?.values?.disclosures)) {
+        formik?.values?.disclosures.forEach((disclosure, index) => {
+            if (isNullOrEmpty(disclosure.SignatureDataUrl) || !toBoolean(disclosure.AcceptAgreement)) {
+                formik.setFieldValue(`disclosures[${index}].Status`, 'Error');
+                isValid = false;
+            }
+        });
+    }
+
+    if (orgSignup && !isNullOrEmpty(orgSignup.Disclosures) && toBoolean(orgSignup.IsDisclosuresRequired) && !toBoolean(formik?.values?.disclosureAgree)) {
+        formik.setFieldValue(`disclosureAgreeErrorStatus`, 'Error');
+        isValid = false;
+    }
+    
+    return isValid;
+}

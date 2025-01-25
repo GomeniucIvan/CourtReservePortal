@@ -5,7 +5,7 @@ import {Button, Checkbox, Flex, Skeleton, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
 
 import {
-    anyInList, equalString,
+    anyInList,
     isNullOrEmpty,
     nullToEmpty,
     toBoolean
@@ -13,7 +13,6 @@ import {
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import PageForm from "@/form/pageform/PageForm.jsx";
 import apiService from "@/api/api.jsx";
-import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
 import {emptyArray} from "@/utils/ListUtils.jsx";
@@ -32,8 +31,6 @@ import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import SVG from "@/components/svg/SVG.jsx";
-import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 

@@ -12,7 +12,7 @@ import FormPaymentProfileStripe from "@/form/formpaymentprofile/FormPaymentProfi
 import FormPaymentProfileSafeSave from "@/form/formpaymentprofile/FormPaymentProfile.SafeSave.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {membershipRequirePayment} from "@/utils/CostUtils.jsx";
-import {setFormikError, validatePaymentProfile} from "@/utils/ValidationUtils.jsx";
+import {setFormikError, validateDisclosures, validatePaymentProfile} from "@/utils/ValidationUtils.jsx";
 import {CardConstants} from "@/constants/CardConstants.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
@@ -24,12 +24,14 @@ import FormCheckbox from "@/form/formcheckbox/FomCheckbox.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import InstructionBlock from "@/components/instructionblock/InstructionBlock.jsx";
 import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
+import {useTranslation} from "react-i18next";
 
 const { Text, Title } = Typography;
 
 function DevAgreements() {
     const {token} = useApp();
-
+    const { t } = useTranslation('');
+    
     const formik = useCustomFormik({
         initialValues: {
 
@@ -43,13 +45,14 @@ function DevAgreements() {
                     DisclosureText: 'DisclosureText 0',
                     SignatureDataUrl: '', 
                     Status: '',
-                    ContentType: '2', 
+                    ContentType: '2',
+                    AcceptAgreement: false,
                     FullPath:'https://tgcstorage.blob.core.windows.net/court-reserve-6969/4fdd4728-d074-49a0-9510-21c4e73d74a5.pdf'},
                 
-                {RuleInstructions: 'RuleInstructions Text1', Id: '1', Name: 'Name 1', DisclosureText: 'DisclosureText 1', SignatureDataUrl: '', Status: ''},
-                {RuleInstructions: 'RuleInstructions Text2', Id: '2', Name: 'Name 2', DisclosureText: 'DisclosureText 2', SignatureDataUrl: '', Status: ''},
-                {RuleInstructions: 'RuleInstructions Text3', Id: '3', Name: 'Name 3', DisclosureText: 'DisclosureText 3 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 3', SignatureDataUrl: '', Status: ''},
-                {RuleInstructions: 'RuleInstructions Text4', Id: '4', Name: 'Name 4', DisclosureText: 'DisclosureText 4 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 4', SignatureDataUrl: '', Status: ''},
+                {RuleInstructions: 'RuleInstructions Text1', Id: '1', Name: 'Name 1', DisclosureText: 'DisclosureText 1', SignatureDataUrl: '', Status: '', AcceptAgreement: false},
+                {RuleInstructions: 'RuleInstructions Text2', Id: '2', Name: 'Name 2', DisclosureText: 'DisclosureText 2', SignatureDataUrl: '', Status: '', AcceptAgreement: false},
+                {RuleInstructions: 'RuleInstructions Text3', Id: '3', Name: 'Name 3', DisclosureText: 'DisclosureText 3 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 3', AcceptAgreement: false, SignatureDataUrl: '', Status: ''},
+                {RuleInstructions: 'RuleInstructions Text4', Id: '4', Name: 'Name 4', DisclosureText: 'DisclosureText 4 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 4', AcceptAgreement: false, SignatureDataUrl: '', Status: ''},
             ],
             signFirstName: 'Mike',
             signLastName: 'Jackson',
@@ -59,8 +62,15 @@ function DevAgreements() {
         },
     });
     
-    const validateDisclosures = () => {
+    const validateFormDisclosures = () => {
+        let isValid = validateDisclosures(t, formik, {
+            Disclosures: 'Test Disclosure',
+            IsDisclosuresRequired: true
+        });
         
+        if (isValid) {
+            pNotify("Valid formik")
+        }
     }
     
     return (
@@ -69,7 +79,7 @@ function DevAgreements() {
                 <FormDisclosures formik={formik} disclosureHtml={'Disclosure Html Body for test'} dateTimeDisplay={'Fake Time 12:00PM'}/>
                 
                 <Flex gap={16} style={{paddingTop: '16px'}}>
-                    <Button type={'primary'} block={true} onClick={validateDisclosures}>Validate Disclosures</Button>
+                    <Button type={'primary'} block={true} onClick={validateFormDisclosures}>Validate Disclosures</Button>
                 </Flex>
             </div>
         </PaddingBlock>

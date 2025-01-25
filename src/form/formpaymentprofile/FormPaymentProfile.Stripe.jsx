@@ -1,19 +1,6 @@
 import React, {useRef, useState, forwardRef, useImperativeHandle, useEffect} from 'react';
-import {Flex, Skeleton, Typography} from 'antd';
-import { FortisPaymentType_Ach, FortisPaymentType_CreditCard, PAYMENT_FORTIS_SOURCE_CreateMember, PAYMENT_FORTIS_SOURCE_CreatePaymentProfileAdmin, PAYMENT_FORTIS_SOURCE_CreatePaymentProfilePortal, PAYMENT_FORTIS_SOURCE_POS, PAYMENT_FORTIS_SOURCE_PayTransactionAdmin, PAYMENT_FORTIS_SOURCE_PortalPayment, PAYMENT_FORTIS_SOURCE_PortalRequestAccess, PaymentProfileAccountType_Card, TransactionPaymentTypeEnum_CreditCardSwipe } from './FormPaymentProfile_Contants.jsx';
-import {isNullOrEmpty, equalString, toBoolean, focus, anyInList} from "../../utils/Utils.jsx";
-import {getConfigValue} from "../../config/WebConfig.jsx";
-import FormSelect from "../formselect/FormSelect.jsx";
-import FormInput from "../input/FormInput.jsx";
-import {useAuth} from "../../context/AuthProvider.jsx";
-import {getAllCountries} from "../../utils/CountryUtils.jsx";
+import {Typography} from 'antd';
 import {useApp} from "../../context/AppProvider.jsx";
-import {cx} from "antd-style";
-import {isNonUsCulture} from "../../utils/DateUtils.jsx";
-import FormSwitch from "../formswitch/FormSwitch.jsx";
-import FormStateProvince from "../formstateprovince/FormStateProvince.jsx";
-import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
-import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 const { Paragraph } = Typography;
 
 const FormPaymentProfileStripe = React.forwardRef(({ stripeCardElementRef,
