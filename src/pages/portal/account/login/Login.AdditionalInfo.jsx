@@ -1,11 +1,11 @@
 import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useState} from "react";
-import {Button, Flex, Skeleton, Typography} from 'antd';
+import {Button, Checkbox, Flex, Skeleton, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
 
 import {
-    anyInList,
+    anyInList, equalString,
     isNullOrEmpty,
     nullToEmpty,
     toBoolean
@@ -32,6 +32,8 @@ import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
+import SVG from "@/components/svg/SVG.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -197,8 +199,14 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
 
             {(!isFetching && !isNullOrEmpty(additionInfoData)) &&
                 <PaddingBlock topBottom={true}>
-
                     <PageForm formik={formik}>
+
+                        {!isNullOrEmpty(additionInfoData?.InstructionText) &&
+                            <>
+                                
+                            </>
+                        }
+
                         <FormInput label={t(`additionalInfo.form.firstName`)}
                                    formik={formik}
                                    name='firstName'

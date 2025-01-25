@@ -8,21 +8,13 @@ import {Alert, Button, Card, Checkbox, Divider, Flex, Skeleton, Typography, Uplo
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useFormik} from "formik";
 import {useTranslation} from "react-i18next";
-import IframeContent from "@/components/iframecontent/IframeContent.jsx";
-import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
-import SignatureCanvas from 'react-signature-canvas'
 import {pNotify} from "@/components/notification/PNotify.jsx";
-import { Document,pdfjs } from 'react-pdf';
-import {DownloadOutlined} from "@ant-design/icons";
-import {getPdfFileDataUrl, isFileType, openPdfInNewTab} from "@/utils/FileUtils.jsx";
 import EmptyBlock, {emptyBlockTypes} from "@/components/emptyblock/EmptyBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
-const {Title, Text} = Typography;
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
-
+import DisclosureBlock from "@/components/disclosureBlock/DisclosureBlock.jsx";
 
 const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal, disclosureData, navigate, isFormSubmit}, ref) => {
     const [isFetching, setIsFetching] = useState(true);
@@ -30,10 +22,7 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
     const{isLoading, setIsFooterVisible, shouldFetch, resetFetch, setIsLoading, token, setFooterContent, globalStyles} = useApp();
     const [modelData, setModelData] = useState(null);
     const [membersData, setMembersData] = useState(null);
-    const [selectedWaiverToSign, setSelectedWaiverToSign] = useState(null);
-    const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
-    const [canvasWidth, setCanvasWidth] = useState(window.innerWidth - (token.padding * 2));
-    const [pdfDataUrl, setPdfDataUrl] = useState(null);
+
 
     useImperativeHandle(ref, () => ({
         submit: () => {
@@ -43,8 +32,6 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
     
     const {orgId, authData} = useAuth();
     const {t} = useTranslation('');
-    const cardRef = useRef(null);
-    const sigCanvasRef = useRef(null);
 
     const loadData = (refresh) => {
         if (isModal){
@@ -176,76 +163,6 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
         // Update the state with the new values
         setMembersData(updatedMembers);
     };
-
-    useEffect(() => {
-        if (!selectedWaiverToSign){
-            if (sigCanvasRef.current) {
-                sigCanvasRef.current.clear();
-            }
-        }
-    }, [selectedWaiverToSign]);
-
-    const clearSignature = () => {
-        if (sigCanvasRef.current) {
-            sigCanvasRef.current.clear();
-
-            setSelectedWaiverToSign(prevState => ({
-                ...prevState,
-                SignatureDataUrl: ''
-            }));
-
-            const updatedMembers = [...membersData];
-
-            const memberIndex = membersData.findIndex(
-                (member) =>
-                    member.Disclosures.some((disclosure) => disclosure.Id === selectedWaiverToSign.Id)
-            );
-            const disclosureIndex = membersData[memberIndex].Disclosures.findIndex(
-                (disclosure) => disclosure.Id === selectedWaiverToSign.Id
-            );
-            updatedMembers[memberIndex].Disclosures[disclosureIndex].SignatureDataUrl = "";
-            setMembersData(updatedMembers);
-        }
-    };
-
-
-    const saveSignature = () => {
-        if (sigCanvasRef.current && !sigCanvasRef.current.isEmpty()) {
-            const dataUrl = sigCanvasRef.current.toDataURL();
-
-            const updatedMembers = [...membersData];
-            const memberIndex = membersData.findIndex(
-                (member) =>
-                    member.Disclosures.some((disclosure) => disclosure.Id === selectedWaiverToSign.Id)
-            );
-            const disclosureIndex = membersData[memberIndex].Disclosures.findIndex(
-                (disclosure) => disclosure.Id === selectedWaiverToSign.Id
-            );
-
-            updatedMembers[memberIndex].Disclosures[disclosureIndex].SignatureDataUrl = dataUrl;
-            setMembersData(updatedMembers);
-
-            setSelectedWaiverToSign(prevState => ({
-                ...prevState,
-                SignatureDataUrl: dataUrl
-            }));
-        }
-    };
-
-    useEffect(() => {
-        if (selectedWaiverToView && selectedWaiverToView.FullPath) {
-            const fetchPdf = async () => {
-                const base64String = await getPdfFileDataUrl(selectedWaiverToView.FullPath);
-                if (base64String) {
-                    setPdfDataUrl(`data:application/pdf;base64,${base64String}`);
-                }
-            };
-
-            fetchPdf();
-        } else {
-            setPdfDataUrl('');
-        }
-    }, [selectedWaiverToView]);
     
     return (
         <>
@@ -292,69 +209,11 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                                                             <div key={disclosureIndex}>
                                                                 <PaddingBlock leftRight={true}>
                                                                     <Flex gap={token.Custom.buttonPadding} vertical={true}>
-                                                                        <Button type="primary"
-                                                                                block
-                                                                                onClick={() => {setSelectedWaiverToView(disclosure)}}
-                                                                                htmlType="button">
-                                                                            {t('disclosure.viewWaiverButton', {name: disclosure.Name})}
-                                                                        </Button>
-
-                                                                        {!isNullOrEmpty(disclosure.RuleInstructions) &&
-                                                                            <IframeContent content={disclosure.RuleInstructions}
-                                                                                           id={disclosure?.Id}/>
-                                                                        }
-
-                                                                        {!isNullOrEmpty(disclosure.ReadAgreementMessage) &&
-                                                                            <Checkbox
-                                                                                checked={disclosure.AcceptAgreement}
-                                                                                onChange={() => handleCheckboxChange(memberIndex, disclosureIndex)}
-                                                                            >
-                                                                                {disclosure.ReadAgreementMessage}
-                                                                            </Checkbox>
-                                                                        }
-
-                                                                        <Flex className={globalStyles.waiverUploadFlex}
-                                                                              vertical={true}
-                                                                              gap={token.Custom.buttonPadding}
-                                                                              onClick={() => {
-                                                                                  setSelectedWaiverToSign(disclosure);
-                                                                              }}>
-                                                                            <>
-                                                                                <Upload
-                                                                                    name="avatar"
-                                                                                    listType="picture-card"
-                                                                                    className="avatar-uploader"
-                                                                                    showUploadList={false}
-                                                                                    disabled={true}
-                                                                                    //onChange={handleChange}
-                                                                                >
-                                                                                    {isNullOrEmpty(disclosure.SignatureDataUrl) ? (
-                                                                                            <Title
-                                                                                                level={3}>{t('disclosure.clickToSign')}</Title>
-                                                                                        ) :
-                                                                                        (
-                                                                                            <img
-                                                                                                src={disclosure.SignatureDataUrl}
-                                                                                                style={{
-                                                                                                    width: '100%',
-                                                                                                    objectFit: 'contain',
-                                                                                                    height: '100%'
-                                                                                                }}/>
-                                                                                        )}
-                                                                                </Upload>
-
-                                                                                {!isNullOrEmpty(disclosure.SignatureDataUrl) &&
-                                                                                    <Flex gap={token.Custom.buttonPadding}
-                                                                                          vertical={true}>
-                                                                                        <div>
-                                                                                            <Title level={1}
-                                                                                                   className={globalStyles.noMargin}>{t('disclosure.signedBy')}</Title>
-                                                                                            <Text>{authData?.MemberFirstName} {authData?.MemberLastName}</Text>
-                                                                                        </div>
-                                                                                    </Flex>
-                                                                                }
-                                                                            </>
-                                                                        </Flex>
+                                                                       <DisclosureBlock memberFullName={`${authData?.MemberFirstName} ${authData?.MemberLastName}`}
+                                                                                        disclosure={disclosure}
+                                                                                        membersData={membersData}
+                                                                                        setMembersData={setMembersData}
+                                                                                        handleReadAgreementCheckboxChange={handleCheckboxChange}/>
                                                                     </Flex>
                                                                 </PaddingBlock>
 
@@ -377,98 +236,6 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                     </>
                 }
             </PaddingBlock>
-
-            <DrawerBottom
-                showDrawer={!isNullOrEmpty(selectedWaiverToSign)}
-                closeDrawer={() => {
-                    setSelectedWaiverToSign(null)
-                }}
-                label={selectedWaiverToSign?.Name}
-                maxHeightVh={80}
-                showButton={true}
-                customFooter={<Flex gap={token.padding}>
-                    <Button type={'primary'} danger block
-                            disabled={isNullOrEmpty(selectedWaiverToSign?.SignatureDataUrl)} onClick={clearSignature}>
-                        {t('clear')}
-                    </Button>
-
-                    <Button type={'primary'} block onClick={() => {
-                        setSelectedWaiverToSign(null)
-                    }}>
-                        {t('close')}
-                    </Button>
-                </Flex>}
-            >
-                <div style={{backgroundColor: token.colorBgContainerDisabled}}>
-                    <div style={{padding: `${token.padding}px`}}>
-                        <Card ref={cardRef} className={globalStyles.signatureCanvasCard}>
-                            <SignatureCanvas
-                                ref={sigCanvasRef}
-                                penColor="black"
-                                canvasProps={{width: canvasWidth, height: 400, className: 'sigCanvas'}}
-                                onEnd={saveSignature}
-                            />
-                        </Card>
-                    </div>
-                </div>
-            </DrawerBottom>
-
-            <DrawerBottom
-                showDrawer={!isNullOrEmpty(selectedWaiverToView)}
-                closeDrawer={() => {
-                    setSelectedWaiverToView(null)
-                }}
-                label={selectedWaiverToView?.Name}
-                maxHeightVh={80}
-                showButton={true}
-                customFooter={<Flex gap={token.padding}>
-                    {equalString(selectedWaiverToView?.ContentType, 2) &&
-                        <Button type="primary" block icon={<DownloadOutlined />} onClick={() => {openPdfInNewTab(selectedWaiverToView?.FullPath)}}>
-                            {t('disclosure.downloadFile')}
-                        </Button>
-                    }
-
-                    <Button type={'primary'} block onClick={() => {
-                        setSelectedWaiverToView(null)
-                    }}>
-                        {t('close')}
-                    </Button>
-                </Flex>}
-            >
-                <PaddingBlock>
-                    {equalString(selectedWaiverToView?.ContentType, 2) &&
-                        <>
-                            {isFileType(selectedWaiverToView?.FullPath, 'pdf') &&
-                                <>
-                                    {(!isNullOrEmpty(selectedWaiverToView?.FullPath)) &&
-                                        <>
-                                            {isNullOrEmpty(pdfDataUrl) &&
-                                                <Skeleton.Button active={true} block style={{height: `160px`}}/>
-                                            }
-
-                                            {!isNullOrEmpty(pdfDataUrl) &&
-                                                <Document file={pdfDataUrl} />
-                                            }
-                                        </>
-                                    }
-                                </>
-                            }
-                            {!isFileType(selectedWaiverToView?.FullPath, 'pdf')  &&
-                                <>
-                                    <Text>{selectedWaiverToView?.FileName}</Text>
-                                </>
-                            }
-                        </>
-                    }
-                    {!equalString(selectedWaiverToView?.ContentType, 2) &&
-                        <>
-                            {!isNullOrEmpty(selectedWaiverToView?.DisclosureText) &&
-                                <IframeContent content={selectedWaiverToView?.DisclosureText} id={'modal-disclosure'}/>
-                            }
-                        </>
-                    }
-                </PaddingBlock>
-            </DrawerBottom>
         </>
     )
 })

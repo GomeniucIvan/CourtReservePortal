@@ -25,6 +25,7 @@ const DrawerBottom = forwardRef(({
                                      dangerButton,
                                      maxHeightVh = 60,
                                      fullHeight = false,
+                                     confirmButtonType = 'primary',
                                      isSearchLoading,
                                      customFooter,
                                      confirmButtonLoading
@@ -144,7 +145,7 @@ const DrawerBottom = forwardRef(({
                     {showButton &&
                         <div className={styles.drawerButton} ref={footerRef}>
                             {isNullOrEmpty(customFooter) ?
-                                (<Button type='primary'
+                                (<Button type={confirmButtonType}
                                          loading={toBoolean(confirmButtonLoading)}
                                          block
                                          danger={toBoolean(dangerButton)}

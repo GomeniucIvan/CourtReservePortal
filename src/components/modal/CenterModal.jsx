@@ -19,6 +19,7 @@ function CenterModal({ show,
                          buttonType,
                          type='',
                          children,
+    zIndex,
                          onClose}) {
     
     const { token } = useApp();
@@ -53,12 +54,13 @@ function CenterModal({ show,
     
     return (
         <AntModal
-            wrapClassName={cx(styles.centerModal, 'safe-area-top', rootClass)}
+            wrapClassName={cx(styles.centerModalWrap, 'safe-area-top', rootClass)}
             title={modalTitle()}
-            className={'ant-center-modal'}
+            className={cx(styles.centerModal,'ant-center-modal')}
             open={toBoolean(show)}
             footer={null}
             centered={true}
+            zIndex={zIndex}
             onCancel={onClose}
         >
             {!isNullOrEmpty(buttonType) &&

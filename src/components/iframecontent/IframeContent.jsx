@@ -1,11 +1,13 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import {isNullOrEmpty} from "../../utils/Utils.jsx";
 import {Skeleton} from "antd";
+import {useApp} from "@/context/AppProvider.jsx";
 
 function IframeContent({ content, id }) {
     const iframeRef = useRef(null);
     const [iframeHeight, setIframeHeight] = useState('150px');
     const [isLoading, setIsLoading] = useState(true);
+const{token} = useApp();
 
     useEffect(() => {
         const iframe = iframeRef.current;
@@ -40,7 +42,10 @@ function IframeContent({ content, id }) {
                 style={{
                     border: 'none',
                     width: '100%',
-                    height: iframeHeight
+                    height: iframeHeight,
+                    backgroundColor: 'white',
+                    borderRadius: `${token.borderRadius}px`,
+                    padding: `${token.paddingXS}px`
                 }}
                 srcDoc={styledContent}
             />

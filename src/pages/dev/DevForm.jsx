@@ -22,6 +22,8 @@ import FormSelect from "@/form/formselect/FormSelect.jsx";
 import FormDateOfBirth from "@/form/formdateofbirth/FormDateOfBirth.jsx";
 import FormCheckbox from "@/form/formcheckbox/FomCheckbox.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
+import InstructionBlock from "@/components/instructionblock/InstructionBlock.jsx";
+import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
 
 const { Text, Title } = Typography;
 
@@ -33,8 +35,7 @@ function DevForm() {
         {Text: 'Text3', Value: '3'},
         {Text: 'Text4', Value: '4'},
     ]);
-    
-    
+
     const formik = useCustomFormik({
         initialValues: {
             input: '',
@@ -72,6 +73,14 @@ function DevForm() {
 
             checkbox: false,
             checkboxDescription: true,
+            disclosures: [
+                {RuleInstructions: 'RuleInstructions Text1', Id: '1', Name: 'Name 1', DisclosureText: 'DisclosureText 1', SignatureDataUrl: ''},
+                {RuleInstructions: 'RuleInstructions Text2', Id: '2', Name: 'Name 2', DisclosureText: 'DisclosureText 2', SignatureDataUrl: ''},
+                {RuleInstructions: 'RuleInstructions Text3', Id: '3', Name: 'Name 3', DisclosureText: 'DisclosureText 3 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 3', SignatureDataUrl: ''},
+                {RuleInstructions: 'RuleInstructions Text4', Id: '4', Name: 'Name 4', DisclosureText: 'DisclosureText 4 ReadAgreementMessage', ReadAgreementMessage: 'ReadAgreementMessage 4', SignatureDataUrl: ''},
+            ],
+            signFirstName: 'Mike',
+            signLastName: 'Jackson',
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
 
@@ -90,7 +99,7 @@ function DevForm() {
                <FormInput formik={formik} name={'inputLoading'} label={'Loading'} placeholder={'Loading'} loading={true} />
                <FormInput formik={formik} name={'inputDisabled'} label={'Disabled'} placeholder={'Disabled'} disabled={true} />
                <FormInput formik={formik} name={'inputPassword'} label={'Password'} placeholder={'Password'} addIconToSeePassword={true} />
-               <FormInput formik={formik} name={'inputDescription'} label={'Description'} placeholder={'Description'} description={'Description Add'} />
+               <FormInput formik={formik} name={'inputDescription'} label={'Description'} placeholder={'Description'} description={'Description Add to display some message for input'} />
                <FormInput formik={formik} name={'inputSearch'} label={'Search'} placeholder={'Search'} isSearch={true} />
                <FormInput formik={formik} name={'inputMask'} label={'Mask Numeric'} placeholder={'XX/XX'} mask={'XX/XX'} />
            </Flex>
@@ -143,6 +152,17 @@ function DevForm() {
                           text={`Text `}
                           description={'Description'}
                           descriptionClick={() => {pNotify('onDescriptionClick')}}/>
+
+            <Divider />
+
+            <InstructionBlock instructions={'Some instruction to test display of'} />
+            
+            <Divider />
+            <div>
+                Disclosures
+
+                <FormDisclosures formik={formik} disclosureHtml={'Disclosure Html Body for test'} dateTimeDisplay={'Fake Time 12:00PM'}/>
+            </div>
         </PaddingBlock>
     );
 }

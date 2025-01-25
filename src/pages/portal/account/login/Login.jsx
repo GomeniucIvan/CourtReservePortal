@@ -25,6 +25,7 @@ import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateA
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {logDebug} from "@/utils/ConsoleUtils.jsx";
 import LoginMembershipDetails from "@portal/account/modules/Login.MembershipDetails.jsx";
+import {useAntd} from "@/context/AntdProvider.jsx";
 
 function Login() {
     const navigate = useNavigate();
@@ -34,7 +35,9 @@ function Login() {
     const [navigationSteps, setNavigationSteps] = useState([]);
     const { setOnBack, setHideHeader } = useHeader();
     const [signupData, setSignupData] = useState(null);
-
+    const {setPrimaryColor, setPrimaryTextColor} = useAntd();
+    const {token} = useApp();
+    
     const location = useLocation();
     const {t} = useTranslation('login');
 
@@ -47,6 +50,11 @@ function Login() {
                 if (isNullOrEmpty(lastNavigationPage)){
                     formik.setFieldValue('step', 'initial');
                 } else{
+                    if (equalString(lastNavigationPage, 'organizations')) {
+                        setPrimaryColor(token.colorCourtReserve);
+                        setPrimaryTextColor('#FFFFFF');
+                    }
+                    
                     formik.setFieldValue('step', lastNavigationPage);
                 }
                 return prevSteps.slice(0, -1);
@@ -180,9 +188,13 @@ function Login() {
             {equalString(formik?.values?.step, 'organizations') &&
                 <LoginSearchOrganization mainFormik={formik}
                                          onOrganizationSelect={(formValues) => {
+                                             
                                              formik.setFieldValue('selectedOrgId', formValues.selectedOrgId);
                                              formik.setFieldValue('selectedOrgName', formValues.selectedOrgName);
                                              formik.setFieldValue('selectedOrgFullAddress', formValues.selectedOrgFullAddress);
+                                             setPrimaryColor(formValues.BaseBackgroundColor);
+                                             setPrimaryTextColor(formValues.BaseTextColor);
+                                             
                                              navigateToStep('sign-up');
                                          }}
 

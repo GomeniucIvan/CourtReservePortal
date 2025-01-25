@@ -91,11 +91,14 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-
+            console.log(selectedOrganization)
+            
             let formikValues = values;
             formikValues.selectedOrgId = selectedOrganization.Id;
             formikValues.selectedOrgName = selectedOrganization.Name;
             formikValues.selectedOrgFullAddress = selectedOrganization.FullAddress;
+            formikValues.BaseTextColor = selectedOrganization.BaseTextColor;
+            formikValues.BaseBackgroundColor = selectedOrganization.BaseBackgroundColor;
 
             onOrganizationSelect(formikValues);
 
@@ -259,7 +262,9 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
                                   {t(`searchOrganization.drawer.close`)}
                               </Button>
 
-                              <Button type={'primary'} block onClick={() => {
+                              <Button type={'primary'}
+                                      block 
+                                      onClick={() => {
                                   formik.submitForm();
                               }}>
                                   {t(`searchOrganization.drawer.select`)}

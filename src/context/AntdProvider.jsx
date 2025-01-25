@@ -14,8 +14,8 @@ export const useAntd = () => useContext(AntdContext);
 //theme.darkAlgorithm
 //theme.defaultAlgorithm,
 export const AntdProvider = ({ children }) => {
-    const [primaryColor, setPrimaryColor] = useState('#873030');
-    const [primaryTextColor, setPrimaryTextColor] = useState('#23ffd6');
+    const [primaryColor, setPrimaryColor] = useState('#34495E');
+    const [primaryTextColor, setPrimaryTextColor] = useState('#ffffff');
     const [isDarkMode, setIsDarkMode] = useState(toBoolean(fromLocalStorage('darkmode', 'false')));
 
     useEffect(() => {
@@ -58,7 +58,7 @@ export const AntdProvider = ({ children }) => {
     
     let colorError = '#D32F2F';
     return (
-        <AntdContext.Provider value={{setPrimaryColor, setIsDarkMode, isDarkMode}}>
+        <AntdContext.Provider value={{setPrimaryColor, setIsDarkMode, isDarkMode, setPrimaryTextColor}}>
             <App>
                 <ConfigProvider
                     wave={{ disabled: true }}

@@ -271,6 +271,7 @@ export const useStyles = createStyles(({ css, token }) => ({
       }
    `,
    waiverUploadFlex: css`
+       
       .ant-upload-wrapper {
          width: 100%;
       }
@@ -285,7 +286,15 @@ export const useStyles = createStyles(({ css, token }) => ({
       }
    `,
 
+    waiverUploadSigned: css`
+        .ant-upload {
+            background-color: white;
+            border-radius: ${token.borderRadius}px;  
+        }
+    `,
+    
    signatureCanvasCard: css `
+       background-color: white;
       .ant-card-body {
          padding: 0;
       }

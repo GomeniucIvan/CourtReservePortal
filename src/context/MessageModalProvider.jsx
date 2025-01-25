@@ -29,6 +29,7 @@ const MessageModalProvider = ({ children }) => {
                          buttonType={modal.data?.buttonType}
                          type={modal.data?.type}
                          onClose={closeModal} 
+                         zIndex={9999}
                          title={typeof modal.data?.title === "function" ? modal.data?.title() : modal.data?.title}
                          children={typeof modal.data?.html === "function" ? modal.data.html(closeModal) : modal.data?.html} />
         </>

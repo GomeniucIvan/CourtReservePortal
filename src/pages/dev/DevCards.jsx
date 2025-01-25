@@ -17,6 +17,8 @@ import {CardConstants} from "@/constants/CardConstants.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import {cx} from "antd-style";
+import InstructionBlock from "@/components/instructionblock/InstructionBlock.jsx";
+import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
 
 const { Text, Title } = Typography;
 
@@ -26,6 +28,7 @@ function DevCards() {
     return (
         <PaddingBlock topBottom={true}>
             <Flex vertical={true} justify={'center'} gap={16}>
+                
                 <Card className={cx(globalStyles.card)}>
                     <Flex align={'center'} justify={'center'}>
                         Card globalStyles.card padding 12px
