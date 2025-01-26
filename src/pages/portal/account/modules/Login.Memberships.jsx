@@ -248,7 +248,7 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'crea
             }
             
             {equalString(page, 'create-account') &&
-                <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>    
+                <LoginCreateAccountReviewModal data={mainFormik.values} show={showReviewModal} setShow={setShowReviewModal}/>    
             }
 
         </PaddingBlock>

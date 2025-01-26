@@ -15,6 +15,5 @@ export const CardConstants = {
     card_routingNumber: '',
     card_accountNumber: '',
     card_savePaymentProfile: false,
-    card_country: '',
-    card_segmentAccountType: 1
+    card_country: ''
 }

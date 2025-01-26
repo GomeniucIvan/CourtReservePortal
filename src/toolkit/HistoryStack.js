@@ -38,7 +38,7 @@ export const getLastFromHistory = () => {
     return null;
 };
 
-export const clearHistory = () => {
+export const navigationClearHistory = () => {
     historyStack = [];
 };
 

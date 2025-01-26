@@ -25,7 +25,6 @@ const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
     const {token} = useApp();
     const {styles} = useStyles();
 
-
     const displayCheckboxDescriptionWithStatus = () => {
         let status = <Text>Please review and agree to this organization's terms of use.</Text>;
 
@@ -146,7 +145,6 @@ const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
                                                                      );
                                                                  }}
                                                                  onAcceptAgreementChange={(e) => {
-                                                                     console.log(e);
                                                                      formik.setFieldValue(
                                                                          `disclosures[${index}].AcceptAgreement`,
                                                                          toBoolean(e)

@@ -22,7 +22,6 @@ function MembershipReceiptBlock({selectedMembership,
     let taxTotal = null;
     let convenienceFee = null;
     let total = null;
-    let paymentFrequencyText = '';
     const {token, globalStyles} = useApp();
     let selectedPrice = '';
     const paymentFrequencyCost = membershipPaymentFrequencyCost(selectedMembership, selectedPaymentFrequency);
@@ -65,11 +64,6 @@ function MembershipReceiptBlock({selectedMembership,
                 convenienceFee = calculatedConvenienceFee;
                 total += calculatedConvenienceFee;
             }
-        }
-
-        const selectedFrequencyOption = selectedMembership.Prices.find(option => equalString(option.CostTypeFrequency, selectedPaymentFrequency));
-        if (!isNullOrEmpty(selectedFrequencyOption)) {
-            paymentFrequencyText = selectedFrequencyOption.FullPriceDisplay;
         }
     }
 

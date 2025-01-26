@@ -42,7 +42,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     const [stripeCardElement, setStripeCardElement] = useState(null);
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
     const [selectedSegmentType, setSelectedSegmentType] = useState('');
-    
+
     const stripeCardElementRef = useRef(null);
     const [validationMessages, setValidationMessages] = useState({});
     const {token, globalStyles} = useApp();
@@ -70,7 +70,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
 
             let isECheck = equalString(selectedSegmentType, 'eCheck');
             let isCreditCard = equalString(selectedSegmentType, 'Credit Card');
-            
+
             //credit card
             if (isCreditCard) {
                 if (equalString(paymentProvider, 2) && stripe && stripeCardElement) {
@@ -132,7 +132,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                     isValid = true
                 }
             }
-            
+
             //echeck
             else if (isECheck) {
                 if (equalString(paymentProvider, 3) && toBoolean(isUsingCollectJs)) {
@@ -248,7 +248,15 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     useEffect(() => {
         setSelectedSegmentType(paymentProviderData?.SelectedSegment);
     }, [paymentProviderData?.SelectedSegment]);
-    
+
+    useEffect(() => {
+        if (equalString(selectedSegmentType, 'Credit Card')){
+            formik.setFieldValue('card_accountType', 1);
+        } else if (equalString(selectedSegmentType, 'ECheck')){
+            formik.setFieldValue('card_accountType', 2);
+        }
+    }, [selectedSegmentType])
+
     return (
         <Flex vertical={true} gap={token.padding}>
             {(anyInList(paymentTypes) && !toBoolean(hideFields?.accountType)) &&
@@ -261,7 +269,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                     propText='Text'
                     propValue='Value' />
             }
-            
+
             {showBillingInformation &&
                 <>
                     <Flex vertical={true} gap={token.paddingLG}>
@@ -283,7 +291,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                                     />
                                 </>
                             }
-                            
+
                             <FormInput label="Street Address"
                                        formik={formik}
                                        name='card_streetAddress' />
@@ -334,7 +342,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
             {showBillingInformation &&
                 <Divider className={globalStyles.noMargin} />
             }
-            
+
             <>
                 <Flex vertical={true} gap={token.paddingLG}>
                     <Title level={3}>Payment Information</Title>
@@ -346,7 +354,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                                        block
                                        onChange={(e) => { setSelectedSegmentType(e) }} />
                         }
-                        
+
                         {(equalString(selectedSegmentType, 'eCheck')) &&
                             <>
                                 <FormPaymentProfileECheck formik={formik}

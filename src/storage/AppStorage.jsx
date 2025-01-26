@@ -1,3 +1,5 @@
+import {toBoolean} from "@/utils/Utils.jsx";
+
 const appLocalStorage = 'courtreserve-online';
 const authLocalStorage = 'courtreserve-auth';
 
@@ -46,12 +48,21 @@ export const clearAllLocalStorage = () => {
     localStorage.clear();
 };
 
-export const setNavigationStorage = (orgId, mainMenu, moreMenu, listOrg, mainLinks, allListItems) => {
+export const setNavigationStorage = (orgId, dashboardData) => {
+    console.log(dashboardData)
+    const mainMenu = dashboardData.Data.menu;
+    const moreMenu = dashboardData.Data.more;
+    const listOrg = dashboardData.Data.listOrg;
+    const mainLinks = dashboardData.Data.mainLinks;
+    const allListItems = dashboardData.Data.allListItems;
+    const showUnsubscribeModal = dashboardData.Data.showUnsubscribeModal;
+    
     toLocalStorage(`dashboard_main_navigation${orgId}`, mainMenu);
     toLocalStorage(`dashboard_more_navigation${orgId}`, moreMenu);
     toLocalStorage(`dashboard_organizations_${orgId}`, listOrg);
     toLocalStorage(`dashboard_main_actions${orgId}`, mainLinks);
     toLocalStorage(`dashboard_all_list${orgId}`, allListItems);
+    toLocalStorage(`data_show_unsubscribe_modal${orgId}`, `${toBoolean(showUnsubscribeModal)}`);
 };
 
 export const getNavigationStorage = (orgId) => {
@@ -68,4 +79,8 @@ export const getDashboardMainLinks = (orgId) => {
 };
 export const getDashboardAllLists = (orgId) => {
     return fromLocalStorage(`dashboard_all_list${orgId}`);
+};
+
+export const getShowUnsubscribeModal = (orgId) => {
+    return fromLocalStorage(`data_show_unsubscribe_modal${orgId}`);
 };

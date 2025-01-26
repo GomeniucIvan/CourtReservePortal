@@ -95,7 +95,6 @@ function Login() {
         state: '',
         zipCode: '',
         disclosures: '',
-        formIncludes: {},
 
         RatingCategories: [],
         Udfs: [],
@@ -228,15 +227,7 @@ function Login() {
                                              gender: formValues.gender,
                                              city: formValues.city,
                                              state: formValues.state,
-                                             zipCode: formValues.zipCode,
-
-                                             formIncludes: {
-                                                 IncludePhoneNumber: toBoolean(formValues.IncludePhoneNumber),
-                                                 IncludeGender: toBoolean(formValues.IncludeGender),
-                                                 IncludeAddressBlock: toBoolean(formValues.IncludeAddressBlock),
-                                                 IncludeMembershipNumber: toBoolean(formValues.IncludeMembershipNumber),
-                                                 IncludeDateOfBirthBlock: toBoolean(formValues.IncludeDateOfBirthBlock),
-                                             }
+                                             zipCode: formValues.zipCode
                                          });
 
                                          setSignupData(signData);
@@ -316,7 +307,7 @@ function Login() {
                                      }}/>
             }
 
-            <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
+            <LoginCreateAccountReviewModal data={signupData} show={showReviewModal} setShow={setShowReviewModal}/>
         </>
     )
 }

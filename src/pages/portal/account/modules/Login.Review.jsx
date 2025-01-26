@@ -87,13 +87,15 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
         disclosureAgree: false,
         hiddenFortisTokenId: '',
         disclosures: [],
+        firstName: mainFormik?.values?.firstName,
+        lastName: mainFormik?.values?.lastName,
         card_firstName: mainFormik?.values?.firstName,
         card_lastName: mainFormik?.values?.lastName,
         card_streetAddress: mainFormik?.values?.streetAddress,
         card_city: mainFormik?.values?.city,
         card_state: mainFormik?.values?.state,
         card_zipCode: mainFormik?.values?.zipCode,
-        card_phoneNumber: mainFormik?.values?.phoneNumber,
+        card_phoneNumber: mainFormik?.values?.phoneNumber
     };
 
     const formik = useCustomFormik({
@@ -151,7 +153,7 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
                         let paymentFrequencyCost = membershipPaymentFrequencyCost(selectedMembership, values?.paymentFrequency);
                         let convenienceFeeHtml = '';
 
-                        if (!equalString(values?.accountType, 2)) {
+                        if (!equalString(values?.card_accountType, 2)) {
                             let calculatedConvenienceFee = calculateConvenienceFee(/*total*/ paymentFrequencyCost, /*org*/ convenienceFeeObj, /*onlyFee*/ true);
 
                             if (!isNullOrEmpty(calculatedConvenienceFee) && calculatedConvenienceFee > 0) {
@@ -168,7 +170,6 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
                             if (!isNullOrEmpty(selectedMembership.InitiationFeePriceDisplay)) {
                                 paymentFrequencyCost = paymentFrequencyCost + selectedMembership.InitiationFeePrice;
                             }
-
 
                             confirmMessageText = `You are going to join the <b>${getMembershipText(selectedMembership?.Name)}</b> and be charged <b>${costDisplay(paymentFrequencyCost)}${convenienceFeeHtml}</b>. Review the information provided and confirm before creating your account. `;
                         }
@@ -193,7 +194,6 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
             }
 
             formik.setFieldValue('card_accountType', '1');
-            formik.setFieldValue('card_segmentAccountType', 1);
             if (!isNullOrEmpty(paymentFrequencyValue)){
                 formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
                 formik.setFieldTouched("paymentFrequency", true, false);
@@ -394,9 +394,10 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
 
                     {equalString(page, 'create-account') &&
                         <LoginCreateAccountReviewModal
-                            formik={{
-                                ...formik,
-                                ...mainFormik
+                            data={{
+                                ...signupData,
+                                ...mainFormik.values,
+                                ...formik.values
                             }}
                             show={showReviewModal}
                             setShow={setShowReviewModal}

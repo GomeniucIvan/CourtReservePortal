@@ -104,6 +104,7 @@ export default defineConfig({
         },
     },
     server: {
+        //hmr: false, //hot reload
         host: '0.0.0.0',
         port: 5173,
         proxy: isProduction

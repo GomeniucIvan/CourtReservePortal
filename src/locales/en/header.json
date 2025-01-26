@@ -46,5 +46,6 @@
   "requestAccess": "Request Access",
   "organizationList": "My Organization(s)",
   "notFound": "Not Found",
-  "locationList": "My Location(s)"
+  "locationList": "My Location(s)",
+  "textMessageOptIn": "Text Messaging Opt-In"
 }

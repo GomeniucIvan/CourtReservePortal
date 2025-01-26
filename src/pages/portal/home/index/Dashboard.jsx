@@ -32,7 +32,6 @@ function Dashboard() {
     const [isFetching, setIsFetching] = useState(true);
     const navigate = useNavigate();
     const [dashboardData, setDashboardData] = useState(null);
-    const { styles } = useStyles();
     
     const loadDashboardData = async (refresh) => {
         const cachedData = fromLocalStorage(`dashboarditems_${orgId}`);
@@ -68,7 +67,6 @@ function Dashboard() {
             authData.OrgMemberId,
             authData.OrgMemberFamilyId,
             null);
-
 
         if (isNullOrEmpty(navigationType)) {
             //if we already set from cookie no need to reset

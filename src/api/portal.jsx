@@ -25,12 +25,7 @@ const portalService = {
             let dashboardData = await portalService.navigationData(navigate, orgId);
 
             if (toBoolean(dashboardData?.IsValid)) {
-                setNavigationStorage(orgId,
-                    dashboardData.Data.menu,
-                    dashboardData.Data.more,
-                    dashboardData.Data.listOrg,
-                    dashboardData.Data.mainLinks,
-                    dashboardData.Data.allListItems);
+                setNavigationStorage(orgId, dashboardData);
             }
             
             return await portalService.organizationData(orgId);

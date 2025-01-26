@@ -25,101 +25,113 @@ import portalService from "@/api/portal.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
+import {navigationClearHistory} from "@/toolkit/HistoryStack.js";
 
 const {Title} = Typography;
 
-function LoginCreateAccountReviewModal({show, setShow, formik}) {
+function LoginCreateAccountReviewModal({show, setShow, data}) {
     const {isLoading, setIsLoading, token} = useApp();
 
     const {
         setAuthorizationData
     } = useAuth();
     const {t} = useTranslation('login');
-    let values = formik?.values;
-    let membership = values?.selectedMembership;
     let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
     let selectedFrequencyValue = '';
     const navigate = useNavigate();
     const recaptchaRef = useRef(null);
+    let signupData = data;
+    let reviewData = data;
+    let selectedRatingCategoryWithRatings = [];
+    let ratingCategories = [];
+    let userDefinedFields = [];
+    let membership = reviewData?.selectedMembership;
+    let uiCulture = reviewData?.UiCulture;
     
     const createAccount = async () => {
         setIsLoading(true);
 
+        let membership = reviewData?.selectedMembership;
+        let orgIdToCreateAccount = data?.OrganizationId;
+        
         const postModel = {
-            MembershipId: membership?.CostTypeId,
-            PaymentFrequency: values?.paymentFrequency,
+            MembershipId: membership?.Id,
+            PaymentFrequency: reviewData?.paymentFrequency,
             IsMobileLayout: true,
             SsoKey: '',
             Token: await recaptchaRef.current.executeAsync(),
-            SpGuideId: values?.SpGuideId,
+            SpGuideId: getGlobalSpGuideId(),
             IsNewAuth: true,
             OrgFields: {
-                MembershipId: membership?.CostTypeId,
-                CustomFields: values?.userDefinedFields,
-                RatingCategories: values?.ratingCategories,
+                MembershipId: membership?.Id,
+                CustomFields: signupData?.Udfs,
+                RatingCategories: signupData?.RatingCategories,
                 PhoneNumber: {
-                    PhoneNumber: values?.phoneNumber,
-                    Include: toBoolean(values?.formIncludes?.IncludePhoneNumber)
+                    PhoneNumber: signupData?.phoneNumber,
+                    Include: toBoolean(signupData?.IncludePhoneNumber)
                 },
                 MemberGender: {
-                    Gender: values?.gender,
-                    Include: toBoolean(values?.formIncludes?.IncludeGender)
+                    Gender: signupData?.gender,
+                    Include: toBoolean(signupData?.IncludeGender)
                 },
                 Address: {
-                    Address: values?.streetAddress,
-                    City: values?.city,
-                    State: values?.state,
-                    ZipCode: values?.zipCode,
-                    Include: toBoolean(values?.formIncludes?.IncludeAddressBlock)
+                    Address: signupData?.streetAddress,
+                    City: signupData?.city,
+                    State: signupData?.state,
+                    ZipCode: signupData?.zipCode,
+                    Include: toBoolean(signupData?.IncludeAddressBlock)
                 },
                 Membership: {
-                    MembershipNumber: values?.membershipNumber,
-                    Include: toBoolean(values?.formIncludes?.IncludeMembershipNumber)
+                    MembershipNumber: signupData?.membershipNumber,
+                    Include: toBoolean(signupData?.IncludeMembershipNumber)
                 },
                 DateOfBirth: {
-                    DateOfBirthString: values?.dateOfBirthString,
-                    Include: toBoolean(values?.formIncludes?.IncludeDateOfBirthBlock)
+                    DateOfBirthString: signupData?.dateOfBirthString,
+                    Include: toBoolean(signupData?.IncludeDateOfBirthBlock)
                 },
-                DisclosureAgree: values?.disclosureAgree,
-                FirstName: values?.firstName,
-                LastName: values?.lastName,
-                Email: values?.email,
-                PaymentFrequency: values?.paymentFrequency,
+                DisclosureAgree: reviewData?.disclosureAgree,
+                FirstName: reviewData?.firstName,
+                LastName: reviewData?.lastName,
+                Email: reviewData?.email,
+                PaymentFrequency: reviewData?.paymentFrequency,
                 //AdditionalFamilyMembers: getFamilyMembersList(familyMembersFormValues),
             },
             SelectedMemberIdToJoin: "",
             UserAccount: {
-                FirstName: values?.firstName,
-                LastName: values?.lastName,
-                Email: values?.email,
-                Password: values?.password,
-                RepeatPassword: values?.confirmPassword,
-                FindOrgId: values?.selectedOrgId,
+                FirstName: signupData?.firstName,
+                LastName: signupData?.lastName,
+                Email: signupData?.email,
+                Password: signupData?.password,
+                RepeatPassword: signupData?.confirmPassword,
+                FindOrgId: orgIdToCreateAccount,
             },
             CardDetails: {
                 //Number: "",
-                CardNumber: values?.card_number,
-                Cvv: values?.card_securityCode,
-                ExpiryDate: values?.card_expiryDate,
-                StripeBankAccountToken: values?.card_number,
-                AccountType: values?.card_accountType,
-                AccountNumber: values?.card_accountNumber,
-                RoutingNumber: values?.card_routingNumber,
-                FirstName: values?.card_firstName,
-                LastName: values?.card_lastName,
-                Address: values?.card_streetAddress,
-                City: values?.card_city,
-                State: values?.card_state,
-                ZipCode: values?.card_zipCode,
-                HiddenFortisTokenId: values?.hiddenFortisTokenId
+                CardNumber: reviewData?.card_number,
+                Cvv: reviewData?.card_securityCode,
+                ExpiryDate: reviewData?.card_expiryDate,
+                StripeBankAccountToken: reviewData?.card_number,
+                AccountType: reviewData?.card_accountType,
+                AccountNumber: reviewData?.card_accountNumber,
+                RoutingNumber: reviewData?.card_routingNumber,
+                FirstName: reviewData?.card_firstName,
+                LastName: reviewData?.card_lastName,
+                Address: reviewData?.card_streetAddress,
+                City: reviewData?.card_city,
+                State: reviewData?.card_state,
+                ZipCode: reviewData?.card_zipCode,
+                HiddenFortisTokenId: reviewData?.hiddenFortisTokenId
             },
-            Country: values?.card_country
+            Country: reviewData?.card_country,
+            DisclosuresToSign: reviewData?.disclosures,
+            SaveDataForFutureUse: reviewData?.card_savePaymentProfile,
         }
         
-        let response = await appService.post(`/app/Online/Portal/RegisterAccount?id=${values.selectedOrgId}`, postModel);
+        let response = await appService.post(`/app/Online/Portal/RegisterAccount?id=${orgIdToCreateAccount}`, postModel);
 
         if (toBoolean(response?.IsValid)){
-            let requestData = await portalService.requestData(navigate, values.selectedOrgId);
+            let requestData = await portalService.requestData(navigate, orgIdToCreateAccount);
 
             if (toBoolean(requestData?.IsValid)) {
                 await setAuthorizationData(requestData.OrganizationData);
@@ -127,17 +139,20 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                 setIsLoading(false);
                 let navigationKey = response.key.toLowerCase();
 
+                navigationClearHistory();
+                
                 switch (navigationKey) {
                     case 'logout':
                         navigate(AuthRouteNames.LOGIN);
                         break;
 
                     case 'paymymembershipfees':
-                        navigate(ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST);
+                        let paymentOptions = toRoute(ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST, 'id', orgIdToCreateAccount);
+                        navigate(paymentOptions);
                         break;
 
                     case 'mymembership':
-                        let profileRoute = toRoute(ProfileRouteNames.PROFILE_MEMBERSHIP, 'id', values.selectedOrgId);
+                        let profileRoute = toRoute(ProfileRouteNames.PROFILE_MEMBERSHIP, 'id', orgIdToCreateAccount);
                         navigate(profileRoute);
                         break;
 
@@ -154,7 +169,7 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         break;
 
                     case 'myfamily':
-                        let familyRoute = toRoute(ProfileRouteNames.PROFILE_FAMILY_LIST, 'id', values.selectedOrgId);
+                        let familyRoute = toRoute(ProfileRouteNames.PROFILE_FAMILY_LIST, 'id', orgIdToCreateAccount);
                         navigate(familyRoute);
                         break;
                 }
@@ -174,12 +189,8 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
         }
     }
     
-    let selectedRatingCategoryWithRatings = [];
-    let ratingCategories = [];
-    let userDefinedFields = [];
-    
-    if (anyInList(values?.ratingCategories)){
-        selectedRatingCategoryWithRatings = values?.ratingCategories.filter(ratingCategory => (!isNullOrEmpty(ratingCategory.SelectedRatingId) || anyInList(ratingCategory.SelectedRatingsIds)));
+    if (anyInList(signupData?.RatingCategories)){
+        selectedRatingCategoryWithRatings = signupData?.RatingCategories.filter(ratingCategory => (!isNullOrEmpty(ratingCategory.SelectedRatingId) || anyInList(ratingCategory.SelectedRatingsIds)));
 
         selectedRatingCategoryWithRatings.forEach(ratingCategory => {
             let selectedRatingIds = [];
@@ -206,13 +217,13 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
         })
     }
     
-    if (anyInList(values?.userDefinedFields)){
-        userDefinedFields = values.userDefinedFields
+    if (anyInList(signupData?.Udfs)){
+        userDefinedFields = signupData?.Udfs
             .filter(udf => !isNullOrEmpty(udf.Value))
     }
     
     if (!isNullOrEmpty(membership)){
-        let selectedPaymentFrequency = values?.paymentFrequency;
+        let selectedPaymentFrequency = reviewData?.paymentFrequency;
         if (!isNullOrEmpty(selectedPaymentFrequency) && anyInList(membership.Prices)){
             let selectedOption = membership.Prices.find(paymentOption => equalString(paymentOption.CostTypeFrequency, selectedPaymentFrequency));
             selectedFrequencyValue = selectedOption.FullPriceDisplay;
@@ -230,51 +241,51 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                 
                 <PaddingBlock>
                     <Title level={4} style={{paddingBottom: token.padding}}>
-                        {!isNullOrEmpty(values?.reviewModalTitle) ? 
-                            (<div style={{fontWeight: 'initial'}} dangerouslySetInnerHTML={{__html: values?.reviewModalTitle}}/>):(
+                        {!isNullOrEmpty(signupData?.reviewModalTitle) ? 
+                            (<div style={{fontWeight: 'initial'}} dangerouslySetInnerHTML={{__html: signupData?.reviewModalTitle}}/>):(
                             <>{t('review.confirmMessage')}</>
                         )}
                     </Title>
 
                     <Descriptions title={t('review.orgInfo')} >
-                        <Descriptions.Item label={t(`searchOrganization.drawer.name`)}>{values?.selectedOrgName}</Descriptions.Item>
+                        <Descriptions.Item label={t(`searchOrganization.drawer.name`)}>{signupData?.selectedOrgName}</Descriptions.Item>
 
-                        {!isNullOrEmpty(values?.OrgFullAddress) &&
-                            <Descriptions.Item label={t(`searchOrganization.drawer.fullAddress`)}>{values?.selectedOrgFullAddress}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.OrgFullAddress) &&
+                            <Descriptions.Item label={t(`searchOrganization.drawer.fullAddress`)}>{signupData?.selectedOrgFullAddress}</Descriptions.Item>
                         }
                     </Descriptions>
 
                     <Divider />
                     <Descriptions title={t('review.profileInfo')}>
-                        <Descriptions.Item label={t(`getStarted.form.email`)}>{values?.email}</Descriptions.Item>
-                        <Descriptions.Item label={t(`additionalInfo.form.firstName`)}>{values?.firstName}</Descriptions.Item>
-                        <Descriptions.Item label={t(`additionalInfo.form.lastName`)}>{values?.lastName}</Descriptions.Item>
+                        <Descriptions.Item label={t(`getStarted.form.email`)}>{signupData?.email}</Descriptions.Item>
+                        <Descriptions.Item label={t(`additionalInfo.form.firstName`)}>{signupData?.firstName}</Descriptions.Item>
+                        <Descriptions.Item label={t(`additionalInfo.form.lastName`)}>{signupData?.lastName}</Descriptions.Item>
 
 
-                        {!isNullOrEmpty(values?.streetAddress) &&
-                            <Descriptions.Item label={t(`additionalInfo.form.streetAddress`)}>{values?.streetAddress}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.streetAddress) &&
+                            <Descriptions.Item label={t(`additionalInfo.form.streetAddress`)}>{signupData?.streetAddress}</Descriptions.Item>
                         }
-                        {!isNullOrEmpty(values?.city) &&
-                            <Descriptions.Item label={t(`additionalInfo.form.city`)}>{values?.city}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.city) &&
+                            <Descriptions.Item label={t(`additionalInfo.form.city`)}>{signupData?.city}</Descriptions.Item>
                         }
 
-                        {!isNullOrEmpty(values?.state) &&
-                            <Descriptions.Item label={t(isCanadaCulture(values?.UiCulture) ? 'additionalInfo.form.province' : 'additionalInfo.form.state')}>{values?.state}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.state) &&
+                            <Descriptions.Item label={t(isCanadaCulture(signupData?.UiCulture) ? 'additionalInfo.form.province' : 'additionalInfo.form.state')}>{signupData?.state}</Descriptions.Item>
                         }
-                        {!isNullOrEmpty(values?.zipCode) &&
-                            <Descriptions.Item label={t(isNonUsCulture(values?.UiCulture) ? 'additionalInfo.form.postalCode' : 'additionalInfo.form.zipCode')}>{values?.zipCode}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.zipCode) &&
+                            <Descriptions.Item label={t(isNonUsCulture(signupData?.UiCulture) ? 'additionalInfo.form.postalCode' : 'additionalInfo.form.zipCode')}>{signupData?.zipCode}</Descriptions.Item>
                         }
-                        {!isNullOrEmpty(values?.phoneNumber) &&
-                            <Descriptions.Item label={t(`additionalInfo.form.phoneNumber`)}>{values?.phoneNumber}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.phoneNumber) &&
+                            <Descriptions.Item label={t(`additionalInfo.form.phoneNumber`)}>{signupData?.phoneNumber}</Descriptions.Item>
                         }
-                        {!isNullOrEmpty(values?.dateOfBirthString) &&
-                            <Descriptions.Item label={t(`additionalInfo.form.dateOfBirth`)}>{values?.dateOfBirthString}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.dateOfBirthString) &&
+                            <Descriptions.Item label={t(`additionalInfo.form.dateOfBirth`)}>{signupData?.dateOfBirthString}</Descriptions.Item>
                         }
-                        {!isNullOrEmpty(values?.membershipNumber) &&
-                            <Descriptions.Item label={t(`additionalInfo.form.membershipNumber`)}>{values?.membershipNumber}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.membershipNumber) &&
+                            <Descriptions.Item label={t(`additionalInfo.form.membershipNumber`)}>{signupData?.membershipNumber}</Descriptions.Item>
                         }
-                        {!isNullOrEmpty(values?.gender) &&
-                            <Descriptions.Item label={t(`additionalInfo.form.gender`)}>{values?.gender}</Descriptions.Item>
+                        {!isNullOrEmpty(signupData?.gender) &&
+                            <Descriptions.Item label={t(`additionalInfo.form.gender`)}>{signupData?.gender}</Descriptions.Item>
                         }
                     </Descriptions>
 
@@ -305,12 +316,12 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         </>
                     }
 
-                    {!isNullOrEmpty(values?.selectedMembership?.CostTypeId) &&
+                    {!isNullOrEmpty(reviewData?.selectedMembership?.Id) &&
                         <>
                             <Divider />
 
                             <Descriptions title={t('review.membershipInfo')}>
-                                <Descriptions.Item label={t('review.membershipName')}>{membership?.Name}</Descriptions.Item>
+                                <Descriptions.Item label={t('review.membershipName')}>{reviewData?.selectedMembership?.Name}</Descriptions.Item>
                                 {!isNullOrEmpty(selectedFrequencyValue) &&
                                     <Descriptions.Item label={t('review.frequency')}>{selectedFrequencyValue}</Descriptions.Item>
                                 }
@@ -318,6 +329,36 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
                         </>
                     }
 
+                    {!isNullOrEmpty(reviewData?.card_firstName) &&
+                        <>
+                            <Divider />
+
+                            <Descriptions title='Billing Info'>
+                                {!isNullOrEmpty(signupData?.card_firstName) &&
+                                    <Descriptions.Item label={'First Name'}>{signupData?.card_firstName}</Descriptions.Item>
+                                }
+                                {!isNullOrEmpty(signupData?.card_lastName) &&
+                                    <Descriptions.Item label={'Last Name'}>{signupData?.card_lastName}</Descriptions.Item>
+                                }
+                                {!isNullOrEmpty(signupData?.card_streetAddress) &&
+                                    <Descriptions.Item label={'Street Address'}>{signupData?.card_streetAddress}</Descriptions.Item>
+                                }
+                                {!isNullOrEmpty(signupData?.city) &&
+                                    <Descriptions.Item label={'City'}>{signupData?.city}</Descriptions.Item>
+                                }
+                                {!isNullOrEmpty(signupData?.card_state) &&
+                                    <Descriptions.Item label={t(isCanadaCulture(uiCulture) ? 'additionalInfo.form.province' : 'additionalInfo.form.state')}>{signupData?.card_state}</Descriptions.Item>
+                                }
+                                {!isNullOrEmpty(signupData?.card_zipCode) &&
+                                    <Descriptions.Item label={isNonUsCulture(uiCulture) ? t(`additionalInfo.form.postalCode`) : t(`additionalInfo.form.zipCode`)}>{signupData?.card_zipCode}</Descriptions.Item>
+                                }
+                                {!isNullOrEmpty(signupData?.card_accountType) &&
+                                    <Descriptions.Item label={'Payment Type'}>{equalString(signupData?.card_accountType, 2) ? 'eCheck' : 'Credit Card'}</Descriptions.Item>
+                                }
+                            </Descriptions>
+                        </>
+                    }
+                    
                     <ReCAPTCHA
                         ref={recaptchaRef}
                         size="invisible"

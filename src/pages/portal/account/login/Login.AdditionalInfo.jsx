@@ -151,14 +151,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
                 isUsingCollectJs: data.IsUsingCollectJs || formik.values.isUsingCollectJs,
                 showStatesDropdown: toBoolean(data?.ShowStatesDropdown) || formik.values.showStatesDropdown,
                 RatingCategories: data.RatingCategories || formik.values.RatingCategories,
-                Udfs: data.UserDefinedFields || formik.values.Udfs,
-                formIncludes: {
-                    IncludePhoneNumber: toBoolean(data.PhoneNumber?.IncludePhoneNumber),
-                    IncludeGender: toBoolean(data.MemberGender?.IncludeGender),
-                    IncludeAddressBlock: toBoolean(data.Address?.IncludeAddressBlock),
-                    IncludeMembershipNumber: toBoolean(data.Membership?.IncludeMembershipNumber),
-                    IncludeDateOfBirthBlock: toBoolean(data.DateOfBirth?.IncludeDateOfBirthBlock),
-                }
+                Udfs: data.UserDefinedFields || formik.values.Udfs
             });
 
             //formik validation
@@ -308,7 +301,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
             }
 
             {equalString(page, 'create-account') &&
-                <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
+                <LoginCreateAccountReviewModal data={formik.values} show={showReviewModal} setShow={setShowReviewModal}/>
             }
         </>
     )

@@ -8,7 +8,7 @@ import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {
-    fromAuthLocalStorage
+    fromAuthLocalStorage, getShowUnsubscribeModal
 } from "../../storage/AppStorage.jsx";
 import {PullToRefresh} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";
@@ -22,12 +22,13 @@ import {useSafeArea} from "../../context/SafeAreaContext.jsx";
 import {ErrorBoundary} from "react-error-boundary";
 import {Toaster} from "react-hot-toast";
 import portalService from "@/api/portal.jsx";
-import {locationCurrentRoute} from "@/utils/RouteUtils.jsx";
+import {locationCurrentRoute, toRoute} from "@/utils/RouteUtils.jsx";
 import {getGlobalRedirectUrl} from "@/utils/AppUtils.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -90,6 +91,10 @@ function Layout() {
             const workingMemberId = authData?.MemberId || memberId;
             const workingOrgId = authData?.OrgId || orgId;
 
+            console.log(toBoolean(getShowUnsubscribeModal(workingOrgId)))
+            let isUnsubscribeModal = !isNullOrEmpty(location.pathname) && location.pathname.includes('textmessage/optin');
+            let textMessageRoute = toRoute(HomeRouteNames.TEXT_MESSAGE_MODAL, 'id', workingOrgId);
+            
             //not authorized
             if (isNullOrEmpty(workingMemberId)) {
                 //not allowed unauthorized
@@ -101,7 +106,6 @@ function Layout() {
 
                 setIsFetching(false);
             }
-
             //authorized without active orgid
             else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)) {
                 //todo my clubs//allowed path
@@ -112,6 +116,7 @@ function Layout() {
                 setIsFetching(false);
             }
 
+            
             //authorized with active orgid
             else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)) {
                 setOrgId(workingOrgId);
@@ -119,7 +124,15 @@ function Layout() {
                 //not allow to access login pages
                 if (equalString(location.pathname, AuthRouteNames.LOGIN) ||
                     equalString(location.pathname, AuthRouteNames.LOGIN_FORGOT_PASSWORD)) {
-                    navigate(HomeRouteNames.INDEX);
+                    if (toBoolean(getShowUnsubscribeModal(workingOrgId)) && !isUnsubscribeModal) {
+                        navigate(textMessageRoute);
+                    } else {
+                        navigate(HomeRouteNames.INDEX);  
+                    }
+                } else if (toBoolean(getShowUnsubscribeModal(workingOrgId)) && !isUnsubscribeModal) {
+                    if (!equalString(location.pathname, HomeRouteNames.DISCLOSURE_PENDING_LOGIN)) {
+                        navigate(textMessageRoute);
+                    }
                 }
 
                 //set from organization load
@@ -128,6 +141,7 @@ function Layout() {
         }
 
         if (equalString(location.pathname, '/MobileSso/AuthorizeAndRedirectApp') || equalString(location.pathname, '/MobileSso/AuthorizeAndRedirect')) {
+            //TODO
             let redirectUrl = getGlobalRedirectUrl();
             if (isNullOrEmpty(redirectUrl)) {
                 navigate(HomeRouteNames.INDEX);
