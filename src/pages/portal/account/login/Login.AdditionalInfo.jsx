@@ -5,7 +5,7 @@ import {Button, Checkbox, Flex, Skeleton, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
 
 import {
-    anyInList,
+    anyInList, equalString,
     isNullOrEmpty,
     nullToEmpty,
     toBoolean
@@ -28,13 +28,13 @@ import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {validateRatingCategories, validateUdfs} from "@/utils/ValidationUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
-import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
+import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
-function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
+function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account'}) {
     const {setHeaderTitleKey} = useHeader();
     const {spGuideId} = useAuth();
     const {isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
@@ -306,8 +306,10 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
                     </PageForm>
                 </PaddingBlock>
             }
-            
-            <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
+
+            {equalString(page, 'create-account') &&
+                <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
+            }
         </>
     )
 }

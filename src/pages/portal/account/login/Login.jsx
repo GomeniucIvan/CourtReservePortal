@@ -21,11 +21,11 @@ import LoginUpdatePassword from "@portal/account/modules/Login.UpdatePassword.js
 import LoginReview from "@portal/account/modules/Login.Review.jsx";
 import LoginAdditionalInfo from "@portal/account/login/Login.AdditionalInfo.jsx";
 import LoginRequestCode from "@portal/account/modules/Login.RequestCode.jsx";
-import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {logDebug} from "@/utils/ConsoleUtils.jsx";
 import LoginMembershipDetails from "@portal/account/modules/Login.MembershipDetails.jsx";
 import {useAntd} from "@/context/AntdProvider.jsx";
+import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
 
 function Login() {
     const navigate = useNavigate();

@@ -30,7 +30,6 @@ import {
 } from "@/utils/ValidationUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
-import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {CardConstants} from "@/constants/CardConstants.jsx";
 import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
@@ -38,10 +37,11 @@ import {useStyles} from "./../styles.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {getMembershipText} from "@/utils/TranslateUtils.jsx";
+import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
 
 const {Paragraph, Link, Title, Text} = Typography;
 
-function LoginReview({mainFormik, signupData}) {
+function LoginReview({mainFormik, signupData, page = 'create-account'}) {
     const {setHeaderTitleKey} = useHeader();
     const {setIsFooterVisible, setFooterContent, token} = useApp();
     const { t } = useTranslation('login');
@@ -361,14 +361,17 @@ function LoginReview({mainFormik, signupData}) {
                                              dateTimeDisplay={signupData.WaiverSignedOnDateTimeDisplay}/>
                         </PaddingBlock>
                     }
-                    <LoginCreateAccountReviewModal
-                        formik={{
-                            ...formik,
-                            ...mainFormik
-                        }}
-                        show={showReviewModal}
-                        setShow={setShowReviewModal}
-                    />
+
+                    {equalString(page, 'create-account') &&
+                        <LoginCreateAccountReviewModal
+                            formik={{
+                                ...formik,
+                                ...mainFormik
+                            }}
+                            show={showReviewModal}
+                            setShow={setShowReviewModal}
+                        />
+                    }
                 </>
             }
         </>

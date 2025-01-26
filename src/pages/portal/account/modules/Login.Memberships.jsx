@@ -3,7 +3,7 @@ import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
 import {useEffect, useRef, useState} from "react";
 import {Button, Descriptions, Divider, Empty, Flex, Input, Skeleton, Tag, Typography} from 'antd';
-import {anyInList, isNullOrEmpty, moreThanOneInList, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, moreThanOneInList, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import apiService from "@/api/api.jsx";
 import {useNavigate} from "react-router-dom";
@@ -13,16 +13,15 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {Card} from "antd-mobile";
 import {useStyles} from "./../styles.jsx";
 import * as React from "react";
-import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
-import LoginCreateAccountReviewModal from "./Login.CreateAccountReviewModal.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
 
 const {Text, Title, Link} = Typography;
 
-function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
+function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'create-account' }) {
     const {setHeaderTitleKey} = useHeader();
     const {setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent } = useApp();
     const {spGuideId} = useAuth();
@@ -247,8 +246,11 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip }) {
                     )}
                 </>
             }
+            
+            {equalString(page, 'create-account') &&
+                <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>    
+            }
 
-            <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
         </PaddingBlock>
     )
 }
