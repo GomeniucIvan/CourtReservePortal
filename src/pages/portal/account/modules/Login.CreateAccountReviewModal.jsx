@@ -213,9 +213,9 @@ function LoginCreateAccountReviewModal({show, setShow, formik}) {
     
     if (!isNullOrEmpty(membership)){
         let selectedPaymentFrequency = values?.paymentFrequency;
-        if (!isNullOrEmpty(selectedPaymentFrequency)){
-            let selectedOption = membership.PaymentOptions.find(paymentOption => equalString(paymentOption.Value, selectedPaymentFrequency));
-            selectedFrequencyValue = selectedOption.Text;
+        if (!isNullOrEmpty(selectedPaymentFrequency) && anyInList(membership.Prices)){
+            let selectedOption = membership.Prices.find(paymentOption => equalString(paymentOption.CostTypeFrequency, selectedPaymentFrequency));
+            selectedFrequencyValue = selectedOption.FullPriceDisplay;
         }
     }
     

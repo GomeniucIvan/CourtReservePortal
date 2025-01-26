@@ -247,7 +247,7 @@ function Login() {
                                          } else if (toBoolean(signupForm?.IsDisclosuresRequired) || toBoolean(signupForm?.RequireCardOnFile)) {
                                              navigateToStep('review');
                                          } else {
-                                             formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before creating your account.` )
+                                             formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before creating your account.`)
                                              setShowReviewModal(true);
                                          }
                                      }}
@@ -262,7 +262,6 @@ function Login() {
                                       navigateToStep('review');
                                   }}
                                   onMembershipSelect={(costType) => {
-                                      console.log(costType);
                                       formik.setFieldValue('selectedMembership', costType)
                                       formik.setFieldValue('selectedMembershipId', costType.Id)
                                       navigateToStep('membership-details');

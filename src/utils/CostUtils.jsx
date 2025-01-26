@@ -18,7 +18,7 @@ export const costDisplay = (price, negative) => {
     return `${getCurrencySymbolByCulture()}${price.toFixed(2)}`;
 }
 
-export const calculateConvenienceFee = (authData, total, onlyFee) => {
+export const calculateConvenienceFee = (total, org, onlyFee) => {
     if (isNullOrEmpty(total)) {
         return null;
     }
@@ -29,17 +29,27 @@ export const calculateConvenienceFee = (authData, total, onlyFee) => {
 
     let incrementedTotal = total;
 
-    if (!isNullOrEmpty(org) && !isNullOrEmpty(org.ConvenienceFeeFixedAmount)) {
-        total += org.ConvenienceFeeFixedAmount || 0;
+    if (!isNullOrEmpty(org) && !isNullOrEmpty(org?.convenienceFeeFixedAmount)) {
+        total += org.convenienceFeeFixedAmount || 0;
+    }
 
-        const fixedConvFee = org.ConvenienceFeePercent || 0;
-        if (fixedConvFee > 0) {
-            total += (total * fixedConvFee) / 100;
-        }
+    const fixedConvFee = org?.convenienceFeePercent || 0;
+    if (fixedConvFee > 0) {
+        total += (total * fixedConvFee) / 100;
     }
 
     if (onlyFee) {
-        return Math.round(total - incrementedTotal);
+        let sumToReturn = total - incrementedTotal;
+
+        if (sumToReturn > 0) {
+            return Math.round(sumToReturn * 100) / 100;
+        }
+
+        return Math.round(sumToReturn);
+    }
+
+    if (total > 0) {
+        return Math.round(total * 100) / 100;
     }
 
     return Math.round(total);
@@ -194,4 +204,46 @@ export const membershipPaymentFrequencyCost = (selectedMembership, selectedPayme
     }
 
     return null;
+}
+
+export const membershipCalculateTaxProperties = (selectedMembership, planFrequency, subtotal) => {
+    if (isNullOrEmpty(selectedMembership)) {
+        return null;
+    }
+
+    if (isNullOrEmpty(selectedMembership.TaxRateId)) {
+        return null;
+    }
+
+    const taxRate = selectedMembership.TaxRate;
+
+    if (isNullOrEmpty(taxRate)) {
+        return null;
+    }
+
+    if (!equalString(taxRate.InitiationFeeTaxable, 1) && isNullOrEmpty(planFrequency)) {
+        return null;
+    }
+
+    //InitiationFeeTaxableOptionEnum.Taxable
+    if (isNullOrEmpty(planFrequency) && equalString(taxRate.InitiationFeeTaxable, 1)) {
+        return null;
+    }
+
+    let taxTotal = null;
+
+    //TaxOptionEnum.Excluded
+    if (equalString(taxRate.TaxOptionId, 1)) {
+        taxTotal = subtotal * (taxRate.Percent / 100);
+    }
+
+    //if (equalString(taxRate.TaxOptionId, 2)) {
+    //    taxTotal = subtotal - (subtotal / (1 + (taxRate.Percent / 100)));
+    //}
+
+    if (taxTotal > 1000) {
+        taxTotal = null;
+    }
+
+    return taxTotal;
 }

@@ -245,13 +245,12 @@ const FormInput = ({ label,
             </div>
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                <Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                     {meta.error}
                 </Paragraph>
             ) : (
                 formik && formik.status && formik.status[name] && (
-                    <Paragraph
-                        style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                    <Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                         {formik.status[name]}
                     </Paragraph>
                 )

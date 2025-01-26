@@ -1,6 +1,8 @@
 import React, {useRef, useState, forwardRef, useImperativeHandle, useEffect} from 'react';
 import {Typography} from 'antd';
 import {useApp} from "../../context/AppProvider.jsx";
+import {cx} from "antd-style";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 const { Paragraph } = Typography;
 
 const FormPaymentProfileStripe = React.forwardRef(({ stripeCardElementRef,
@@ -106,10 +108,7 @@ const FormPaymentProfileStripe = React.forwardRef(({ stripeCardElementRef,
                             </div>
                         </span>
                 {validationMessage &&
-                    <Paragraph style={{
-                        color: token.Form.colorError,
-                        marginLeft: token.Form.labelColonMarginInlineStart
-                    }}>
+                    <Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                         {validationMessage}
                     </Paragraph>
                 }

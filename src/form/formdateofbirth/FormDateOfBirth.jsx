@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useImperativeHandle, useState} from 'react';
 import {useStyles} from "./styles.jsx";
 import {anyInList, calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {cultureStartingWithDay} from "../../utils/DateUtils.jsx";
-import {cx} from "antd-style";
 import InlineBlock from "../../components/inlineblock/InlineBlock.jsx";
 import {Flex, Input, Select, Skeleton, Typography} from "antd";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
@@ -10,6 +9,7 @@ import FormDrawerRadio from "../formradio/FormDrawerRadio.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useTranslation} from "react-i18next";
 import {addCypressTag} from "@/utils/TestUtils.jsx";
+import {cx} from "antd-style";
 
 const {Paragraph} = Typography;
 
@@ -384,7 +384,7 @@ const FormDateOfBirth = React.forwardRef(({
             </InlineBlock>
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                <Paragraph {...addCypressTag(`error-date_of_birth`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                     {meta.error}
                 </Paragraph>
             ) : null}

@@ -40,8 +40,6 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     const [validationMessage, setValidationMessage] = useState('');
     const [stripe, setStripe] = useState(null);
     const [stripeCardElement, setStripeCardElement] = useState(null);
-    const [showECheckDetails, setShowECheckDetails] = useState(false);
-    const [showCardDetails, setShowCardDetails] = useState(false);
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
     const [selectedSegmentType, setSelectedSegmentType] = useState('');
     
@@ -65,13 +63,16 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     });
 
     useImperativeHandle(ref, () => ({
-        async submitCreateToken(values) {
+        async submitCreateToken() {
 
             let isValid = false;
             let errorMessage = '';
 
+            let isECheck = equalString(selectedSegmentType, 'eCheck');
+            let isCreditCard = equalString(selectedSegmentType, 'Credit Card');
+            
             //credit card
-            if (equalString(values.card_accountType, 1)) {
+            if (isCreditCard) {
                 if (equalString(paymentProvider, 2) && stripe && stripeCardElement) {
                     try {
                         const result = await stripe.createToken(stripeCardElement);
@@ -131,8 +132,9 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                     isValid = true
                 }
             }
+            
             //echeck
-            else if (equalString(values.card_accountType, 2)) {
+            else if (isECheck) {
                 if (equalString(paymentProvider, 3) && toBoolean(isUsingCollectJs)) {
 
                     const allFieldsValid = Object.values(fieldValidity).every(status => status === true);
@@ -190,9 +192,9 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                         const paramObject = {
                             country: 'US',
                             currency: 'usd',
-                            routing_number: values.card_routingNumber,
-                            account_number: values.card_accountNumber,
-                            account_holder_name: `${values.card_firstName} ${values.card_lastName}`,
+                            routing_number: formik?.values?.card_routingNumber,
+                            account_number: formik?.values?.card_accountNumber,
+                            account_holder_name: `${formik?.values?.card_firstName} ${formik?.values?.card_lastName}`,
                             account_holder_type: 'individual',
                         };
                         const result = await stripe.createToken('bank_account', paramObject);

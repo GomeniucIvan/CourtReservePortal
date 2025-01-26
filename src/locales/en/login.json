@@ -84,7 +84,8 @@
       "membershipNumber": "Membership Number",
       "dateOfBirth": "Date of Birth",
       "postalCode": "Postal Code",
-      "zipCode": "Zip Code"
+      "zipCode": "Zip Code",
+      "state": "State"
     },
     
     "button": {
@@ -119,7 +120,7 @@
       "disclosureAgree": "I agree to the",
       "disclosureAgreeDescription": "Terms and Conditions",
       "disclosureAgreeRequired": "You must agree to the terms & conditions.",
-      "paymentFrequency": "Payment Frequency"
+      "paymentFrequency": "Pricing Option(s)"
     },
     "button" : {
       "continue": "Continue"

@@ -6,6 +6,7 @@ import FormInput from "../input/FormInput.jsx";
 import {getAllCountries} from "../../utils/CountryUtils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 const { Paragraph } = Typography;
 
 const FormPaymentProfileCardConnect = React.forwardRef(({ formik}, ref) => {
@@ -80,17 +81,11 @@ const FormPaymentProfileCardConnect = React.forwardRef(({ formik}, ref) => {
                 </div>
 
                 {validationMessage ?
-                    (<Paragraph style={{
-                        color: token.Form.colorError,
-                        marginLeft: token.Form.labelColonMarginInlineStart
-                    }}>
+                    (<Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                         {validationMessage}
                     </Paragraph>) :
                     (<>{cardConnectCardHasError && metaCardConnectCard && typeof metaCardConnectCard.error === 'string' ? (
-                        <Paragraph style={{
-                            color: token.Form.colorError,
-                            marginLeft: token.Form.labelColonMarginInlineStart
-                        }}>
+                        <Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                             {metaCardConnectCard.error}
                         </Paragraph>
                     ) : null}</>)

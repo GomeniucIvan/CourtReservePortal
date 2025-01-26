@@ -146,8 +146,7 @@ const FormSelect = forwardRef(({
                     </Select>
 
                     {hasError && meta && typeof meta.error === 'string' ? (
-                        <Paragraph
-                            style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                        <Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                             {meta.error}
                         </Paragraph>
                     ) : null}

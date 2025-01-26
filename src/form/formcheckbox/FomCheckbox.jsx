@@ -60,9 +60,7 @@ const FormCheckbox = ({label, text, formik, name, description, descriptionClick}
                     }
                 </Flex>
                 {hasError && meta && typeof meta.error === 'string' ? (
-                    <Paragraph
-                        className={'ant-input-status-error'}
-                        style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                    <Paragraph className={cx(globalStyles.formError, 'ant-input-status-error')}>
                         {meta.error}
                     </Paragraph>
                 ) : null}

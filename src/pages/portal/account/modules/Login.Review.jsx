@@ -1,23 +1,33 @@
 import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Button, Checkbox, Divider, Flex, Skeleton, Typography} from 'antd';
 import {
     anyInList, equalString,
     isNullOrEmpty,
-    moreThanOneInList,
+    moreThanOneInList, notValidScroll,
     oneListItem,
     toBoolean
 } from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {useTranslation} from "react-i18next";
 import {orgCardCountryCode} from "@/utils/OrganizationUtils.jsx";
-import {costDisplay, membershipPaymentFrequencyCost, membershipRequirePayment} from "@/utils/CostUtils.jsx";
+import {
+    calculateConvenienceFee,
+    costDisplay, membershipCalculateTaxProperties,
+    membershipPaymentFrequencyCost,
+    membershipRequirePayment
+} from "@/utils/CostUtils.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import FormSelect from "@/form/formselect/FormSelect.jsx";
 import FormPaymentProfile from "@/form/formpaymentprofile/FormPaymentProfile.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
-import {setFormikError, validateDisclosures, validatePaymentProfile} from "@/utils/ValidationUtils.jsx";
+import {
+    setFormikError,
+    setFormikErrorN,
+    validateDisclosures,
+    validatePaymentProfile
+} from "@/utils/ValidationUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/modules/Login.CreateAccountReviewModal.jsx";
@@ -25,6 +35,9 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import {CardConstants} from "@/constants/CardConstants.jsx";
 import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
 import {useStyles} from "./../styles.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {getMembershipText} from "@/utils/TranslateUtils.jsx";
 
 const {Paragraph, Link, Title, Text} = Typography;
 
@@ -37,26 +50,33 @@ function LoginReview({mainFormik, signupData}) {
     const [isFetching, setIsFetching] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [paymentInfoData, setPaymentInfoData] = useState(null);
-
+    const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+    const [convenienceFeeObj, setConvenienceFeeObj] = useState(null);
+    
+    const paymentProfileRef = useRef(null);
+    
     const selectedMembership = mainFormik?.values?.selectedMembership;
     const {styles} = useStyles();
     
     useEffect(() => {
         setIsFooterVisible(true);
+        setHeaderTitleKey('loginReview');
+        setIsFetching(false);
+    }, []);
+
+    useEffect(() => {
         setFooterContent(<FooterBlock topBottom={true}>
             <Button type="primary"
                     block
                     htmlType="submit"
                     disabled={isFetching}
+                    loading={isSubmitLoading}
                     onClick={formik.handleSubmit}>
                 {t('review.button.continue')}
             </Button>
         </FooterBlock>);
-        setHeaderTitleKey('loginReview');
-        
-        setIsFetching(false);
-    }, []);
-
+    }, [isSubmitLoading, isFetching]);
+    
     const initialValues = {
         ...CardConstants,
         card_country: orgCardCountryCode(mainFormik?.values?.UiCulture),
@@ -72,42 +92,90 @@ function LoginReview({mainFormik, signupData}) {
         card_zipCode: mainFormik?.values?.zipCode,
         card_phoneNumber: mainFormik?.values?.phoneNumber,
     };
-
-    const getMembershipInitialValues = () => {
-        return  {
-            ...initialValues,
-            ...mainFormik,
-        };
-    }
-
-    const validationSchema = () => {
-        let schemaFields = {
-
-        };
-
-        if (!isNullOrEmpty(selectedMembership) && moreThanOneInList(selectedMembership?.DetailedPaymentOptions)) {
-            schemaFields.paymentFrequency = Yup.string().required(t('common:requiredMessage', {label: 'review.form.paymentFrequency'}));
-        }
-
-        return Yup.object(schemaFields);
-    }
     
     const formik = useCustomFormik({
-        initialValues: getMembershipInitialValues(),
-        validationSchema: validationSchema(),
+        initialValues: initialValues,
         validation: () => {
+            let isValidFormik = true;
+            let selectedMembership = mainFormik?.values?.selectedMembership;
+            //first validation always when use disclosure
+            let isValidDisclosures = validateDisclosures(t, formik, signupData);
+            
             //card details
             let formikPaymentFrequency = formik?.values?.paymentFrequency;
             const isMembershipRequirePayment = (membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(signupData.RequireCardOnFile));
-            let isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment);
-            
-            let isValidDisclosures = validateDisclosures(t, formik, signupData);
-            return isValidPaymentProfile && isValidDisclosures;
+            let isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment, paymentInfoData);
+
+            if (moreThanOneInList(selectedMembership?.Prices) && isNullOrEmpty(formik?.values?.paymentFrequency)) {
+                setFormikErrorN(formik, 'paymentFrequency', 'Pricing Option is required.');
+                isValidFormik = false;
+            }
+            return isValidPaymentProfile && isValidDisclosures && isValidFormik;
         },
         validateOnBlur: true,
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
-            setShowReviewModal(true);
+            
+            //card validation
+            if (!isSubmitLoading) {
+                setIsSubmitLoading(true);
+
+                if (paymentProfileRef.current) {
+                    let isValidTokenObj = await paymentProfileRef.current.submitCreateToken();
+                    if (!isValidTokenObj.isValid) {
+                        setIsSubmitLoading(false);
+                        displayMessageModal({
+                            title: 'Error',
+                            html: (onClose) => `${isValidTokenObj?.errorMessage}`,
+                            type: "error",
+                            buttonType: modalButtonType.DEFAULT_CLOSE,
+                            onClose: () => {
+                                notValidScroll();
+                            },
+                        })
+
+                        return;
+                    }
+                }
+
+                let confirmMessageText = `You are going to join organization. Review the information provided and confirm before creating your account.`;
+                let selectedMembership = mainFormik?.values?.selectedMembership;
+                
+                if (selectedMembership) {
+                    confirmMessageText = `You are going to join the <b>${getMembershipText(selectedMembership?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.`;
+
+                    if (signupData && signupData?.AllowMembersToPayTransactionsOnPortal) {
+                        let paymentFrequencyCost = membershipPaymentFrequencyCost(selectedMembership, values?.paymentFrequency);
+                        let convenienceFeeHtml = '';
+
+                        if (!equalString(values?.accountType, 2)) {
+                            let calculatedConvenienceFee = calculateConvenienceFee(/*total*/ paymentFrequencyCost, /*org*/ convenienceFeeObj, /*onlyFee*/ true);
+
+                            if (!isNullOrEmpty(calculatedConvenienceFee) && calculatedConvenienceFee > 0) {
+                                convenienceFeeHtml = `<span class='red'> + ${costDisplay(calculatedConvenienceFee)} Convinience Fee</span>`;
+                            }
+                        }
+
+                        if (!isNullOrEmpty(paymentFrequencyCost)) {
+                            let membershipTax = membershipCalculateTaxProperties(selectedMembership, values?.paymentFrequency, paymentFrequencyCost);
+                            if (!isNullOrEmpty(membershipTax)) {
+                                paymentFrequencyCost = paymentFrequencyCost + membershipTax;
+                            }
+
+                            if (!isNullOrEmpty(selectedMembership.InitiationFeePriceDisplay)) {
+                                paymentFrequencyCost = paymentFrequencyCost + selectedMembership.InitiationFeePrice;
+                            }
+
+
+                            confirmMessageText = `You are going to join the <b>${getMembershipText(selectedMembership?.Name)}</b> and be charged <b>${costDisplay(paymentFrequencyCost)}${convenienceFeeHtml}</b>. Review the information provided and confirm before creating your account. `;
+                        }
+                    }
+                }
+
+                formik.setFieldValue('reviewModalTitle', confirmMessageText);
+                setShowReviewModal(true);
+                setIsSubmitLoading(false);
+            }
         },
     });
 
@@ -123,8 +191,10 @@ function LoginReview({mainFormik, signupData}) {
 
             formik.setFieldValue('card_accountType', '1');
             formik.setFieldValue('card_segmentAccountType', 1);
-            formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
-            formik.setFieldTouched("paymentFrequency", true, false);
+            if (!isNullOrEmpty(paymentFrequencyValue)){
+                formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
+                formik.setFieldTouched("paymentFrequency", true, false);
+            }
         }
 
         if (anyInList(selectedMembership?.DisclosuresToSign)) {
@@ -138,7 +208,7 @@ function LoginReview({mainFormik, signupData}) {
 
             formik.setFieldValue('disclosures', disclosuresToSign);
         }
-
+        
         setPaymentInfoData({
             ...signupData,
             ShowSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck),
@@ -148,6 +218,17 @@ function LoginReview({mainFormik, signupData}) {
             SelectedSegment: toBoolean(selectedMembership?.AllowCreditCard) && toBoolean(selectedMembership?.AllowECheck) ? 'Credit Card' : (toBoolean(selectedMembership?.AllowECheck) ? 'eCheck' : 'Credit Card')
         })
     }, []);
+    
+    useEffect(() => {
+        if (signupData && toBoolean(signupData.IsUsingConvenienceFee)) {
+            setConvenienceFeeObj({
+                convenienceFeeFixedAmount: signupData?.ConvenienceFeeFixedAmount,
+                convenienceFeePercent: signupData?.ConvenienceFeePercent,
+            });
+        } else {
+            setConvenienceFeeObj(null);
+        }
+    }, [signupData]);
     
     useEffect(() => {
         if (!isNullOrEmpty(formik?.values)){
@@ -224,6 +305,7 @@ function LoginReview({mainFormik, signupData}) {
                                                 name='paymentFrequency'
                                                 label={t(`review.form.paymentFrequency`)}
                                                 options={selectedMembership?.Prices}
+                                                placeholder={'Select Pricing Option'}
                                                 required={moreThanOneInList(selectedMembership?.Prices)}
                                                 disabled={oneListItem(selectedMembership?.Prices)}
                                                 propText='FullPriceDisplay'
@@ -251,6 +333,7 @@ function LoginReview({mainFormik, signupData}) {
                                                             isPaymentProfile={false}
                                                             includeCustomerDetails={true}
                                                             allowToSavePaymentProfile={false}
+                                                            paymentProfileRef={paymentProfileRef}
                                                             showStatesDropdown={toBoolean(signupData.ShowStatesDropdown)}
                                                             hideFields={{
                                                                 firstLastName: true,
@@ -278,8 +361,14 @@ function LoginReview({mainFormik, signupData}) {
                                              dateTimeDisplay={signupData.WaiverSignedOnDateTimeDisplay}/>
                         </PaddingBlock>
                     }
-                    
-                    <LoginCreateAccountReviewModal formik={formik} show={showReviewModal} setShow={setShowReviewModal}/>
+                    <LoginCreateAccountReviewModal
+                        formik={{
+                            ...formik,
+                            ...mainFormik
+                        }}
+                        show={showReviewModal}
+                        setShow={setShowReviewModal}
+                    />
                 </>
             }
         </>

@@ -14,6 +14,7 @@ import FormSwitch from "../formswitch/FormSwitch.jsx";
 import FormStateProvince from "../formstateprovince/FormStateProvince.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {addCypressTag} from "@/utils/TestUtils.jsx";
 const { Paragraph } = Typography;
 
 let resolvePaymentRequest, rejectPaymentRequest;
@@ -947,17 +948,11 @@ const FormPaymentProfileFortis = React.forwardRef(({ formik,
                         />
 
                         {validationMessage ?
-                            (<Paragraph style={{
-                                color: token.Form.colorError,
-                                marginLeft: token.Form.labelColonMarginInlineStart
-                            }}>
+                            (<Paragraph {...addCypressTag(`error-card_number`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                                 {validationMessage}
                             </Paragraph>) :
                             (<>{cardConnectCardHasError && metaCardConnectCard && typeof metaCardConnectCard.error === 'string' ? (
-                                <Paragraph style={{
-                                    color: token.Form.colorError,
-                                    marginLeft: token.Form.labelColonMarginInlineStart
-                                }}>
+                                <Paragraph {...addCypressTag(`error-card_number`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                                     {metaCardConnectCard.error}
                                 </Paragraph>
                             ) : null}</>)

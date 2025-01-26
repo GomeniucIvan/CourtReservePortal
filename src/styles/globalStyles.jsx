@@ -441,5 +441,11 @@ export const useStyles = createStyles(({ css, token }) => ({
    `,
    tag: css`
     border-radius: ${token.borderRadiusXS}px;
-   `
+   `,
+    formError: css`
+        color: ${token.Form.colorError};
+        margin-left: 4px;
+        margin-bottom: 0 !important;
+        font-size: ${token.fontSizeSM}px;
+    `
 }));

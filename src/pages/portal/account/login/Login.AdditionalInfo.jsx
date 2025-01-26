@@ -59,7 +59,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
     }, [isFetching, isLoading]);
 
     const initialValues = {
-        ...mainFormik,
+        ...mainFormik.values,
         firstName: '',
         lastName: '',
         streetAddress: '',
@@ -110,8 +110,6 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
             const isValidRatingCategories = validateRatingCategories(t, formik);
             return isValidUdfs && isValidRatingCategories;
         },
-        validateOnBlur: true,
-        validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
             
@@ -125,7 +123,6 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit}) {
                 
                 onSignupSubmit(postModel, additionInfoData);
                 setIsLoading(false);
-
             }
         },
     });

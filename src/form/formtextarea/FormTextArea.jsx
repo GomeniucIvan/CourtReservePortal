@@ -48,13 +48,12 @@ const FormTextarea = ({ formik, name, rows = 3, max = null, placeholder = '',isR
             />
 
             {hasError && meta && typeof meta.error === 'string' ? (
-                <Paragraph style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                <Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                     {meta.error}
                 </Paragraph>
             ) : (
                 formik.status && formik.status[name] && (
-                    <Paragraph
-                        style={{color: token.Form.colorError, marginLeft: token.Form.labelColonMarginInlineStart}}>
+                    <Paragraph {...addCypressTag(`error-${name}`)} className={cx(globalStyles.formError, 'ant-input-status-error')}>
                         {formik.status[name]}
                     </Paragraph>
                 )

@@ -12,15 +12,37 @@ import {isCanadaCulture} from "./OrganizationUtils.jsx";
 
 export const setFormikError = (t, formik, fieldName, errorKey, error) => {
     if (!isNullOrEmpty(errorKey)){
-        formik.setFieldError(fieldName, t('common:requiredMessage', {label: errorKey}));
-        logError(t('common:requiredMessage', {label: errorKey}));
+        let errorToSet = t('common:requiredMessage', {label: errorKey});
+        
+        if (formik.errors[fieldName] !== errorToSet) {
+            formik.setFieldError(fieldName, errorToSet);
+            logError(errorToSet);
+        }
     } else{
-        formik.setFieldError(fieldName, error);
+        if (formik.errors[fieldName] !== error) {
+            formik.setFieldError(fieldName, error); 
+            logError(error);
+        }
+    }
+
+    if (!formik.touched[fieldName]) {
+        formik.setFieldTouched(fieldName, true, false);
+    }
+}
+
+//TODO REMOVE
+export const setFormikErrorN = (formik, fieldName, error) => {
+    // Check if the current error for the field is the same as the new error
+    if (formik.errors[fieldName] !== error) {
+        formik.setFieldError(fieldName, error); // Update the error if it has changed
         logError(error);
     }
-    
-    formik.setFieldTouched(fieldName, true, false);
-}
+
+    // Ensure the field is marked as touched
+    if (!formik.touched[fieldName]) {
+        formik.setFieldTouched(fieldName, true, false);
+    }
+};
 
 export const validateUdfs = (t, formik) => {
     let customFieldKey = false;
@@ -82,8 +104,10 @@ export const validateRatingCategories = (t, formik) => {
     return isValid;
 };
 
-export const validatePaymentProfile = (t, formik, requireCard) => {
-    let paymentProvider = formik?.values?.paymentProvider;
+export const validatePaymentProfile = (t, formik, requireCard, paymentInfoData) => {
+    let paymentProvider = paymentInfoData?.PaymentProvider;
+    let isUsingCollectJs = paymentInfoData?.IsUsingCollectJs;
+    
     let isValid = true;
     
     if (requireCard) {
@@ -153,7 +177,7 @@ export const validatePaymentProfile = (t, formik, requireCard) => {
 
         //SafeSave
         if (equalString(paymentProvider, 3)) {
-            if (toBoolean(formik?.values?.isUsingCollectJs)) {
+            if (toBoolean(isUsingCollectJs)) {
                 //validate by iframe response
             } else {
                 
@@ -541,14 +565,18 @@ export const validateDisclosures = (t, formik, orgSignup) => {
     if (anyInList(formik?.values?.disclosures)) {
         formik?.values?.disclosures.forEach((disclosure, index) => {
             if (isNullOrEmpty(disclosure.SignatureDataUrl) || !toBoolean(disclosure.AcceptAgreement)) {
-                formik.setFieldValue(`disclosures[${index}].Status`, 'Error');
+                if (isNullOrEmpty(disclosure.Status)){
+                    formik.setFieldValue(`disclosures[${index}].Status`, 'Error');
+                }
                 isValid = false;
             }
         });
     }
 
     if (orgSignup && !isNullOrEmpty(orgSignup.Disclosures) && toBoolean(orgSignup.IsDisclosuresRequired) && !toBoolean(formik?.values?.disclosureAgree)) {
-        formik.setFieldValue(`disclosureAgreeErrorStatus`, 'Error');
+       if (isNullOrEmpty(formik?.values?.disclosureAgreeErrorStatus)) {
+           formik.setFieldValue(`disclosureAgreeErrorStatus`, 'Error');
+       }
         isValid = false;
     }
     

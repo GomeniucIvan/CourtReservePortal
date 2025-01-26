@@ -120,8 +120,6 @@ function DisclosureBlock({disclosure,
         }
     };
     
-    console.log(formik?.values)
-    
     return (
         <>
             {!isNullOrEmpty(disclosure?.RuleInstructions) &&
