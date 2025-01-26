@@ -440,7 +440,8 @@ export const useStyles = createStyles(({ css, token }) => ({
       width: ${window.innerWidth - (token.padding*2)}px;
    `,
    tag: css`
-    border-radius: ${token.borderRadiusXS}px;
+        border-radius: ${token.borderRadiusXS}px;
+       margin-inline-end: 0px;
    `,
     formError: css`
         color: ${token.Form.colorError};

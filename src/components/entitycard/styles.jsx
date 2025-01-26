@@ -27,10 +27,10 @@ export const useStyles = createStyles(({ css, token }) => ({
         border-bottom-left-radius: ${token.borderRadiusSM}px;
     `,
     emptyFlexBlock: css`
-        min-height: 176px;
+       // min-height: 176px;
     `,
     emptyText: css`
-        color: ${token.colorSecondary};
+        color: ${token.colorText};
     `,
     emptyCard: css`
         background-color: ${token.colorBgLayout};

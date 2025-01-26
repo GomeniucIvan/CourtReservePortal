@@ -65,7 +65,7 @@ const DashboardBookings = ({dashboardData, isFetching}) => {
                         })}
                     </SwiperSlider>
             ) : (
-                <EntityEmptyBlock text='You have no upcoming bookings' />
+                <EntityEmptyBlock text='You have no upcoming bookings' height={136} />
             )}
         </EntityCardWrapper>
     );

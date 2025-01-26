@@ -14,7 +14,7 @@ import {useStyles} from "./styles.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const {Text} = Typography;
 
-const EntityEmptyBlock = ({text, height}) => {
+const EntityEmptyBlock = ({text, height = 150}) => {
     const {globalStyles} = useApp();
     const { styles } = useStyles();
 

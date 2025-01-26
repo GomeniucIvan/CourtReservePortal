@@ -35,7 +35,7 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
 
             setMyLeaguesDropdown(myLeagues);
             setShowLeaguesBlock(toBoolean(dashboardData?.ShowLeaguesBlock) && anyInList(myLeagues));
-            setLeaguesDates(stringToJson(dashboardData?.LeagueDatesJson));
+            setLeaguesDates(dashboardData?.LeagueDates);
             setHideLeagues(!anyInList(myLeagues) || isNullOrEmpty(dashboardData?.SelectedLeagueSessionId));
 
             if (!isNullOrEmpty(dashboardData?.SelectedLeagueSessionId) && isNullOrEmpty(selectedLeagueId)) {
