@@ -1,6 +1,6 @@
 ﻿import {getCurrencySymbolByCulture} from "./DateUtils.jsx";
 import {parseSafeInt} from "./NumberUtils.jsx";
-import {equalString, isNullOrEmpty} from "./Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty} from "./Utils.jsx";
 
 export const costDisplay = (price, negative) => {
     if (isNullOrEmpty(price)){
@@ -64,59 +64,24 @@ export const membershipRequirePayment = (selectedMembership, selectedPaymentFreq
         return false;
     }
 
-    try {
-        const isMonthlyPaymentFrequency = equalString(selectedPaymentFrequency, '1');
-        const isQuarterPaymentFrequency = equalString(selectedPaymentFrequency, '2');
-        const isAnnualPaymentFrequency = equalString(selectedPaymentFrequency, '3');
-        const isCustomPaymentFrequency = equalString(selectedPaymentFrequency, '4');
-        const isOneTimePaymentFrequency = equalString(selectedPaymentFrequency, '5');
+    if (anyInList(selectedMembership?.Prices)) {
+        try {
+            const findPayment = selectedMembership.Prices.find((price) => price.CostTypeFrequency == selectedPaymentFrequency ? price : null);
 
-
-        if (isMonthlyPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.MonthlyMembershipPrice)) {
-                return false;
+            if (findPayment) {
+                const doubleCost = parseFloat(findPayment.Price);
+                return doubleCost > 0;
             }
-
-            const monthlyDoubleCost = parseFloat(selectedMembership.MonthlyMembershipPrice);
-            return monthlyDoubleCost > 0;
+        } catch (e) {
+            return false;
+        }
+    } else if (anyInList(selectedMembership?.GetMembershipFrequenciesWithCost)) {
+        let selectedCost = selectedMembership?.GetMembershipFrequenciesWithCost.find(v => equalString(v.Value, selectedPaymentFrequency));
+        if (selectedCost) {
+            const doubleCost = parseFloat(selectedCost.Cost);
+            return doubleCost > 0;
         }
 
-        if (isAnnualPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.AnnualMembershipPrice)) {
-                return false;
-            }
-
-            const annualDoubleCost = parseFloat(selectedMembership.AnnualMembershipPrice);
-            return annualDoubleCost > 0;
-        }
-
-        if (isQuarterPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.QuarterMembershipPrice)) {
-                return false;
-            }
-
-            const quarterDoubleCost = parseFloat(selectedMembership.QuarterMembershipPrice);
-            return quarterDoubleCost > 0;
-        }
-
-        if (isCustomPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.CustomMembershipPrice)) {
-                return false;
-            }
-
-            const customDoubleCost = parseFloat(selectedMembership.CustomMembershipPrice);
-            return customDoubleCost > 0;
-        }
-
-        if (isOneTimePaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.LifetimeMembershipPrice)) {
-                return false;
-            }
-
-            const lifetimeDoubleCost = parseFloat(selectedMembership.LifetimeMembershipPrice);
-            return lifetimeDoubleCost > 0;
-        }
-    } catch (e) {
         return false;
     }
 
@@ -132,78 +97,31 @@ export const membershipPaymentFrequencyCost = (selectedMembership, selectedPayme
         return null;
     }
 
-    try {
-        const isMonthlyPaymentFrequency = equalString(selectedPaymentFrequency, '1');
-        const isQuarterPaymentFrequency = equalString(selectedPaymentFrequency, '2');
-        const isAnnualPaymentFrequency = equalString(selectedPaymentFrequency, '3');
-        const isCustomPaymentFrequency = equalString(selectedPaymentFrequency, '4');
-        const isOneTimePaymentFrequency = equalString(selectedPaymentFrequency, '5');
+    if (anyInList(selectedMembership?.Prices)) {
+        try {
+            const findPayment = selectedMembership?.Prices.find((price) => price.CostTypeFrequency == selectedPaymentFrequency ? price : null);
 
-
-        if (isMonthlyPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.MonthlyMembershipPrice)) {
-                return null;
+            if (findPayment) {
+                const doubleCost = parseFloat(findPayment.Price);
+                if (doubleCost > 0) {
+                    return doubleCost;
+                }
             }
-
-            const monthlyDoubleCost = parseFloat(selectedMembership.MonthlyMembershipPrice);
-            if (monthlyDoubleCost > 0) {
-                return monthlyDoubleCost;
-            }
+            // return selectedMembership.Prices[0].FullPriceDisplay;
+        } catch (e) {
             return null;
         }
-
-        if (isAnnualPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.AnnualMembershipPrice)) {
-                return null;
+    } else if (anyInList(selectedMembership?.GetMembershipFrequenciesWithCost)) {
+        let selectedCost = selectedMembership?.GetMembershipFrequenciesWithCost.find(v => equalString(v.Value, selectedPaymentFrequency));
+        if (selectedCost) {
+            const doubleCost = parseFloat(selectedCost.Cost);
+            if (doubleCost > 0) {
+                return doubleCost;
             }
-
-            const annualDoubleCost = parseFloat(selectedMembership.AnnualMembershipPrice);
-            if (annualDoubleCost > 0) {
-                return annualDoubleCost;
-            }
-            return null;
         }
 
-        if (isQuarterPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.QuarterMembershipPrice)) {
-                return null;
-            }
-
-            const quarterDoubleCost = parseFloat(selectedMembership.QuarterMembershipPrice);
-            if (quarterDoubleCost > 0) {
-                return quarterDoubleCost;
-            }
-            return null;
-        }
-
-        if (isCustomPaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.CustomMembershipPrice)) {
-                return null;
-            }
-
-            const customDoubleCost = parseFloat(selectedMembership.CustomMembershipPrice);
-            if (customDoubleCost > 0) {
-                return customDoubleCost;
-            }
-            return null;
-        }
-
-        if (isOneTimePaymentFrequency) {
-            if (isNullOrEmpty(selectedMembership.LifetimeMembershipPrice)) {
-                return false;
-            }
-
-            const lifetimeDoubleCost = parseFloat(selectedMembership.LifetimeMembershipPrice);
-            if (lifetimeDoubleCost > 0) {
-                return lifetimeDoubleCost;
-            }
-            return null;
-        }
-    } catch (e) {
         return null;
     }
-
-    return null;
 }
 
 export const membershipCalculateTaxProperties = (selectedMembership, planFrequency, subtotal) => {

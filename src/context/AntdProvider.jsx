@@ -94,7 +94,9 @@ export const AntdProvider = ({ children }) => {
                             paddingXS: 4,
                             paddingXXS: 2,
                             colorTextTertiary: 'rgba(0, 0, 0, 0.45)',
-                            colorInfoText: '#1677ff'
+                            colorInfoText: '#1677ff',
+                            colorSplit: '#d9d9d9', //divider color
+                            colorBorderSecondary: '#d9d9d9' //cards color
                         },
                         components: {
                             Custom: {
