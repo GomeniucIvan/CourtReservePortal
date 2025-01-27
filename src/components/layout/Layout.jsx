@@ -93,6 +93,7 @@ function Layout() {
 
             console.log(toBoolean(getShowUnsubscribeModal(workingOrgId)))
             let isUnsubscribeModal = !isNullOrEmpty(location.pathname) && location.pathname.includes('textmessage/optin');
+            let isDisclosurePending = !isNullOrEmpty(location.pathname) && location.pathname.includes('disclosures/pending');
             let textMessageRoute = toRoute(HomeRouteNames.TEXT_MESSAGE_MODAL, 'id', workingOrgId);
             
             //not authorized
@@ -130,7 +131,7 @@ function Layout() {
                         navigate(HomeRouteNames.INDEX);  
                     }
                 } else if (toBoolean(getShowUnsubscribeModal(workingOrgId)) && !isUnsubscribeModal) {
-                    if (!equalString(location.pathname, HomeRouteNames.DISCLOSURE_PENDING_LOGIN)) {
+                    if (!isDisclosurePending) {
                         navigate(textMessageRoute);
                     }
                 }

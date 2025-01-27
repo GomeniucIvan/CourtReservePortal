@@ -26,7 +26,7 @@ export const HomeRouteNames = {
     NEWS_LIST: `/online/news/list/:id`,
     NEWS_DETAILS: `/online/news/details/:id`,
     NAVIGATE: `/online/portal/navigate/:id/:nodeId`,
-    DISCLOSURE_PENDING_LOGIN: `/disclosure/pending-login`,
+    DISCLOSURE_PENDING_LOGIN: `/online/disclosures/pending/:id`,
     MY_CLUBS: `/myclubs`,
     MEMBER_GROUP: `/online/publicmembergroup/MemberGroup/:id`,
     MEMBERSHIPS: `/memberships`,

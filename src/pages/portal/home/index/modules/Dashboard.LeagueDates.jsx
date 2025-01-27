@@ -24,7 +24,6 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
     const {tagStyles} = useCombinedStyles();
     const [isOptInLoading, setIsOptInLoading] = useState(false);
     const [innerLeaguesDates, setInnerLeaguesDates] = useState(leaguesDates);
-    const [inProgressStatus, setInProgressStatus] = useState(false);
     
     if (!anyInList(leaguesDates)){
         return '';
@@ -32,7 +31,6 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
 
     useEffect(() => {
         setInnerLeaguesDates(leaguesDates);
-        setInProgressStatus(leaguesDates?.InProgress);
     }, [leaguesDates])
     
     const optInAjax = async (data, isFree) => {
@@ -128,6 +126,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
 
     const optInButton = (data) => {
         let isDisabled = !data.AllowToOptIn;
+        let inProgressStatus = data?.InProgress;
         let isFreeLeaguePrice = getValueOrDefault(data.PriceToPay, 0) <= 0 || toBoolean(data.FamilyRegisteredMembersCount <= 1);
         let href = '';
 

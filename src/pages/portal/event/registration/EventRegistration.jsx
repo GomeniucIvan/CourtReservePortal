@@ -24,9 +24,9 @@ import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {Toast} from "antd-mobile";
 import Modal from "@/components/modal/Modal.jsx";
 import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
-import DisclosuresPartial from "@portal/home/disclosure/DisclosuresPartial.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import DisclosuresPartial from "@/form/formdisclosures/DisclosuresPartial.jsx";
 
 const {Title, Text} = Typography;
 

@@ -1,8 +1,6 @@
-import {Button, Checkbox, Descriptions, Divider, Flex, Radio, Skeleton, Typography} from 'antd';
+import {Button, Flex, Typography} from 'antd';
 import {
     anyInList,
-    equalString,
-    focus,
     isNullOrEmpty,
     toBoolean
 } from "../../utils/Utils.jsx";
@@ -18,7 +16,7 @@ import Modal from "@/components/modal/Modal.jsx";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
-import DisclosureBlock from "@/components/disclosureBlock/DisclosureBlock.jsx";
+import DisclosureBlock from "@/form/formdisclosures/DisclosureBlock.jsx";
 
 const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
     const [showCheckboxModal, setShowCheckboxModal] = useState(false);
@@ -33,19 +31,6 @@ const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
         }
         else if (!isNullOrEmpty(formik?.values?.disclosureAgreeErrorStatus)) {
             status = <Flex gap={token.paddingSM} style={{color: token.colorError}}><SVG icon='alert-triangle' preventFill={true} /> Please review and agree to this organization's Terms of Use.</Flex>;
-        }
-
-        return status;
-    }
-
-    const displayWaiverDescriptionWithStatus = (item, itemHasError) => {
-        let status = <Text>Please review and sign this Membership Agreement.</Text>
-
-        if (equalString(item.Status, 'Success') || (!isNullOrEmpty(item.SignatureDataUrl) && toBoolean(item.AcceptAgreement))) {
-            status = <Flex gap={token.paddingSM}><SVG icon='circle-check' preventFill={true} /> Completed</Flex>;
-        }
-        else if (equalString(item.Status, 'error') || itemHasError) {
-            status = <Flex gap={token.paddingSM} style={{color: token.colorError}}><SVG icon='alert-triangle' preventFill={true} /> Please review and sign this Membership Agreement.</Flex>;
         }
 
         return status;
@@ -112,51 +97,38 @@ const FormDisclosures = ({ formik, disclosureHtml, dateTimeDisplay }) => {
                 {(anyInList(formik?.values?.disclosures)) &&
                     <Flex vertical={true} gap={token.padding}>
                         <>
-                            {(anyInList(formik?.values?.disclosures)) &&
-                                <>
-                                    {formik?.values?.disclosures.map((disclosure, index) => {
-                                        let isSignedWaiver = toBoolean(disclosure.AcceptAgreement) && !isNullOrEmpty(disclosure.SignatureDataUrl);
-                                        let isErrorState = !isSignedWaiver && equalString(disclosure?.Status, 'error');
-                                        
-                                        let memberFullName = `${formik?.values?.firstName} ${formik?.values?.lastName}`;
+                            {formik?.values?.disclosures.map((disclosure, index) => {
+                                let memberFullName = `${formik?.values?.firstName} ${formik?.values?.lastName}`;
 
-                                        return (
-                                            <Flex vertical={true} gap={20} className={cx(styles.disclosureBlock, isErrorState && styles.errorBlock)} key={index}>
-                                                <Flex vertical={true} gap={4}>
-                                                    <Title level={3}>Membership Agreement: {disclosure?.Name} <Text style={{color: token.colorError}}>*</Text></Title>
-                                                    {displayWaiverDescriptionWithStatus(disclosure)}
-                                                </Flex>
+                                return (
+                                    <div key={index}>
+                                        <DisclosureBlock memberFullName={memberFullName}
+                                                         disclosure={disclosure}
+                                                         dateTimeDisplay={dateTimeDisplay}
+                                                         formik={formik}
+                                                         onSign={(dataUrl) => {
+                                                             formik.setFieldValue(
+                                                                 `disclosures[${index}].SignatureDataUrl`,
+                                                                 dataUrl
+                                                             );
+                                                         }}
+                                                         onClear={() => {
+                                                             formik.setFieldValue(
+                                                                 `disclosures[${index}].SignatureDataUrl`,
+                                                                 ''
+                                                             );
+                                                         }}
+                                                         onAcceptAgreementChange={(e) => {
+                                                             formik.setFieldValue(
+                                                                 `disclosures[${index}].AcceptAgreement`,
+                                                                 toBoolean(e)
+                                                             );
+                                                         }}
 
-
-                                                <DisclosureBlock memberFullName={memberFullName}
-                                                                 disclosure={disclosure}
-                                                                 dateTimeDisplay={dateTimeDisplay}
-                                                                 formik={formik}
-                                                                 onSign={(dataUrl) => {
-                                                                     formik.setFieldValue(
-                                                                         `disclosures[${index}].SignatureDataUrl`,
-                                                                         dataUrl
-                                                                     );
-                                                                 }}
-                                                                 onClear={() => {
-                                                                     formik.setFieldValue(
-                                                                         `disclosures[${index}].SignatureDataUrl`,
-                                                                         ''
-                                                                     );
-                                                                 }}
-                                                                 onAcceptAgreementChange={(e) => {
-                                                                     formik.setFieldValue(
-                                                                         `disclosures[${index}].AcceptAgreement`,
-                                                                         toBoolean(e)
-                                                                     );
-                                                                 }}
-
-                                                />
-                                            </Flex>
-                                        )
-                                    })}
-                                </>
-                            }
+                                        />
+                                    </div>
+                                )
+                            })}
                         </>
                     </Flex>
                 }

@@ -117,8 +117,6 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
             }
             return isValidPaymentProfile && isValidDisclosures && isValidFormik;
         },
-        validateOnBlur: true,
-        validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
 
             //card validation
