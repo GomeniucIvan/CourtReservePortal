@@ -61,7 +61,6 @@ function ListLinks({links, className, classNameLi, hideChevron, announcementsCou
                               key={index}
                               className={classNameLi}
                               onClick={() => {
-                                  console.log(link)
                                   if (toBoolean(link.TargetBlank)) {
                                       displayMessageModal({
                                           title: "External Link",
