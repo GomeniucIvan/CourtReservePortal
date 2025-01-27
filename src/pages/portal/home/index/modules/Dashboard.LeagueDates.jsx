@@ -30,10 +30,6 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
         return '';
     }
 
-    const buildDashboardOptInButton = () => {
-        return '';
-    }
-
     useEffect(() => {
         setInnerLeaguesDates(leaguesDates);
         setInProgressStatus(leaguesDates?.InProgress);
@@ -50,7 +46,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
         let isFreeLeaguePrice = true;// getValueOrDefault(data.PriceToPay, 0) || toBoolean(data.FamilyRegisteredMembersCount <= 1);
 
         if (isFreeLeaguePrice) {
-            let optInResponse = await appService.post(`/Online/Leagues/OptinFree?id=${orgId}&sessionId=${leagueSessionId}&resId=${reservationId}&orgMemberId=${orgMemberId}&leagueId=${leagueId}&registrationId=${leagueSessionRegistrationId}`)
+            let optInResponse = await appService.post(`/app/Online/Leagues/OptinFree?id=${orgId}&sessionId=${leagueSessionId}&resId=${reservationId}&orgMemberId=${orgMemberId}&leagueId=${leagueId}&registrationId=${leagueSessionRegistrationId}`)
             if (toBoolean(optInResponse?.isValid)) {
                 let respData = optInResponse?.Data;
 
@@ -163,7 +159,6 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
                             danger={true}
                             loading={isOptInLoading}
                             data-href={href}
-                            className={cx('prevent-redirect btn-modal', buttonStyles.height44)}
                             onClick={() => {
                                 //setIsOptInLoading(true);
 
