@@ -29,6 +29,8 @@ function DashboardModern({navigationItems,
     const {orgId} = useAuth();
     const [buttons, setButtons] = useState(anyInList(getDashboardMainLinks(orgId)) ? getDashboardMainLinks(orgId) : []);
     
+    console.log(dashboardData?.itemsData)
+    
     return (
         <>
             <Flex vertical={true} gap={token.padding}>
@@ -67,15 +69,31 @@ function DashboardModern({navigationItems,
                         }
                     </PaddingBlock>
                 </Flex>
-                
-                {toBoolean(dashboardData?.itemsModel?.ShowMembershipBtn) &&
-                    <AlertBlock
-                        type={dashboardData?.itemsModel.MembershipStatusDisplay}
-                        title={dashboardData?.itemsModel?.MembershipText}
-                        description={dashboardData?.itemsModel?.MembershipDescriptionHtml}
-                        buttonText={dashboardData?.itemsModel?.GetMembershipButtonText}
-                        onButtonClick={() => {navigate(dashboardData?.itemsModel?.GetMembershipBtnUrl)}}
-                    />
+
+                {(toBoolean(dashboardData?.itemsData?.ShowMembershipBtn) || (anyInList(dashboardData?.itemsData?.UnpaidItems))) &&
+                    <>
+                        {toBoolean(dashboardData?.itemsData?.ShowMembershipBtn) &&
+                            <AlertBlock
+                                type={dashboardData?.itemsData?.MembershipStatusDisplay}
+                                title={dashboardData?.itemsData?.MembershipText}
+                                description={dashboardData?.itemsData?.MembershipDescriptionHtml}
+                                buttonText={dashboardData?.itemsData?.GetMembershipButtonText}
+                                onButtonClick={() => {navigate(dashboardData?.itemsData?.GetMembershipBtnUrl)}}
+                            />
+                        }
+
+                        {(anyInList(dashboardData?.itemsData?.UnpaidItems)) &&
+                            <>
+                                <AlertBlock
+                                    type={'danger'}
+                                    title={'Upfront Payment Reminder'}
+                                    description={'Upfront payment is pending'}
+                                    buttonText={toBoolean(dashboardData?.itemsData?.AllowMembersToPayTransactionsOnPortal) ? 'Pay' : ''}
+                                    onButtonClick={() => {navigate(`/Online/Payments/ProcessPayment/${orgId}`)}}
+                                />
+                            </>
+                        }
+                    </>
                 }
                 
                 <PaddingBlock leftRight={false} onlyBottom={true}>

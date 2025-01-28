@@ -1,5 +1,5 @@
 ﻿import {useApp} from "@/context/AppProvider.jsx";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {DayView} from "@/components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {InnerScheduler} from "@/components/scheduler/partial/InnerScheduler.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
@@ -7,8 +7,6 @@ import {Flex, Skeleton, Spin, Typography} from "antd";
 import {useLocation, useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import moment from "moment";
-const {Text} = Typography
-import '@progress/kendo-date-math/tz/all.js';
 import {
     SchedulerProportionalViewItem
 } from "@/components/scheduler/partial/items/SchedulerProportionalViewItemDisplay.jsx";
@@ -16,14 +14,14 @@ import {SchedulerViewSlot} from "@/components/scheduler/partial/slots/SchedulerV
 import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {dateFormatByUiCulture, dateTimeToFormat, dateToTimeString, toReactDate} from "@/utils/DateUtils.jsx";
+import {dateFormatByUiCulture, dateToTimeString, toReactDate} from "@/utils/DateUtils.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import dayjs from "dayjs";
 import apiService from "@/api/api.jsx";
 import {saveCookie} from "@/utils/CookieUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import '@progress/kendo-date-math/tz/all.js';
 
-function InstructorScheduler() {
+function ExpandedScheduler() {
     const {setHeaderRightIcons} = useHeader();
     const {availableHeight, setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
     const {orgId} = useAuth();
@@ -100,21 +98,40 @@ function InstructorScheduler() {
                 }
             }
             
-            apiService.get(`/api/scheduler/member-expanded?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
-                const formattedEvents = resp.Data.map(event => ({
-                    ...event,
-                    Start: new Date(event.Start),
-                    start: new Date(event.Start),
-                    End: new Date(event.End),
-                    end: new Date(event.End),
+            //instructor
+            if (equalString(schedulerData?.SchedulerEntityType, 2)){
+                appService.get(navigate, `/app/Online/Reservations/ReadInstructorExpanded?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
+                    const formattedEvents = resp.Data.map(event => ({
+                        ...event,
+                        Start: new Date(event.Start),
+                        start: new Date(event.Start),
+                        End: new Date(event.End),
+                        end: new Date(event.End),
 
-                    isAllDay: false,
-                    IsAllDay: false,
-                }));
-                
-                setEvents(formattedEvents);
-                setLoading(false);
-            });
+                        isAllDay: false,
+                        IsAllDay: false,
+                    }));
+
+                    setEvents(formattedEvents);
+                    setLoading(false);
+                });
+            } else{
+                apiService.get(`/api/scheduler/member-expanded?id=${orgId}&jsonData=${JSON.stringify(result)}`).then(resp => {
+                    const formattedEvents = resp.Data.map(event => ({
+                        ...event,
+                        Start: new Date(event.Start),
+                        start: new Date(event.Start),
+                        End: new Date(event.End),
+                        end: new Date(event.End),
+
+                        isAllDay: false,
+                        IsAllDay: false,
+                    }));
+
+                    setEvents(formattedEvents);
+                    setLoading(false);
+                });  
+            }
         }
     }, [selectedDate]);
     
@@ -129,6 +146,12 @@ function InstructorScheduler() {
         
         return (
             `<span style="color: ${token.colorPrimary};font-weight: 500;">${court.Label}</span><br/><span>${court.CourtTypeName}</span>`
+        )
+    }
+
+    const instructorHeader = (instructor) => {
+        return (
+            `<span style="color: ${token.colorPrimary};font-weight: 500;">${instructor.FullName}</span><br/><span>${instructor.InstructorType.Name}</span>`
         )
     }
     
@@ -151,12 +174,22 @@ function InstructorScheduler() {
                 setTimeZone(model.TimeZone);
                 setInterval(model.MinInterval);
 
-                const formattedCourts = model.Courts.map(court => ({
+                let formattedCourts = model.Courts.map(court => ({
                     ...court,
-                    Text:  courtHeader(court),
+                    Text: courtHeader(court),
                     Value: court.Id
                 }));
 
+                if (equalString(model.SchedulerEntityType, 2)) {
+                    formattedCourts = model.SchedulerInstructors.map(instructor => ({
+                        ...instructor,
+                        Text:  instructorHeader(instructor),
+                        Value: instructor.Id
+                    }));
+                }
+                
+                console.log(formattedCourts);
+                
                 setCourts(formattedCourts);
                 setIsSchedulerInitializing(false);
                 setCurrentDateTime(currentDateTime);
@@ -318,4 +351,4 @@ function InstructorScheduler() {
     );
 }
 
-export default InstructorScheduler
+export default ExpandedScheduler

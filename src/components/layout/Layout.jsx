@@ -91,7 +91,6 @@ function Layout() {
             const workingMemberId = authData?.MemberId || memberId;
             const workingOrgId = authData?.OrgId || orgId;
 
-            console.log(toBoolean(getShowUnsubscribeModal(workingOrgId)))
             let isUnsubscribeModal = !isNullOrEmpty(location.pathname) && location.pathname.includes('textmessage/optin');
             let isDisclosurePending = !isNullOrEmpty(location.pathname) && location.pathname.includes('disclosures/pending');
             let textMessageRoute = toRoute(HomeRouteNames.TEXT_MESSAGE_MODAL, 'id', workingOrgId);
