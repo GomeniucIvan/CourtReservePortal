@@ -2,15 +2,16 @@ import apiService from "@/api/api.jsx";
 import moment from "moment/moment.js";
 import {dateFormatByUiCulture} from "@/utils/DateUtils.jsx";
 import {equalString} from "@/utils/Utils.jsx";
+import appService from "@/api/app.jsx";
 
 
 export const schedulerItemsRead = async (type, schedulerData, selectedDate, courts) => {
-    console.log(schedulerData);
+    let orgId = schedulerData.OrgId;
     
-    const result = {
+    let result = {
         startDate: selectedDate,
         //end: scheduler.view().endDate(),
-        orgId: schedulerData.OrgId,
+        orgId: orgId,
         TimeZone: schedulerData.TimeZone,
         Date: moment(selectedDate).format(dateFormatByUiCulture()),
         KendoDate: {
@@ -21,33 +22,46 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
         UiCulture: schedulerData.UiCulture,
         CostTypeId: schedulerData.CostTypeId,
         CustomSchedulerId: schedulerData.SchedulerId,
-        ReservationMinInterval: schedulerData.MajorTick,
-        SelectedCourtIds: courts.map(item => item.Id).join(','),
-        SelectedInstructorIds: '',
-        MemberIds: schedulerData.MemberIds.join(','),
-        MemberFamilyId: '',
-        EmbedCodeId: '',
-        HideEmbedCodeReservationDetails: ''
+        ReservationMinInterval: schedulerData.MajorTick
     }
     
-    let resp = null
     if (equalString(type, 'expanded')) {
-        resp = await apiService.get(`/api/scheduler/member-expanded?id=${orgId}&jsonData=${JSON.stringify(result)}`);
-    } else if (equalString(type, 'instructor')){
-        resp = await apiService.get(`/app/Online/Reservations/ReadInstructorExpanded?id=${orgId}&jsonData=${JSON.stringify(result)}`);
+        result.SelectedCourtIds = courts.map(item => item.Id).join(',');
+        result.SelectedInstructorIds = '';
+        result.MemberIds = schedulerData.MemberIds.join(',');
+        result.MemberFamilyId = '';
+        result.EmbedCodeId = '';
+        result.HideEmbedCodeReservationDetails = '';
+    } else if (equalString(type, 'instructor')) {
+        
+    } else if (equalString(type, 'consolidated')) {
+        //nothing
     }
     
-    const formattedEvents = resp.Data.map(event => ({
+    let resp = null;
+
+    let formattedEvents = [];
+    
+    if (equalString(type, 'expanded')) {
+        resp = await apiService.get(null, `/api/scheduler/member-expanded?id=${orgId}&jsonData=${JSON.stringify(result)}`);
+    } else if (equalString(type, 'instructor')){
+        resp = await appService.get(null, `/app/Online/Reservations/ReadInstructorExpanded?id=${orgId}&jsonData=${JSON.stringify(result)}`);
+    } else if (equalString(type, 'consolidated')){
+        resp = await appService.get(null, `/app/Online/Reservations/ReadConsolidated?id=${orgId}&jsonData=${JSON.stringify(result)}`);
+    }
+    
+    console.log(resp.Data);
+    
+    formattedEvents = resp.Data.map(event => ({
         ...event,
-        Start: new Date(event.Start),
-        start: new Date(event.Start),
-        End: new Date(event.End),
-        end: new Date(event.End),
+        Start: equalString(type, 'consolidated') ? new Date(event.StartTimeString) :  new Date(event.Start),
+        start: equalString(type, 'consolidated') ? new Date(event.StartTimeString) :  new Date(event.Start),
+        End: equalString(type, 'consolidated') ? new Date(event.EndTimeString) :  new Date(event.End),
+        end: equalString(type, 'consolidated') ? new Date(event.EndTimeString) :  new Date(event.End),
 
         isAllDay: false,
         IsAllDay: false,
     }));
 
-    setEvents(formattedEvents);
-    setLoading(false);
+    return formattedEvents;
 }

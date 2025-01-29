@@ -43,8 +43,9 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.SCHEDULER,
         element: <ExpandedScheduler />,
-        title: 'scheduler',
-        disablePullDown: true
+        title: '',
+        disablePullDown: true,
+        header: true
     },
     {
         path: HomeRouteNames.ANNOUNCEMENT_LIST,

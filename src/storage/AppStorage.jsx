@@ -49,7 +49,6 @@ export const clearAllLocalStorage = () => {
 };
 
 export const setNavigationStorage = (orgId, dashboardData) => {
-    console.log(dashboardData)
     const mainMenu = dashboardData.Data.menu;
     const moreMenu = dashboardData.Data.more;
     const listOrg = dashboardData.Data.listOrg;

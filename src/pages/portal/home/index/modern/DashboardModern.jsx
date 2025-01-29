@@ -29,8 +29,6 @@ function DashboardModern({navigationItems,
     const {orgId} = useAuth();
     const [buttons, setButtons] = useState(anyInList(getDashboardMainLinks(orgId)) ? getDashboardMainLinks(orgId) : []);
     
-    console.log(dashboardData?.itemsData)
-    
     return (
         <>
             <Flex vertical={true} gap={token.padding}>

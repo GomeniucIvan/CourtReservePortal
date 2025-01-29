@@ -1,1 +1,9 @@
 ﻿npx vite build --mode production
+
+
+--packages
+npm outdated
+npm update 
+npm install 
+
+npx npm-check-updates -u
