@@ -1,6 +1,19 @@
 ﻿import { createStyles } from 'antd-style';
 
 export const useStyles = createStyles(({ css, token }) => ({
+    consolidatedScheduler:css`
+        .k-scheduler-layout-flex {
+            .k-scheduler-head {
+                .k-scheduler-cell {
+                    background-color: #f4f4f4;
+                    
+                    &.k-side-cell {
+                        min-height: 26px;
+                    }
+                }      
+            }
+        }
+    `,
     scheduler: css`
         .k-scheduler-layout {
             width: 100%;

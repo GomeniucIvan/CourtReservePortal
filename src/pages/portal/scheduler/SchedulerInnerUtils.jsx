@@ -17,6 +17,20 @@ export const expandedModelFields = {
     isAllDay: "isAllDay",
 };
 
+export const consolidatedModelFields = {
+    id: "Id",
+    title: "Title",
+    description: "Description",
+    start: "Start",
+    end: "End",
+    recurrenceRule: "RecurrenceRule",
+    recurrenceId: "RecurrenceId",
+    recurrenceExceptions: "RecurrenceException",
+    //startTimezone: "StartTimezone",
+    //endTimezone: "EndTimezone",
+    isAllDay: "isAllDay",
+};
+
 export const handleDateChange = (event, setSelectedDate) => {
     const selectedDate = event.value;
 

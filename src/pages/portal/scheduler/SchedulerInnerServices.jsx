@@ -50,8 +50,6 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
         resp = await appService.get(null, `/app/Online/Reservations/ReadConsolidated?id=${orgId}&jsonData=${JSON.stringify(result)}`);
     }
     
-    console.log(resp.Data);
-    
     formattedEvents = resp.Data.map(event => ({
         ...event,
         Start: equalString(type, 'consolidated') ? new Date(event.StartTimeString) :  new Date(event.Start),

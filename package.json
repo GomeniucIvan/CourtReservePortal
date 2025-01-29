@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
+    "@microsoft/signalr": "^8.0.7",
     "@progress/kendo-date-math": "^1.5.14",
     "@progress/kendo-react-common": "^9.1.0",
     "antd": "^5.23.3",

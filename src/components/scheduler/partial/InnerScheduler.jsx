@@ -319,7 +319,7 @@ const InnerSchedulerComponent = memo(React.forwardRef((props, ref) => {
     const [eventSelection, setEventSelection] = React.useState(null);
 
     return (
-       <div className={cx(styles.scheduler)}>
+       <div className={cx(styles.scheduler, equalString(props.type,'consolidated') && styles.consolidatedScheduler)}>
            <SchedulerContext
                // Static
                element={element}

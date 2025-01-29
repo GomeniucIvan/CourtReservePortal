@@ -1,23 +1,16 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {SchedulerItem} from "@/components/scheduler/partial/items/SchedulerItemDisplay.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
-import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
-import {useApp} from "@/context/AppProvider.jsx";
-import {EventRouteNames} from "@/routes/EventRoutes.jsx";
-import {useNavigate} from "react-router-dom";
-import {Button, Card, theme, Typography} from "antd";
-import {isMemberSignUp} from "@/utils/SchedulerUtils.jsx";
-import {useAuth} from "@/context/AuthProvider.jsx";
-import {stringToJson} from "@/utils/ListUtils.jsx";
-import {SchedulerSlot} from "@/components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
+import {useStyles} from "./styles.jsx";
+import {Button, Flex, theme, Typography} from "antd";
+import {isMemberSignUp, queuedOrder} from "@/utils/SchedulerUtils.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
-const { useToken } = theme;
+import { cx } from 'antd-style';
+import {useApp} from "@/context/AppProvider.jsx";
 
 const {Text} = Typography;
 
 const ConsolidatedSchedulerSlot = (props) => {
-    console.log(props)
+
     let dataItem = props.dataItem;
 
     let IsWaitListSlot = dataItem.IsWaitListSlot;
@@ -27,7 +20,6 @@ const ConsolidatedSchedulerSlot = (props) => {
     let MemberIds = dataItem.MemberIds;
     let QueuedMembers = dataItem.QueuedMembers;
     let ShowWaitList = dataItem.ShowWaitList;
-    let queuedOrder = dataItem.queuedOrder;
     let ShowCourtWaitlistOrderNumber = dataItem.ShowCourtWaitlistOrderNumber;
     let WaitListCount = dataItem.WaitListCount;
     let showQueueNumber = dataItem.showQueueNumber;
@@ -40,13 +32,15 @@ const ConsolidatedSchedulerSlot = (props) => {
     let urlPref = dataItem.urlPref;
     let SchedulerId = dataItem.SchedulerId;
 
+    const {styles} = useStyles();
+    const {token} = useApp();
+    
     const handleWaitlistClick = () => {
         pNotify('handleWaitlistClick')
     }
     const handleReserveClick = () => {
         pNotify('handleReserveClick')
     }
-
 
     if (IsWaitListSlot) {
         if (IsAvailableTemplate) {
@@ -57,16 +51,11 @@ const ConsolidatedSchedulerSlot = (props) => {
                         ...props.style
                     }}
                 >
-                    <Card
-                        style={{ backgroundColor: '#cdf5b6', color: '#3a3a3a' }}
-                        className="main-reservation-container"
-                    >
-                        <div className="reservation-container">
-                            <Text style={{ fontWeight: 500, fontSize: 'large' }}>
-                                {IsCourtAssignmentHiddenOnPortal ? 'Available' : `${AvailableCourts} available`}
-                            </Text>
-                        </div>
-                    </Card>
+                    <Flex align={'center'} justify={'center'} className={styles.availableWaitListSlot}>
+                        <Text style={{color: '#3a3a3a'}}>
+                            {IsCourtAssignmentHiddenOnPortal ? 'Available' : `${AvailableCourts} available`}
+                        </Text>
+                    </Flex>
                 </SchedulerItem>
             );
         } else {
@@ -84,30 +73,24 @@ const ConsolidatedSchedulerSlot = (props) => {
                         ...props.style
                     }}
                 >
-
-                    <Card
-                        className={`main-reservation-container org-sch-wl-template ${waitlistClass}`}
-                        style={{ cursor: 'pointer' }}
-                        onClick={handleWaitlistClick}
-                    >
-                        <div className="reservation-container">
-                            <Text style={{ fontWeight: 500, fontSize: 'large' }}>
-                                {isInWaitlist ? 'Edit Waitlist' : 'Join Waitlist'}
-                            </Text>
-                            {ShowWaitList && (
-                                <>
-                                    {showOrderNumber && (
-                                        <Text style={{ fontSize: '10px' }} className={`nr_${SchedulerId}`}>
-                                            {orderNumber}
-                                        </Text>
-                                    )}
-                                    {showWaitlistCount && (
-                                        <Text style={{ fontSize: '10px' }}>{WaitListCount} waiting</Text>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    </Card>
+                    <Flex align={'center'} 
+                          justify={'center'}
+                          onClick={handleWaitlistClick}
+                          className={cx(styles.joinWaitlist, isInWaitlist && styles.editWaitlist)}>
+                        <Text style={{color: token.colorOrgText}}>{isInWaitlist ? 'Edit Waitlist' : 'Join Waitlist'}</Text>
+                        {ShowWaitList && (
+                            <>
+                                {showOrderNumber && (
+                                    <Text style={{ fontSize: '10px' }} className={`nr_${SchedulerId}`}>
+                                        {orderNumber}
+                                    </Text>
+                                )}
+                                {showWaitlistCount && (
+                                    <Text style={{ fontSize: '10px' }}>{WaitListCount} waiting</Text>
+                                )}
+                            </>
+                        )}
+                    </Flex>
                 </SchedulerItem>
             );
         }
@@ -120,12 +103,9 @@ const ConsolidatedSchedulerSlot = (props) => {
                         ...props.style
                     }}
                 >
-
-                    <Card className="schedule-Event-Container">
-                        <Text className="consolidate-text closed-consolidated-sch-span">
-                            UNAVAILABLE
-                        </Text>
-                    </Card>
+                    <Flex align={'center'} justify={'center'} className={styles.unavailableCell}>
+                        <Text>Unavailable</Text>
+                    </Flex>
                 </SchedulerItem>
             );
         } else if (IsInPast) {
@@ -136,12 +116,9 @@ const ConsolidatedSchedulerSlot = (props) => {
                         ...props.style
                     }}
                 >
-
-                    <Card className="schedule-Event-Container">
-                        <div className="consolidate-item-container inPast-courts-container">
-                            <Text className="consolidate-text">Unavailable (Date Has Passed)</Text>
-                        </div>
-                    </Card>
+                    <Flex align={'center'} justify={'center'} className={styles.unavailableCell}>
+                        <Text>Unavailable</Text>
+                    </Flex>
                 </SchedulerItem>
             );
         } else if (AvailableCourts === 0) {
@@ -152,12 +129,9 @@ const ConsolidatedSchedulerSlot = (props) => {
                         ...props.style
                     }}
                 >
-
-                    <Card className="schedule-Event-Container">
-                        <div className="consolidate-item-container not-available-courts-container">
-                            <Text className="consolidate-text">None Available</Text>
-                        </div>
-                    </Card>
+                    <Flex align={'center'} justify={'center'} className={styles.noneAvailable}>
+                        <Text style={{color: '#ffffff'}}>None Available</Text>
+                    </Flex>
                 </SchedulerItem>
             );
         } else {
@@ -168,38 +142,19 @@ const ConsolidatedSchedulerSlot = (props) => {
                         ...props.style
                     }}
                 >
-
-                    <Card className="schedule-Event-Container">
-                        <div className="consolidate-item-container available-courts-container">
-                            <Button
-                                type="primary"
-                                className="slot-btn btn-consolidate-slot"
-                                onClick={handleReserveClick}
-                            >
-                                {hideCourtsCount ? (
-                                    'Reserve'
-                                ) : (
-                                    <span> <span>{AvailableCourts}</span> Available </span>
-                                )}
-                            </Button>
-                        </div>
-                    </Card>
+                    <Flex align={'center'} justify={'center'} className={styles.availableSlot}>
+                        <Text style={{color: token.colorOrgText}}>
+                            {hideCourtsCount ? (
+                                'Reserve'
+                            ) : (
+                                <>{`${AvailableCourts} Available`}</>
+                            )}
+                        </Text>
+                    </Flex>
                 </SchedulerItem>
             );
         }
     }
-
-
-    return (
-        <>
-            <SchedulerSlot
-                {...props}
-                style={{ ...props.style, backgroundColor: props.isAllDay ? 'lightgray' : 'darkgray' }}
-            >
-                Test33
-            </SchedulerSlot>
-        </>
-    );
 };
 
 

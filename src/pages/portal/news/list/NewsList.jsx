@@ -1,5 +1,4 @@
-﻿import {useStyles} from "./../styles.jsx";
-import {useNavigate, useParams} from "react-router-dom";
+﻿import {useNavigate, useParams} from "react-router-dom";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Card, Flex, Typography} from "antd";
 import React, {useEffect, useState, useRef} from "react";

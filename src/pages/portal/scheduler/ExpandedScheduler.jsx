@@ -18,6 +18,7 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import '@progress/kendo-date-math/tz/all.js';
 import {
+    consolidatedModelFields,
     courtHeader, expandedModelFields,
     expandedOpenReservationCreateModal,
     handleDataChange,
@@ -25,8 +26,8 @@ import {
 } from "@portal/scheduler/SchedulerInnerUtils.jsx";
 import {schedulerItemsRead} from "@portal/scheduler/SchedulerInnerServices.jsx";
 import {useTranslation} from "react-i18next";
-import {SchedulerSlot} from "@/components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
 import ConsolidatedSchedulerSlot from "@portal/scheduler/ConsolidatedSchedulerSlot.jsx";
+import {hubConnection, startConnection} from "@/api/signalR/portalConsolidateSignalRService.jsx";
 
 function ExpandedScheduler() {
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
@@ -93,8 +94,8 @@ function ExpandedScheduler() {
                 } else if (equalString(model?.TypeString, 'Consolidated')){
                     formattedCourts = model.AllCourtTypes.map(courtType => ({
                         ...courtType,
-                        Text:  courtType.Name,
-                        Value: courtType.Value
+                        Text:  toBoolean(courtType.IsWailitsingData) ? 'WATILIST' : courtType.Name,
+                        Value: courtType.Name
                     }));
                 }
 
@@ -115,6 +116,19 @@ function ExpandedScheduler() {
 
         loadSchedulerData();
     }, []);
+
+    // useEffect(() => {
+    //     startConnection(orgId); // Start SignalR connection when component mounts
+    //
+    //     // Handle court updates from SignalR
+    //     hubConnection.on("onCourtsChange", (reservationStart) => {
+    //         console.log("Court Reservation Updated:", reservationStart);
+    //     });
+    //
+    //     return () => {
+    //         hubConnection.off("onCourtsChange"); // Cleanup listener when unmounting
+    //     };
+    // }, [orgId]);
     
     useEffect(() => {
         const loadSchedulerItems = async () => {
@@ -205,11 +219,12 @@ function ExpandedScheduler() {
                currentDateTime={currentDateTime}
                onDateChange={(e) => {handleDateChange(e, setSelectedDate)}}
                onDataChange={handleDataChange}
-               modelFields={expandedModelFields}
+               modelFields={equalString(schedulerData?.TypeString, 'Consolidated') ? consolidatedModelFields : expandedModelFields}
                height={availableHeight}
                minDate={minDate}
                maxDate={maxDate}
                viewSlot={CustomViewSlot}
+               type={schedulerData?.TypeString}
                group={{
                    resources: equalString(schedulerData?.TypeString, 'Consolidated') ? ["CourtTypes"] : ["Courts"],
                }}
@@ -221,7 +236,7 @@ function ExpandedScheduler() {
                    [{
                        name: 'CourtTypes',
                        data: courts,
-                       field: 'Text',
+                       field: 'CourtType',
                        textField: 'Text',
                        valueField: 'Value',
                        color: 'ReservationColor'
