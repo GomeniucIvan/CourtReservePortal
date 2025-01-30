@@ -51,3 +51,42 @@ export const schedulerSlotIntersects = (item, events) => {
         );
     });
 };
+
+export const stringToArray = (incString) => {
+    if (isNullOrEmpty(incString)) {
+        return []
+    }
+    debugger;
+    return incString.split(",");
+}
+
+export const listFilter = (incValues) => {
+    let minPrice = incValues?.FilterSliderMinPrice || incValues?.MinPrice;
+    let maxPrice = incValues?.FilterSliderMaxPrice || incValues?.MaxPrice;
+    let instructorIds = incValues?.SelectedInstructorIds || incValues?.InstructorIds || [];
+    let eventTypeIds = incValues?.SelectedCategories || incValues?.EventTypeIds || [];
+    let sessionIds = (typeof incValues?.SessionIdsString != 'undefined') ? stringToArray(incValues?.SessionIdsString) : incValues?.SessionIds;
+    let dayOfWeeks = incValues?.FilterSelectedDayOfWeeks || incValues?.DayOfWeeks || [];
+    let dates = incValues?.FilterSelectedDates || incValues?.Dates || [];
+    let eventTagIds = incValues?.SelectedEventTags || incValues?.EventTagIds || [];
+    
+    
+    return {
+        MinPrice: minPrice,
+        MaxPrice: maxPrice,
+        SessionIdsString: sessionIds.join(','),
+        InstructorIdsString: instructorIds.join(','),
+        EventTypeIdsString: eventTypeIds.join(','),
+        TimeOfDayString: incValues.TimeOfDay,
+        DayOfWeeksString: dayOfWeeks.join(','),
+        DatesString: dates.join(','),
+        CustomDate_Start: incValues.CustomDate_Start,
+        CustomDate_End: incValues.CustomDate_End,
+        FilterTimeOfADayStart: incValues.FilterTimeOfADayStart,
+        FilterTimeOfADayEnd: incValues.FilterTimeOfADayEnd,
+        EventRegistrationTypeId: incValues.EventRegistrationTypeId,
+        EventTagIdsString: eventTagIds.join(','),
+        HideIneligibleAndFullEvents: incValues.HideIneligibleAndFullEvents,
+        EventSortBy: incValues.EventSortBy,
+    }
+}

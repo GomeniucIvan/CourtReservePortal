@@ -19,29 +19,33 @@ function ListFilter({data ,show, onClose, formik}) {
 
     useEffect(() => {
         if (formik && typeof formik.getFieldProps === 'function') {
+            let selectedEventTypeIds = eventTypes.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+            let selectedEventSessionIds = eventSessions.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+            let selectedInstructorIds = instructors.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+            let selectedEventTagIds = eventTagIds.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                
             formik.setFieldValue("DrawerFilter.MinPrice", minPrice);
             formik.setFieldValue("DrawerFilter.MaxPrice", maxPrice);
-            formik.setFieldValue("DrawerFilter.SessionIdsString", sessionIds.join(','));
-            formik.setFieldValue("DrawerFilter.InstructorIdsString", instructors.join(','));
-            formik.setFieldValue("DrawerFilter.EventTypeIdsString", eventTypes.join(','));
+            formik.setFieldValue("DrawerFilter.SessionIds", selectedEventSessionIds);
+            formik.setFieldValue("DrawerFilter.InstructorIds", selectedInstructorIds);
+            formik.setFieldValue("DrawerFilter.EventTypeIds", selectedEventTypeIds);
             
-            formik.setFieldValue("DrawerFilter.TimeOfDayString", '');
-            formik.setFieldValue("DrawerFilter.DayOfWeeksString", '');
-            formik.setFieldValue("DrawerFilter.DatesString", '');
+            formik.setFieldValue("DrawerFilter.TimeOfDa", '');
+            formik.setFieldValue("DrawerFilter.DayOfWeeks", '');
+            formik.setFieldValue("DrawerFilter.Dates", '');
             formik.setFieldValue("DrawerFilter.CustomDate_Start", '');
             formik.setFieldValue("DrawerFilter.CustomDate_End", '');
             formik.setFieldValue("DrawerFilter.FilterTimeOfADayStart", '');
             formik.setFieldValue("DrawerFilter.FilterTimeOfADayEnd", '');
             formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", '');
-            formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", '');
-            formik.setFieldValue("DrawerFilter.EventTagIdsString", eventTagIds.join(','));
+            formik.setFieldValue("DrawerFilter.EventTagIds", selectedEventTagIds);
             formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
             
         }
     }, [minPrice, maxPrice, sessionIds, eventTypes, instructors, eventSessions,  eventTagIds])
     
     useEffect(() => {
-        if (!isNullOrEmpty(data)){
+        if (!isNullOrEmpty(data)) {
             setMinPrice(data.MinPrice)
             setMaxPrice(data.MaxPrice)
             
@@ -67,17 +71,12 @@ function ListFilter({data ,show, onClose, formik}) {
     }, [data]);
 
     const onFilterClose = () =>{
-        let filteredData = {
-            EventTypeIds : eventTypes.filter(et => toBoolean(et.Selected)).map(et => et.Id),
-            EventSessionIds : eventSessions.filter(et => toBoolean(et.Selected)).map(et => et.Id),
-        };
-
-        onClose(filteredData);
+        onClose();
     }
     
     return (
         <DrawerBottom
-            showDrawer={show}
+            showDrawer={toBoolean(show)}
             closeDrawer={() => {
                 onFilterClose();
             }}

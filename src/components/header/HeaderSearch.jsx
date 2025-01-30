@@ -44,7 +44,7 @@ const HeaderSearch = ({placeholder = 'typeToFilter', setText, isLoading}) => {
             if (setText && typeof setText === 'function') {
                 setText(value);
             }
-        }, 600);
+        }, 1000);
     }
 
     const onSearchBlur = (e) => {

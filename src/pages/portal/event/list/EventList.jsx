@@ -30,6 +30,7 @@ import {pNotify} from "@/components/notification/PNotify.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {useFormik} from "formik";
+import {listFilter} from "@/utils/ListUtils.jsx";
 
 const {Title, Text} = Typography;
 
@@ -50,8 +51,8 @@ function EventList({filter}) {
     const [loadedEvents, setLoadedEvents] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('event-list-format', 'list'), 'list'));
-    const [showFilter, setShowFilter] = useState(false);
-    const [searchText, setSearchText] = useState('');
+    const [showFilter, setShowFilter] = useState(null);
+    const [searchText, setSearchText] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
     const {orgId, authData} = useAuth();
     const [eventData, setEventData] = useState(null);
@@ -65,19 +66,19 @@ function EventList({filter}) {
             DrawerFilter: {
                 MinPrice: null,
                 MaxPrice: null,
-                SessionIdsString: null,
-                InstructorIdsString: null,
-                EventTypeIdsString: null,
-                TimeOfDayString: null,
-                DayOfWeeksString: null,
-                DatesString: null,
+                SessionIds: [],
+                InstructorIds: [],
+                EventTypeIds: [],
+                TimeOfDay: null,
+                DayOfWeeks: [],
+                Dates: null,
                 FilterText: null,
                 CustomDate_Start: null,
                 CustomDate_End: null ,
                 FilterTimeOfADayStart: null,
                 FilterTimeOfADayEnd: null,
                 EventRegistrationTypeId: null,
-                EventTagIdsString: null,
+                EventTagIds: [],
                 HideIneligibleAndFullEvents: false,
                 EventSortBy: 1,
             }
@@ -87,28 +88,13 @@ function EventList({filter}) {
         },
     });
     
-    const loadEvents = async (incData) => {
+    const loadEvents = async (incData, searchText) => {
         let readValues = incData || formik?.values?.DrawerFilter || {};
+        setIsFetching(true);
         
         let postData = {
-            MinPrice: readValues.MinPrice,
-            MaxPrice: readValues.MinPrice,
-            SessionIdsString: readValues.SessionIdsString,
-            InstructorIdsString: readValues.InstructorIdsString,
-            EventTypeIdsString: readValues.EventTypeIdsString,
-            TimeOfDayString: readValues.TimeOfDayString,
-            DayOfWeeksString: readValues.DayOfWeeksString,
-            DatesString: readValues.DatesString,
-            FilterText: readValues.FilterText,
-            CustomDate_Start: readValues.CustomDate_Start,
-            CustomDate_End: readValues.CustomDate_End,
-            FilterTimeOfADayStart: readValues.FilterTimeOfADayStart,
-            FilterTimeOfADayEnd: readValues.FilterTimeOfADayEnd,
-            EventRegistrationTypeId: readValues.EventRegistrationTypeId,
-            EventTagIdsString: readValues.EventTagIdsString,
-            HideIneligibleAndFullEvents: readValues.HideIneligibleAndFullEvents,
-            EventSortBy: readValues.EventSortBy,
-            
+            ...listFilter(readValues),
+            FilterText: searchText,
             EmbedCodeId: null,
             Filter: filterKey,
             preventCookieSave: true,
@@ -122,33 +108,49 @@ function EventList({filter}) {
             setEvents(response.Data.List)
             setHasMore(response.Data.TotalRecords > response.Data.List.length)
         }
+
+        setIsFetching(false);
     }
     
+    //filter change
     useEffect(() => {
-        const onFilterChange = async (isOpen) => {
-            if (!isNullOrEmpty(formik?.values)){
-                if (isOpen) {
-                    formik.setFieldValue("DrawerFilterKey", await generateHash(formik.values.DrawerFilter));
-                } else {
-                    let filteredEventTypes = formik.values.DrawerFilter.EventTypeIds;
-                    let filteredCount = filteredEventTypes.length;
+        if (!isNullOrEmpty(showFilter)) {
+            const onFilterChange = async (isOpen) => {
+                if (!isNullOrEmpty(formik?.values)){
+                    if (isOpen) {
+                        formik.setFieldValue("DrawerFilterKey", await generateHash(formik.values.DrawerFilter));
+                    } else {
+                        let filteredEventTypes = formik.values.DrawerFilter.EventTypeIds;
+                        let filteredCount = filteredEventTypes.length;
 
-                    setFilteredCount(filteredCount);
-                    
-                    let previousHash = formik.values.DrawerFilterKey;
-                    let currentHash = await generateHash(formik.values.DrawerFilter);
-                    
-                    if (equalString(currentHash, previousHash)) {
-                        loadEvents();
+                        setFilteredCount(filteredCount);
+
+                        let previousHash = formik.values.DrawerFilterKey;
+                        let currentHash = await generateHash(formik.values.DrawerFilter);
+
+                        if (!equalString(currentHash, previousHash)) {
+                            loadEvents(null);
+                        }
                     }
                 }
             }
-        }
 
-        onFilterChange(showFilter)
+            onFilterChange(showFilter)
+        }
     }, [showFilter])
 
-    const onFilterClose = (filter) => {
+    //header search change
+    useEffect(() => {
+        //force initial null check
+        if (searchText != null) {
+            const onFilterTextChange = async () => {
+                loadEvents(null, searchText);
+            }
+            onFilterTextChange()
+        }
+    }, [searchText])
+    
+    const onFilterClose = () => {
         setShowFilter(false);
     }
     
