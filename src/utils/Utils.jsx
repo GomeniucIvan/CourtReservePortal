@@ -237,3 +237,22 @@ export const containsNoCase = (str1, str2) => {
 
     return str1.toLowerCase().includes(str2.toLowerCase());
 };
+
+export const generateHash = async (obj) => {
+    // Convert object to a sorted JSON string for consistent hashing
+    const jsonStr = JSON.stringify(obj, Object.keys(obj).sort());
+
+    // Convert string to ArrayBuffer
+    const encoder = new TextEncoder();
+    const data = encoder.encode(jsonStr);
+
+    // Generate hash using SHA-256
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+    // Convert buffer to hex string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
+
+    // Return a shorter version (first 10 characters for quick comparison)
+    return hashHex.slice(0, 10);
+}

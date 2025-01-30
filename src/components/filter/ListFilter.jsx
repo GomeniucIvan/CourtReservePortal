@@ -6,17 +6,40 @@ import {Slider} from "antd";
 import React, {useEffect, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 
-function ListFilter({data ,show, onClose}) {
-    let [filterChanged, setFilterChanged] = useState(false);
+function ListFilter({data ,show, onClose, formik}) {
     let [eventTypes, setEventTypes] = useState([]);
     let [eventSessions, setEventSessions] = useState([]);
     let [instructors, setInstructors] = useState([]);
+    let [sessionIds, setSessionIds] = useState([]);
     let [minPrice, setMinPrice] = useState(null);
     let [maxPrice, setMaxPrice] = useState(null);
     let [eventTagIds, setEventTagIds] = useState([]);
 
     const {globalStyles} = useApp();
 
+    useEffect(() => {
+        if (formik && typeof formik.getFieldProps === 'function') {
+            formik.setFieldValue("DrawerFilter.MinPrice", minPrice);
+            formik.setFieldValue("DrawerFilter.MaxPrice", maxPrice);
+            formik.setFieldValue("DrawerFilter.SessionIdsString", sessionIds.join(','));
+            formik.setFieldValue("DrawerFilter.InstructorIdsString", instructors.join(','));
+            formik.setFieldValue("DrawerFilter.EventTypeIdsString", eventTypes.join(','));
+            
+            formik.setFieldValue("DrawerFilter.TimeOfDayString", '');
+            formik.setFieldValue("DrawerFilter.DayOfWeeksString", '');
+            formik.setFieldValue("DrawerFilter.DatesString", '');
+            formik.setFieldValue("DrawerFilter.CustomDate_Start", '');
+            formik.setFieldValue("DrawerFilter.CustomDate_End", '');
+            formik.setFieldValue("DrawerFilter.FilterTimeOfADayStart", '');
+            formik.setFieldValue("DrawerFilter.FilterTimeOfADayEnd", '');
+            formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", '');
+            formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", '');
+            formik.setFieldValue("DrawerFilter.EventTagIdsString", eventTagIds.join(','));
+            formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
+            
+        }
+    }, [minPrice, maxPrice, sessionIds, eventTypes, instructors, eventSessions,  eventTagIds])
+    
     useEffect(() => {
         if (!isNullOrEmpty(data)){
             setMinPrice(data.MinPrice)
@@ -87,7 +110,6 @@ function ListFilter({data ,show, onClose}) {
                             //showCheckMark={false}
                                   multiple={true}
                                   onChange={(selectedValues) => {
-                                      setFilterChanged(true);
 
                                       setEventTypes(prevSessions =>
                                           prevSessions.map(et => ({
@@ -117,7 +139,6 @@ function ListFilter({data ,show, onClose}) {
                             //showCheckMark={false}
                                   multiple={true}
                                   onChange={(selectedValues) => {
-                                      setFilterChanged(true);
 
                                       setEventSessions(prevSessions =>
                                           prevSessions.map(et => ({
@@ -147,7 +168,6 @@ function ListFilter({data ,show, onClose}) {
                             //showCheckMark={false}
                                   multiple={true}
                                   onChange={(selectedValues) => {
-                                      setFilterChanged(true);
 
                                       setInstructors(prevSessions =>
                                           prevSessions.map(et => ({
