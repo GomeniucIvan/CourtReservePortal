@@ -340,7 +340,13 @@ function EventList({filter}) {
             </List>
             
             <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
-            <ListFilter formik={formik} show={showFilter} data={eventData} onClose={onFilterClose} />
+            <ListFilter formik={formik}
+                        show={showFilter}
+                        data={eventData} 
+                        onClose={onFilterClose} 
+                        showDates={true} showTimeOfADay={true} 
+                        showEventRegistrationType={true}
+                        showDayOfTheWeek={true} />
         </>
     )
 }

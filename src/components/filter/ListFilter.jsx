@@ -1,11 +1,10 @@
 ﻿import DrawerBottom from "../drawer/DrawerBottom.jsx";
-import {anyInList, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
-import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
+import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Selector} from "antd-mobile";
 import {Slider} from "antd";
 import React, {useEffect, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
-import {any} from "prop-types";
+import ListFilterItemExpander from "@/components/filter/ListFilterItemExpander.jsx";
 
 function ListFilter({data, 
                         show,
@@ -15,6 +14,8 @@ function ListFilter({data,
                         showDayOfTheWeek,
                         showTimeOfADay,
                         showEventRegistrationType}) {
+
+    const {globalStyles} = useApp();
     
     //filter data
     const [dates, setDates] = useState([
@@ -44,12 +45,13 @@ function ListFilter({data,
         { Name: 'Custom', Id: 4, Selected: false },
     ]);
 
-    const [eventRegistrationsType, setShowEventRegistrationsType] = useState([
+    const [eventRegistrationTypes, setEventRegistrationTypes] = useState([
         { Name: 'Drop-in', Id: 1, Selected: false },
         { Name: 'Full Event', Id: 2, Selected: false }
     ]);
     
     //formik values
+    let [sortByOptions, setSortByOptions] = useState([]);
     let [eventTypes, setEventTypes] = useState([]);
     let [eventSessions, setEventSessions] = useState([]);
     let [instructors, setInstructors] = useState([]);
@@ -58,7 +60,6 @@ function ListFilter({data,
     let [eventTags, setEventTags] = useState([]);
 
 
-    const {globalStyles} = useApp();
 
     useEffect(() => {
         if (formik && typeof formik.getFieldProps === 'function') {
@@ -83,19 +84,17 @@ function ListFilter({data,
             formik.setFieldValue("DrawerFilter.CustomDate_End", '');
             formik.setFieldValue("DrawerFilter.FilterTimeOfADayStart", '');
             formik.setFieldValue("DrawerFilter.FilterTimeOfADayEnd", '');
-            formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", anyInList(eventRegistrationsType) ? eventRegistrationsType[0] : '');
+            formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", anyInList(eventRegistrationTypes) ? eventRegistrationTypes[0] : '');
             formik.setFieldValue("DrawerFilter.EventTagIds", selectedEventTagIds);
             formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
             
         }
-    }, [minPrice, maxPrice, eventTypes, instructors, eventSessions, eventTags, dates, dayOfTheWeeks, timeOfADays])
+    }, [minPrice, maxPrice, eventTypes, instructors, eventSessions, eventTags, dates, dayOfTheWeeks, timeOfADays, eventRegistrationTypes])
     
     useEffect(() => {
         if (!isNullOrEmpty(data)) {
             setMinPrice(data.MinPrice)
             setMaxPrice(data.MaxPrice)
-            
-            console.log(data)
             
             if (anyInList(data?.EventCategories)){
                 setEventTypes(data.EventCategories.map(eventType => {
@@ -124,7 +123,36 @@ function ListFilter({data,
                     }
                 }))
             }
+            
+            if (showEventRegistrationType) {
+                setEventRegistrationTypes(eventRegistrationTypes.map(regType => {
+                    return {
+                        Name: regType.Name,
+                        Id: regType.Id,
+                        Selected: equalString(regType.Id, data?.EventListDisplayType)
+                    }
+                }))
+            }
 
+            if (anyInList(data?.EventTags)){
+                setEventTags(data.EventTags.map(eventTag => {
+                    return {
+                        Name: eventTag.Name,
+                        Id: eventTag.EventTagId,
+                        Selected: data.SelectedEventTags.includes(eventTag.Id)
+                    }
+                }))
+            }
+            
+            if (anyInList(data?.SortByOptions)) {
+                setSortByOptions(data.SortByOptions.map(sortOption => {
+                    return {
+                        Name: sortOption.Text,
+                        Id: sortOption.Value,
+                        Selected: equalString(sortOption.Value, data?.EventSortBy)
+                    }
+                }))
+            }
         }
     }, [data]);
 
@@ -141,17 +169,42 @@ function ListFilter({data,
             label={'Filter'}
             showButton={true}
             confirmButtonText={'Filter'}
+            maxHeightVh={80}
             onConfirmButtonClick={() => {
                 onFilterClose();
             }}
         >
             <>
-                {anyInList(eventTypes) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Categories
-                        </label>
+                {anyInList(sortByOptions) &&
+                    <>
+                        <ListFilterItemExpander label={'Sort by'}>
+                                 <Selector className={globalStyles.filterSelector}
+                                           multiple={false}
+                                           onChange={(selectedValues) => {
+                                               if (anyInList(selectedValues)) {
+                                                   setSortByOptions(prevSessions =>
+                                                       prevSessions.map(so => ({
+                                                           ...so,
+                                                           Selected: selectedValues.includes(so.Id)
+                                                       }))
+                                                   );
+                                               }
+                                           }}
+                                           options={sortByOptions.map(so => ({
+                                               label: so.Name,
+                                               value: so.Id
+                                           }))}
+                                           value={sortByOptions
+                                               .filter(et => et.Selected)
+                                               .map(et => et.Id)}
+                                 />
+                        </ListFilterItemExpander>
+                    </>
 
+                }
+                
+                {anyInList(eventTypes) &&
+                    <ListFilterItemExpander label={'Categories'}>
                         <Selector className={globalStyles.filterSelector}
                             //showCheckMark={false}
                                   multiple={true}
@@ -172,15 +225,11 @@ function ListFilter({data,
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
 
                 {anyInList(eventTags) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Tags
-                        </label>
-
+                    <ListFilterItemExpander label={'Tags'}>
                         <Selector className={globalStyles.filterSelector}
                             //showCheckMark={false}
                                   multiple={true}
@@ -193,23 +242,19 @@ function ListFilter({data,
                                           }))
                                       );
                                   }}
-                                  options={dayOfTheWeeks.map(et => ({
+                                  options={eventTags.map(et => ({
                                       label: et.Name,
                                       value: et.Id
                                   }))}
-                                  defaultValue={dayOfTheWeeks
+                                  defaultValue={eventTags
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
-                
-                {anyInList(eventSessions) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Sessions
-                        </label>
 
+                {anyInList(eventSessions) &&
+                    <ListFilterItemExpander label={'Sessions'}>
                         <Selector className={globalStyles.filterSelector}
                             //showCheckMark={false}
                                   multiple={true}
@@ -230,15 +275,11 @@ function ListFilter({data,
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
 
                 {anyInList(instructors) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Instructors
-                        </label>
-
+                    <ListFilterItemExpander label={'Instructors'}>
                         <Selector className={globalStyles.filterSelector}
                                   multiple={true}
                                   onChange={(selectedValues) => {
@@ -257,15 +298,11 @@ function ListFilter({data,
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
 
                 {(anyInList(dates) && showDates) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Dates
-                        </label>
-
+                    <ListFilterItemExpander label={'Dates'}>
                         <Selector className={globalStyles.filterSelector}
                                   multiple={false}
                                   onChange={(selectedValues) => {
@@ -284,15 +321,11 @@ function ListFilter({data,
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
 
                 {(anyInList(dayOfTheWeeks) && showDayOfTheWeek) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Day of Week
-                        </label>
-
+                    <ListFilterItemExpander label={'Day of Week'}>
                         <Selector className={globalStyles.filterSelector}
                                   multiple={true}
                                   onChange={(selectedValues) => {
@@ -311,15 +344,11 @@ function ListFilter({data,
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
 
                 {(anyInList(timeOfADays) && showTimeOfADay) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Time of Day
-                        </label>
-
+                    <ListFilterItemExpander label={'Time of Day'}>
                         <Selector className={globalStyles.filterSelector}
                                   multiple={true}
                                   onChange={(selectedValues) => {
@@ -338,44 +367,36 @@ function ListFilter({data,
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
 
-                {(anyInList(eventRegistrationsType) && showEventRegistrationType) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Event Type
-                        </label>
-
+                {(anyInList(eventRegistrationTypes) && showEventRegistrationType) &&
+                    <ListFilterItemExpander label={'Event Type'}>
                         <Selector className={globalStyles.filterSelector}
                                   multiple={false}
                                   onChange={(selectedValues) => {
-                                      setShowEventRegistrationsType(prevSessions =>
-                                          prevSessions.map(sd => ({
-                                              ...sd,
-                                              Selected: selectedValues.includes(sd.Id)
+                                      setEventRegistrationTypes(prevSessions =>
+                                          prevSessions.map(rt => ({
+                                              ...rt,
+                                              Selected: selectedValues.includes(rt.Id)
                                           }))
                                       );
                                   }}
-                                  options={eventRegistrationsType.map(et => ({
+                                  options={eventRegistrationTypes.map(et => ({
                                       label: et.Name,
                                       value: et.Id
                                   }))}
-                                  defaultValue={eventRegistrationsType
+                                  defaultValue={eventRegistrationTypes
                                       .filter(et => et.Selected)
                                       .map(et => et.Id)}
                         />
-                    </PaddingBlock>
+                    </ListFilterItemExpander>
                 }
-                
-                {(!isNullOrEmpty(minPrice) && !isNullOrEmpty(maxPrice)) &&
-                    <PaddingBlock onlyTop={true}>
-                        <label className={globalStyles.globalLabel}>
-                            Price
-                        </label>
 
-                        <Slider range defaultValue={[minPrice, maxPrice]} min={minPrice} max={maxPrice} />
-                    </PaddingBlock>
+                {(!isNullOrEmpty(minPrice) && !isNullOrEmpty(maxPrice)) &&
+                    <ListFilterItemExpander label={'Price'}>
+                        <Slider range defaultValue={[minPrice, maxPrice]} min={minPrice} max={maxPrice}/>
+                    </ListFilterItemExpander>
                 }
             </>
         </DrawerBottom>

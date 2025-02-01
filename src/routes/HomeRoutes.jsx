@@ -27,7 +27,7 @@ export const HomeRouteNames = {
     NEWS_DETAILS: `/online/news/details/:id`,
     NAVIGATE: `/online/portal/navigate/:id/:nodeId`,
     DISCLOSURE_PENDING_LOGIN: `/online/disclosures/pending/:id`,
-    MY_CLUBS: `/myclubs`,
+    MY_CLUBS: `/online/myprofile/myclubs`,
     MEMBER_GROUP: `/online/publicmembergroup/MemberGroup/:id`,
     MEMBERSHIPS: `/memberships`,
     TEXT_MESSAGE_MODAL: `/online/textmessage/optin/:id`, //textmessage/optin is bindned to check current page

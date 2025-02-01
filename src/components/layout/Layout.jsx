@@ -201,7 +201,7 @@ function Layout() {
         
         setAvailableHeight(calculatedMaxHeight);
         setMaxHeight(calculatedMaxHeight);
-
+        
         if (isIosKeyboardOpen) {
             if (!equalString(isFooterVisible, isPrevIsFooterVisible)) {
                 setIsPrevIsFooterVisible(isFooterVisible)
@@ -221,7 +221,7 @@ function Layout() {
 
     useEffect(() => {
         calculateMaxHeight();
-    }, [isFooterVisible, footerContent, footerRef.current, headerRef.current, customHeader, headerTitle, headerTitleKey]);
+    }, [isFooterVisible, footerContent, footerRef.current, headerRef.current, customHeader, headerTitle, headerTitleKey, isFetching]);
     
     const handleIphoneInputFocus = () => {
         const activeElement = document.activeElement; // Get the currently focused element
