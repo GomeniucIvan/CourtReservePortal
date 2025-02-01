@@ -1,21 +1,23 @@
 ﻿import DrawerBottom from "../drawer/DrawerBottom.jsx";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {Selector} from "antd-mobile";
-import {Slider} from "antd";
+import {Flex, Slider} from "antd";
 import React, {useEffect, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import ListFilterItemExpander from "@/components/filter/ListFilterItemExpander.jsx";
+import FormInputsDateInterval from "@/form/input/FormInputsDateInterval.jsx";
 
 function ListFilter({data, 
                         show,
                         onClose,
                         formik,
                         showDates,
+                        currentDateTime,
                         showDayOfTheWeek,
                         showTimeOfADay,
                         showEventRegistrationType}) {
 
-    const {globalStyles} = useApp();
+    const {globalStyles, token} = useApp();
     
     //filter data
     const [dates, setDates] = useState([
@@ -58,7 +60,7 @@ function ListFilter({data,
     let [minPrice, setMinPrice] = useState(null);
     let [maxPrice, setMaxPrice] = useState(null);
     let [eventTags, setEventTags] = useState([]);
-
+    let [showCustomDatesDatePickers, setShowCustomDatesDatePickers] = useState(false);
 
 
     useEffect(() => {
@@ -303,24 +305,38 @@ function ListFilter({data,
 
                 {(anyInList(dates) && showDates) &&
                     <ListFilterItemExpander label={'Dates'}>
-                        <Selector className={globalStyles.filterSelector}
-                                  multiple={false}
-                                  onChange={(selectedValues) => {
-                                      setDates(prevSessions =>
-                                          prevSessions.map(sd => ({
-                                              ...sd,
-                                              Selected: selectedValues.includes(sd.Id)
-                                          }))
-                                      );
-                                  }}
-                                  options={dates.map(et => ({
-                                      label: et.Name,
-                                      value: et.Id
-                                  }))}
-                                  defaultValue={dates
-                                      .filter(et => et.Selected)
-                                      .map(et => et.Id)}
-                        />
+                        <Flex vertical={true} gap={token.padding}>
+                            <Selector className={globalStyles.filterSelector}
+                                      multiple={false}
+                                      onChange={(selectedValues) => {
+                                          setShowCustomDatesDatePickers(selectedValues.includes(5));
+
+                                          setDates(prevSessions =>
+                                              prevSessions.map(sd => ({
+                                                  ...sd,
+                                                  Selected: selectedValues.includes(sd.Id)
+                                              }))
+                                          );
+                                      }}
+                                      options={dates.map(et => ({
+                                          label: et.Name,
+                                          value: et.Id
+                                      }))}
+                                      defaultValue={dates
+                                          .filter(et => et.Selected)
+                                          .map(et => et.Id)}
+                            />
+                            {showCustomDatesDatePickers &&
+                                <Flex gap={token.padding}>
+                                    <FormInputsDateInterval formik={formik}
+                                                            labelStart={'Select Start Date'}
+                                                            labelEnd={'Select End Date'}
+                                                            nameStart={'DrawerFilter.CustomDate_Start'}
+                                                            nameEnd={'DrawerFilter.CustomDate_End'}
+                                                            minDate={currentDateTime} />
+                                </Flex>
+                            }
+                        </Flex>
                     </ListFilterItemExpander>
                 }
 

@@ -22,6 +22,7 @@ const FormInputsDateInterval = ({ labelStart,
                                     interval = 30,
                                     minDate,
                                     maxDate,
+                                    hideLabels = false,
                                     ...props }) => {
     const { token, globalStyles } = useApp();
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -132,7 +133,7 @@ const FormInputsDateInterval = ({ labelStart,
         <>
             <div>
                 <div onClick={() => setShowStartDatePicker(true)}>
-                    <FormInput formik={formik} name={nameStart} label={labelStart} disabled={true} className={styles.activeBgInput} />
+                    <FormInput formik={formik} name={nameStart} label={''} disabled={true} className={styles.activeBgInput} placeholder={labelStart} />
                 </div>
 
                 <ModalDatePicker selectedDate={startDate} show={showStartDatePicker} onChange={onStartChange} onConfirm={onStartConfirm} onClose={onStartClose} minDate={minDate} maxDate={maxDate}  />
@@ -140,7 +141,7 @@ const FormInputsDateInterval = ({ labelStart,
 
             <div>
                 <div onClick={() => setShowEndDatePicker(true)}>
-                    <FormInput formik={formik} name={nameEnd} label={labelEnd} disabled={true} className={styles.activeBgInput} />
+                    <FormInput formik={formik} name={nameEnd} label={''} disabled={true} className={styles.activeBgInput} placeholder={labelEnd} />
                 </div>
 
                 <ModalDatePicker selectedDate={endDate} show={showEndDatePicker} onChange={onEndChange} onConfirm={onEndConfirm} onClose={onEndClose} minDate={minDate} maxDate={maxDate} className={styles.activeBgInput} />
