@@ -6,6 +6,7 @@ import React, {useEffect, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import ListFilterItemExpander from "@/components/filter/ListFilterItemExpander.jsx";
 import FormInputsDateInterval from "@/form/input/FormInputsDateInterval.jsx";
+import FormInputsTimeInterval from "@/form/input/FormInputsTimeInterval.jsx";
 
 function ListFilter({data, 
                         show,
@@ -61,7 +62,7 @@ function ListFilter({data,
     let [maxPrice, setMaxPrice] = useState(null);
     let [eventTags, setEventTags] = useState([]);
     let [showCustomDatesDatePickers, setShowCustomDatesDatePickers] = useState(false);
-
+    let [showTimeOfADayTimePickers, setShowTimeOfADayTimePickers] = useState(false);
 
     useEffect(() => {
         if (formik && typeof formik.getFieldProps === 'function') {
@@ -365,24 +366,38 @@ function ListFilter({data,
 
                 {(anyInList(timeOfADays) && showTimeOfADay) &&
                     <ListFilterItemExpander label={'Time of Day'}>
-                        <Selector className={globalStyles.filterSelector}
-                                  multiple={true}
-                                  onChange={(selectedValues) => {
-                                      setTimeOfADays(prevSessions =>
-                                          prevSessions.map(sd => ({
-                                              ...sd,
-                                              Selected: selectedValues.includes(sd.Id)
-                                          }))
-                                      );
-                                  }}
-                                  options={timeOfADays.map(et => ({
-                                      label: et.Name,
-                                      value: et.Id
-                                  }))}
-                                  defaultValue={timeOfADays
-                                      .filter(et => et.Selected)
-                                      .map(et => et.Id)}
-                        />
+                        <Flex vertical={true} gap={token.padding}>
+                            <Selector className={globalStyles.filterSelector}
+                                      multiple={true}
+                                      onChange={(selectedValues) => {
+                                          setShowTimeOfADayTimePickers(selectedValues.includes(4));
+
+                                          setTimeOfADays(prevSessions =>
+                                              prevSessions.map(sd => ({
+                                                  ...sd,
+                                                  Selected: selectedValues.includes(sd.Id)
+                                              }))
+                                          );
+                                      }}
+                                      options={timeOfADays.map(et => ({
+                                          label: et.Name,
+                                          value: et.Id
+                                      }))}
+                                      defaultValue={timeOfADays
+                                          .filter(et => et.Selected)
+                                          .map(et => et.Id)}
+                            />
+
+                            {showTimeOfADayTimePickers &&
+                                <Flex gap={token.padding}>
+                                    <FormInputsTimeInterval formik={formik}
+                                                            labelStart={'Select Start Time'}
+                                                            labelEnd={'Select End Time'}
+                                                            nameStart={'DrawerFilter.FilterTimeOfADayStart'}
+                                                            nameEnd={'DrawerFilter.FilterTimeOfADayEnd'} />
+                                </Flex>
+                            }
+                        </Flex>
                     </ListFilterItemExpander>
                 }
 

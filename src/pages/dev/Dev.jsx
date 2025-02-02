@@ -32,7 +32,7 @@ function Dev() {
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_PAYMENT_PROVIDERS)}}>Payment Providers</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_TYPOGRAPHY)}}>Typography</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_COLORS)}}>Colors</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_DATE_PICKER)}}>Date Picker</Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_DATE_PICKER)}}>Date & Time Pickers</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_FORM)}}>Form</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_MODALS)}}>Alerts & Modals</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_CARDS)}}>Cards</Flex>

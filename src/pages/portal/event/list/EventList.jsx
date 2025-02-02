@@ -1,7 +1,6 @@
 ﻿import * as React from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import mockData from "@/mocks/event-data.json";
 import {useApp} from "@/context/AppProvider.jsx";
 import {Card, Ellipsis, List} from 'antd-mobile'
 import {anyInList, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
@@ -22,13 +21,6 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import ListFilter from "@/components/filter/ListFilter.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
-import useCustomFormik from "@/components/formik/CustomFormik.jsx";
-import {validateReservationGuests, validateReservationMatchMaker, validateUdfs} from "@/utils/ValidationUtils.jsx";
-import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
-import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
-import {pNotify} from "@/components/notification/PNotify.jsx";
-import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
-import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {useFormik} from "formik";
 import {listFilter} from "@/utils/ListUtils.jsx";
 

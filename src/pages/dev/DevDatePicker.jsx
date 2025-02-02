@@ -19,12 +19,14 @@ import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import DrawerDatePicker from "@/components/drawer/DrawerDatePicker.jsx";
 import FormRangePicker from "@/form/formrangepicker/FormRangePicker.jsx";
 import ModalDatePicker from "@/components/modal/ModalDatePicker.jsx";
+import ModalTimePicker from "@/components/modal/ModalTimePicker.jsx";
 
 const { Text, Title } = Typography;
 
 function DevDatePicker() {
     const [showDrawer, setShowDrawer] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showTimeModal, setShowTimeModal] = useState(false);
     const {globalStyles} = useApp();
     
     const formik = useCustomFormik({
@@ -66,6 +68,10 @@ function DevDatePicker() {
                    </Text>
                    <Button type="primary" block={true} onClick={() => {setShowDrawer(true)}}>Drawer</Button>
                </Card>
+
+               <Card className={globalStyles.card}>
+                   <Button type="primary" block={true} onClick={() => {setShowTimeModal(true)}}>Time Picker</Button>
+               </Card>
            </Flex>
             
             <DrawerDatePicker show={showDrawer}
@@ -81,9 +87,16 @@ function DevDatePicker() {
 
             <ModalDatePicker selectedDate={null} 
                              show={showModal} 
-                             onChange={(e) => {console.log('onChange', e);}}
-                             onConfirm={() => {console.log('onConfirm'); setShowModal(false)}}
-                             onClose={() => {console.log('onClose'); setShowModal(false)}}
+                             onChange={(e) => {pNotify('onChange', e);}}
+                             onConfirm={() => {pNotify('onConfirm'); setShowModal(false)}}
+                             onClose={() => {pNotify('onClose'); setShowModal(false)}}
+                             minDate={''} 
+                             maxDate={''}  />
+
+            <ModalTimePicker show={showTimeModal}
+                             onChange={(e) => {pNotify('onChange', e);}}
+                             onConfirm={() => {pNotify('onConfirm'); setShowTimeModal(false)}}
+                             onClose={() => {pNotify('onClose'); setShowTimeModal(false)}}
                              minDate={''} 
                              maxDate={''}  />
             
