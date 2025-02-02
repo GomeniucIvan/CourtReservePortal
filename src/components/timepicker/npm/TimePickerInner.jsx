@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { cx } from 'antd-style';
-import OutsideClickHandler from './OutsideClickHandler';
 import timeHelper from './utils/time';
 import languageHelper from './utils/language';
 import { is } from './utils/func';
@@ -18,7 +17,6 @@ const propTypes = {
     autoClose: PropTypes.bool,
     colorPalette: PropTypes.string,
     draggable: PropTypes.bool,
-    focused: PropTypes.bool,
     language: PropTypes.string,
     meridiem: PropTypes.string,
     onFocusChange: PropTypes.func,
@@ -61,10 +59,8 @@ const TimePickerInner = (props) => {
         autoMode = true,
         autoClose = true,
         draggable = true,
-        focused: propFocused = false,
         language = 'en',
         meridiem = TIME.meridiem,
-        onFocusChange = Function.prototype,
         onTimeChange = Function.prototype,
         onTimezoneChange = Function.prototype,
         time = '',
@@ -78,25 +74,10 @@ const TimePickerInner = (props) => {
         disabled = false,
         focusDropdownOnTime = true,
     } = props;
-
-    const [focused, setFocused] = useState(propFocused);
+    
     const [timezoneData, setTimezoneData] = useState(timeHelper.time({ time:incTime, meridiem, timeMode, tz: props.timezone, useTz: false }));
     const [timeChanged, setTimeChanged] = useState(false);
-    const [formattedTime, setFormattedTime] = useState('');
     
-    useEffect(() => {
-        if (propFocused !== focused) {
-            setFocused(propFocused);
-        }
-    }, [propFocused]);
-
-    const onBlur = () => {
-        if (focused) {
-            onFocusChange(!focused);
-            setFocused(false);
-        }
-    };
-
     const timeData = (timeChanged) => {
         return timeHelper.time({
             time: timezoneData?.time,
@@ -181,7 +162,6 @@ const TimePickerInner = (props) => {
                         timeConfig={timeConfig}
                         showTimezone={false}
                         phrases={languageData}
-                        clearFocus={onBlur}
                         timeMode={parseInt(timeMode, 10)}
                         onTimezoneChange={onTimezoneChange}
                         minuteStep={parseInt(minuteStep, 10)}
@@ -207,7 +187,6 @@ const TimePickerInner = (props) => {
                         timeConfig={timeConfig}
                         showTimezone={false}
                         phrases={languageData}
-                        clearFocus={onBlur}
                         timeMode={parseInt(timeMode, 10)}
                         onTimezoneChange={onTimezoneChange}
                         minuteStep={parseInt(minuteStep, 10)}
@@ -229,13 +208,7 @@ const TimePickerInner = (props) => {
 
     return (
         <div className={containerClass}>
-            <OutsideClickHandler
-                focused={focused}
-                onOutsideClick={onBlur}
-                closeOnOutsideClick={disabled ? false : closeOnOutsideClick}
-            >
-                {renderDialPlate()}
-            </OutsideClickHandler>
+            {renderDialPlate()}
         </div>
     );
 };
