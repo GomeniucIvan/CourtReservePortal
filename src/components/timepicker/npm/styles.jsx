@@ -17,7 +17,7 @@ export const useStyles = createStyles(({ css, token }) => {
                height: 75px;
                line-height: 75px;
                text-align: center;
-               margin-bottom: 30px;
+               margin-bottom: ${token.paddingXXL}px;
                background-color: ${token.colorPrimary};
                color: ${token.colorOrgText};
                font-size: 36px;
@@ -25,6 +25,7 @@ export const useStyles = createStyles(({ css, token }) => {
                justify-content: center;
                border-top-left-radius: ${token.borderRadius}px;
                border-top-right-radius: ${token.borderRadius}px;
+               overflow: hidden;
                
                .time_picker_modal_header_centered {
                    position: relative;
@@ -38,7 +39,7 @@ export const useStyles = createStyles(({ css, token }) => {
                        }
                        &.pm {
                            top: 32px;
-                           opacity: 0.5;
+                           opacity: 0.3;
                        }
                    }
 
@@ -50,7 +51,7 @@ export const useStyles = createStyles(({ css, token }) => {
                            top: -30px;
 
                            .am {
-                               opacity: 0.5;
+                               opacity: 0.3;
                            }
                            .pm {
                                opacity: 1;
@@ -63,7 +64,7 @@ export const useStyles = createStyles(({ css, token }) => {
            .picker_container {
                width: 260px;
                height: 260px;
-               margin: 0 20px 20px;
+               margin: 0 ${token.paddingXXL}px ${token.paddingXXL}px;
                border-radius: 50%;
                background-color: ${token.colorBgContainerDisabled};
                position: relative;
