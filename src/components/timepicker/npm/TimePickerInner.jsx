@@ -110,16 +110,6 @@ const TimePickerInner = (props) => {
         ...props.phrases
     };
 
-    const hourAndMinute = () => {
-        const timeDataResult = timeData(timeChanged);
-        const hour = toBoolean(props.twelveFormat)
-            ? (parseInt(timeDataResult.hour12, 10) === 12 ? '00' : timeDataResult.hour12)
-            : (parseInt(timeDataResult.hour24, 10) === 24 ? '00' : timeDataResult.hour24);
-        const minute = timeDataResult.minute;
-
-        return [hour, minute];
-    };
-
     const meridiemData = () => {
         const timeDataResult = timeData(timeChanged);
         const localMessages = languageData;
@@ -129,18 +119,25 @@ const TimePickerInner = (props) => {
 
     const handleHourChange = (hour) => {
         const validateHour = timeHelper.validate(hour);
-        const minute = hourAndMinute()[1];
+        //let minute = hourAndMinute()[1];
+        let minute = timezoneData?.minute;
         handleTimeChange({ hour: validateHour, minute, meridiem: meridiemData() });
     };
 
     const handleMinuteChange = (minute) => {
         const validateMinute = timeHelper.validate(minute);
-        const hour = hourAndMinute()[0];
+        //let hour = hourAndMinute()[0];
+
+        let hour = timezoneData?.hour;
         handleTimeChange({ hour, minute: validateMinute, meridiem: meridiemData() });
     };
 
     const handleMeridiemChange = (meridiem) => {
-        const [hour, minute] = hourAndMinute();
+        //const [hour, minute] = hourAndMinute();
+
+        let hour = timezoneData?.hour;
+        let minute = timezoneData?.minute;
+        
         handleTimeChange({ hour, minute, meridiem });
     };
 
@@ -150,46 +147,30 @@ const TimePickerInner = (props) => {
         setTimezoneData(options);
         setTimeChanged(true);
 
-        const [hour, minute] = hourAndMinute();
+        let hour = options?.hour;
+        let minute = options?.minute;
+        
         const validTimeMode = timeHelper.validateTimeMode(timeMode);
 
+        if (typeof props.setTime === 'function') {
+            let time = (validTimeMode === 12)
+                ? `${hour}:${minute} ${meridiemData()}`
+                : `${hour}:${minute}`;
+            props.setTime(time);
+        }
+        
         if (timeFormatter && is.func(timeFormatter)) {
             return timeFormatter({ hour, minute, meridiem: meridiemData() });
-        } else if (timeFormat && is.string(timeFormat)) {
-            let times = timeFormat;
-            if (/HH?/.test(times) || /MM?/.test(times)) {
-                if (validTimeMode === 12) {
-                    console.warn('It seems you are using 12 hours mode with 24 hours time format. Please check your timeMode and timeFormat props');
-                }
-            } else if (/hh?/.test(times) || /mm?/.test(times)) {
-                if (validTimeMode === 24) {
-                    console.warn('It seems you are using 24 hours mode with 12 hours time format. Please check your timeMode and timeFormat props');
-                }
-            }
-            times = times.replace(/(HH|hh)/g, hour);
-            times = times.replace(/(MM|mm)/g, minute);
-            times = times.replace(/(H|h)/g, Number(hour));
-            times = times.replace(/(M|m)/g, Number(minute));
-            setFormattedTime(times);
-        } else {
-            let time = (validTimeMode === 12)
-                ? `${hour} : ${minute} ${meridiemData()}`
-                : `${hour} : ${minute}`;
-
-            setFormattedTime(time);
         }
     };
 
     const renderDialPlate = () => {
-        if (disabled) return null;
-        const [hour, minute] = hourAndMinute();
-
         return (
             <div className="modal_container time_picker_modal_container" id="MaterialTheme">
                 {toBoolean(props.twelveFormat) &&
                     <TwelveHoursMode
-                        hour={timezoneData?.hour || hour}
-                        minute={timezoneData?.minute || minute}
+                        hour={timezoneData?.hour}
+                        minute={timezoneData?.minute}
                         autoMode={autoMode}
                         autoClose={autoClose}
                         language={language}
@@ -214,8 +195,8 @@ const TimePickerInner = (props) => {
                 }
                 {!toBoolean(props.twelveFormat) &&
                     <TwentyFourHoursMode
-                        hour={timezoneData?.hour || hour}
-                        minute={timezoneData?.minute || minute}
+                        hour={timezoneData?.hour}
+                        minute={timezoneData?.minute}
                         autoMode={autoMode}
                         autoClose={autoClose}
                         language={language}

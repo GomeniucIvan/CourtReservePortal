@@ -62,8 +62,6 @@ const getValidTimeData = (options = {}) => {
     time: hourFormatter(fullTime)
   };
 
-  console.log(timeData)
-  
   return timeData;
 };
 

@@ -99,17 +99,13 @@ function DevDatePicker() {
                              maxDate={''}  />
 
             <ModalTimePicker show={showTimeModal}
-                             onChange={(e) => {pNotify('onChange', e);}}
-                             onConfirm={() => {pNotify('onConfirm'); setShowTimeModal(false)}}
-                             onClose={() => {pNotify('onClose'); setShowTimeModal(false)}}
-                             twelveFormat={true}
-                             minDate={''} 
-                             maxDate={''}  />
+                             onConfirm={(e) => {pNotify(`onConfirm ${e}`); setShowTimeModal(false)}}
+                             onClear={() => {pNotify(`onClear`); setShowTimeModal(false)}}
+                             twelveFormat={true} />
 
             <ModalTimePicker show={showTime24Modal}
-                             onChange={(e) => {pNotify('onChange', e);}}
-                             onConfirm={() => {pNotify('onConfirm'); setShowTime24Modal(false)}}
-                             onClose={() => {pNotify('onClose'); setShowTime24Modal(false)}}  />
+                             onConfirm={(e) => {pNotify(`onConfirm ${e}`); setShowTime24Modal(false)}}
+                             onClear={() => {pNotify(`onClear`); setShowTime24Modal(false)}}  />
             
         </PaddingBlock>
     );

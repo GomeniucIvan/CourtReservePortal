@@ -12,27 +12,20 @@ import {toBoolean} from "@/utils/Utils.jsx";
 const {Title} = Typography;
 
 function ModalTimePicker({ show,
-                             selectedDate,
-                             minDate,
-                             maxDate,
-                             dateFormat = dateFormatByUiCulture(),
-                             onChange,
+                             onClear,
                              twelveFormat,
                              onConfirm}) {
     const { token } = useApp();
     const {styles} = useStyles();
     const timePickerRef = useRef(null);
-
-    const getPopupContainer = () => {
-        return timePickerRef.current || document.body;
-    };
-
+    const [time, setTime] = useState('02:20 AM');
+    
     return (
         <Modal show={show} full={false} rootClass={cx(styles.datePickerModal)} hideFooter={true}>
             <div ref={timePickerRef}>
-                <TimePicker twelveFormat={toBoolean(twelveFormat)} />
+                <TimePicker twelveFormat={toBoolean(twelveFormat)} time={time} setTime={setTime} />
             </div>
-            <Button block={true} type={'primary'} className={styles.datePickerButtonConfirm} onClick={onConfirm}>
+            <Button block={true} type={'primary'} className={styles.datePickerButtonConfirm} onClick={() => {onConfirm(time)}}>
                 Confirm
             </Button>
         </Modal>
