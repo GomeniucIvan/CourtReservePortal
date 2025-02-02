@@ -7,7 +7,6 @@ import { is } from './utils/func';
 import TwelveHoursMode from "@/components/timepicker/npm/TwelveHoursMode.jsx";
 import TwentyFourHoursMode from "@/components/timepicker/npm/TwentyFourHoursMode.jsx";
 import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
-import time from "./utils/time";
 
 // aliases for defaultProps readability
 const TIME = timeHelper.time({ useTz: false });
@@ -148,7 +147,16 @@ const TimePickerInner = (props) => {
     };
 
     const clearFocus = () => {
+        if (typeof props.onTimeSelect === 'function') {
+            let hour = timezoneData?.hour;
+            let minute = timezoneData?.minute;
 
+            let time = toBoolean(props.twelveFormat)
+                ? `${hour}:${minute} ${meridiemData()}`
+                : `${hour}:${minute}`;
+
+            props.onTimeSelect(time);
+        }
     }
     
     const renderDialPlate = () => {

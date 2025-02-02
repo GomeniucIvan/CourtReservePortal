@@ -23,7 +23,7 @@ function ModalTimePicker({ show,
     return (
         <Modal show={show} full={false} rootClass={cx(styles.datePickerModal)} hideFooter={true}>
             <div ref={timePickerRef}>
-                <TimePicker twelveFormat={toBoolean(twelveFormat)} time={time} setTime={setTime} />
+                <TimePicker twelveFormat={toBoolean(twelveFormat)} time={time} setTime={setTime} onTimeSelect={() => {onConfirm(time)}} />
             </div>
             <Button block={true} type={'primary'} className={styles.datePickerButtonConfirm} onClick={() => {onConfirm(time)}}>
                 Confirm
