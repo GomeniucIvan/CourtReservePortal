@@ -2,52 +2,6 @@
 import moment from 'moment-timezone';
 import { head, last, is } from './func';
 
-// loads moment-timezone's timezone data, which comes from the
-// IANA Time Zone Database at https://www.iana.org/time-zones
-moment.tz.load({
-  zones: [],
-  links: [],
-  version: 'latest',
-});
-
-const guessUserTz = () => {
-  // User-Agent sniffing is not always reliable, but is the recommended technique
-  // for determining whether or not we're on a mobile device according to MDN
-  // see https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-  let global = window;
-  
-  const isMobile = global.navigator !== undefined
-    ? global.navigator.userAgent.match(/Mobi/)
-    : false;
-
-  const supportsIntl = global.Intl !== undefined;
-
-  let userTz;
-
-  if (isMobile && supportsIntl) {
-    // moment-timezone gives preference to the Intl API regardless of device type,
-    // so unset global.Intl to trick moment-timezone into using its fallback
-    // see https://github.com/moment/moment-timezone/issues/441
-    // TODO: Clean this up when that issue is resolved
-    const globalIntl = global.Intl;
-    global.Intl = undefined;
-    userTz = moment.tz.guess();
-    global.Intl = globalIntl;
-  } else {
-    userTz = moment.tz.guess();
-  }
-
-  // return GMT if we're unable to guess or the system is using UTC
-  if (!userTz || userTz === 'UTC') return getTzForName('Etc/Greenwich');
-
-  try {
-    return getTzForName(userTz);
-  } catch (e) {
-    console.error(e);
-    return getTzForName('Etc/Greenwich');
-  }
-};
-
 /**
  * Create a time data object using moment.
  * If a time is provided, just format it; if not, use the current time.
@@ -61,18 +15,17 @@ const guessUserTz = () => {
  */
 const getValidTimeData = (options = {}) => {
   const {
-    tz,
     time,
     timeMode,
     useTz = false,
     meridiem = null,
   } = options;
 
+  console.log(options)
+  
   const validMeridiem = getValidMeridiem(meridiem);
-
   // when we only have a valid meridiem, that implies a 12h mode
   const mode = (validMeridiem && !timeMode) ? 12 : timeMode || 24;
-  const timezone = tz || guessUserTz().zoneName;
 
   const validMode = getValidateTimeMode(mode);
   const validTime = getValidTimeString(time, validMeridiem);
@@ -85,7 +38,8 @@ const getValidTimeData = (options = {}) => {
   let time24;
   let time12;
   const formatTime = moment(`1970-01-01 ${validTime}`, `YYYY-MM-DD ${hourFormat}`, 'en');
-  if (time || !useTz) {
+  
+  if (time) {
     time24 = ((validTime)
       ? formatTime.format(format24)
       : moment().format(format24)).split(/:/);
@@ -93,17 +47,11 @@ const getValidTimeData = (options = {}) => {
       ? formatTime.format(format12)
       : moment().format(format12)).split(/:/);
   } else {
-    time24 = ((validTime)
-      ? formatTime.tz(timezone).format(format24)
-      : moment().tz(timezone).format(format24)).split(/:/);
-
-    time12 = ((validTime)
-      ? formatTime.tz(timezone).format(format12)
-      : moment().tz(timezone).format(format12)).split(/:/);
+    time24 = ['24', '00']; 
+    time12 = ['12', '00'];
   }
 
   const timeData = {
-    timezone,
     mode: validMode,
     hour24: head(time24),
     minute: last(time24).slice(0, 2),
@@ -223,79 +171,6 @@ const getValidateTimeMode = (timeMode) => {
   return mode;
 };
 
-const tzNames = (() => {
-  //  We want to subset the existing timezone data as much as possible, both for efficiency
-  //  and to avoid confusing the user. Here, we focus on removing reduntant timezone names
-  //  and timezone names for timezones we don't necessarily care about, like Antarctica, and
-  //  special timezone names that exist for convenience.
-  const scrubbedPrefixes = ['Antarctica', 'Arctic', 'Chile'];
-  const scrubbedSuffixes = ['ACT', 'East', 'Knox_IN', 'LHI', 'North', 'NSW', 'South', 'West'];
-
-  const tznames = moment.tz.names()
-      .filter(name => name.indexOf('/') >= 0)
-      .filter(name => !scrubbedPrefixes.indexOf(name.split('/')[0]) >= 0)
-      .filter(name => !scrubbedSuffixes.indexOf(name.split('/').slice(-1)[0]) >= 0);
-
-  return tznames;
-})();
-
-// We need a human-friendly city name for each timezone identifier
-// counting Canada/*, Mexico/*, and US/* allows users to search for
-// things like 'Eastern' or 'Mountain' and get matches back
-const tzCities = tzNames
-    .map(name => (['Canada', 'Mexico', 'US'].indexOf(name.split('/')[0]) >= 0)
-      ? name : name.split('/').slice(-1)[0])
-    .map(name => name.replace(/_/g, ' '));
-
-// Provide a mapping between a human-friendly city name and its corresponding
-// timezone identifier and timezone abbreviation as a named export.
-// We can fuzzy match on any of these.
-const tzMaps = tzCities.map((city) => {
-  const tzMap = {};
-  const tzName = tzNames[tzCities.indexOf(city)];
-
-  tzMap.city = city;
-  tzMap.zoneName = tzName;
-  tzMap.zoneAbbr = moment().tz(tzName).zoneAbbr();
-
-  return tzMap;
-});
-
-const getTzForCity = (city) => {
-  const val = city.toLowerCase();
-  const maps = tzMaps.filter(tzMap => tzMap.city.toLowerCase() === val);
-  return head(maps);
-};
-
-const getTzCountryAndCity = (name) => {
-  const sections = name.split('/');
-  return {
-    country: sections[0].toLowerCase(),
-    city: sections.slice(-1)[0].toLowerCase()
-  };
-};
-
-const _matchTzByName = (target, name) => {
-  const v1 = getTzCountryAndCity(target);
-  const v2 = getTzCountryAndCity(name);
-
-  return v1.country === v2.country && v1.city === v2.city;
-};
-
-const getTzForName = (name) => {
-  let maps = tzMaps.filter(tzMap => tzMap.zoneName === name);
-  if (!maps.length && /\//.test(name)) {
-    maps = tzMaps.filter(tzMap => tzMap.zoneAbbr === name);
-  }
-  if (!maps.length) {
-    maps = tzMaps.filter(tzMap => _matchTzByName(tzMap.zoneName, name));
-  }
-  if (!maps.length) {
-    throw new Error(`Can not find target timezone for ${name}`);
-  }
-  return head(maps);
-};
-
 const hourFormatter = (hour, defaultTime = '00:00') => {
   if (!hour) return defaultTime;
 
@@ -373,8 +248,6 @@ const get24ModeTimes = ({ from, to, step = 30, unit = 'minutes' }) => {
 };
 
 export default {
-  tzMaps,
-  guessUserTz,
   hourFormatter,
   getStartAndEnd,
   get12ModeTimes,
@@ -382,8 +255,6 @@ export default {
   withoutMeridiem,
   time: getValidTimeData,
   current: getCurrentTime,
-  tzForCity: getTzForCity,
-  tzForName: getTzForName,
   validate: getValidateTime,
   validateInt: getValidateIntTime,
   validateMeridiem: getValidateMeridiem,
