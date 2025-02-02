@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import { cx } from 'antd-style';
 import timeHelper from './utils/time';
@@ -7,6 +7,7 @@ import { is } from './utils/func';
 import TwelveHoursMode from "@/components/timepicker/npm/TwelveHoursMode.jsx";
 import TwentyFourHoursMode from "@/components/timepicker/npm/TwentyFourHoursMode.jsx";
 import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import time from "./utils/time";
 
 // aliases for defaultProps readability
 const TIME = timeHelper.time({ useTz: false });
@@ -54,29 +55,30 @@ const propTypes = {
 
 const TimePickerInner = (props) => {
     let incTime = props.time;
+    let autoClose = true;
     
     const {
         autoMode = true,
-        autoClose = true,
         draggable = true,
         language = 'en',
         meridiem = TIME.meridiem,
         onTimeChange = Function.prototype,
         onTimezoneChange = Function.prototype,
-        time = '',
         timeMode = TIME.mode,
         minuteStep = 5,
         limitDrag = false,
-        timeFormat = '',
         timeFormatter = null,
-        closeOnOutsideClick = true,
         timeConfig = { step: 5, unit: 'minutes' },
-        disabled = false,
         focusDropdownOnTime = true,
     } = props;
     
     const [timezoneData, setTimezoneData] = useState(timeHelper.time({ time:incTime, meridiem, timeMode, tz: props.timezone, useTz: false }));
     const [timeChanged, setTimeChanged] = useState(false);
+    const [key, setKey] = useState(0);
+    
+    useEffect(() => {
+       setTimeout(function () {setKey(1)}, 1000); 
+    },[])
     
     const timeData = (timeChanged) => {
         return timeHelper.time({
@@ -145,6 +147,10 @@ const TimePickerInner = (props) => {
         }
     };
 
+    const clearFocus = () => {
+
+    }
+    
     const renderDialPlate = () => {
         return (
             <div className="modal_container time_picker_modal_container" id="MaterialTheme">
@@ -152,7 +158,9 @@ const TimePickerInner = (props) => {
                     <TwelveHoursMode
                         hour={timezoneData?.hour}
                         minute={timezoneData?.minute}
+                        key={key}
                         autoMode={autoMode}
+                        clearFocus={clearFocus}
                         autoClose={autoClose}
                         language={language}
                         draggable={draggable}
@@ -177,7 +185,9 @@ const TimePickerInner = (props) => {
                     <TwentyFourHoursMode
                         hour={timezoneData?.hour}
                         minute={timezoneData?.minute}
+                        key={key}
                         autoMode={autoMode}
+                        clearFocus={clearFocus}
                         autoClose={autoClose}
                         language={language}
                         draggable={draggable}
