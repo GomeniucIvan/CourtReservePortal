@@ -1,9 +1,17 @@
 ﻿import * as React from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
 import {Card, Ellipsis, List} from 'antd-mobile'
-import {anyInList, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {
+    anyInList,
+    encodeParamsObject,
+    equalString,
+    generateHash,
+    isNullOrEmpty,
+    nullToEmpty,
+    toBoolean
+} from "@/utils/Utils.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {Segmented, Space, Flex, Typography, Progress} from "antd";
@@ -51,6 +59,10 @@ function EventList({filter}) {
     const [filteredCount, setFilteredCount] = useState(0);
     const { filterKey } = useParams();
 
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const headerEvTypeId = queryParams.get("evTypeId");
+    
     const formik = useFormik({
         initialValues: {
             DrawerFilterKey: '',
@@ -94,7 +106,8 @@ function EventList({filter}) {
             CostTypeId: authData?.CostTypeId,
             SkipRows: 0,
         };
-
+        setFilterCount();
+        
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiLoadEvents?id=${orgId}`, postData);
         if (toBoolean(response?.IsValid)){
             setEvents(response.Data.List)
@@ -102,6 +115,13 @@ function EventList({filter}) {
         }
 
         setIsFetching(false);
+    }
+    
+    const setFilterCount = () => {
+        let filteredEventTypes = formik.values.DrawerFilter.EventTypeIds;
+        let filteredCount = filteredEventTypes.length;
+
+        setFilteredCount(filteredCount);
     }
     
     //filter change
@@ -112,11 +132,8 @@ function EventList({filter}) {
                     if (isOpen) {
                         formik.setFieldValue("DrawerFilterKey", await generateHash(formik.values.DrawerFilter));
                     } else {
-                        let filteredEventTypes = formik.values.DrawerFilter.EventTypeIds;
-                        let filteredCount = filteredEventTypes.length;
 
-                        setFilteredCount(filteredCount);
-
+                        setFilterCount();
                         let previousHash = formik.values.DrawerFilterKey;
                         let currentHash = await generateHash(formik.values.DrawerFilter);
 
@@ -149,7 +166,13 @@ function EventList({filter}) {
     const loadData = async (refresh) => {
         setIsFetching(true);
 
-        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiList?id=${orgId}&costTypeId=${authData?.CostTypeId}`);
+        let postModel = {
+            costTypeId: authData?.CostTypeId,
+            evTypeId: nullToEmpty(headerEvTypeId),
+            filter: nullToEmpty(filterKey),
+        }
+        
+        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiList?id=${orgId}&${encodeParamsObject(postModel)}`);
 
         if (toBoolean(response?.IsValid)) {
             setEventData(response.Data);
