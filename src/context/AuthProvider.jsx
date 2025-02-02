@@ -12,6 +12,9 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({children}) => {
+    //used only for main dashboard/index page
+    const [newOrgId, setNewOrgId] = useState(null);
+    
     const [orgId, setOrgId] = useState(null);
     const [spGuideId, setSpGuideId] = useState(getGlobalSpGuideId());
     const [shouldLoadOrgData, setShouldLoadOrgData] = useState(true);
@@ -70,6 +73,8 @@ export const AuthProvider = ({children}) => {
             setAuthData,
             setOrgId,
             orgId,
+            newOrgId,
+            setNewOrgId,
             shouldLoadOrgData,
             setShouldLoadOrgData,
             spGuideId,

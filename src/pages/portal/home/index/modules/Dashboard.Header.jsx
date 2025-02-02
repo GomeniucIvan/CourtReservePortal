@@ -22,7 +22,7 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import {reactNavigateToMainRoute} from "@/utils/MobileUtils.jsx";
 const {Text, Title} = Typography;
 
-const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) => {
+const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, headerOrgChange }) => {
     const [showOrganizationDrawer, setShowOrganizationDrawer] = useState(false);
     const [weather, setWeather] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
@@ -31,7 +31,7 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
     const { styles } = useStyles();
     const {setCustomHeader} = useHeader();
     const {token, globalStyles} = useApp();
-    const {spGuideId, orgId, authData, setAuthData,setOrgId } = useAuth();
+    const {spGuideId, orgId, authData, setAuthData, setOrgId, setNewOrgId } = useAuth();
     const [loadingOrganizationId, setLoadingOrganizationId] = useState(null);
     const navigate = useNavigate();
     const {setPrimaryColor} = useAntd();
@@ -166,16 +166,12 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching }) 
         
         toAuthLocalStorage('memberData', memberResponseData);
         setOrgId(memberResponseData.OrgId);
+        setNewOrgId(memberResponseData.OrgId);
+
         setClientUiCulture(memberResponseData.UiCulture);
-        
-        //setAuthorizationData will not work because dashboard already check this hook state
-        //await setAuthorizationData(requestData.OrganizationData);
-        
-        //navigate will not reload required information like request data
-        //navigate(HomeRouteNames.INDEX);
 
         //react native webview function
-        reactNavigateToMainRoute();
+        //reactNavigateToMainRoute();
     } 
     
     const changeViewingOrganization = async (selectedOrg) => {

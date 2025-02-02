@@ -21,7 +21,7 @@ import CardLinks from "@/components/navigationlinks/CardLinks.jsx";
 
 function DashboardModern({navigationItems, 
                              dashboardData, 
-                             organizationList, 
+                             organizationList,
                              dashboardViewType }) {
     const { styles } = useStyles();
     const { token, setDynamicPages } = useApp();

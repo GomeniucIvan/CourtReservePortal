@@ -44,7 +44,7 @@ function Layout() {
     //used only for ios keyboard open
     const [isPrevIsFooterVisible, setIsPrevIsFooterVisible] = useState(null);
     const [iosKeyboardHeight, setIosKeyboardHeight] = useState(null);
-    const {customHeader, headerTitle, headerTitleKey} = useHeader();
+    const {customHeader, headerTitle, headerTitleKey, setCustomHeader} = useHeader();
     
     const {
         footerContent,
@@ -55,7 +55,7 @@ function Layout() {
         refreshData,
         setAvailableHeight,
         isMockData,
-        setIsLoading,
+        setIsLoading
     } = useApp();
 
     const {safeAreaInsets} = useSafeArea();
@@ -67,7 +67,9 @@ function Layout() {
         setShouldLoadOrgData,
         setOrgId,
         setAuthorizationData,
-        memberData
+        memberData,
+        newOrgId,
+        setNewOrgId
     } = useAuth();
 
     if (isNullOrEmpty(currentRoute)) {
@@ -386,6 +388,15 @@ function Layout() {
         setIsLoading(false);
     }
 
+    useEffect(() => {
+        if (!isNullOrEmpty(newOrgId)){
+            setNewOrgId(null);
+            setIsFetching(true);
+            //setCustomHeader(null);
+            loadOrganizationData(newOrgId);
+        }
+    }, [newOrgId]);
+    
     const skeletonArray = Array.from({length: 5});
 
     function ErrorFallback({ error }) {

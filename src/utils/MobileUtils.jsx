@@ -42,10 +42,13 @@ export const openMobileExternalBrowser = (url) => {
     }
 }
 
-export const reactNavigateToMainRoute = () => {
+export const reactNavigateToMainRoute = (redirectUrl) => {
     if (window.ReactNativeWebView){
-        const message = JSON.stringify({ type: 'FlutterNavToMainUrl' });
+        const message = JSON.stringify({ type: 'FlutterNavToMainUrl', redirecturl: redirectUrl });
         window.ReactNativeWebView.postMessage(message);
+    } else{
+        // browser acess
+        window.location.reload();
     }
 }
 
