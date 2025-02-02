@@ -180,18 +180,6 @@ export const dateToString = (incDate) => {
     return moment.utc(incDate).format(dateFormatByUiCulture());
 }
 
-export const dateToTimeString = (incDate, twentyFourHourFormat) => {
-    if (isNullOrEmpty(incDate)){
-        return '';
-    }
-
-    if (twentyFourHourFormat){
-        return moment.utc(incDate).format('HH:mm');
-    }
-
-    return moment.utc(incDate).format('H:mm');
-}
-
 export const isNonUsCulture = () => {
     if (isNullOrEmpty(clientUiCulture)) {
         return false;
@@ -316,3 +304,30 @@ export const subtractDateDays = (dateString, days) => {
         return `${updatedMonth}/${updatedDay}/${updatedYear}`;
     }
 };
+
+export const fromDateTimeStringToDateTime = (dateString) => {
+    if (!dateString) return null;
+    return moment(dateString).format(`${dateFormatByUiCulture()} HH:mm:ss`);
+}
+
+export const fromDateTimeStringToDate = (dateString) => {
+    if (!dateString) return null;
+    return moment(dateString).format(`${dateFormatByUiCulture()}`);
+}
+
+export const fromTimeSpanString = (dateString) => {
+    if (!dateString) return null;
+    return moment(dateString).format('HH:mm');
+}
+
+export const dateToTimeString = (incDate, twentyFourHourFormat) => {
+    if (isNullOrEmpty(incDate)){
+        return '';
+    }
+
+    if (twentyFourHourFormat){
+        return moment.utc(incDate).format('HH:mm');
+    }
+
+    return moment.utc(incDate).format('H:mm');
+}

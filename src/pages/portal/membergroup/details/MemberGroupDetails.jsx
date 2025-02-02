@@ -31,7 +31,6 @@ function MemberGroupDetails() {
 
                 if (toBoolean(r?.IsValid)){
                     const data = r.Data;
-                    console.log(data);
                     setHeaderTitle(data.Name);
                     //todo SelectedMemberPortalFields
 

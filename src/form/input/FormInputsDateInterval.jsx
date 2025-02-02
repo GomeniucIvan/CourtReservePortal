@@ -12,6 +12,7 @@ import FormInput from "./FormInput.jsx";
 import ModalDatePicker from "../../components/modal/ModalDatePicker.jsx";
 import dayjs from "dayjs";
 import {dateFormatByUiCulture} from "../../utils/DateUtils.jsx";
+import SVG from "@/components/svg/SVG.jsx";
 
 const FormInputsDateInterval = ({ labelStart,
                                     labelEnd,
@@ -133,18 +134,42 @@ const FormInputsDateInterval = ({ labelStart,
         <>
             <div>
                 <div onClick={() => setShowStartDatePicker(true)}>
-                    <FormInput formik={formik} name={nameStart} label={''} disabled={true} className={styles.activeBgInput} placeholder={labelStart} />
+                    <FormInput formik={formik}
+                               name={nameStart} label={''}
+                               disabled={true}
+                               suffix={<SVG icon={'calendar'} size={18} />}
+                               className={styles.activeBgInput} 
+                               placeholder={labelStart} />
                 </div>
 
-                <ModalDatePicker selectedDate={startDate} show={showStartDatePicker} onChange={onStartChange} onConfirm={onStartConfirm} onClose={onStartClose} minDate={minDate} maxDate={maxDate}  />
+                <ModalDatePicker selectedDate={startDate}
+                                 show={showStartDatePicker}
+                                 onChange={onStartChange} 
+                                 onConfirm={onStartConfirm} 
+                                 onClose={onStartClose}
+                                 minDate={minDate}
+                                 maxDate={maxDate}  />
             </div>
 
             <div>
                 <div onClick={() => setShowEndDatePicker(true)}>
-                    <FormInput formik={formik} name={nameEnd} label={''} disabled={true} className={styles.activeBgInput} placeholder={labelEnd} />
+                    <FormInput formik={formik} 
+                               name={nameEnd} 
+                               label={''} 
+                               disabled={true}
+                               suffix={<SVG icon={'calendar'} size={18} />}
+                               className={styles.activeBgInput}
+                               placeholder={labelEnd} />
                 </div>
 
-                <ModalDatePicker selectedDate={endDate} show={showEndDatePicker} onChange={onEndChange} onConfirm={onEndConfirm} onClose={onEndClose} minDate={minDate} maxDate={maxDate} className={styles.activeBgInput} />
+                <ModalDatePicker selectedDate={endDate}
+                                 show={showEndDatePicker}
+                                 onChange={onEndChange} 
+                                 onConfirm={onEndConfirm} 
+                                 onClose={onEndClose} 
+                                 minDate={minDate} 
+                                 maxDate={maxDate} 
+                                 className={styles.activeBgInput} />
             </div>
         </>
     )

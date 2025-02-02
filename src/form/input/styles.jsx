@@ -28,7 +28,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         z-index: 1;
     `,
     activeBgInput: css`
-        input {
+        input, .ant-input-disabled {
             background-color: ${token.colorBgBase} !important;
         }
     `

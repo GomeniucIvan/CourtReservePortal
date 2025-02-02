@@ -30,6 +30,7 @@ const FormInput = ({ label,
                        loading,
                        isExpiryDate,
                        placeholder,
+                       suffix = undefined,
                        description,
                        ...props }) => {
     const { token, globalStyles } = useApp();
@@ -217,6 +218,7 @@ const FormInput = ({ label,
                             iconRender={(visible) =>
                                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                             }
+                            suffix={suffix}
                             placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                             status={toBoolean(hasError) ? 'error' : ''}
                             type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}
@@ -236,7 +238,7 @@ const FormInput = ({ label,
                             autoComplete="off"
                             spellCheck="false"
                             ref={inputRef}
-                            suffix={equalString(name, 'phoneNumber') ? <div style={{opacity: (showErrorIcon ? 1 : 0)}}><SVG size={18} preventFill={true} icon={'alert-triangle'} /></div> : undefined}
+                            suffix={equalString(name, 'phoneNumber') ? <div style={{opacity: (showErrorIcon ? 1 : 0)}}><SVG size={18} preventFill={true} icon={'alert-triangle'} /></div> : suffix}
                             placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                             status={toBoolean(hasError) ? 'error' : ''}
                             type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}

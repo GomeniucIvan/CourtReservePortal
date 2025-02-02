@@ -84,8 +84,8 @@ function ListFilter({data,
             formik.setFieldValue("DrawerFilter.TimeOfDay", selectedTimeOfADays);
             formik.setFieldValue("DrawerFilter.DayOfWeeks", selectedDayOfTheWeeks);
             formik.setFieldValue("DrawerFilter.Dates", selectedDates);
-            formik.setFieldValue("DrawerFilter.CustomDate_Start", '');
-            formik.setFieldValue("DrawerFilter.CustomDate_End", '');
+            formik.setFieldValue("DrawerFilter.CustomDate_Start", data?.CustomDate_Start);
+            formik.setFieldValue("DrawerFilter.CustomDate_End", data?.CustomDate_End);
             formik.setFieldValue("DrawerFilter.FilterTimeOfADayStart", '');
             formik.setFieldValue("DrawerFilter.FilterTimeOfADayEnd", '');
             formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", anyInList(eventRegistrationTypes) ? eventRegistrationTypes[0] : '');

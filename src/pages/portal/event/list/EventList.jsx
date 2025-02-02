@@ -31,6 +31,7 @@ import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useFormik} from "formik";
 import {listFilter} from "@/utils/ListUtils.jsx";
+import {fromDateTimeStringToDate} from "@/utils/DateUtils.jsx";
 
 const {Title, Text} = Typography;
 
@@ -166,9 +167,15 @@ function EventList({filter}) {
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiList?id=${orgId}&${encodeParamsObject(postModel)}`);
 
         if (toBoolean(response?.IsValid)) {
-            setEventData(response.Data);
-            console.log(response.Data)
-            await loadEvents(response.Data);
+            let filterData = {
+                ...response.Data,
+                CustomDate_Start: fromDateTimeStringToDate(response.Data.CustomDate_StartStringDisplay),
+                CustomDate_End: fromDateTimeStringToDate(response.Data.CustomDate_EndStringDisplay),
+            }
+            
+            setEventData(filterData);
+            console.log(filterData)
+            await loadEvents(filterData);
         }
         
         setIsFetching(false);
