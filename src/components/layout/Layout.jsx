@@ -392,7 +392,7 @@ function Layout() {
         if (!isNullOrEmpty(newOrgId)){
             setNewOrgId(null);
             setIsFetching(true);
-            //setCustomHeader(null);
+            setCustomHeader(null);
             loadOrganizationData(newOrgId);
         }
     }, [newOrgId]);
