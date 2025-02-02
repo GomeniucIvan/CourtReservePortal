@@ -71,13 +71,20 @@ const TimePickerInner = (props) => {
         focusDropdownOnTime = true,
     } = props;
     
-    const [timezoneData, setTimezoneData] = useState(timeHelper.time({ time:incTime, meridiem, timeMode, tz: props.timezone, useTz: false }));
+    
+    const [timezoneData, setTimezoneData] = useState(timeHelper.time({ time:incTime, meridiem, timeMode }));
     const [timeChanged, setTimeChanged] = useState(false);
     const [key, setKey] = useState(0);
     
     useEffect(() => {
-       setTimeout(function () {setKey(1)}, 1000); 
-    },[])
+       if (toBoolean(props.show)) {
+           setTimeout(function () {setKey(key+1)}, 1000);
+       }
+    },[props.show])
+    
+    useEffect(() => {
+        setTimezoneData(timeHelper.time({ time:props.time, meridiem, timeMode }));
+    }, [props.time])
     
     const timeData = (timeChanged) => {
         return timeHelper.time({
@@ -125,7 +132,6 @@ const TimePickerInner = (props) => {
 
     const handleTimeChange = (options) => {
         onTimeChange(options);
-
         setTimezoneData(options);
         setTimeChanged(true);
 

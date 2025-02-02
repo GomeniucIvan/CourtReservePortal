@@ -17,7 +17,6 @@ const getValidTimeData = (options = {}) => {
   const {
     time,
     timeMode,
-    useTz = false,
     meridiem = null,
   } = options;
 
@@ -26,24 +25,14 @@ const getValidTimeData = (options = {}) => {
   const mode = (validMeridiem && !timeMode) ? 12 : timeMode || 24;
 
   const validMode = getValidateTimeMode(mode);
-  const validTime = getValidTimeString(time, validMeridiem);
-  const format12 = 'hh:mmA';
-  const format24 = 'HH:mmA';
-
-  // What format is the hour we provide to moment below in?
-  const hourFormat = (validMode === 12) ? format12 : format24;
 
   let time24;
   let time12;
-  const formatTime = moment(`1970-01-01 ${validTime}`, `YYYY-MM-DD ${hourFormat}`, 'en');
   
   if (time) {
-    time24 = ((validTime)
-      ? formatTime.format(format24)
-      : moment().format(format24)).split(/:/);
-    time12 = ((validTime)
-      ? formatTime.format(format12)
-      : moment().format(format12)).split(/:/);
+    let time12hourStart = time.split(':')[0] > 12 ? `0${time.split(':')[0] - 12}` : time.split(':')[0];
+    time24 = [time.split(':')[0], time.split(':')[1]];
+    time12 = [time12hourStart, time.split(':')[1]];
   } else {
     time24 = ['24', '00']; 
     time12 = ['12', '00'];
@@ -59,7 +48,8 @@ const getValidTimeData = (options = {}) => {
     minute: last(time24).slice(0, 2),
     hour12: head(time12).replace(/^0/, ''),
     meridiem: validMode === 12 ? last(time12).slice(2) : null,
-    time: hourFormatter(fullTime)
+    time: hourFormatter(fullTime),
+    hour: validMode === 12 ?head(time12).replace(/^0/, '') : head(time24)
   };
 
   return timeData;

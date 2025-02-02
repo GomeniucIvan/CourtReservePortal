@@ -31,7 +31,7 @@ import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useFormik} from "formik";
 import {listFilter} from "@/utils/ListUtils.jsx";
-import {fromDateTimeStringToDate} from "@/utils/DateUtils.jsx";
+import {fromDateTimeStringToDate, fromTimeSpanString} from "@/utils/DateUtils.jsx";
 
 const {Title, Text} = Typography;
 
@@ -171,10 +171,11 @@ function EventList({filter}) {
                 ...response.Data,
                 CustomDate_Start: fromDateTimeStringToDate(response.Data.CustomDate_StartStringDisplay),
                 CustomDate_End: fromDateTimeStringToDate(response.Data.CustomDate_EndStringDisplay),
+                FilterTimeOfADayStart: response.Data.FilterTimeOfADayStartStringDisplay,
+                FilterTimeOfADayEnd: response.Data.FilterTimeOfADayEndStringDisplay,
             }
             
             setEventData(filterData);
-            console.log(filterData)
             await loadEvents(filterData);
         }
         
