@@ -106,7 +106,6 @@ function EventList({filter}) {
             CostTypeId: authData?.CostTypeId,
             SkipRows: 0,
         };
-        setFilterCount();
         
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiLoadEvents?id=${orgId}`, postData);
         if (toBoolean(response?.IsValid)){
@@ -115,13 +114,6 @@ function EventList({filter}) {
         }
 
         setIsFetching(false);
-    }
-    
-    const setFilterCount = () => {
-        let filteredEventTypes = formik.values.DrawerFilter.EventTypeIds;
-        let filteredCount = filteredEventTypes.length;
-
-        setFilteredCount(filteredCount);
     }
     
     //filter change
@@ -133,7 +125,6 @@ function EventList({filter}) {
                         formik.setFieldValue("DrawerFilterKey", await generateHash(formik.values.DrawerFilter));
                     } else {
 
-                        setFilterCount();
                         let previousHash = formik.values.DrawerFilterKey;
                         let currentHash = await generateHash(formik.values.DrawerFilter);
 
@@ -176,7 +167,7 @@ function EventList({filter}) {
 
         if (toBoolean(response?.IsValid)) {
             setEventData(response.Data);
-
+            console.log(response.Data)
             await loadEvents(response.Data);
         }
         
@@ -358,7 +349,8 @@ function EventList({filter}) {
             <ListFilter formik={formik}
                         show={showFilter}
                         data={eventData} 
-                        onClose={onFilterClose} 
+                        onClose={onFilterClose}
+                        setFilteredCount={setFilteredCount} 
                         showDates={true} showTimeOfADay={true} 
                         showEventRegistrationType={true}
                         showDayOfTheWeek={true} />

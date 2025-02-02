@@ -16,6 +16,7 @@ function ListFilter({data,
                         currentDateTime,
                         showDayOfTheWeek,
                         showTimeOfADay,
+                        setFilteredCount,
                         showEventRegistrationType}) {
 
     const {globalStyles, token} = useApp();
@@ -91,6 +92,15 @@ function ListFilter({data,
             formik.setFieldValue("DrawerFilter.EventTagIds", selectedEventTagIds);
             formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
             
+            if (typeof setFilteredCount === 'function') {
+                let count = selectedEventTypeIds.length +
+                    selectedEventSessionIds.length+selectedInstructorIds.length +
+                    selectedEventTagIds.length+
+                    selectedDates.length+
+                    selectedDayOfTheWeeks.length+
+                    selectedTimeOfADays.length;
+                setFilteredCount(count);
+            }
         }
     }, [minPrice, maxPrice, eventTypes, instructors, eventSessions, eventTags, dates, dayOfTheWeeks, timeOfADays, eventRegistrationTypes])
     
@@ -117,12 +127,13 @@ function ListFilter({data,
                     }
                 }))
             }
+
             if (anyInList(data?.EventTags)){
                 setEventTags(data.EventTags.map(eventTag => {
                     return {
                         Name: eventTag.Name,
                         Id: eventTag.EventTagId,
-                        Selected: data.SelectedEventTags.includes(eventTag.Id)
+                        Selected: data.SelectedEventTags.includes(eventTag.EventTagId)
                     }
                 }))
             }
@@ -136,16 +147,6 @@ function ListFilter({data,
                     }
                 }))
             }
-
-            if (anyInList(data?.EventTags)){
-                setEventTags(data.EventTags.map(eventTag => {
-                    return {
-                        Name: eventTag.Name,
-                        Id: eventTag.EventTagId,
-                        Selected: data.SelectedEventTags.includes(eventTag.Id)
-                    }
-                }))
-            }
             
             if (anyInList(data?.SortByOptions)) {
                 setSortByOptions(data.SortByOptions.map(sortOption => {
@@ -155,6 +156,38 @@ function ListFilter({data,
                         Selected: equalString(sortOption.Value, data?.EventSortBy)
                     }
                 }))
+            }
+            
+            if (toBoolean(showDates)){
+                setDates(dates.map(date => {
+                    return {
+                        Name: date.Name,
+                        Id: date.Id,
+                        Selected: data.FilterSelectedDates.includes(date.Id)
+                    }
+                }));
+                setShowCustomDatesDatePickers(data.FilterSelectedDates.includes(5));
+            }
+
+            if (toBoolean(showDayOfTheWeek)){
+                setDayOfTheWeeks(dayOfTheWeeks.map(dayOfKeek => {
+                    return {
+                        Name: dayOfKeek.Name,
+                        Id: dayOfKeek.Id,
+                        Selected: data.FilterSelectedDayOfWeeks.includes(dayOfKeek.Id)
+                    }
+                }))
+            }
+
+            if (toBoolean(showTimeOfADay)){
+                setTimeOfADays(timeOfADays.map(timeOfDay => {
+                    return {
+                        Name: timeOfDay.Name,
+                        Id: timeOfDay.Id,
+                        Selected: data.FilterSelectedTimeOfDays.includes(timeOfDay.Id)
+                    }
+                }));
+                setShowTimeOfADayTimePickers(data.FilterSelectedTimeOfDays.includes(4))
             }
         }
     }, [data]);
