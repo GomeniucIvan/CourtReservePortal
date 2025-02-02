@@ -101,9 +101,7 @@ const TimePickerInner = (props) => {
         return timeHelper.time({
             time: timezoneData?.time,
             meridiem: timezoneData?.meridiem || meridiem,
-            timeMode: timezoneData?.timeMode,
-            tz: props.timezone,
-            useTz: false
+            timeMode: timezoneData?.timeMode
         });
     };
 

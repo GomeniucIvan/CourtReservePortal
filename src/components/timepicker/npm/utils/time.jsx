@@ -21,8 +21,6 @@ const getValidTimeData = (options = {}) => {
     meridiem = null,
   } = options;
 
-  console.log(options)
-  
   const validMeridiem = getValidMeridiem(meridiem);
   // when we only have a valid meridiem, that implies a 12h mode
   const mode = (validMeridiem && !timeMode) ? 12 : timeMode || 24;
@@ -51,14 +49,21 @@ const getValidTimeData = (options = {}) => {
     time12 = ['12', '00'];
   }
 
+  let fullTime = validMode === 12 ?
+      `${head(time12).replace(/^0/, '')}:${last(time24).slice(0, 2)} ${last(time12).slice(2)}` :
+      `${head(time24)}:${last(time24).slice(0, 2)}`;
+  
   const timeData = {
     mode: validMode,
     hour24: head(time24),
     minute: last(time24).slice(0, 2),
     hour12: head(time12).replace(/^0/, ''),
     meridiem: validMode === 12 ? last(time12).slice(2) : null,
+    time: hourFormatter(fullTime)
   };
 
+  console.log(timeData)
+  
   return timeData;
 };
 
@@ -175,7 +180,7 @@ const hourFormatter = (hour, defaultTime = '00:00') => {
   if (!hour) return defaultTime;
 
   let [h, m, meridiem] = `${hour}`.split(/[:|\s]/);
-
+  
   if (meridiem && meridiem.toLowerCase() === 'pm') meridiem = 'PM';
   if (meridiem && meridiem.toLowerCase() === 'am') meridiem = 'AM';
   if (meridiem && meridiem !== 'AM' && meridiem !== 'PM') meridiem = 'AM';
