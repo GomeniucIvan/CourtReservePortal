@@ -12,6 +12,7 @@ import timeHelper from './utils/time';
 import Button from './Common/Button';
 import PickerDragHandler from './Picker/PickerDragHandler';
 import pickerPointGenerator from './Picker/PickerPointGenerator';
+import {equalString} from "@/utils/Utils.jsx";
 
 const TIME = timeHelper.time();
 
@@ -91,8 +92,8 @@ class TwelveHoursMode extends React.PureComponent {
   handleMeridiemChange() {
     const { meridiem, phrases } = this.props;
     const newMeridiem = (meridiem === 'AM' || meridiem === phrases.am)
-      ? phrases.pm
-      : phrases.am;
+        ? phrases.pm
+        : phrases.am;
     if (newMeridiem !== meridiem) {
       const { handleMeridiemChange } = this.props;
       handleMeridiemChange && handleMeridiemChange(newMeridiem);
@@ -147,7 +148,6 @@ class TwelveHoursMode extends React.PureComponent {
       showTimezone,
     } = this.props;
 
-    console.log(minute)
     const { hourPointerRotate, minutePointerRotate } = this.state;
 
     const [top, height] = this.getHourTopAndHeight();
@@ -167,61 +167,68 @@ class TwelveHoursMode extends React.PureComponent {
     const MinutePickerPointGenerator = pickerPointGenerator('minute', 12);
 
     return (
-      <React.Fragment>
-        <div className="time_picker_modal_header">
-          <span className="time_picker_header active">
+        <React.Fragment>
+          <div className="time_picker_modal_header">
+            <div className="time_picker_modal_header_centered">
+              <span className="time_picker_header active">
             {hour}:{minute}
           </span>&nbsp;
-          <span
-            onClick={this.handleMeridiemChange}
-            className="time_picker_header meridiem"
-          >
-            {meridiem}
+              <span
+                  onClick={this.handleMeridiemChange}
+                  className={`time_picker_header meridiem ${equalString(meridiem, 'pm') ? 'pm-selection' : ''}`}
+              >
+            <div className="time_picker_header_meridiem_time am">
+              AM
+            </div>
+            <div className="time_picker_header_meridiem_time pm">
+              PM
+            </div>
           </span>
-        </div>
-        <div className="picker_container">
-          <HourPickerPointGenerator
-            handleTimePointerClick={this.handleHourPointerClick}
-            pointerRotate={hourPointerRotate}
-          />
-          <MinutePickerPointGenerator
-            handleTimePointerClick={this.handleMinutePointerClick}
-            pointerRotate={minutePointerRotate}
-          />
-          <PickerDragHandler
-            step={1}
-            timeMode={timeMode}
-            limitDrag={limitDrag}
-            minuteStep={minuteStep}
-            rotateState={minuteRotateState}
-            time={parseInt(minute, 10)}
-            minLength={MAX_ABSOLUTE_POSITION}
-            draggable={draggable}
-            handleTimePointerClick={this.handleMinutePointerClick}
-          />
-          <PickerDragHandler
-            step={0}
-            timeMode={timeMode}
-            limitDrag={limitDrag}
-            minuteStep={minuteStep}
-            rotateState={hourRotateState}
-            time={parseInt(hour, 10)}
-            maxLength={MIN_ABSOLUTE_POSITION}
-            draggable={draggable}
-            handleTimePointerClick={this.handleHourPointerClick}
-          />
-        </div>
-        {!showTimezone ? (
-          <div className="buttons_wrapper">
-            <Button
-              onClick={clearFocus}
-              className="time_picker_button"
-            >
-              {phrases.close}
-            </Button>
+            </div>
           </div>
-        ) : null}
-      </React.Fragment>
+          <div className="picker_container">
+            <HourPickerPointGenerator
+                handleTimePointerClick={this.handleHourPointerClick}
+                pointerRotate={hourPointerRotate}
+            />
+            <MinutePickerPointGenerator
+                handleTimePointerClick={this.handleMinutePointerClick}
+                pointerRotate={minutePointerRotate}
+            />
+            <PickerDragHandler
+                step={1}
+                timeMode={timeMode}
+                limitDrag={limitDrag}
+                minuteStep={minuteStep}
+                rotateState={minuteRotateState}
+                time={parseInt(minute, 10)}
+                minLength={MAX_ABSOLUTE_POSITION}
+                draggable={draggable}
+                handleTimePointerClick={this.handleMinutePointerClick}
+            />
+            <PickerDragHandler
+                step={0}
+                timeMode={timeMode}
+                limitDrag={limitDrag}
+                minuteStep={minuteStep}
+                rotateState={hourRotateState}
+                time={parseInt(hour, 10)}
+                maxLength={MIN_ABSOLUTE_POSITION}
+                draggable={draggable}
+                handleTimePointerClick={this.handleHourPointerClick}
+            />
+          </div>
+          {(!showTimezone && 1 == 2) ? (
+              <div className="buttons_wrapper">
+                <Button
+                    onClick={clearFocus}
+                    className="time_picker_button"
+                >
+                  {phrases.close}
+                </Button>
+              </div>
+          ) : null}
+        </React.Fragment>
     );
   }
 }

@@ -64,7 +64,7 @@ const getValidTimeData = (options = {}) => {
     tz,
     time,
     timeMode,
-    useTz = true,
+    useTz = false,
     meridiem = null,
   } = options;
 

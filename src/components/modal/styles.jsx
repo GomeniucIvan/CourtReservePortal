@@ -31,6 +31,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
     `,
     datePickerModal: css`
+
         .ant-modal {
             width: fit-content !important;
             margin: 0px auto !important;

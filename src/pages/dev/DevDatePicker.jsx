@@ -27,6 +27,7 @@ function DevDatePicker() {
     const [showDrawer, setShowDrawer] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showTimeModal, setShowTimeModal] = useState(false);
+    const [showTime24Modal, setShowTime24Modal] = useState(false);
     const {globalStyles} = useApp();
     
     const formik = useCustomFormik({
@@ -70,7 +71,11 @@ function DevDatePicker() {
                </Card>
 
                <Card className={globalStyles.card}>
-                   <Button type="primary" block={true} onClick={() => {setShowTimeModal(true)}}>Time Picker</Button>
+                   <Button type="primary" block={true} onClick={() => {setShowTimeModal(true)}}>12h Time Picker</Button>
+               </Card>
+
+               <Card className={globalStyles.card}>
+                   <Button type="primary" block={true} onClick={() => {setShowTime24Modal(true)}}>24h Time Picker</Button>
                </Card>
            </Flex>
             
@@ -97,8 +102,14 @@ function DevDatePicker() {
                              onChange={(e) => {pNotify('onChange', e);}}
                              onConfirm={() => {pNotify('onConfirm'); setShowTimeModal(false)}}
                              onClose={() => {pNotify('onClose'); setShowTimeModal(false)}}
+                             twelveFormat={true}
                              minDate={''} 
                              maxDate={''}  />
+
+            <ModalTimePicker show={showTime24Modal}
+                             onChange={(e) => {pNotify('onChange', e);}}
+                             onConfirm={() => {pNotify('onConfirm'); setShowTime24Modal(false)}}
+                             onClose={() => {pNotify('onClose'); setShowTime24Modal(false)}}  />
             
         </PaddingBlock>
     );

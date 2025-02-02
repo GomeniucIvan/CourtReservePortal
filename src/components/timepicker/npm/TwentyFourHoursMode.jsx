@@ -45,6 +45,7 @@ class TwentyFourHoursMode extends React.PureComponent {
     this.handleTimePointerClick = this.handleTimePointerClick.bind(this);
   }
 
+  
   handleStepChange(step) {
     const stateStep = this.state.step;
     if (stateStep !== step) {

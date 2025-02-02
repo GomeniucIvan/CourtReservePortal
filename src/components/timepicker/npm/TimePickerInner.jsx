@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { cx } from 'antd-style';
 import OutsideClickHandler from './OutsideClickHandler';
-import Button from './Common/Button';
 import timeHelper from './utils/time';
 import languageHelper from './utils/language';
-import ICONS from './utils/icons';
 import { is } from './utils/func';
 import TwelveHoursMode from "@/components/timepicker/npm/TwelveHoursMode.jsx";
 import TwentyFourHoursMode from "@/components/timepicker/npm/TwentyFourHoursMode.jsx";
+import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 
 // aliases for defaultProps readability
 const TIME = timeHelper.time({ useTz: false });
@@ -61,7 +60,6 @@ const TimePickerInner = (props) => {
     const {
         autoMode = true,
         autoClose = true,
-        colorPalette = 'light',
         draggable = true,
         focused: propFocused = false,
         language = 'en',
@@ -82,7 +80,7 @@ const TimePickerInner = (props) => {
         timeFormatter = null,
         useTz = true,
         closeOnOutsideClick = true,
-        timeConfig = { step: 30, unit: 'minutes' },
+        timeConfig = { step: 15, unit: 'minutes' },
         disabled = false,
         focusDropdownOnTime = true,
     } = props;
@@ -92,7 +90,6 @@ const TimePickerInner = (props) => {
     const [timeChanged, setTimeChanged] = useState(false);
     const [timeOptions, setTimeOptions] = useState({});
     const [formattedTime, setFormattedTime] = useState('');
-    
     
     useEffect(() => {
         if (propFocused !== focused) {
@@ -117,7 +114,7 @@ const TimePickerInner = (props) => {
     const timeData = (timeChanged) => {
         return timeHelper.time({
             time: timeOptions?.time,
-            meridiem: timeOptions?.meridiem,
+            meridiem: timeOptions?.meridiem || meridiem,
             timeMode: timeOptions?.timeMode,
             tz: props.timezone,
             useTz: !time && !timeChanged && useTz
@@ -141,7 +138,7 @@ const TimePickerInner = (props) => {
     const meridiemData = () => {
         const timeDataResult = timeData(timeChanged);
         const localMessages = languageData;
-        const m = meridiem ? meridiem : timeDataResult.meridiem;
+        const m = !isNullOrEmpty(timeOptions?.meridiem) ? timeOptions?.meridiem : timeDataResult.meridiem;
         return m && !!(m.match(/^am|pm/i)) ? localMessages[m.toLowerCase()] : m;
     };
 
@@ -164,7 +161,7 @@ const TimePickerInner = (props) => {
 
     const handleTimeChange = (options) => {
         onTimeChange(options);
-        console.log(options)
+
         setTimeOptions(options);
         setTimeChanged(true);
 
@@ -198,12 +195,6 @@ const TimePickerInner = (props) => {
         }
     };
 
-    const handleHourAndMinuteChange = (time) => {
-        setTimeChanged(true);
-        if (autoClose) onBlur();
-        return onTimeChange && onTimeChange(time);
-    };
-
     const renderDialPlate = () => {
         if (disabled) return null;
 
@@ -211,7 +202,7 @@ const TimePickerInner = (props) => {
 
         return (
             <div className="modal_container time_picker_modal_container" id="MaterialTheme">
-                {1 == 1 &&
+                {toBoolean(props.twelveFormat) &&
                     <TwelveHoursMode
                         hour={timeOptions?.hour || hour}
                         minute={timeOptions?.minute || minute}
@@ -229,7 +220,7 @@ const TimePickerInner = (props) => {
                         timeMode={parseInt(timeMode, 10)}
                         onTimezoneChange={onTimezoneChange}
                         minuteStep={parseInt(minuteStep, 10)}
-                        timezoneIsEditable={false}
+                        timezoneIsEditable={props.timezoneIsEditable}
                         handleHourChange={handleHourChange}
                         handleTimeChange={handleTimeChange}
                         handleMinuteChange={handleMinuteChange}
@@ -237,7 +228,7 @@ const TimePickerInner = (props) => {
                         focusDropdownOnTime={focusDropdownOnTime}
                     />
                 }
-                {1 == 2 &&
+                {!toBoolean(props.twelveFormat) &&
                     <TwentyFourHoursMode
                         hour={timeOptions?.hour || hour}
                         minute={timeOptions?.minute || minute}
@@ -251,11 +242,11 @@ const TimePickerInner = (props) => {
                         timeConfig={timeConfig}
                         showTimezone={showTimezone}
                         phrases={languageData}
-                        clearFocus={onBlur}
+s                        clearFocus={onBlur}
                         timeMode={parseInt(timeMode, 10)}
                         onTimezoneChange={onTimezoneChange}
                         minuteStep={parseInt(minuteStep, 10)}
-                        timezoneIsEditable={false}
+                        timezoneIsEditable={props.timezoneIsEditable}
                         handleHourChange={handleHourChange}
                         handleTimeChange={handleTimeChange}
                         handleMinuteChange={handleMinuteChange}
@@ -267,33 +258,12 @@ const TimePickerInner = (props) => {
         );
     };
 
-    const pickerPreviewClass = cx(
-        'time_picker_preview',
-        focused && 'active',
-        disabled && 'disabled'
-    );
     const containerClass = cx(
-        'time_picker_container',
-        colorPalette === 'dark' && 'dark'
-    );
-    const previewContainerClass = cx(
-        'preview_container',
-        withoutIcon && 'without_icon'
+        'time_picker_container'
     );
 
     return (
         <div className={containerClass}>
-            {trigger || (
-                <Button
-                    onClick={onFocus}
-                    className={pickerPreviewClass}
-                >
-                    <div className={previewContainerClass}>
-                        {withoutIcon ? '' : (ICONS.time)}
-                        {placeholder || formattedTime}
-                    </div>
-                </Button>
-            )}
             <OutsideClickHandler
                 focused={focused}
                 onOutsideClick={onBlur}
