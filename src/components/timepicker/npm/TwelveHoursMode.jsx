@@ -147,6 +147,7 @@ class TwelveHoursMode extends React.PureComponent {
       showTimezone,
     } = this.props;
 
+    console.log(minute)
     const { hourPointerRotate, minutePointerRotate } = this.state;
 
     const [top, height] = this.getHourTopAndHeight();

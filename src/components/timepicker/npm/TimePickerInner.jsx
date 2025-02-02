@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {cx} from "antd-style";
+import { cx } from 'antd-style';
 import OutsideClickHandler from './OutsideClickHandler';
 import Button from './Common/Button';
 import timeHelper from './utils/time';
@@ -57,120 +57,124 @@ const propTypes = {
     focusDropdownOnTime: PropTypes.bool,
 };
 
-class TimePickerInner extends React.PureComponent {
+const TimePickerInner = (props) => {
+    const {
+        autoMode = true,
+        autoClose = true,
+        colorPalette = 'light',
+        draggable = true,
+        focused: propFocused = false,
+        language = 'en',
+        meridiem = TIME.meridiem,
+        onFocusChange = Function.prototype,
+        onTimeChange = Function.prototype,
+        onTimezoneChange = Function.prototype,
+        placeholder = '',
+        showTimezone = false,
+        theme = 'material',
+        time = '',
+        timeMode = TIME.mode,
+        trigger = null,
+        withoutIcon = false,
+        minuteStep = 5,
+        limitDrag = false,
+        timeFormat = '',
+        timeFormatter = null,
+        useTz = true,
+        closeOnOutsideClick = true,
+        timeConfig = { step: 30, unit: 'minutes' },
+        disabled = false,
+        focusDropdownOnTime = true,
+    } = props;
+
+    const [focused, setFocused] = useState(propFocused);
+    const [timezoneData, setTimezoneData] = useState(timeHelper.tzForName(timeHelper.time({ time, meridiem, timeMode, tz: props.timezone, useTz: !time && useTz }).timezone));
+    const [timeChanged, setTimeChanged] = useState(false);
+    const [timeOptions, setTimeOptions] = useState({});
+    const [formattedTime, setFormattedTime] = useState('');
     
-    constructor(props) {
-        super(props);
-        const { focused, timezone, onTimezoneChange } = props;
-        const timeData = this.timeData(false);
-        const timezoneData = timeHelper.tzForName(timeData.timezone);
-
-        this.state = {
-            focused,
-            timezoneData,
-            timeChanged: false
-        };
-
-        this.onBlur = this.onBlur.bind(this);
-        this.onFocus = this.onFocus.bind(this);
-        this.timeData = this.timeData.bind(this);
-        this.handleTimeChange = this.handleTimeChange.bind(this);
-        this.handleHourChange = this.handleHourChange.bind(this);
-        this.handleMinuteChange = this.handleMinuteChange.bind(this);
-        this.handleMeridiemChange = this.handleMeridiemChange.bind(this);
-        this.handleHourAndMinuteChange = this.handleHourAndMinuteChange.bind(this);
-
-        // if a timezone value was not passed in,
-        // call the callback with the default value used for timezone
-        if (!timezone) {
-            //onTimezoneChange(timezoneData);
+    
+    useEffect(() => {
+        if (propFocused !== focused) {
+            setFocused(propFocused);
         }
-    }
+    }, [propFocused]);
 
-    componentDidUpdate(nextProps) {
-        const { focused } = nextProps;
-        if (focused !== this.props.focused) {
-            this.setState({ focused });
-        }
-    }
-
-    onFocus() {
-        const { focused } = this.state;
+    const onFocus = () => {
         if (!focused) {
-            this.onFocusChange(!focused);
+            onFocusChange(!focused);
+            setFocused(true);
         }
-    }
+    };
 
-    onBlur() {
-        const { focused } = this.state;
+    const onBlur = () => {
         if (focused) {
-            this.onFocusChange(!focused);
+            onFocusChange(!focused);
+            setFocused(false);
         }
-    }
+    };
 
-    onFocusChange(focused) {
-        const { disabled } = this.props;
-        if (disabled) return;
-
-        this.setState({ focused });
-        const { onFocusChange } = this.props;
-        onFocusChange && onFocusChange(focused);
-    }
-
-    timeData(timeChanged) {
-        const {
-            time,
-            useTz,
-            timeMode,
-            timezone,
-            meridiem,
-        } = this.props;
-        const timeData = timeHelper.time({
-            time,
-            meridiem,
-            timeMode,
-            tz: timezone,
+    const timeData = (timeChanged) => {
+        return timeHelper.time({
+            time: timeOptions?.time,
+            meridiem: timeOptions?.meridiem,
+            timeMode: timeOptions?.timeMode,
+            tz: props.timezone,
             useTz: !time && !timeChanged && useTz
         });
-        return timeData;
-    }
+    };
 
-    get languageData() {
-        const { language, phrases = {} } = this.props;
-        return Object.assign({}, languageHelper.get(language), phrases);
-    }
+    const languageData = {
+        ...languageHelper.get(language),
+        ...props.phrases
+    };
 
-    get hourAndMinute() {
-        const { timeMode } = this.props;
-        const timeData = this.timeData(this.state.timeChanged);
-        // Since someone might pass a time in 24h format, etc., we need to get it from
-        // timeData to 'translate' it into the local format, including its accurate meridiem
+    const hourAndMinute = () => {
+        const timeDataResult = timeData(timeChanged);
         const hour = (parseInt(timeMode, 10) === 12)
-            ? (parseInt(timeData.hour12, 10) === 12 ? '00' : timeData.hour12)
-            : (parseInt(timeData.hour24, 10) === 24 ? '00' : timeData.hour24);
-        const minute = timeData.minute;
+            ? (parseInt(timeDataResult.hour12, 10) === 12 ? '00' : timeDataResult.hour12)
+            : (parseInt(timeDataResult.hour24, 10) === 24 ? '00' : timeDataResult.hour24);
+        const minute = timeDataResult.minute;
         return [hour, minute];
-    }
+    };
 
-    get formattedTime() {
-        const {
-            timeMode,
-            timeFormat,
-            timeFormatter,
-        } = this.props;
+    const meridiemData = () => {
+        const timeDataResult = timeData(timeChanged);
+        const localMessages = languageData;
+        const m = meridiem ? meridiem : timeDataResult.meridiem;
+        return m && !!(m.match(/^am|pm/i)) ? localMessages[m.toLowerCase()] : m;
+    };
 
-        const [hour, minute] = this.hourAndMinute;
+    const handleHourChange = (hour) => {
+        const validateHour = timeHelper.validate(hour);
+        const minute = hourAndMinute()[1];
+        handleTimeChange({ hour: validateHour, minute, meridiem: meridiemData() });
+    };
+
+    const handleMinuteChange = (minute) => {
+        const validateMinute = timeHelper.validate(minute);
+        const hour = hourAndMinute()[0];
+        handleTimeChange({ hour, minute: validateMinute, meridiem: meridiemData() });
+    };
+
+    const handleMeridiemChange = (meridiem) => {
+        const [hour, minute] = hourAndMinute();
+        handleTimeChange({ hour, minute, meridiem });
+    };
+
+    const handleTimeChange = (options) => {
+        onTimeChange(options);
+        console.log(options)
+        setTimeOptions(options);
+        setTimeChanged(true);
+
+        const [hour, minute] = hourAndMinute();
         const validTimeMode = timeHelper.validateTimeMode(timeMode);
 
-        let times = '';
         if (timeFormatter && is.func(timeFormatter)) {
-            times = timeFormatter({
-                hour,
-                minute,
-                meridiem: this.meridiem
-            });
+            return timeFormatter({ hour, minute, meridiem: meridiemData() });
         } else if (timeFormat && is.string(timeFormat)) {
-            times = timeFormat;
+            let times = timeFormat;
             if (/HH?/.test(times) || /MM?/.test(times)) {
                 if (validTimeMode === 12) {
                     console.warn('It seems you are using 12 hours mode with 24 hours time format. Please check your timeMode and timeFormat props');
@@ -184,240 +188,123 @@ class TimePickerInner extends React.PureComponent {
             times = times.replace(/(MM|mm)/g, minute);
             times = times.replace(/(H|h)/g, Number(hour));
             times = times.replace(/(M|m)/g, Number(minute));
+            setFormattedTime(times);
         } else {
-            times = (validTimeMode === 12)
-                ? `${hour} : ${minute} ${this.meridiem}`
+            let time = (validTimeMode === 12)
+                ? `${hour} : ${minute} ${meridiemData()}`
                 : `${hour} : ${minute}`;
+
+            setFormattedTime(time);
         }
-        return times;
-    }
+    };
 
-    get meridiem() {
-        const { meridiem } = this.props;
-        const timeData = this.timeData(this.state.timeChanged);
-        const localMessages = this.languageData;
-        // eslint-disable-next-line no-unneeded-ternary
-        const m = (meridiem) ? meridiem : timeData.meridiem;
-        // eslint-disable-next-line no-extra-boolean-cast
-        return m && !!(m.match(/^am|pm/i)) ? localMessages[m.toLowerCase()] : m;
-    }
-
-    onTimeChanged(timeChanged) {
-        this.setState({ timeChanged });
-    }
-
-    handleHourChange(hour) {
-        const validateHour = timeHelper.validate(hour);
-        const minute = this.hourAndMinute[1];
-        this.handleTimeChange({
-            hour: validateHour,
-            minute,
-            meridiem: this.meridiem
-        });
-    }
-
-    handleMinuteChange(minute) {
-        const validateMinute = timeHelper.validate(minute);
-        
-        const hour = this.hourAndMinute[0];
-
-        this.handleTimeChange({
-            hour,
-            minute: validateMinute,
-            meridiem: this.meridiem
-        });
-    }
-
-    handleMeridiemChange(meridiem) {
-        const [hour, minute] = this.hourAndMinute;
-        this.handleTimeChange({
-            hour,
-            minute,
-            meridiem
-        });
-    }
-
-    handleTimeChange(options) {
-        const { onTimeChange } = this.props;
-        
-        onTimeChange && onTimeChange(options);
-        this.onTimeChanged(true);
-    }
-
-    handleHourAndMinuteChange(time) {
-        this.onTimeChanged(true);
-        const { onTimeChange, autoClose } = this.props;
-        if (autoClose) this.onBlur();
+    const handleHourAndMinuteChange = (time) => {
+        setTimeChanged(true);
+        if (autoClose) onBlur();
         return onTimeChange && onTimeChange(time);
-    }
+    };
 
-    renderDialPlate() {
-        const {
-            disabled,
-            timeMode,
-            autoMode = true,
-            autoClose,
-            draggable,
-            language,
-            limitDrag,
-            minuteStep,
-            timeConfig,
-            colorPalette,
-            showTimezone,
-            onTimezoneChange,
-            timezoneIsEditable,
-            focusDropdownOnTime,
-        } = this.props;
-
+    const renderDialPlate = () => {
         if (disabled) return null;
 
-        const { timezoneData } = this.state;
-        const [hour, minute] = this.hourAndMinute;
-        
+        const [hour, minute] = hourAndMinute();
+
         return (
             <div className="modal_container time_picker_modal_container" id="MaterialTheme">
                 {1 == 1 &&
                     <TwelveHoursMode
-                        hour={hour}
-                        minute={minute}
+                        hour={timeOptions?.hour || hour}
+                        minute={timeOptions?.minute || minute}
                         autoMode={autoMode}
                         autoClose={autoClose}
                         language={language}
                         draggable={draggable}
                         limitDrag={limitDrag}
                         timezone={timezoneData}
-                        meridiem={this.meridiem}
+                        meridiem={meridiemData()}
                         timeConfig={timeConfig}
                         showTimezone={showTimezone}
-                        phrases={this.languageData}
-                        colorPalette={colorPalette}
-                        clearFocus={this.onBlur}
+                        phrases={languageData}
+                        clearFocus={onBlur}
                         timeMode={parseInt(timeMode, 10)}
                         onTimezoneChange={onTimezoneChange}
                         minuteStep={parseInt(minuteStep, 10)}
-                        timezoneIsEditable={timezoneIsEditable}
-                        handleHourChange={this.handleHourChange}
-                        handleTimeChange={this.handleTimeChange}
-                        handleMinuteChange={this.handleMinuteChange}
-                        handleMeridiemChange={this.handleMeridiemChange}
+                        timezoneIsEditable={false}
+                        handleHourChange={handleHourChange}
+                        handleTimeChange={handleTimeChange}
+                        handleMinuteChange={handleMinuteChange}
+                        handleMeridiemChange={handleMeridiemChange}
                         focusDropdownOnTime={focusDropdownOnTime}
                     />
                 }
                 {1 == 2 &&
                     <TwentyFourHoursMode
-                        hour={hour}
-                        minute={minute}
+                        hour={timeOptions?.hour || hour}
+                        minute={timeOptions?.minute || minute}
                         autoMode={autoMode}
                         autoClose={autoClose}
                         language={language}
                         draggable={draggable}
                         limitDrag={limitDrag}
                         timezone={timezoneData}
-                        meridiem={this.meridiem}
+                        meridiem={meridiemData()}
                         timeConfig={timeConfig}
                         showTimezone={showTimezone}
-                        phrases={this.languageData}
-                        colorPalette={colorPalette}
-                        clearFocus={this.onBlur}
+                        phrases={languageData}
+                        clearFocus={onBlur}
                         timeMode={parseInt(timeMode, 10)}
                         onTimezoneChange={onTimezoneChange}
                         minuteStep={parseInt(minuteStep, 10)}
-                        timezoneIsEditable={timezoneIsEditable}
-                        handleHourChange={this.handleHourChange}
-                        handleTimeChange={this.handleTimeChange}
-                        handleMinuteChange={this.handleMinuteChange}
-                        handleMeridiemChange={this.handleMeridiemChange}
+                        timezoneIsEditable={false}
+                        handleHourChange={handleHourChange}
+                        handleTimeChange={handleTimeChange}
+                        handleMinuteChange={handleMinuteChange}
+                        handleMeridiemChange={handleMeridiemChange}
                         focusDropdownOnTime={focusDropdownOnTime}
                     />
                 }
             </div>
         );
-    }
+    };
 
-    render() {
-        const {
-            trigger,
-            disabled,
-            placeholder,
-            withoutIcon,
-            colorPalette,
-            closeOnOutsideClick
-        } = this.props;
+    const pickerPreviewClass = cx(
+        'time_picker_preview',
+        focused && 'active',
+        disabled && 'disabled'
+    );
+    const containerClass = cx(
+        'time_picker_container',
+        colorPalette === 'dark' && 'dark'
+    );
+    const previewContainerClass = cx(
+        'preview_container',
+        withoutIcon && 'without_icon'
+    );
 
-        const { focused } = this.state;
-        const times = this.formattedTime;
-
-        const pickerPreviewClass = cx(
-            'time_picker_preview',
-            focused && 'active',
-            disabled && 'disabled'
-        );
-        const containerClass = cx(
-            'time_picker_container',
-            colorPalette === 'dark' && 'dark'
-        );
-        const previewContainerClass = cx(
-            'preview_container',
-            withoutIcon && 'without_icon'
-        );
-
-        return (
-            <div className={containerClass}>
-                {trigger || (
-                    <Button
-                        onClick={this.onFocus}
-                        className={pickerPreviewClass}
-                    >
-                        <div className={previewContainerClass}>
-                            {withoutIcon ? '' : (ICONS.time)}
-                            {placeholder || times}
-                        </div>
-                    </Button>
-                )}
-                <OutsideClickHandler
-                    focused={focused}
-                    onOutsideClick={this.onBlur}
-                    closeOnOutsideClick={disabled ? false : closeOnOutsideClick}
+    return (
+        <div className={containerClass}>
+            {trigger || (
+                <Button
+                    onClick={onFocus}
+                    className={pickerPreviewClass}
                 >
-                    {this.renderDialPlate()}
-                </OutsideClickHandler>
-            </div>
-        );
-    }
-}
+                    <div className={previewContainerClass}>
+                        {withoutIcon ? '' : (ICONS.time)}
+                        {placeholder || formattedTime}
+                    </div>
+                </Button>
+            )}
+            <OutsideClickHandler
+                focused={focused}
+                onOutsideClick={onBlur}
+                closeOnOutsideClick={disabled ? false : closeOnOutsideClick}
+            >
+                {renderDialPlate()}
+            </OutsideClickHandler>
+        </div>
+    );
+};
 
 TimePickerInner.propTypes = propTypes;
-// Define defaultProps outside the class
-TimePickerInner.defaultProps = {
-    autoMode: true,
-    autoClose: true,
-    colorPalette: 'light',
-    draggable: true,
-    focused: false,
-    language: 'en',
-    meridiem: TIME.meridiem,
-    onFocusChange: Function.prototype,
-    onTimeChange: Function.prototype,
-    onTimezoneChange: Function.prototype,
-    placeholder: '',
-    showTimezone: false,
-    theme: 'material',
-    time: '',
-    timeMode: TIME.mode,
-    trigger: null,
-    withoutIcon: false,
-    minuteStep: 5,
-    limitDrag: false,
-    timeFormat: '',
-    timeFormatter: null,
-    useTz: true,
-    closeOnOutsideClick: true,
-    timeConfig: {
-        step: 30,
-        unit: 'minutes'
-    },
-    disabled: false,
-    focusDropdownOnTime: true,
-};
 
 export default TimePickerInner;

@@ -67,6 +67,7 @@ const getValidTimeData = (options = {}) => {
     useTz = true,
     meridiem = null,
   } = options;
+
   const validMeridiem = getValidMeridiem(meridiem);
 
   // when we only have a valid meridiem, that implies a 12h mode
