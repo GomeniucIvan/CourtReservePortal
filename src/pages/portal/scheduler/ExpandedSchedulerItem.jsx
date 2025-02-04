@@ -118,8 +118,10 @@ const ExpandedSchedulerItem = (props) => {
                         setPage(setDynamicPages, dataItem.ReservationType, route);
                         navigate(route);
                     } else {
-                        let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', dataItem.Number);
-                        setPage(setDynamicPages, dataItem.Number, route);
+                        let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', dataItem.OrganizationId);
+                        route = toRoute(route, 'number', dataItem.Number);
+                        route = `${route}?resId=${dataItem.ReservationId}`;
+                        setPage(setDynamicPages, dataItem.EventName, route);
                         navigate(route);
                     }
                 }

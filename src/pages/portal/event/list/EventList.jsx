@@ -278,7 +278,9 @@ function EventList({filter}) {
                                            key={index}
                                            arrowIcon={false}
                                            onClick={() => {
-                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'number', item.NextReservationNumber);
+                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.OrganizationId);
+                                               route = toRoute(route, 'number', item.NextReservationNumber);
+                                               route = `${route}?resId=${item.NextReservationId}`;
                                                setPage(setDynamicPages, item.EventName, route);
                                                navigate(route);
                                            }}>

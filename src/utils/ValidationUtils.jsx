@@ -1,12 +1,7 @@
 ﻿import {anyInList, equalString, isNullOrEmpty, moreThanOneInList, toBoolean} from "./Utils.jsx";
 import {logError} from "./ConsoleUtils.jsx";
-import * as Yup from "yup";
-import {requiredMessage} from "./TranslateUtils.jsx";
-import {any} from "prop-types";
 import {matchmakerGenderList} from "./SelectUtils.jsx";
 import {countListItems} from "./ListUtils.jsx";
-import FormSelect from "../form/formselect/FormSelect.jsx";
-import React from "react";
 import {dateOfBirthStringToArray, isNonUsCulture} from "./DateUtils.jsx";
 import {isCanadaCulture} from "./OrganizationUtils.jsx";
 
@@ -581,4 +576,69 @@ export const validateDisclosures = (t, formik, orgSignup) => {
     }
     
     return isValid;
+}
+
+export const validateEventMembersUdfs = (t, formik) => {
+    let isValid = true;
+    
+    let members = formik?.values?.Members;
+    
+    if (anyInList(members)){
+        members.forEach((member, index) => {
+            if (toBoolean(member.IsChecked)) {
+                if (anyInList(member.MemberUdfs)) {
+                    member.MemberUdfs.forEach((currentUdf, udfIndex) => {
+                        if (toBoolean(currentUdf?.IsRequired) && !currentUdf?.Value?.trim()) {
+                            let fieldName = `Members[${index}].MemberUdfs[${udfIndex}].Value`;
+                            setFormikError(t, formik, fieldName, currentUdf.Label);
+                            isValid = false;
+                        }
+                    });
+                }
+            }
+        });
+    }
+    
+    return isValid;
+}
+
+export const invalidEventGuestsErrors = (t, formik, guestOwnerRequired = false) => {
+    let errorList = [];
+
+    let guests = formik?.values?.ReservationGuests;
+
+    if (anyInList(guests)){
+        guests.forEach((guest, index) => {
+
+            if (isNullOrEmpty(guest.FirstName)) {
+                let fieldName = `ReservationGuests[${index}].FirstName`;
+                setFormikError(t, formik, fieldName, 'Guest First Name');
+                errorList.push({Error:`First Name is required for Guest #${index+1}`, Index: index, Guid: guest.Guid});
+            }
+
+            if (isNullOrEmpty(guest.LastName)) {
+                let fieldName = `ReservationGuests[${index}].LastName`;
+                setFormikError(t, formik, fieldName, 'Guest Last Name');
+                errorList.push({Error:`Last Name is required for Guest #${index+1}`, Index: index, Guid: guest.Guid});
+            }
+
+            if (toBoolean(guestOwnerRequired) && isNullOrEmpty(guest.GuestOwnerId)){
+                let fieldName = `ReservationGuests[${index}].GuestOwnerId`;
+                setFormikError(t, formik, fieldName, 'Guest Owner');
+                errorList.push({Error:`Guest Owner is required for Guest #${index+1}`, Index: index, Guid: guest.Guid});
+            }
+            
+            if (anyInList(guest.MemberUdfs)) {
+                guest.MemberUdfs.forEach((currentUdf, udfIndex) => {
+                    if (toBoolean(currentUdf?.IsRequired) && !currentUdf?.Value?.trim()) {
+                        let fieldName = `ReservationGuests[${index}].MemberUdfs[${udfIndex}].Value`;
+                        setFormikError(t, formik, fieldName, currentUdf.Label);
+                        errorList.push({Error:`${currentUdf.Label} is required for Guest #${index+1}`, Index: index, Guid: guest.Guid});
+                    }
+                });
+            }
+        });
+    }
+
+    return errorList;
 }

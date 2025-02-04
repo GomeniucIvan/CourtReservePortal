@@ -273,19 +273,17 @@ function Layout() {
         }, 50)
 
         //not working on ios
-        // window.addEventListener('resize', calculateMaxHeight);
-        // if (window.visualViewport) {
-        //     window.visualViewport.addEventListener('resize', calculateMaxHeight);
-        //     window.visualViewport.addEventListener('scroll', calculateMaxHeight);
-        // }
-        //
-        // return () => {
-        //     window.removeEventListener('resize', calculateMaxHeight);
-        //     if (window.visualViewport) {
-        //         window.visualViewport.removeEventListener('resize', calculateMaxHeight);
-        //         window.visualViewport.removeEventListener('scroll', calculateMaxHeight);
-        //     }
-        // };
+        window.addEventListener('resize', calculateMaxHeight);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', calculateMaxHeight);
+        }
+
+        return () => {
+            window.removeEventListener('resize', calculateMaxHeight);
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', calculateMaxHeight);
+            }
+        };
     }, []);
     
     useEffect(() => {

@@ -68,8 +68,8 @@ function ExpandedScheduler() {
 
                 setHeaderTitle(model.Name)
                 
-                setStartTimeString(dateToTimeString(model.StartTime, true));
-                setEndTimeString(dateToTimeString(model.EndTime, true));
+                setStartTimeString(model.StartTimeSpanStringDisplay);
+                setEndTimeString(model.EndTimeSpanStringDisplay);
 
                 setSchedulerData(model);
                 setSchedulerHours(model.SchedulerDto.OrganizationHours)

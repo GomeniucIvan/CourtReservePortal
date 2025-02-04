@@ -356,8 +356,8 @@ function EventDetails() {
                                     <Button type="primary"
                                             block
                                             onClick={() => {
-                                                let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'reservationId', event.ReservationId);
-                                                route = toRoute(route, 'eventId', event.EventId);
+                                                let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'id', orgId);
+                                                route = `${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}&reservationNumber=${event.ReservationNumber}`;
                                                 setPage(setDynamicPages, event.EventName, route);
                                                 navigate(route);
                                             }}
@@ -370,8 +370,8 @@ function EventDetails() {
                                     <Button type="primary"
                                             block
                                             onClick={() => {
-                                                let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'reservationId', event.ReservationId);
-                                                route = toRoute(route, 'eventId', event.EventId);
+                                                let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'id', orgId);
+                                                route = `${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}&reservationNumber=${event.ReservationNumber}`;
                                                 setPage(setDynamicPages, event.EventName, route);
                                                 navigate(route);
                                             }}

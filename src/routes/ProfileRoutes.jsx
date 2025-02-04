@@ -26,7 +26,9 @@ export const ProfileRouteNames = {
     PROFILE_BILLING_PAYMENT: `/profile/payment/:id`,
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
-    PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`
+    PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`,
+
+    PROCESS_PAYMENT: `/online/payments/processpayment/:id`,
 };
 
 const ProfileRoutes = [

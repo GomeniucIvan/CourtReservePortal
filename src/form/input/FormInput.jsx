@@ -90,13 +90,13 @@ const FormInput = ({ label,
         return maskedValue;
     };
 
-
+    let isPhoneNumber = equalString(name, 'phoneNumber') || (!isNullOrEmpty(name) && name.includes('PhoneNumber'));
     const handleInputChange = (event) => {
         let { value } = event.target;
 
         value = applyMask(value, mask);
 
-        if (equalString(name, 'phoneNumber')) {
+        if (toBoolean(isPhoneNumber)) {
             handlePhoneNumberInputChange(event);
         } else {
             if (!isNullOrEmpty(mask)){
@@ -238,7 +238,7 @@ const FormInput = ({ label,
                             autoComplete="off"
                             spellCheck="false"
                             ref={inputRef}
-                            suffix={equalString(name, 'phoneNumber') ? <div style={{opacity: (showErrorIcon ? 1 : 0)}}><SVG size={18} preventFill={true} icon={'alert-triangle'} /></div> : suffix}
+                            suffix={toBoolean(isPhoneNumber) ? <div style={{opacity: (showErrorIcon ? 1 : 0)}}><SVG size={18} preventFill={true} icon={'alert-triangle'} /></div> : suffix}
                             placeholder={isNullOrEmpty(placeholder) ? t('common:inputPlaceholder', {label: label}) : placeholder}
                             status={toBoolean(hasError) ? 'error' : ''}
                             type={((addIconToSeePassword && !showPassword) || (!showPassword && equalString(props.type, 'password'))) ? 'password' : (toBoolean(onlyDigits) && !toBoolean(isExpiryDate) ? 'number' : 'text')}

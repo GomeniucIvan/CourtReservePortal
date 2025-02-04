@@ -1,4 +1,4 @@
-﻿import {useNavigate, useParams} from "react-router-dom";
+﻿import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import {AppProvider, useApp} from "@/context/AppProvider.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
@@ -18,7 +18,7 @@ import {
     toBoolean
 } from "@/utils/Utils.jsx";
 import {dateTimeToFormat, dateTimeToTimes} from "@/utils/DateUtils.jsx";
-import {emptyArray} from "@/utils/ListUtils.jsx";
+import {countListItems, emptyArray} from "@/utils/ListUtils.jsx";
 import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {Toast} from "antd-mobile";
@@ -27,15 +27,26 @@ import RegistrationGuestBlock from "@/components/registration/RegistrationGuestB
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import DisclosuresPartial from "@/form/formdisclosures/DisclosuresPartial.jsx";
+import useCustomFormik from "@/components/formik/CustomFormik.jsx";
+import {
+    invalidEventGuestsErrors,
+    validateEventMembersUdfs,
+} from "@/utils/ValidationUtils.jsx";
+import {useTranslation} from "react-i18next";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import {eventRegistrationRedirect, eventUstaSatelliteDataRegistrationRedirect} from "@/utils/RedirectUtils.jsx";
 
 const {Title, Text} = Typography;
 
 function EventRegistration({fullRegistration}) {
     const navigate = useNavigate();
-    let {reservationId, eventId} = useParams();
     const {orgId, authData} = useAuth();
     const [event, setEvent] = useState(null);
-    const [members, setMembers] = useState([]);
     const disclosureSignHandler = useRef();
     const disclosureRef = useRef();
     const [isFetching, setIsFetching] = useState(true);
@@ -44,6 +55,14 @@ function EventRegistration({fullRegistration}) {
     const [disclosureSubmitting, setDisclosureSubmitting] = useState(false);
 
     const {setHeaderRightIcons} = useHeader();
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const reservationId = queryParams.get("reservationId");
+    const eventId = queryParams.get("eventId");
+    const reservationNumber = queryParams.get("reservationNumber");
+    const {t} = useTranslation('');
+    const guestBlockRef = useRef(null);
     
     const {
         setIsFooterVisible,
@@ -56,39 +75,6 @@ function EventRegistration({fullRegistration}) {
         token,
         globalStyles
     } = useApp();
-
-    const loadData = async (refresh) => {
-
-        setIsFetching(true);
-        if (isMockData) {
-            const details = mockData.details;
-            setEvent(details);
-            setIsFetching(false);
-        } else {
-            let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_Get?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&ajaxCall=false&isFullEventReg=${toBoolean(fullRegistration)}`);
-
-            if (toBoolean(response?.isValid)){
-                setEvent(response.Data);
-                const allMembers = [];
-                allMembers.push(response.Data.CurrentMember);
-
-                response.Data.FamilyMembers.map(familyMember => {
-                    allMembers.push(familyMember);
-                })
-
-                let udfs = response.Data.Udfs;
-
-                if (anyInList(udfs)){
-                    allMembers.forEach(member => {
-                        member.MemberUdfs = udfs;
-                    });
-                }
-                setMembers(allMembers);
-            }
-            setIsFetching(false);
-        }
-        resetFetch();
-    }
 
     useEffect(() => {
         if (shouldFetch) {
@@ -129,7 +115,7 @@ function EventRegistration({fullRegistration}) {
                 Register
             </Button>
         </PaymentDrawerBottom>)
-    }, [isFetching, isLoading, members])
+    }, [isFetching, isLoading])
 
 
     useEffect(() => {
@@ -139,34 +125,132 @@ function EventRegistration({fullRegistration}) {
     }, []);
 
     const initialValues = {
-        reservationTypeId: '',
-        ReservationGuests: []
+        ReservationGuests: [],
+        Members: [],
     };
 
     const validationSchema = Yup.object({
-        reservationTypeId: Yup.string().required('Reservation Type is require.'),
+
     });
 
-    const formik = useFormik({
+    const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
-        validateOnBlur: true,
-        validateOnChange: true,
+        validation: () => {
+            const isValidMemberUdfs = validateEventMembersUdfs(t, formik);
+            
+            //array return to display information from drawers
+            const guestsErrors = invalidEventGuestsErrors(t, formik, countListItems(formik.values.Members.filter(v => v.IsChecked)) > 1);
+            let isValidGuests = guestsErrors.length === 0;
+
+            if (anyInList(guestsErrors) && isValidMemberUdfs) {
+                let firstErrorObject = guestsErrors[0];
+                
+                displayMessageModal({
+                    title: "Registration Error",
+                    html: (onClose) => firstErrorObject.Error,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+                        guestBlockRef.current?.open(firstErrorObject.Guid);
+                    },
+                })
+            }
+            
+            return isValidMemberUdfs && isValidGuests;
+        },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
+            
+            let familyMembers = [];
+            let currentMember = values.Members[0];
+            
+            if (moreThanOneInList(values.Members)) {
+                familyMembers = values.Members.filter(member => !equalString(member.OrganizationMemberId, currentMember.OrganizationMemberId));
+                
+                if (!familyMembers.some(v => toBoolean(v.IsChecked))) {
+                    setIsLoading(false);
+                    displayMessageModal({
+                        title: "Registration Error",
+                        html: (onClose) => 'At least one registrant is required.',
+                        type: "error",
+                        buttonType: modalButtonType.DEFAULT_CLOSE,
+                        onClose: () => {
 
-            if (isMockData) {
-
+                        },
+                    });
+                    return;
+                }
             } else {
-                //todo
-                alert('todo verification')
+                currentMember = {
+                    ...currentMember,
+                    IsChecked: true,
+                }
+            }
+            
+            let postModel = {
+                CurrentMember: currentMember,
+                FamilyMembers: familyMembers,
+                ReservationGuests: formik.values.ReservationGuests,
+                EventId: eventId,
+                SelectedReservation: {
+                    Id: reservationId
+                }
+            }
+            
+            let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/EventsApi/EventApi_SignUpToEvent_DropIn_Post?id=${orgId}`,postModel);
+            if (toBoolean(response?.IsValid)) {
+                removeLastHistoryEntry();
+
+                let actionType = 1; //1 signup
+                if (toBoolean(response.data.RequireOnlinePayment)) {
+                    actionType = 4;
+
+                    let route = toRoute(ProfileRouteNames.PROCESS_PAYMENT, 'id', orgId);
+                    route = `${route}?evAction=${actionType}`;
+                    navigate(route);
+                } else {
+                    if (toBoolean(response.data.RequiresApproval)) {
+                        actionType = 5;
+                    }
+                }
+
+                if (!toBoolean(response.data.RequireOnlinePayment)) {
+                    if (toBoolean(response.data.IsOrganizedPlayEvent)) {
+                        let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', orgId);
+                        route = toRoute(route, 'number', reservationNumber);
+                        route = `${route}?evAction=${actionType}`;
+                        //setPage(setDynamicPages, booking.EventName, route);
+                        navigate(route);
+                    } else {
+                        //USTA ONLY
+                        if (equalString(orgId,6415)){
+                            eventUstaSatelliteDataRegistrationRedirect(navigate, orgId,actionType, event?.EventName, response.data);
+                        } else {
+                            eventRegistrationRedirect(navigate, orgId,actionType);
+                        }
+                    }
+                }
+                
+            } else {
+                setIsLoading(false);
+                displayMessageModal({
+                    title: "Registration Error",
+                    html: (onClose) => response.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+                        
+                    },
+                })
             }
         },
     });
 
     const toggleInitialCheck = (index) => {
-        setMembers((prevMembers) =>
-            prevMembers.map((member, idx) =>
+        formik.setFieldValue(
+            'Members',
+            formik.values.Members.map((member, idx) =>
                 idx === index ? { ...member, IsChecked: !member.IsChecked } : member
             )
         );
@@ -196,6 +280,43 @@ function EventRegistration({fullRegistration}) {
         }
     }
 
+    const loadData = async (refresh) => {
+        setIsFetching(true);
+        if (isMockData) {
+            const details = mockData.details;
+            setEvent(details);
+            setIsFetching(false);
+        } else {
+            let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_Get?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&ajaxCall=false&isFullEventReg=${toBoolean(fullRegistration)}`);
+
+            if (toBoolean(response?.isValid)){
+                setEvent(response.Data);
+                const allMembers = [];
+                allMembers.push(response.Data.CurrentMember);
+
+                response.Data.FamilyMembers.map(familyMember => {
+                    allMembers.push(familyMember);
+                })
+
+                let udfs = response.Data.Udfs;
+
+                if (anyInList(udfs)){
+                    allMembers.forEach(member => {
+                        member.MemberUdfs = udfs;
+                    });
+                }
+                formik.setFieldValue("Members", allMembers);
+            }
+            setIsFetching(false);
+        }
+        resetFetch();
+    }
+
+    let members = [];
+    if (anyInList(formik.values?.Members)) {
+        members = formik.values?.Members;
+    }
+    
     return (
         <>
             <PaddingBlock topBottom={true}>
@@ -242,50 +363,51 @@ function EventRegistration({fullRegistration}) {
                                                description={dateTimeToTimes(event?.SelectedReservation.Start, event?.SelectedReservation.End, 'friendly')}/>
                             </Flex>
 
-                            {moreThanOneInList(members) &&
+                            {moreThanOneInList(formik?.values?.Members) &&
                                 <>
                                     <List
                                         itemLayout="horizontal"
-                                        dataSource={members}
+                                        dataSource={formik.values.Members}
                                         bordered
                                         renderItem={(member, index) => {
                                             let requireToSignWaiver = equalString(member.DisclosureStatus, 2) && !toBoolean(member.InitialCheck);
 
                                             return (
                                                 <List.Item className={globalStyles.listItemSM}>
-                                                    <Flex justify={'space-between'} align={'center'} className={'width-100'}>
-                                                        <Title level={1} onClick={() => {if (!requireToSignWaiver){toggleInitialCheck(index)}}}>
-                                                            {member.FullName}
-                                                        </Title>
-                                                        <Switch checked={member.IsChecked}
-                                                                onChange={() => toggleInitialCheck(index)} disabled={requireToSignWaiver}/>
-                                                    </Flex>
+                                                   <Flex vertical={true} gap={token.padding} flex={1}>
+                                                       <Flex justify={'space-between'} align={'center'} className={'width-100'}>
+                                                           <Title level={2} onClick={() => {if (!requireToSignWaiver){toggleInitialCheck(index)}}}>
+                                                               {member.FullName}
+                                                           </Title>
+                                                           <Switch checked={member.IsChecked}
+                                                                   onChange={() => toggleInitialCheck(index)} disabled={requireToSignWaiver}/>
+                                                       </Flex>
 
-                                                    {toBoolean(member.HasDisclosureToSign) &&
-                                                        <div>
-                                                            <label htmlFor={name} className={globalStyles.globalLabel}>
-                                                                Sign Waiver(s)
-                                                            </label>
-                                                            <Button size={'small'} type={'primary'} onClick={() => {
-                                                                disclosureSignHandler.current = Toast.show({
-                                                                    icon: 'loading',
-                                                                    content: '',
-                                                                    maskClickable: false,
-                                                                    duration: 0
-                                                                })
-                                                                loadMemberWaivers(member.Id);
-                                                            }}>
-                                                                Sign
-                                                            </Button>
-                                                        </div>
-                                                    }
+                                                       {toBoolean(member.HasDisclosureToSign) &&
+                                                           <div>
+                                                               <label htmlFor={name} className={globalStyles.globalLabel}>
+                                                                   Sign Waiver(s)
+                                                               </label>
+                                                               <Button size={'small'} type={'primary'} onClick={() => {
+                                                                   disclosureSignHandler.current = Toast.show({
+                                                                       icon: 'loading',
+                                                                       content: '',
+                                                                       maskClickable: false,
+                                                                       duration: 0
+                                                                   })
+                                                                   loadMemberWaivers(member.Id);
+                                                               }}>
+                                                                   Sign
+                                                               </Button>
+                                                           </div>
+                                                       }
 
-                                                    {toBoolean(member.IsChecked) &&
-                                                        <>
-                                                            <FormCustomFields customFields={member.MemberUdfs} formik={formik} index={index} name={'members[{index}].MemberUdfs[{udfIndex}].Value'}/>
-                                                        </>
-                                                    }
-
+                                                       {toBoolean(member.IsChecked) &&
+                                                           <>
+                                                               <FormCustomFields customFields={member.MemberUdfs} formik={formik} index={index} name={'Members[{index}].MemberUdfs[{udfIndex}].Value'}/>
+                                                           </>
+                                                       }
+                                                   </Flex>
                                                 </List.Item>
                                             )
                                         }}
@@ -297,9 +419,17 @@ function EventRegistration({fullRegistration}) {
                                 <RegistrationGuestBlock disableAddGuest={false}
                                                         formik={formik}
                                                         udfs={event.Udfs}
+                                                        type={'event'}
+                                                        ref={guestBlockRef}
                                                         guestOrgMemberIdValue={'OrganizationMemberId'}
                                                         showGuestOwner={members.filter(resMember => toBoolean(resMember.IsChecked)).length > 1}
                                                         reservationMembers={members.filter(resMember => toBoolean(resMember.IsChecked))}
+                                                        onGuestRemove={(guestIndex) => {
+                                                            formik.setFieldValue(
+                                                                'ReservationGuests',
+                                                                formik.values.ReservationGuests.filter((_, index) => index !== guestIndex)
+                                                            );
+                                                        }}
                                                         showAllCosts={false}/>
                             }
                         </Flex>

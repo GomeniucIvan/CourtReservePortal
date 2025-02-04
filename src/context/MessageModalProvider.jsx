@@ -16,6 +16,9 @@ const MessageModalProvider = ({ children }) => {
 
     const closeModal = () => {
         setModal({ isVisible: false, data: null });
+        if (typeof modal.data?.onClose === "function") {
+            modal.data.onClose()
+        }
     };
 
     // Assign the displayModal function to the global reference

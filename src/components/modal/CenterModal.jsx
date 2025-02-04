@@ -19,7 +19,7 @@ function CenterModal({ show,
                          buttonType,
                          type='',
                          children,
-    zIndex,
+                         zIndex,
                          onClose}) {
     
     const { token } = useApp();

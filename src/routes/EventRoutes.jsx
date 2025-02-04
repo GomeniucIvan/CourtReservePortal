@@ -10,9 +10,9 @@ export const EventRouteNames = {
     EVENT_CATEGORIES: '/online/events/categories/:id',
     EVENT_CALENDAR: '/online/calendar/events/:id',
     EVENT_FILTER: '/online/events/list/:id/:filterKey',
-    EVENT_DETAILS: '/event/details/:number',
-    EVENT_SIGNUP: '/event/signup/:eventId/:reservationId',
-    EVENT_FULL_SIGNUP: '/event/full-signup/:eventId/:reservationId',
+    EVENT_DETAILS: '/online/event/details/:id/:number',
+    EVENT_SIGNUP: '/online/event/signuptoevent/:id',
+    EVENT_FULL_SIGNUP: '/online/event/full-signup/:eventId/:reservationId',
 };
 
 const EventRoutes = [
