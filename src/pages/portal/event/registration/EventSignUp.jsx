@@ -327,7 +327,8 @@ function EventSignUp() {
             setEvent(response.Data);
             setIsFamilyMember(anyInList(response.Data.FamilyMembers));
 
-            const allMembers = [];
+            console.log(response.Data);
+            let allMembers = [];
             allMembers.push(response.Data.CurrentMember);
 
             response.Data.FamilyMembers.map(familyMember => {
@@ -341,6 +342,10 @@ function EventSignUp() {
                     member.MemberUdfs = udfs;
                 });
             }
+            if (toBoolean(isFullEventReg)){
+                allMembers = allMembers.filter(member => response.Data.EligibleUsersToSignByEntireCost.includes(member.Id));
+            }
+            
             formik.setFieldValue("Members", allMembers);
         }
         setIsFetching(false);
