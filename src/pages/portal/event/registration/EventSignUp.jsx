@@ -60,6 +60,7 @@ function EventSignUp() {
     const {t} = useTranslation('');
     const guestBlockRef = useRef(null);
     const [isFamilyMember, setIsFamilyMember] = useState(false);
+    const [maxAllowedGuests, setMaxAllowedGuests] = useState(0);
     
     const {
         setIsFooterVisible,
@@ -233,6 +234,9 @@ function EventSignUp() {
         }
         
         let checkedMembers = members.filter(member => toBoolean(member.IsChecked));
+        let checkedMembersWithMaxGuests = checkedMembers.filter(member => !isNullOrEmpty(member.MaxGuests));
+        setMaxAllowedGuests(checkedMembersWithMaxGuests.some(v => toBoolean(v.AllowGuests)) ? checkedMembersWithMaxGuests.reduce((sum, member) => sum + member.MaxGuests, 0) : 0)
+        
         let membersWithDue = checkedMembers.filter(member => member.PriceToPay > 0 && !toBoolean(member.IsMonthlyFree));
         let guestsWithDue = [];
         
@@ -351,7 +355,12 @@ function EventSignUp() {
                 <PaddingBlock topBottom={true}>
                     <Flex vertical={true} gap={token.padding}>
                         <EventSignUpDetails event={event} />
-                        <EventSignUpPartial isFetching={isFetching} formik={formik} event={event} loadData={loadData} guestBlockRef={guestBlockRef} />
+                        <EventSignUpPartial isFetching={isFetching}
+                                            formik={formik} 
+                                            event={event}
+                                            maxAllowedGuests={maxAllowedGuests}
+                                            loadData={loadData}
+                                            guestBlockRef={guestBlockRef} />
                     </Flex>
                 </PaddingBlock>
             }

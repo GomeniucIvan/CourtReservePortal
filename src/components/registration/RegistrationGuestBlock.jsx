@@ -370,7 +370,7 @@ const RegistrationGuestBlock = forwardRef(({formik,
                                                       index={index}
                                                       name={'ReservationGuests[{index}].MemberUdfs[{udfIndex}].Value'}/>
 
-                                    {hasGuestsWithPayment &&
+                                    {(hasGuestsWithPayment && !equalString(type,'event')) &&
                                         <>
                                             <FormInput label={isOverriden ? "Daily Cost" : "Cost"}
                                                        formik={formik}
