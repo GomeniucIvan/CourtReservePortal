@@ -25,7 +25,8 @@ const Header = forwardRef((props, ref) => {
     }));
 
     useEffect(() => {
-        pushToHistory(location.pathname, props.route?.root);
+        const fullPath = `${location.pathname}${location.search}`;
+        pushToHistory(fullPath, props.route?.root);
     }, [location]);
 
     const navigateBack = () => {

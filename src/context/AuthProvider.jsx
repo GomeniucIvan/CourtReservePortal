@@ -16,6 +16,7 @@ export const AuthProvider = ({children}) => {
     const [newOrgId, setNewOrgId] = useState(null);
     
     const [orgId, setOrgId] = useState(null);
+    const [enterpriseId, setEnterpriseId] = useState(null);
     const [spGuideId, setSpGuideId] = useState(getGlobalSpGuideId());
     const [shouldLoadOrgData, setShouldLoadOrgData] = useState(true);
     const [authData, setAuthData] = useState(null);
@@ -71,6 +72,8 @@ export const AuthProvider = ({children}) => {
         <AuthContext.Provider value={{
             authData,
             setAuthData,
+            enterpriseId,
+            setEnterpriseId,
             setOrgId,
             orgId,
             newOrgId,

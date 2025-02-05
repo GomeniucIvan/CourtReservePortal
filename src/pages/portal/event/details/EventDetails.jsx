@@ -19,6 +19,8 @@ import {costDisplay} from "@/utils/CostUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
+import {getConfigValue} from "@/config/WebConfig.jsx";
+import {eReplace} from "@/utils/TranslateUtils.jsx";
 
 const {Title, Text} = Typography;
 
@@ -33,7 +35,8 @@ function EventDetails() {
     const [additionalDates, setAdditionalDates] = useState(null);
     const [additionalDatesLoading, setAdditionalDatesLoading] = useState(false);
     const {buttonStyles} = useCombinedStyles();
-
+    let clubsToRestrictUpdateWithdrawForEvents = getConfigValue('ClubsToRestrictUpdateWithdrawForEvents');
+    
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
     
     let {
@@ -44,7 +47,8 @@ function EventDetails() {
         setFooterContent,
         token,
         globalStyles,
-        setDynamicPages
+        setDynamicPages,
+        setIsLoading
     } = useApp();
 
     const loadData = async (refresh) => {
@@ -73,6 +77,7 @@ function EventDetails() {
                 
                 setRegistration(registrationData);
                 setIsFetching(false);
+                setIsLoading(false);
             }
         }
         resetFetch();
@@ -384,16 +389,30 @@ function EventDetails() {
                                     <Button type="primary"
                                             block
                                             onClick={() => {
-                                                let route = toRoute(EventRouteNames.EVENT_FULL_SIGNUP, 'reservationId', event.ReservationId);
-                                                route = toRoute(route, 'eventId', event.EventId);
+                                                let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'id', orgId);
+                                                route = `${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}&reservationNumber=${event.ReservationNumber}&isFullEventReg=true`;
                                                 setPage(setDynamicPages, event.EventName, route);
                                                 navigate(route);
                                             }}
                                             htmlType={'button'}>
-                                        Register to Full Event
+                                        {eReplace('Register to Full Event')}
                                     </Button>
                                 }
 
+                                {(toBoolean(registration?.ShowEditRegistrationBtn)) &&
+                                    <Button type="primary"
+                                            block
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_CHANGE_SIGNUP, 'id', orgId);
+                                                route = `${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}`;
+                                                setPage(setDynamicPages, event.EventName, route);
+                                                navigate(route);
+                                            }}
+                                            htmlType={'button'}>
+                                        Edit Registration
+                                    </Button>
+                                }
+                                
                                 {toBoolean(registration?.ShowPaymentBtn) &&
                                     <Button type="primary"
                                             block
@@ -417,6 +436,12 @@ function EventDetails() {
                                             danger
                                             block
                                             ghost
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_WITHDRAWN, 'id', orgId);
+                                                route = `${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}`;
+                                                setPage(setDynamicPages, event.EventName, route);
+                                                navigate(route);
+                                            }}
                                             htmlType={'button'}>
                                         Withdraw
                                     </Button>

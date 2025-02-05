@@ -29,6 +29,7 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
+import LayoutScripts from "@/components/layout/LayoutScripts.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -428,8 +429,8 @@ function Layout() {
                  style={{height: `${maxHeight}px`}}>
                 <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <>
-                        <LayoutExtra/>
-
+                        <LayoutExtra />
+                        <LayoutScripts />
                         <Toaster
                             toastOptions={{
                                 className: 'safe-area-top-margin',

@@ -1,18 +1,20 @@
 import EventCategoryList from "@portal/event/categories/EventCategoryList.jsx";
 import EventCalendar from "@portal/event/calendar/EventCalendar.jsx";
-import EventRegistration from "@portal/event/registration/EventRegistration.jsx";
 import EventDetails from "@portal/event/details/EventDetails.jsx";
 import EventList from "@portal/event/list/EventList.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import EventSignUp from "@portal/event/registration/EventSignUp.jsx";
+import EventChangeSignUp from "@portal/event/registration/EventChangeSignUp.jsx";
+import EventWithdraw from "@portal/event/withdraw/EventWithdraw.jsx";
 
 export const EventRouteNames = {
     EVENT_LIST: '/online/events/list/:id',
     EVENT_CATEGORIES: '/online/events/categories/:id',
     EVENT_CALENDAR: '/online/calendar/events/:id',
     EVENT_FILTER: '/online/events/list/:id/:filterKey',
-    EVENT_DETAILS: '/online/event/details/:id/:number',
-    EVENT_SIGNUP: '/online/event/signuptoevent/:id',
-    EVENT_FULL_SIGNUP: '/online/event/full-signup/:eventId/:reservationId',
+    EVENT_DETAILS: '/online/events/details/:id/:number',
+    EVENT_SIGNUP: '/online/events/signuptoevent/:id',
+    EVENT_CHANGE_SIGNUP: '/online/events/changesignup/:id',
+    EVENT_WITHDRAWN: '/online/events/withdraw/:id',
 };
 
 const EventRoutes = [
@@ -42,20 +44,23 @@ const EventRoutes = [
     },
     {
         path: EventRouteNames.EVENT_SIGNUP,
-        element: <EventRegistration />,
+        element: <EventSignUp />,
         title: 'eventSignup',
         entityTitle: true,
         header: true,
     },
     {
-        path: EventRouteNames.EVENT_FULL_SIGNUP,
-        element: <EventRegistration fullRegistration={true}/>,
+        path: EventRouteNames.EVENT_CHANGE_SIGNUP,
+        element: <EventChangeSignUp />,
         title: 'eventSignup',
         entityTitle: true,
         header: true,
     },
     {
-        path: '/event-category-list/:orgId',
+        path: EventRouteNames.EVENT_CATEGORIES,
+        title: 'eventCategories',
+        entityTitle: true,
+        header: true,
         element: <EventCategoryList />
     },
     {
@@ -66,9 +71,12 @@ const EventRoutes = [
         disablePullDown: true
     },
     {
-        path: '/event-registration/:orgId/:resId',
-        element: <EventRegistration />
-    },
+        path: EventRouteNames.EVENT_WITHDRAWN,
+        element: <EventWithdraw />,
+        title: 'eventWithdraw',
+        entityTitle: true,
+        disablePullDown: true
+    }
 ];
 
 export default EventRoutes;

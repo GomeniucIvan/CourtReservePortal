@@ -1,13 +1,13 @@
 ﻿import {Button, Flex, Typography} from "antd";
 import {useState} from "react";
 import SVG from "@/components/svg/SVG.jsx";
-import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 const{Title, Text} = Typography;
 import {useStyles} from "./styles.jsx";
 import { cx } from 'antd-style';
 
-function AlertBlock({type = 'danger', title, description, onButtonClick, buttonText}) {
+function AlertBlock({type = 'danger', title, description, onButtonClick, buttonText, removePadding}) {
     const [isLoading, setIsLoading] = useState(false);
     const {token} = useApp();
     const {styles} = useStyles();
@@ -41,7 +41,7 @@ function AlertBlock({type = 'danger', title, description, onButtonClick, buttonT
     }
     
     return (
-        <Flex className={cx(styles.block, blockClassName)} style={{borderLeft: `5px solid ${config[type]?.borderColor}`}}>
+        <Flex className={cx(styles.block, blockClassName, toBoolean(removePadding) && styles.removePaddingBlock)} style={{borderLeft: `5px solid ${config[type]?.borderColor}`}}>
            <Flex justify={'space-between'} align={'center'} flex={1} style={{paddingRight: token.padding}}>
                <Flex gap={token.paddingLG} style={{paddingLeft: token.padding}} flex={1}>
                    {currentConfig.icon}

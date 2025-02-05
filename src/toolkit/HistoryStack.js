@@ -24,6 +24,8 @@ export const pushToHistory = (path, isRoot) => {
         historyStack.push({ path: path, isRoot: isRoot });
         historyStack = removeConsecutiveDuplicates(historyStack); 
     }
+    
+    console.log(historyStack)
 };
 
 export const getLastFromHistory = () => {

@@ -8,6 +8,10 @@ export const useStyles = createStyles(({ css, token }) => ({
             color: rgba(0, 0, 0, 0.88); //we display black for dark theme
         }
     `,
+    removePaddingBlock: css`
+        margin-left: -${token.padding}px;
+        margin-right: -${token.padding}px;
+    `,
     dangerBlock: css`
         background-color: #ffeaea;
         border-color: #f03d3d;

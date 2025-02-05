@@ -8,7 +8,7 @@ function InlineBlock({children, style, vertical}) {
     return (
         <>
             {toBoolean(vertical) ?
-                (<Flex gap={token.padding} style={{...style}} vertical={true}>
+                (<Flex gap={token.paddingSM} style={{...style}} vertical={true}>
                     {children}
                 </Flex>) :
                 (<Flex gap={token.padding} style={{...style}}>
