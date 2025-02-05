@@ -321,9 +321,6 @@ function EventList({filter}) {
                                                     </div>
                                                 </Flex>
 
-                                                <Progress percent={90} status="active"
-                                                          strokeColor={{from: token.colorPrimary, to: 'red'}}/>
-
                                                 <CardIconLabel icon={'team'} description={item.SlotsInfo}/>
                                             </Card>
                                         ) :

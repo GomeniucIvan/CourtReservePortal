@@ -1,7 +1,7 @@
 ﻿import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
-import {Button } from "antd";
+import {Button, Flex} from "antd";
 import * as Yup from "yup";
 import mockData from "@/mocks/event-data.json";
 import appService, {apiRoutes} from "@/api/app.jsx";
@@ -11,7 +11,7 @@ import {
     anyInList,
     equalString,
     isNullOrEmpty,
-    moreThanOneInList,
+    moreThanOneInList, oneListItem,
     toBoolean
 } from "@/utils/Utils.jsx";
 import {countListItems, emptyArray} from "@/utils/ListUtils.jsx";
@@ -29,15 +29,21 @@ import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
-import {eventRegistrationRedirect, eventUstaSatelliteDataRegistrationRedirect} from "@/utils/RedirectUtils.jsx";
+import {
+    eventRegistrationRedirect,
+    eventUstaSatelliteDataRegistrationRedirect,
+    eventValidResponseRedirect
+} from "@/utils/RedirectUtils.jsx";
 import EventSignUpPartial from "@portal/event/registration/modules/EventSignUpPartial.jsx";
+import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpSkeleton.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import EventSignUpDetails from "@portal/event/registration/modules/EventSignUpDetails.jsx";
 
-function EventChangeSignUp() {
+function EventChangeSignUp({isFullEventReg = false}) {
     const navigate = useNavigate();
     const {orgId, authData} = useAuth();
     const [event, setEvent] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
-
     const {setHeaderRightIcons} = useHeader();
 
     const location = useLocation();
@@ -47,6 +53,7 @@ function EventChangeSignUp() {
     const reservationNumber = queryParams.get("reservationNumber");
     const {t} = useTranslation('');
     const guestBlockRef = useRef(null);
+    const [maxAllowedGuests, setMaxAllowedGuests] = useState(0);
     
     const {
         setIsFooterVisible,
@@ -55,7 +62,8 @@ function EventChangeSignUp() {
         setIsLoading,
         isMockData,
         shouldFetch,
-        resetFetch
+        resetFetch,
+        token
     } = useApp();
 
     useEffect(() => {
@@ -63,46 +71,6 @@ function EventChangeSignUp() {
             loadData(true);
         }
     }, [shouldFetch, resetFetch]);
-
-    useEffect(() => {
-        let members = [];
-        if (anyInList(formik?.values?.Members)) {
-            members = formik.values?.Members;
-        }
-        
-        let membersWithDue = members.filter(member => member.PriceToPay > 0 && member.IsChecked);
-        let totalPriceToPay = membersWithDue.reduce((sum, member) => sum + member.PriceToPay, 0);
-
-        let paymentLists = [];
-        if (anyInList(membersWithDue)){
-            paymentLists.push({
-                label: 'Members',
-                items: membersWithDue.map(member => ({
-                    label: member.FullName,
-                    price: member.PriceToPay
-                }))
-            });
-        }
-
-        let paymentData = {
-            list: paymentLists,
-            totalDue: totalPriceToPay,
-            requireOnlinePayment: toBoolean(event?.RequireOnlinePayment),
-            show: totalPriceToPay > 0,
-            holdTimeForReservation: event?.HoldTimeForReservation
-        };
-
-        setFooterContent(<PaymentDrawerBottom paymentData={paymentData} group={true}>
-            <Button type="primary"
-                    block
-                    htmlType="submit"
-                    loading={isLoading}
-                    disabled={isFetching}
-                    onClick={formik.handleSubmit}>
-                Register
-            </Button>
-        </PaymentDrawerBottom>)
-    }, [isFetching, isLoading])
     
     useEffect(() => {
         setIsFooterVisible(true);
@@ -189,40 +157,13 @@ function EventChangeSignUp() {
             
             let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_DropIn_Post?id=${orgId}`,postModel);
             
-            
             if (toBoolean(response?.IsValid)) {
                 removeLastHistoryEntry();
-
-                let actionType = 1; //1 signup
-                if (toBoolean(response.data.RequireOnlinePayment)) {
-                    actionType = 4;
-
-                    let route = toRoute(ProfileRouteNames.PROCESS_PAYMENT, 'id', orgId);
-                    route = `${route}?evAction=${actionType}`;
-                    navigate(route);
-                } else {
-                    if (toBoolean(response.data.RequiresApproval)) {
-                        actionType = 5;
-                    }
-                }
-
-                if (!toBoolean(response.data.RequireOnlinePayment)) {
-                    if (toBoolean(response.data.IsOrganizedPlayEvent)) {
-                        let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', orgId);
-                        route = toRoute(route, 'number', reservationNumber);
-                        route = `${route}?evAction=${actionType}`;
-                        //setPage(setDynamicPages, booking.EventName, route);
-                        navigate(route);
-                    } else {
-                        //USTA ONLY
-                        if (equalString(orgId,6415)){
-                            eventUstaSatelliteDataRegistrationRedirect(navigate, orgId,actionType, event?.EventName, response.data);
-                        } else {
-                            eventRegistrationRedirect(navigate, orgId,actionType);
-                        }
-                    }
-                }
-                
+                eventValidResponseRedirect(response, navigate, {
+                    orgId: orgId,
+                    eventName: event.EventName,
+                    reservationNumber: reservationNumber
+                });
             } else {
                 setIsLoading(false);
                 displayMessageModal({
@@ -238,41 +179,179 @@ function EventChangeSignUp() {
         },
     });
 
+    useEffect(() => {
+        let members = [];
+        let guests = [];
+        
+        if (anyInList(formik?.values?.Members)) {
+            members = formik.values?.Members;
+        }
+
+        if (anyInList(formik?.values?.ReservationGuests)) {
+            guests = formik.values?.ReservationGuests;
+        }
+        
+        let checkedMembers = members.filter(member => toBoolean(member.IsChecked));
+        let checkedMembersWithMaxGuests = checkedMembers.filter(member => !isNullOrEmpty(member.MaxGuests));
+        setMaxAllowedGuests(checkedMembersWithMaxGuests.some(v => toBoolean(v.AllowGuests)) ? checkedMembersWithMaxGuests.reduce((sum, member) => sum + member.MaxGuests, 0) : 0)
+        let membersWithDue = checkedMembers.filter(member => member.PriceToPay > 0 && !toBoolean(member.IsMonthlyFree) && !toBoolean(member.IsPaid));
+        let guestsWithDue = [];
+
+        let selectedFirstMember = null;
+        if (anyInList(checkedMembers)) {
+            selectedFirstMember = checkedMembers[0];
+        }
+
+        let guestIncrement = 0;
+        guests.forEach(guest => {
+            let guestOwner = null;
+            guestIncrement++;
+
+            if (!isNullOrEmpty(guest.GuestOwnerId)) {
+                guestOwner = checkedMembers.find(v => equalString(v.OrganizationMemberId, guest.GuestOwnerId));
+            } else if (oneListItem(checkedMembers) && !isNullOrEmpty(selectedFirstMember)) {
+                guestOwner = selectedFirstMember;
+            }
+
+            if (!isNullOrEmpty(guestOwner)) {
+                //is paid
+
+                let cost = toBoolean(isFullEventReg) ? guestOwner.EntireEventGuestPrice : guestOwner.OccurrenceGuestPrice;
+                if (isNullOrEmpty(cost)) {
+                    cost = 0;
+                }
+                if (cost > 0) {
+                    let guestFullName = `${guest.FirstName} ${guest.LastName}`;
+                    if (isNullOrEmpty(guestFullName)){
+                        guestFullName = `Guest #${guestIncrement}`;
+                    }
+                    guestsWithDue.push({
+                        FullName: guestFullName,
+                        PriceToPay: cost,
+                    })
+                }
+            }
+        })
+        
+        let totalPriceToPay = membersWithDue.reduce((sum, member) => sum + member.PriceToPay, 0) + guestsWithDue.reduce((sum, guest) => sum + guest.PriceToPay, 0);
+
+        let paymentLists = [];
+        if (anyInList(membersWithDue)){
+            paymentLists.push({
+                label: 'Members',
+                items: membersWithDue.map(member => ({
+                    label: member.FullName,
+                    price: member.PriceToPay
+                }))
+            });
+        }
+
+        if (anyInList(guestsWithDue)){
+            paymentLists.push({
+                label: 'Guests',
+                items: guestsWithDue.map(member => ({
+                    label: member.FullName,
+                    price: member.PriceToPay
+                }))
+            });
+        }
+        
+        let paymentData = {
+            list: paymentLists,
+            totalDue: totalPriceToPay,
+            requireOnlinePayment: toBoolean(event?.RequireOnlinePayment),
+            show: totalPriceToPay > 0,
+            holdTimeForReservation: event?.HoldTimeForReservation
+        };
+
+        setFooterContent(<PaymentDrawerBottom paymentData={paymentData} group={true}>
+            <Button type="primary"
+                    block
+                    htmlType="submit"
+                    loading={isLoading}
+                    disabled={isFetching}
+                    onClick={formik.handleSubmit}>
+                Register
+            </Button>
+        </PaymentDrawerBottom>)
+    }, [isFetching, isLoading, formik.values])
+    
     const loadData = async (refresh) => {
-        setIsFetching(true);
-        if (isMockData) {
-            const details = mockData.details;
-            setEvent(details);
-            setIsFetching(false);
-        } else {
-            let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Events/ChangeSignUp?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&reservationNumber=${reservationNumber}`);
+        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Events/ChangeSignUp?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&reservationNumber=${reservationNumber}`);
 
-            if (toBoolean(response?.isValid)){
-                setEvent(response.Data);
-                const allMembers = [];
-                allMembers.push(response.Data.CurrentMember);
+        if (toBoolean(response?.isValid)){
+            setEvent(response.Data);
+            const allMembers = [];
+            console.log(response.Data)
+            allMembers.push(response.Data.CurrentMember);
 
-                response.Data.FamilyMembers.map(familyMember => {
-                    allMembers.push(familyMember);
-                })
+            response.Data.FamilyMembers.map(familyMember => {
+                allMembers.push(familyMember);
+            })
 
-                let udfs = response.Data.Udfs;
+            let udfs = response.Data.Udfs;
 
+            if (anyInList(udfs)){
+                allMembers.forEach(member => {
+                    member.MemberUdfs = udfs;
+                    let currentMemberInList = response.Data.MemberUdfs.find(v => equalString(v.OrganizationMemberId, member.OrganizationMemberId));
+
+                    if (anyInList(currentMemberInList?.Udfs)) {
+                        member.MemberUdfs.forEach(memberUdf => {
+                            let currentUdfInList = currentMemberInList.Udfs.find(v => equalString(v.Id, memberUdf.Id));
+                            if (!isNullOrEmpty(currentUdfInList)) {
+                                memberUdf.Value = currentUdfInList.Value;
+                            }
+                        })
+                    }
+                });
+            }
+            
+            formik.setFieldValue("Members", allMembers);
+            
+            //Guests
+            let reservationGuests = response.Data.ReservationGuests;
+            if (anyInList(reservationGuests)) {
                 if (anyInList(udfs)){
-                    allMembers.forEach(member => {
-                        member.MemberUdfs = udfs;
+                    reservationGuests.forEach(guest => {
+                        guest.MemberUdfs = udfs;
+                        let currentMemberInList = response.Data.MemberUdfs.find(v => equalString(v.Guid, guest.Guid));
+
+                        if (anyInList(currentMemberInList?.Udfs)) {
+                            guest.MemberUdfs.forEach(memberUdf => {
+                                let currentUdfInList = currentMemberInList.Udfs.find(v => equalString(v.Id, memberUdf.Id));
+                                if (!isNullOrEmpty(currentUdfInList)) {
+                                    memberUdf.Value = currentUdfInList.Value;
+                                }
+                            })
+                        }
                     });
                 }
-                formik.setFieldValue("Members", allMembers);
             }
-            setIsFetching(false);
+
+            formik.setFieldValue("ReservationGuests", reservationGuests);
         }
+        setIsFetching(false);
         resetFetch();
     }
     
     return (
         <>
-            <EventSignUpPartial isFetching={isFetching} formik={formik} event={event} loadData={loadData} guestBlockRef={guestBlockRef} />
+            <EventSignUpSkeleton isFetching={isFetching} />
+
+            {!isFetching &&
+                <PaddingBlock topBottom={true}>
+                    <Flex vertical={true} gap={token.padding}>
+                        <EventSignUpDetails event={event} />
+                        <EventSignUpPartial isFetching={isFetching} 
+                                            formik={formik}
+                                            event={event}
+                                            maxAllowedGuests={maxAllowedGuests}
+                                            loadData={loadData}
+                                            guestBlockRef={guestBlockRef} />
+                    </Flex>
+                </PaddingBlock>
+            }
         </>
     )
 }

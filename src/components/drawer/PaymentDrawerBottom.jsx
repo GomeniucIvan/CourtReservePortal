@@ -139,21 +139,29 @@ const PaymentDrawerBottom = forwardRef(({
                                                 {toBoolean(group) ? (
                                                     <>
                                                         {paymentData.list.map((paymentListItem, index) => {
+                                                            const isLastIndex = index === paymentData.list.length - 1;
+                                                            
                                                             return (
-                                                                <Flex key={index} vertical={true}>
-                                                                    <Text level={1} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
+                                                                <>
+                                                                    <Flex key={index} vertical={true}>
+                                                                        <Text level={1} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
 
-                                                                    {paymentListItem.items.map((paymentItem, paymentItemIndex) => {
-                                                                        return (
-                                                                            <div key={paymentItemIndex}>
-                                                                                <Flex align={'center'} justify={'space-between'} gap={2}>
-                                                                                    <Text><strong>{paymentItem.label}</strong></Text>
-                                                                                    <Text>{costDisplay(paymentItem.price)}</Text>
-                                                                                </Flex>
-                                                                            </div>
-                                                                        )
-                                                                    })}
-                                                                </Flex>
+                                                                        {paymentListItem.items.map((paymentItem, paymentItemIndex) => {
+                                                                            return (
+                                                                                <div key={paymentItemIndex}>
+                                                                                    <Flex align={'center'} justify={'space-between'} gap={2}>
+                                                                                        <Text><strong>{paymentItem.label}</strong></Text>
+                                                                                        <Text>{costDisplay(paymentItem.price)}</Text>
+                                                                                    </Flex>
+                                                                                </div>
+                                                                            )
+                                                                        })}
+
+                                                                        {!isLastIndex &&
+                                                                            <Divider style={{marginTop: token.paddingXS, marginBottom: token.paddingXS}} />
+                                                                        }
+                                                                    </Flex>
+                                                                </>
                                                             )
                                                         })}
                                                     </>

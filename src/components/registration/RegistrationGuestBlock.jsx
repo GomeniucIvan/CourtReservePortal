@@ -20,7 +20,7 @@ import {Ellipsis} from "antd-mobile";
 import SVG from "../svg/SVG.jsx";
 import FormCustomFields from "../../form/formcustomfields/FormCustomFields.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {emptyArray} from "../../utils/ListUtils.jsx";
+import {countListItems, emptyArray} from "../../utils/ListUtils.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 const {Title, Text, Link} = Typography;
 import { v4 as uuidv4 } from 'uuid';
@@ -35,6 +35,7 @@ const RegistrationGuestBlock = forwardRef(({formik,
                                     setLoading,
                                     onGuestRemove,
                                     type,
+                                    maxAllowedGuests,
                                     guestOrgMemberIdValue}, ref) => {
     
     const { token, globalStyles } = useApp();
@@ -52,13 +53,15 @@ const RegistrationGuestBlock = forwardRef(({formik,
     }));
     
     const addNewGuest = async () => {
+        let guid = uuidv4();
+        
         let guestObject = {
             FirstName: '',
             LastName: '',
             PhoneNumber: '',
             GuestOwnerId: '',
             MemberUdfs: anyInList(udfs) ? udfs : [],
-            Guid: equalString(type,'event') ? uuidv4() : ''
+            Guid: equalString(type,'event') ? guid : ''
         };
 
         let currentReservationGuests = formik.values.ReservationGuests || [];
@@ -87,6 +90,10 @@ const RegistrationGuestBlock = forwardRef(({formik,
         if (typeof setLoading == 'function') {
             setLoading('ReservationGuests', false);
             setLoading('SelectedReservationMembers', false);
+        }
+        
+        if(equalString(type,'event')) {
+            setSelectedGuest(guestObject);
         }
     }
     
@@ -122,6 +129,10 @@ const RegistrationGuestBlock = forwardRef(({formik,
         if (typeof reloadPlayers == 'function') {
             let newGuests = await reloadPlayers(null, updatedGuests, true);
         }
+    }
+    
+    const allowToAddGuests = () => {
+        return ((isNullOrEmpty(maxAllowedGuests) && maxAllowedGuests !== 0) || maxAllowedGuests > countListItems(formik?.values?.ReservationGuests));
     }
     
     return (
@@ -203,7 +214,7 @@ const RegistrationGuestBlock = forwardRef(({formik,
 
                                     return (
                                         <div key={index}
-                                             style={{marginBottom: isLastIndex ? `${token.padding}px` : ''}}>
+                                             style={{marginBottom: (isLastIndex && allowToAddGuests()) ? `${token.padding}px` : ''}}>
                                             <Flex justify={'space-between'}
                                                   align={'center'}
                                                   onClick={() => {
@@ -235,14 +246,17 @@ const RegistrationGuestBlock = forwardRef(({formik,
                             </>
 
                         }
-                        <Button type="primary"
-                                block
-                                ghost
-                                disabled={disableAddGuest}
-                                htmlType={'button'}
-                                onClick={addNewGuest}>
-                            Add Guest
-                        </Button>
+
+                        {allowToAddGuests() &&
+                            <Button type="primary"
+                                    block
+                                    ghost
+                                    disabled={disableAddGuest}
+                                    htmlType={'button'}
+                                    onClick={addNewGuest}>
+                                Add Guest
+                            </Button>
+                        }
                     </Flex>
                 </Card>
             </div>

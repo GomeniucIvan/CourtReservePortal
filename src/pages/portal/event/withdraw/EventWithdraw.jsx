@@ -1,7 +1,7 @@
 ﻿import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import {AppProvider, useApp} from "@/context/AppProvider.jsx";
-import {Button } from "antd";
+import {Button, Card, Flex, Switch, Typography} from "antd";
 import * as Yup from "yup";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
@@ -10,7 +10,7 @@ import {
     anyInList,
     equalString,
     isNullOrEmpty,
-    moreThanOneInList,
+    moreThanOneInList, oneListItem,
     toBoolean
 } from "@/utils/Utils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
@@ -21,9 +21,12 @@ import EventSignUpPartial from "@portal/event/registration/modules/EventSignUpPa
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import EventSignUpDetails from "@portal/event/registration/modules/EventSignUpDetails.jsx";
 import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpSkeleton.jsx";
+import FormTextarea from "@/form/formtextarea/FormTextArea.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+const {Title} = Typography;
 
 function EventWithdraw() {
-    const navigate = useNavigate();
     const {orgId, authData} = useAuth();
     const [event, setEvent] = useState(null);
     const [isFamilyMember, setIsFamilyMember] = useState(false);
@@ -35,7 +38,7 @@ function EventWithdraw() {
     const queryParams = new URLSearchParams(location.search);
     const reservationId = queryParams.get("reservationId");
     const eventId = queryParams.get("eventId");
-    const guestBlockRef = useRef(null);
+    const navigate = useNavigate();
     
     const {
         setIsFooterVisible,
@@ -44,8 +47,7 @@ function EventWithdraw() {
         setIsLoading,
         shouldFetch,
         resetFetch,
-        token,
-        globalStyles
+        token
     } = useApp();
 
     useEffect(() => {
@@ -68,7 +70,6 @@ function EventWithdraw() {
         </PaddingBlock>)
     }, [isFetching, isLoading])
 
-
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
@@ -82,15 +83,13 @@ function EventWithdraw() {
     };
 
     const validationSchema = Yup.object({
-
+        PullOutReason: Yup.string().required('Reason is required'),
     });
 
     const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
         validation: () => {
-            
-            
             return true;
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
@@ -124,7 +123,7 @@ function EventWithdraw() {
                     IsChecked: true,
                 }
             }
-            
+
             let postModel = {
                 CurrentMember: currentMember,
                 FamilyMembers: familyMembers,
@@ -136,7 +135,28 @@ function EventWithdraw() {
                 }
             }
 
-            let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/PullOutFromEvent?id=${orgId}`,postModel);
+            let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventPullOutApi/PullOutFromEvent?id=${orgId}`,postModel);
+            
+            setIsLoading(false);
+            if (toBoolean(response?.IsValid)) {
+                if (equalString(orgId, 6415)) {
+                    pNotify('Successfully Removed From Event');
+                } else {
+                    pNotify('Successfully Withdrawn');
+                }
+                navigate(HomeRouteNames.INDEX);
+            } else {
+                displayMessageModal({
+                    title: "Withdraw Error",
+                    html: (onClose) => response.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+
+                    },
+                })
+            }
+            
             setIsLoading(false);
         },
     });
@@ -151,32 +171,92 @@ function EventWithdraw() {
             allMembers.push(response.Data.CurrentMember);
 
             setIsFamilyMember(anyInList(response.Data.FamilyMembers));
-            
+
             response.Data.FamilyMembers.map(familyMember => {
                 allMembers.push(familyMember);
             })
 
-            allMembers = allMembers.filter(v => v.InitialCheck);
+            allMembers = allMembers.filter(v => v.IsChecked);
+            console.log(allMembers);
             formik.setFieldValue("Members", allMembers);
         }
         setIsFetching(false);
         resetFetch();
     }
+
+    const toggleInitialCheck = (orgMemberId) => {
+        formik.setFieldValue(
+            'Members',
+            formik.values.Members.map((member, idx) =>
+                equalString(member.OrganizationMemberId, orgMemberId) ? { ...member, IsChecked: !member.IsChecked } : member
+            )
+        );
+    }
+
+    const toggleGuestCheck = (guest) => {
+        formik.setFieldValue(
+            'ReservationGuests',
+            formik.values.ReservationGuests.map((resGuest, idx) =>
+                equalString(resGuest.Guid, guest.Guid) ? { ...guest, IsChecked: !guest.IsChecked } : guest
+            )
+        );
+    }
     
     return (
         <>
             <EventSignUpSkeleton isFetching={isFetching} />
-            {!isFetching && 
-                <>
-                    <EventSignUpDetails event={event} />
 
-                    <EventSignUpPartial isFetching={isFetching}
-                                        formik={formik}
-                                        event={event}
-                                        loadData={loadData}
-                                        type={'withdrawn'}
-                                        isFamilyMember={isFamilyMember}
-                                        guestBlockRef={guestBlockRef} />
+            {!isFetching &&
+                <>
+                    <PaddingBlock topBottom={true}>
+                        <Flex vertical={true} gap={token.padding}>
+                            <EventSignUpDetails event={event} />
+
+                            {(isFamilyMember || anyInList(formik.values.ReservationGuests)) &&
+                                <Card>
+                                    {isFamilyMember &&
+                                        <>
+                                            {formik.values.Members.map((member, index) => {
+                                                let isDisabled = oneListItem(formik.values.Members) && !anyInList(formik.values.ReservationGuests)
+                                                
+                                                return (
+                                                    <Flex vertical={true} gap={token.padding} flex={1} key={index}>
+                                                        <Flex justify={'space-between'} align={'center'} onClick={() => {
+                                                            if (!isDisabled) {
+                                                                toggleInitialCheck(index)
+                                                            }
+                                                        }}>
+                                                            <Title level={3}>
+                                                                {member.FullName}
+                                                            </Title>
+                                                            <Switch checked={member.IsChecked} 
+                                                                    disabled={isDisabled}
+                                                                    onChange={() => toggleInitialCheck(index)}/>
+                                                        </Flex>
+                                                    </Flex>
+                                                )
+                                            })}
+                                        </>
+                                    }
+
+                                    {formik.values.ReservationGuests.map((guest, index) => {
+                                        return (
+                                            <Flex vertical={true} gap={token.padding} flex={1} key={index}>
+                                                <Flex justify={'space-between'} align={'center'}>
+                                                    <Title level={3}>
+                                                        {guest.FullName}
+                                                    </Title>
+                                                    <Switch checked={guest.IsChecked} onChange={() => toggleGuestCheck(guest)}/>
+                                                </Flex>
+                                            </Flex>
+                                        )
+                                    })}
+                                </Card>
+                            }
+
+                            <FormTextarea formik={formik} label={'Reason'} name={'PullOutReason'} max={350} isRequired={toBoolean(authData.RequireReasonForEventCancellations)}/>
+                        </Flex>
+                    </PaddingBlock>
                 </>
             }
         </>
