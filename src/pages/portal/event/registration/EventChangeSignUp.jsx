@@ -282,49 +282,60 @@ function EventChangeSignUp({isFullEventReg = false}) {
         if (toBoolean(response?.isValid)){
             setEvent(response.Data);
             const allMembers = [];
-            console.log(response.Data)
+
             allMembers.push(response.Data.CurrentMember);
 
             response.Data.FamilyMembers.map(familyMember => {
                 allMembers.push(familyMember);
             })
 
-            let udfs = response.Data.Udfs;
+            let udfs = structuredClone(response.Data.Udfs); // Create a deep copy to avoid reference issues
 
-            if (anyInList(udfs)){
+            if (anyInList(udfs)) {
                 allMembers.forEach(member => {
-                    member.MemberUdfs = udfs;
-                    let currentMemberInList = response.Data.MemberUdfs.find(v => equalString(v.OrganizationMemberId, member.OrganizationMemberId));
+                    // Clone UDFs to prevent unwanted reference modifications
+                    member.MemberUdfs = structuredClone(udfs);
 
-                    if (anyInList(currentMemberInList?.Udfs)) {
-                        member.MemberUdfs.forEach(memberUdf => {
-                            let currentUdfInList = currentMemberInList.Udfs.find(v => equalString(v.Id, memberUdf.Id));
-                            if (!isNullOrEmpty(currentUdfInList)) {
-                                memberUdf.Value = currentUdfInList.Value;
-                            }
-                        })
-                    }
+                    let currentMemberInList = response.Data.MemberUdfs.find(v =>
+                        equalString(v.OrganizationMemberId, member.OrganizationMemberId)
+                    );
+
+                    member.MemberUdfs.forEach(memberUdf => {
+                        // Ensure currentMemberInList and its Udfs exist before accessing
+                        const currentUdfInList = currentMemberInList?.Udfs?.find(v =>
+                            equalString(v.Id, memberUdf.Id)
+                        );
+
+                        // Set the value properly, ensuring empty values are handled
+                        memberUdf.Value = currentUdfInList?.Value ?? '';
+                    });
                 });
             }
-            
+
             formik.setFieldValue("Members", allMembers);
             
             //Guests
             let reservationGuests = response.Data.ReservationGuests;
             if (anyInList(reservationGuests)) {
-                if (anyInList(udfs)){
-                    reservationGuests.forEach(guest => {
-                        guest.MemberUdfs = udfs;
-                        let currentMemberInList = response.Data.MemberUdfs.find(v => equalString(v.Guid, guest.Guid));
 
-                        if (anyInList(currentMemberInList?.Udfs)) {
-                            guest.MemberUdfs.forEach(memberUdf => {
-                                let currentUdfInList = currentMemberInList.Udfs.find(v => equalString(v.Id, memberUdf.Id));
-                                if (!isNullOrEmpty(currentUdfInList)) {
-                                    memberUdf.Value = currentUdfInList.Value;
-                                }
-                            })
-                        }
+                if (anyInList(udfs)) {
+                    reservationGuests.forEach(guest => {
+                        // Clone UDFs to prevent unwanted reference modifications
+                        guest.MemberUdfs = structuredClone(udfs);
+
+                        let currentMemberInList = response.Data.MemberUdfs.find(v =>
+                            equalString(v.Guid, guest.Guid)
+                        );
+
+                        guest.MemberUdfs.forEach(memberUdf => {
+                            // Ensure currentMemberInList and its Udfs exist before accessing
+                            const currentUdfInList = currentMemberInList?.Udfs?.find(v =>
+                                equalString(v.Id, memberUdf.Id)
+                            );
+
+                            // Set the value properly, ensuring empty values are handled
+                            memberUdf.Value = currentUdfInList?.Value ?? '';
+                        });
                     });
                 }
             }
