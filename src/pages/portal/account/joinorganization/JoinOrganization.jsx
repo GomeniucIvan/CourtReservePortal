@@ -20,6 +20,9 @@ import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAcc
 import * as Yup from "yup";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOrganization.ReviewModal.jsx";
+import {getLastFromHistory} from "@/toolkit/HistoryStack.js";
+import {authMember} from "@/storage/AppStorage.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 const {Title, Text, Paragraph, Link} = Typography;
 
 function JoinOrganization() {
@@ -40,6 +43,9 @@ function JoinOrganization() {
         setHeaderTitleKey(isNullOrEmpty(spGuideId) ? 'loginOrganization' : 'loginLocation')
         setIsFooterVisible(false);
         setFooterContent('');
+        setNavigationSteps((prevSteps) => {
+            return [...prevSteps, 'organizations'];
+        });
     }, []);
     
     const initialValues = {
@@ -97,7 +103,12 @@ function JoinOrganization() {
             setNavigationSteps((prevSteps) => {
                 const lastNavigationPage = prevSteps[prevSteps.length - 2];
                 if (isNullOrEmpty(lastNavigationPage)){
-                    formik.setFieldValue('step', 'organizations');
+                    const lastPath = getLastFromHistory();
+                    if (lastPath) {
+                        navigate(`${lastPath.path}`);
+                    } else {
+                        navigate(HomeRouteNames.INDEX);
+                    }
                 } else{
                     formik.setFieldValue('step', lastNavigationPage);
                 }
