@@ -195,7 +195,7 @@ function Layout() {
         let isIosKeyboardOpen = !isNullOrEmpty(iosKeyboardHeight) && parseInt(iosKeyboardHeight) > 0;
         
         let calculatedMaxHeight = windowHeight - headerHeight - safeAreaInsetsTop - footerHeight - safeAreaInsetsBottom;
-            
+        
         if (!isFetching) {
             if (toBoolean(currentRoute?.fullHeight)) {
                 calculatedMaxHeight = windowHeight - headerHeight - footerHeight;

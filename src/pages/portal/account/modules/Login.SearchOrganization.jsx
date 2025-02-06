@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import {useEffect, useRef, useState} from "react";
 import {Button, Descriptions, Empty, Flex, Input, Skeleton, Tag, Typography} from 'antd';
 import FormInput from "@/form/input/FormInput.jsx";
-import {anyInList, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import apiService from "@/api/api.jsx";
 import {useNavigate} from "react-router-dom";
@@ -23,13 +23,12 @@ import SVG from "@/components/svg/SVG.jsx";
 
 const {Text, Title} = Typography;
 
-function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
+function LoginSearchOrganization({mainFormik, onOrganizationSelect, page = 'create-account'}) {
     const {setHeaderTitleKey} = useHeader();
-    const {formikData, setFormikData, isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight} = useApp();
-    const {spGuideId} = useAuth();
+    const {isLoading, setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent, availableHeight} = useApp();
+    const {spGuideId, orgId} = useAuth();
     
     const {t} = useTranslation('login');
-    const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(false);
     const [searchValue, setSearchValue] = useState(false);
     const [organizations, setOrganizations] = useState([]);
@@ -47,26 +46,33 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
     const headerRef = useRef();
 
     useEffect(() => {
-        setIsFooterVisible(false);
+        setHeaderTitleKey(isNullOrEmpty(spGuideId) ? 'loginOrganization' : 'loginLocation');
         fixHeaderItems();
-        setFooterContent(<FooterBlock topBottom={true}>
-            <Button type="primary"
-                    block
-                    htmlType="submit"
-                    disabled={isFetching}
-                    loading={isLoading}
-                    onClick={formik.handleSubmit}>
-                {t('searchOrganization.button.continue')}
-            </Button>
-        </FooterBlock>);
-        setHeaderTitleKey('loginOrganization')
+        if (equalString(page, 'create-account')) {
+            setIsFooterVisible(false);
+            setFooterContent(<FooterBlock topBottom={true}>
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        disabled={isFetching}
+                        loading={isLoading}
+                        onClick={formik.handleSubmit}>
+                    {t('searchOrganization.button.continue')}
+                </Button>
+            </FooterBlock>);
+        }
+
+        if (equalString(page, 'join-organization')) {
+            setIsFooterVisible(false);
+            setFooterContent(null);
+        }
     }, []);
 
     const initialValues = {
         email: email,
         password: password,
         confirmPassword: confirmPassword,
-        spGuideId: spGuideId,
+        spGuideId: nullToEmpty(spGuideId),
         selectedOrgId: '',
         selectedOrgName: '',
         selectedOrgFullAddress: '',
@@ -80,6 +86,10 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
         }
     }
 
+    useEffect(() => {
+        fixHeaderItems();
+    }, [availableHeight])
+    
     const validationSchema = Yup.object({
 
     });
@@ -91,7 +101,6 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
         validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            console.log(selectedOrganization)
             
             let formikValues = values;
             formikValues.selectedOrgId = selectedOrganization.Id;
@@ -122,12 +131,12 @@ function LoginSearchOrganization({mainFormik, onOrganizationSelect}) {
             const postModel = {
                 InputValue: searchValue,
                 TakeRows: 30,
-                SpGuideId: '',
+                SpGuideId: nullToEmpty(spGuideId),
                 SkipRows: countListItems(currentOrganizations),
                 RemoveOrgId: selectedOrganization?.Id
             };
 
-            let response = await apiService.post('/api/create-account/search-organization', postModel);
+            let response = await apiService.post(`/api/create-account/search-organization?orgId=${nullToEmpty(orgId)}`, postModel);
 
             if (toBoolean(response?.IsValid)){
                 const resultData = response.Data;

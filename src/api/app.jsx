@@ -23,6 +23,7 @@ const axiosInstance = axios.create({
     headers: {
         'X-Requested-By': 'ReactApp',
         'Content-Type': 'application/json',
+        'ReactSubmit': 'true'
     },
 });
 

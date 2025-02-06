@@ -10,7 +10,8 @@ const AuthRoutes = [
     {
         path: AuthRouteNames.LOGIN,
         element: <Login />,
-        unauthorized: true
+        useHeaderKeys: true,
+        unauthorized: true,
     },
     {
         path: AuthRouteNames.LOGIN_FORGOT_PASSWORD,

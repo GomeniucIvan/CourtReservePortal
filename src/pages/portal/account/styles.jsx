@@ -11,7 +11,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         }
   `,
     searchOrganizationNoImage: css`
-        background-color: ${token.colorCourtReserve};
+        background-color: ${token.colorPrimary};
         border-radius: ${token.borderRadius}px;
 
         img {

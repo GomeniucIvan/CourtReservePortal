@@ -29,15 +29,17 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     const [activeKey, setActiveKey] = useState('home');
     const footerRef = useRef(null);
     const location = useLocation();
-    const [footerHeight, setFooterHeight] = useState();
+    const [footerHeight, setFooterHeight] = useState(0);
     const [showReserveDrawer, setShowReserveDrawer] = useState(false);
     const [drawerLInks, setDrawerLinks] = useState(null);
     
     useEffect(() => {
-        if (footerRef.current){
+        if (!toBoolean(isFooterVisible)) {
+            setFooterHeight(0);
+        } else if (footerRef.current){
             setFooterHeight(footerRef.current.getBoundingClientRect().height);
         }
-    }, [footerRef]);
+    }, [footerRef, isFooterVisible, footerContent]);
 
     useEffect(() => {
         let cacheLinks = getDashboardMainLinks(orgId);

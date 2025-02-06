@@ -31,7 +31,7 @@ import LoginJoinOrganizationModal from "@portal/account/modules/LoginJoinOrganiz
 
 const {Title} = Typography;
 
-function LoginCreateAccountReviewModal({show, setShow, data}) {
+function JoinOrganizationReviewModal({show, setShow, data}) {
     const {setIsLoading} = useApp();
 
     const { setAuthorizationData } = useAuth();
@@ -41,61 +41,62 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
     let signupData = data;
     let reviewData = data;
     
-    const createAccount = async () => {
+    const joinOrganization = async () => {
         setIsLoading(true);
 
         let membership = reviewData?.selectedMembership;
         let orgIdToCreateAccount = data?.OrganizationId;
-        
+
         const postModel = {
+            AdditionalFamilyMembers: getFamilyMembersList(familyMembersFormValues),
+            PaymentTypeId:reviewData?.card_accountType,
+            
+            ///
             MembershipId: membership?.Id,
             PaymentFrequency: reviewData?.paymentFrequency,
             IsMobileLayout: true,
-            SsoKey: '',
+            SsoKey: ssoKey,
             Token: await recaptchaRef.current.executeAsync(),
             SpGuideId: getGlobalSpGuideId(),
-            IsNewAuth: true,
-            OrgFields: {
-                MembershipId: membership?.Id,
-                CustomFields: signupData?.Udfs,
-                RatingCategories: signupData?.RatingCategories,
-                PhoneNumber: {
-                    PhoneNumber: signupData?.phoneNumber,
-                    Include: toBoolean(signupData?.IncludePhoneNumber)
-                },
-                MemberGender: {
-                    Gender: signupData?.gender,
-                    Include: toBoolean(signupData?.IncludeGender)
-                },
-                Address: {
-                    Address: signupData?.streetAddress,
-                    City: signupData?.city,
-                    State: signupData?.state,
-                    ZipCode: signupData?.zipCode,
-                    Include: toBoolean(signupData?.IncludeAddressBlock)
-                },
-                Membership: {
-                    MembershipNumber: signupData?.membershipNumber,
-                    Include: toBoolean(signupData?.IncludeMembershipNumber)
-                },
-                DateOfBirth: {
-                    DateOfBirthString: signupData?.dateOfBirthString,
-                    Include: toBoolean(signupData?.IncludeDateOfBirthBlock)
-                },
-                DisclosureAgree: reviewData?.disclosureAgree,
-                FirstName: reviewData?.firstName,
-                LastName: reviewData?.lastName,
-                Email: reviewData?.email,
-                PaymentFrequency: reviewData?.paymentFrequency,
-                //AdditionalFamilyMembers: getFamilyMembersList(familyMembersFormValues),
+            PhoneNumber: {
+                PhoneNumber: signupData?.phoneNumber,
+                Include: toBoolean(signupData?.IncludePhoneNumber)
             },
+            MemberGender: {
+                Gender: signupData?.gender,
+                Include: toBoolean(signupData?.IncludeGender)
+            },
+            Address: {
+                Address: signupData?.streetAddress,
+                City: signupData?.city,
+                State: signupData?.state,
+                ZipCode: signupData?.zipCode,
+                Include: toBoolean(signupData?.IncludeAddressBlock)
+            },
+            Membership: {
+                MembershipNumber: signupData?.membershipNumber,
+                Include: toBoolean(signupData?.IncludeMembershipNumber)
+            },
+            DateOfBirth: {
+                DateOfBirthString: signupData?.dateOfBirthString,
+                Include: toBoolean(signupData?.IncludeDateOfBirthBlock)
+            },
+            
+            IsNewAuth: true,
+            CustomFields: signupData?.Udfs,
+            RatingCategories: signupData?.RatingCategories,
+            DisclosureAgree: reviewData?.disclosureAgree,
+            FirstName: reviewData?.firstName,
+            LastName: reviewData?.lastName,
+            Email: reviewData?.email,
+            
             SelectedMemberIdToJoin: "",
             UserAccount: {
-                FirstName: signupData?.firstName,
-                LastName: signupData?.lastName,
-                Email: signupData?.email,
-                Password: signupData?.password,
-                RepeatPassword: signupData?.confirmPassword,
+                FirstName: signupData.firstName,
+                LastName: signupData.lastName,
+                Email: signupData.email,
+                Password: signupData.password,
+                RepeatPassword: signupData.confirmPassword,
                 FindOrgId: orgIdToCreateAccount,
             },
             CardDetails: {
@@ -120,12 +121,13 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
             SaveDataForFutureUse: reviewData?.card_savePaymentProfile,
         }
         
-        let response = await appService.post(`/app/Online/Portal/RegisterAccount?id=${orgIdToCreateAccount}`, postModel);
+        let response = await appService.post(`/app/Online/Portal/SignUp?id=${orgIdToCreateAccount}`, postModel);
 
         if (toBoolean(response?.IsValid)){
             let requestData = await portalService.requestData(navigate, orgIdToCreateAccount);
 
             if (toBoolean(requestData?.IsValid)) {
+                
                 await setAuthorizationData(requestData.OrganizationData);
 
                 setIsLoading(false);
@@ -183,9 +185,9 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
     
     return (
         <>
-            <LoginJoinOrganizationModal show={show} setShow={setShow} data={data} onSubmitClick={createAccount} />
+            <LoginJoinOrganizationModal show={show} setShow={setShow} data={data} onSubmitClick={joinOrganization} />
         </>
     )
 }
 
-export default LoginCreateAccountReviewModal
+export default JoinOrganizationReviewModal

@@ -327,7 +327,6 @@ function EventSignUp() {
             setEvent(response.Data);
             setIsFamilyMember(anyInList(response.Data.FamilyMembers));
 
-            console.log(response.Data);
             let allMembers = [];
             allMembers.push(response.Data.CurrentMember);
 

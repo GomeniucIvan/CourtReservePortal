@@ -31,6 +31,7 @@ import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
+import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOrganization.ReviewModal.jsx";
 
 const {Paragraph, Link, Title} = Typography;
 
@@ -60,8 +61,8 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
 
     const initialValues = {
         ...mainFormik.values,
-        firstName: '',
-        lastName: '',
+        //firstName: '',
+        //lastName: '',
         streetAddress: '',
         city: '',
         state: '',
@@ -197,12 +198,14 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
                         <FormInput label={t(`additionalInfo.form.firstName`)}
                                    formik={formik}
                                    name='firstName'
+                                   disabled={equalString(page, 'join-organization') && isNullOrEmpty(formik.values.firstName)}
                                    placeholder={t(`additionalInfo.form.firstNamePlaceholder`)}
                                    required='true'
                         />
                         <FormInput label={t(`additionalInfo.form.lastName`)}
                                    formik={formik}
                                    name='lastName'
+                                   disabled={equalString(page, 'join-organization') && isNullOrEmpty(formik.values.lastName)}
                                    placeholder={t(`additionalInfo.form.lastNamePlaceholder`)}
                                    required='true'
                         />
@@ -302,6 +305,10 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
 
             {equalString(page, 'create-account') &&
                 <LoginCreateAccountReviewModal data={formik.values} show={showReviewModal} setShow={setShowReviewModal}/>
+            }
+
+            {equalString(page, 'join-organization') &&
+                <JoinOrganizationReviewModal data={formik.values} show={showReviewModal} setShow={setShowReviewModal}/>
             }
         </>
     )

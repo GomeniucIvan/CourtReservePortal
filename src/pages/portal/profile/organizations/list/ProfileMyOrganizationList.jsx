@@ -2,7 +2,7 @@
 import {useAuth} from "@/context/AuthProvider.jsx";
 import React, {useEffect, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import apiService from "@/api/api.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Card, Divider, Flex, Skeleton, Tabs, Tag, Typography} from "antd";
@@ -16,16 +16,20 @@ import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import CenterModal from "@/components/modal/CenterModal.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 
 const {Title, Text} = Typography;
 
 function ProfileMyOrganizationList() {
     const navigate = useNavigate();
-    let { orgId, spGuideId, setAuthorizationData } = useAuth();
+    let { orgId, spGuideId, setAuthorizationData, authData } = useAuth();
     const [isFetching, setIsFetching] = useState(true);
     const {setHeaderRightIcons} = useHeader();
     
-    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles} = useApp();
+    const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles, setFooterContent} = useApp();
     const [selectedTab, setSelectedTab] = useState(selectedTabStorage('organizations-list', 'active'));
     const [loadingOrganization, setLoadingOrganization] = useState(null);
     const [primaryOrganizationDataModal, setPrimaryOrganizationDataModal] = useState(null);
@@ -43,7 +47,7 @@ function ProfileMyOrganizationList() {
         }
         setIsLoading(true);
 
-        let response = await apiService.get(`/api/member-portal/my-organizations/get-list?orgId=${orgId}&spGuideId=${spGuideId}`);
+        let response = await apiService.get(`/api/member-portal/my-organizations/get-list?orgId=${orgId}&spGuideId=${nullToEmpty(spGuideId)}`);
 
         if (toBoolean(response?.IsValid)) {
             let incOrganizations = response?.Data;
@@ -68,9 +72,23 @@ function ProfileMyOrganizationList() {
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons(null);
+
+        if (toBoolean(authData?.HideJoinOrganization)) {
+            setFooterContent('');
+        } else {
+            setFooterContent(<FooterBlock topBottom={true}>
+                <Button type="primary" block onClick={() => {
+                    let route = toRoute(AccountRouteNames.REQUEST_ORGANIZATION, 'id', orgId);
+                    navigate(route)
+                }}>
+                    {isNullOrEmpty(nullToEmpty(spGuideId)) ? 'Add Organization' : 'Add Location'}
+                </Button>
+            </FooterBlock>);
+        }
+        
         loadData();
     }, []);
-
+    
     const changeViewingOrganization = async (selectedOrg) => {
         setIsFooterVisible(false);
         setLoadingOrganization(selectedOrg);
@@ -84,10 +102,10 @@ function ProfileMyOrganizationList() {
 
     const makePrimary = async (selectedOrgId) => {
         setPrimaryOrganizationDataModal(null);
-        let response = await apiService.post(`/api/member-portal/my-organizations/make-primary?orgId=${orgId}&spGuideId=${spGuideId}&selectedOrgId=${selectedOrgId}`);
+        let response = await apiService.post(`/api/member-portal/my-organizations/make-primary?orgId=${orgId}&spGuideId=${nullToEmpty(spGuideId)}&selectedOrgId=${selectedOrgId}`);
 
         if (toBoolean(response?.IsValid)) {
-            if (!isNullOrEmpty(spGuideId)){
+            if (!isNullOrEmpty(nullToEmpty(spGuideId))){
                 pNotify('The location has been successfully updated to primary');
             } else{
                 pNotify('The organization has been successfully updated to primary');
@@ -99,7 +117,7 @@ function ProfileMyOrganizationList() {
 
     const addToActiveOrganizations = async (selectedOrgId) => {
         setShowOrganizationDataModal(null);
-        let response = await apiService.post(`/api/member-portal/my-organizations/change-visibility?orgId=${orgId}&spGuideId=${spGuideId}&selectedOrgId=${selectedOrgId}&isHidden=false`);
+        let response = await apiService.post(`/api/member-portal/my-organizations/change-visibility?orgId=${orgId}&spGuideId=${nullToEmpty(spGuideId)}&selectedOrgId=${selectedOrgId}&isHidden=false`);
 
         if (toBoolean(response?.IsValid)) {
             const updateOrganizations = organizations.map((item) => {
@@ -116,7 +134,7 @@ function ProfileMyOrganizationList() {
             setOrganizations(updateOrganizations);
             setTabKey((prevKey) => prevKey + 1);
             
-            if (!isNullOrEmpty(spGuideId)){
+            if (!isNullOrEmpty(nullToEmpty(spGuideId))){
                 pNotify('The location has been added back to your list successfully');
             } else{
                 pNotify('The organization has been added back to your list successfully');
@@ -126,7 +144,7 @@ function ProfileMyOrganizationList() {
     
     const hideOrganization = async (selectedOrgId) => {
         setHideOrganizationDataModal(null);
-        let response = await apiService.post(`/api/member-portal/my-organizations/change-visibility?orgId=${orgId}&spGuideId=${spGuideId}&selectedOrgId=${selectedOrgId}&isHidden=true`);
+        let response = await apiService.post(`/api/member-portal/my-organizations/change-visibility?orgId=${orgId}&spGuideId=${nullToEmpty(spGuideId)}&selectedOrgId=${selectedOrgId}&isHidden=true`);
 
         if (toBoolean(response?.IsValid)) {
 
@@ -143,7 +161,7 @@ function ProfileMyOrganizationList() {
             
             setOrganizations(updateOrganizations);
             setTabKey((prevKey) => prevKey + 1);
-            if (!isNullOrEmpty(spGuideId)){
+            if (!isNullOrEmpty(nullToEmpty(spGuideId))){
                 pNotify('The location has been hidden successfully');
             } else{
                 pNotify('The organization has been hidden successfully');
@@ -204,15 +222,17 @@ function ProfileMyOrganizationList() {
                                                     <img src={organization?.LogoUrl} alt={organization.Name} className={styles.orgCardLogo}/>
 
                                                     {anyInList(organizationTags) &&
-                                                        <div className={styles.headerBadgesWrapper}>
-                                                            {organizationTags.map((organizationTag, index) => {
-                                                                return (
-                                                                    <Tag key={index} color={organizationTag.Type} className={globalStyles.tag}>
-                                                                        {organizationTag.Text}
-                                                                    </Tag>
-                                                                )
-                                                            })}
-                                                        </div>
+                                                       <div>
+                                                           <Flex gap={token.paddingXS} className={styles.headerBadgesWrapper}>
+                                                               {organizationTags.map((organizationTag, index) => {
+                                                                   return (
+                                                                       <Tag key={index} color={organizationTag.Type} className={globalStyles.tag}>
+                                                                           {organizationTag.Text}
+                                                                       </Tag>
+                                                                   )
+                                                               })}
+                                                           </Flex>
+                                                       </div>
                                                     }
                                                 </Flex>
 
@@ -342,10 +362,10 @@ function ProfileMyOrganizationList() {
             <CenterModal show={!isNullOrEmpty(primaryOrganizationDataModal)}
                          hideFooter={true}
                          onClose={() => {setPrimaryOrganizationDataModal(null)}}
-                         title={isNullOrEmpty(spGuideId) ? 'Make Primary Organization' : 'Make Primary Location'}>
+                         title={isNullOrEmpty(nullToEmpty(spGuideId)) ? 'Make Primary Organization' : 'Make Primary Location'}>
                 <Flex vertical={true} gap={token.paddingXXL}>
                     <Flex vertical={true} gap={token.paddingLG}>
-                        <Text style={{color: token.colorSecondary}}>Are you sure you want to make this your Primary {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'}</Text>
+                        <Text style={{color: token.colorSecondary}}>Are you sure you want to make this your Primary {isNullOrEmpty(nullToEmpty(spGuideId)) ? 'Organization' : 'Location'}</Text>
 
                         <Flex gap={token.paddingLG} className={styles.orgModalOrgInfo}>
                             <img src={primaryOrganizationDataModal?.LogoUrl} alt={loadingOrganization?.Name} className={styles.orgModalLogo}/>
@@ -367,10 +387,10 @@ function ProfileMyOrganizationList() {
             <CenterModal show={!isNullOrEmpty(hideOrganizationDataModal)}
                          hideFooter={true}
                          onClose={() => {setHideOrganizationDataModal(null)}}
-                         title={isNullOrEmpty(spGuideId) ? 'Hide Organization' : 'Hide Location'}>
+                         title={isNullOrEmpty(nullToEmpty(spGuideId)) ? 'Hide Organization' : 'Hide Location'}>
                 <Flex vertical={true} gap={token.paddingXXL}>
                     <Flex vertical={true} gap={token.paddingLG}>
-                        <Text style={{color: token.colorSecondary}}>Are you sure you want to make this your Primary {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'}</Text>
+                        <Text style={{color: token.colorSecondary}}>Are you sure you want to make this your Primary {isNullOrEmpty(nullToEmpty(spGuideId)) ? 'Organization' : 'Location'}</Text>
 
                         <Flex gap={token.paddingLG} className={styles.orgModalOrgInfo}>
                             <img src={hideOrganizationDataModal?.LogoUrl} alt={hideOrganizationDataModal?.Name} className={styles.orgModalLogo}/>
@@ -381,7 +401,7 @@ function ProfileMyOrganizationList() {
                             </Flex>
                         </Flex>
 
-                        <Text><b>Note:</b> This will not cancel your membership or remove your record. Please contact the {isNullOrEmpty(spGuideId) ? 'organization' : 'location'} directly to request further action.</Text>
+                        <Text><b>Note:</b> This will not cancel your membership or remove your record. Please contact the {isNullOrEmpty(nullToEmpty(spGuideId)) ? 'organization' : 'location'} directly to request further action.</Text>
                     </Flex>
 
                     <Flex vertical={true} gap={token.paddingSM}>
@@ -394,10 +414,10 @@ function ProfileMyOrganizationList() {
             <CenterModal show={!isNullOrEmpty(showOrganizationDataModal)}
                          hideFooter={true}
                          onClose={() => {setShowOrganizationDataModal(null)}}
-                         title={isNullOrEmpty(spGuideId) ? 'Add To My Organizations' : 'Add To My Locations'}>
+                         title={isNullOrEmpty(nullToEmpty(spGuideId)) ? 'Add To My Organizations' : 'Add To My Locations'}>
                 <Flex vertical={true} gap={token.paddingXXL}>
                     <Flex vertical={true} gap={token.paddingLG}>
-                        <Text style={{color: token.colorSecondary}}>Are you sure you would like to add this {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'} back to your {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'} list?</Text>
+                        <Text style={{color: token.colorSecondary}}>Are you sure you would like to add this {isNullOrEmpty(nullToEmpty(spGuideId)) ? 'Organization' : 'Location'} back to your {isNullOrEmpty(spGuideId) ? 'Organization' : 'Location'} list?</Text>
 
                         <Flex gap={token.paddingLG} className={styles.orgModalOrgInfo}>
                             <img src={showOrganizationDataModal?.LogoUrl} alt={showOrganizationDataModal?.Name} className={styles.orgModalLogo}/>

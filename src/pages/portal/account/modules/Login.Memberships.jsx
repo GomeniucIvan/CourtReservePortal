@@ -18,6 +18,7 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
+import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOrganization.ReviewModal.jsx";
 
 const {Text, Title, Link} = Typography;
 
@@ -249,6 +250,10 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'crea
             
             {equalString(page, 'create-account') &&
                 <LoginCreateAccountReviewModal data={mainFormik.values} show={showReviewModal} setShow={setShowReviewModal}/>    
+            }
+
+            {equalString(page, 'join-organization') &&
+                <JoinOrganizationReviewModal data={mainFormik.values} show={showReviewModal} setShow={setShowReviewModal}/>
             }
 
         </PaddingBlock>

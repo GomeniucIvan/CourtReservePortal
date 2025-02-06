@@ -69,11 +69,13 @@ const Header = forwardRef((props, ref) => {
         useKey = false;
     }
 
-    if (isNullOrEmpty(title) && !isNullOrEmpty(headerTitleKey)) {
+    if (isNullOrEmpty(title) && !isNullOrEmpty(headerTitleKey) || (toBoolean(props.route?.useHeaderKeys) && !isNullOrEmpty(headerTitleKey))) {
         title = headerTitleKey;
         useKey = true;
     }
-
+    
+    console.log(title)
+    
     return (
         <>
             {(isDashboardPage && !isNullOrEmpty(customHeader)) &&
