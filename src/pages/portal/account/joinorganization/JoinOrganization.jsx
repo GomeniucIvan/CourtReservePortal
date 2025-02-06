@@ -180,7 +180,7 @@ function JoinOrganization() {
                                              } else if (toBoolean(signupForm?.IsDisclosuresRequired) || toBoolean(signupForm?.RequireCardOnFile)) {
                                                  navigateToStep('review');
                                              } else {
-                                                 formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before creating your account.`)
+                                                 formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before join to ${formik?.values?.selectedOrgName}.`)
                                                  setShowReviewModal(true);
                                              }
                                          }
@@ -210,7 +210,7 @@ function JoinOrganization() {
                     lastStep={isMembershipDetailsLastStep()}
                     onNext={(formikValues) => {
                         if (isMembershipDetailsLastStep()) {
-                            formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(formik?.values?.selectedMembership?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
+                            formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(formik?.values?.selectedMembership?.Name)}</b>. Review the information provided and confirm.` )
                             setShowReviewModal(true);
                         } else {
                             navigateToStep('review');
@@ -220,7 +220,7 @@ function JoinOrganization() {
             }
 
             {equalString(formik?.values?.step, 'review') &&
-                <LoginReview mainFormik={formik} signupData={signupData}/>
+                <LoginReview mainFormik={formik} signupData={signupData} page={'join-organization'}/>
             }
 
             <JoinOrganizationReviewModal data={signupData} show={showReviewModal} setShow={setShowReviewModal}/>

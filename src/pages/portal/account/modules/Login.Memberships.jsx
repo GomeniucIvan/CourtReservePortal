@@ -71,14 +71,6 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'crea
             let costType = values.selectedMembership;
 
             onSkip(values);
-            
-            // if (costType && costType.OneFreePaymentOption && toBoolean(skipReview)) {
-            //     formik.setFieldValue('selectedMembershipId', costType.CostTypeId)
-            //     formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(costType?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.` )
-            //     setShowReviewModal(true);
-            // } else {
-            //    
-            // }
         },
     });
 

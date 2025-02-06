@@ -39,6 +39,7 @@ import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {getMembershipText} from "@/utils/TranslateUtils.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
 import MembershipReceiptBlock from "@/components/receiptblock/MembershipReceiptBlock.jsx";
+import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOrganization.ReviewModal.jsx";
 
 const {Paragraph, Link, Title, Text} = Typography;
 
@@ -140,13 +141,21 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
                         return;
                     }
                 }
-
+                
                 let confirmMessageText = `You are going to join organization. Review the information provided and confirm before creating your account.`;
+                if (equalString(page, 'join-organization')) {
+                    confirmMessageText = `You are going to join organization. Review the information provided and confirm.`;
+                }
+                
                 let selectedMembership = mainFormik?.values?.selectedMembership;
 
                 if (selectedMembership) {
                     confirmMessageText = `You are going to join the <b>${getMembershipText(selectedMembership?.Name)}</b> and create an account. Review the information provided and confirm before creating your account.`;
 
+                    if (equalString(page, 'join-organization')) {
+                        confirmMessageText = `You are going to join the <b>${getMembershipText(selectedMembership?.Name)}</b>. Review the information provided and confirm.`;
+                    }
+                    
                     if (signupData && signupData?.AllowMembersToPayTransactionsOnPortal) {
                         let paymentFrequencyCost = membershipPaymentFrequencyCost(selectedMembership, values?.paymentFrequency);
                         let convenienceFeeHtml = '';
@@ -170,6 +179,10 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
                             }
 
                             confirmMessageText = `You are going to join the <b>${getMembershipText(selectedMembership?.Name)}</b> and be charged <b>${costDisplay(paymentFrequencyCost)}${convenienceFeeHtml}</b>. Review the information provided and confirm before creating your account. `;
+                            
+                            if (equalString(page, 'join-organization')) {
+                                confirmMessageText = `You are going to join the <b>${getMembershipText(selectedMembership?.Name)}</b> and be charged <b>${costDisplay(paymentFrequencyCost)}${convenienceFeeHtml}</b>. Review the information provided and confirm. `;
+                            }
                         }
                     }
                 }
@@ -392,6 +405,18 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
 
                     {equalString(page, 'create-account') &&
                         <LoginCreateAccountReviewModal
+                            data={{
+                                ...signupData,
+                                ...mainFormik.values,
+                                ...formik.values
+                            }}
+                            show={showReviewModal}
+                            setShow={setShowReviewModal}
+                        />
+                    }
+
+                    {equalString(page, 'join-organization') &&
+                        <JoinOrganizationReviewModal
                             data={{
                                 ...signupData,
                                 ...mainFormik.values,
