@@ -393,7 +393,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                                                                 rejectPaymentRequest={rejectPaymentRequest}
                                                                 setIsUsingCollectJsLoading={setIsUsingCollectJsLoading}
                                                                 isUsingCollectJsLoading={isUsingCollectJsLoading}
-                                                                isEcheck={isEcheck}
+                                                                isEcheck={equalString(selectedSegmentType, 'eCheck')}
                                     />
                                 }
 

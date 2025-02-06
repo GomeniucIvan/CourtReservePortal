@@ -147,7 +147,7 @@ function JoinOrganization() {
             {equalString(formik?.values?.step, 'sign-up') &&
                 <LoginAdditionalInfo mainFormik={formik}
                                      page={'join-organization'}
-                                     onSignupSubmit={(formValues, signData) => {
+                                     onSignupSubmit={(formValues, incSignData) => {
                                          formik.setValues({
                                              ...formik.values,
                                              skipReview: formValues.skipReview,
@@ -168,16 +168,21 @@ function JoinOrganization() {
                                              zipCode: formValues.zipCode
                                          });
 
-                                         setSignupData(signData);
+                                         setSignupData(incSignData);
 
-                                         let isMembershipNext = signData && (toBoolean(signData.RequireMembershipOnSignUpForm) || (toBoolean(signData.HasAnyMemberships) && !toBoolean(signData.IsOneMembershipAndIsDefault)));
-                                         if (isMembershipNext) {
-                                             navigateToStep('memberships');
-                                         } else if (toBoolean(signupForm?.IsDisclosuresRequired) || toBoolean(signupForm?.RequireCardOnFile)) {
-                                             navigateToStep('review');
+                                         let familyMembers = formik.FamilyMembers;
+                                         if (anyInList(familyMembers)) {
+                                             
                                          } else {
-                                             formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before creating your account.`)
-                                             setShowReviewModal(true);
+                                             let isMembershipNext = incSignData && (toBoolean(incSignData.RequireMembershipOnSignUpForm) || (toBoolean(incSignData.HasAnyMemberships) && !toBoolean(incSignData.IsOneMembershipAndIsDefault)));
+                                             if (isMembershipNext) {
+                                                 navigateToStep('memberships');
+                                             } else if (toBoolean(signupForm?.IsDisclosuresRequired) || toBoolean(signupForm?.RequireCardOnFile)) {
+                                                 navigateToStep('review');
+                                             } else {
+                                                 formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before creating your account.`)
+                                                 setShowReviewModal(true);
+                                             }
                                          }
                                      }}
                 />

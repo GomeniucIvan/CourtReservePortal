@@ -37,7 +37,7 @@ const {Paragraph, Link, Title} = Typography;
 
 function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account'}) {
     const {setHeaderTitleKey} = useHeader();
-    const {spGuideId} = useAuth();
+    const {spGuideId, orgId} = useAuth();
     const {isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
     const [isFetching, setIsFetching] = useState(true);
     const [additionInfoData, setAdditionInfoData] = useState(null);
@@ -61,8 +61,8 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
 
     const initialValues = {
         ...mainFormik.values,
-        //firstName: '',
-        //lastName: '',
+        firstName: '',
+        lastName: '',
         streetAddress: '',
         city: '',
         state: '',
@@ -71,6 +71,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
         dateOfBirthString: '',
         membershipNumber: '',
         gender: '',
+        FamilyMembers: []
     };
 
     const getValidationSchema = (signupForm) => {
@@ -132,15 +133,48 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
         setIsFetching(true);
         setIsLoading(true);
 
-        const response = await apiService.get(`/api/create-account/signup-form?orgId=${nullToEmpty(mainFormik?.values?.selectedOrgId)}&spGuideId=${nullToEmpty(spGuideId)}`);
+        const response = await apiService.get(`/api/create-account/signup-form?orgId=${nullToEmpty(mainFormik?.values?.selectedOrgId)}&isAddOrganization=${equalString(page, 'join-organization')}&spGuideId=${nullToEmpty(spGuideId)}&overrideOrgId=${nullToEmpty(orgId)}`);
         if (toBoolean(response?.IsValid)){
             const data = response.Data;
             setAdditionInfoData(data);
             let skipReviewAndMemberships = !toBoolean(data?.RequireMembershipOnSignUpForm) && !toBoolean(data?.RequireCardOnFile) && !toBoolean(data.IsDisclosuresRequired);
             setSkipReviewAndMemberships(skipReviewAndMemberships);
+
+            let authMember = null;
+            if (equalString(page, 'join-organization')) {
+                let familyMembersResponse = await apiService.get(`/api/create-account/family-members?orgId=${orgId}`);
+
+                if (toBoolean(familyMembersResponse?.IsValid)) {
+                    const dbFamilyMembers = familyMembersResponse.Data.FamilyMembers;
+                    if (anyInList(dbFamilyMembers)) {
+
+                        dbFamilyMembers.forEach((member) => {
+                            member.RatingCategories = data.RatingCategories || [];
+                            member.Udfs = data.Udfs || [];
+                        })
+                        console.log(dbFamilyMembers);
+                        
+                        formik.setFieldValue('FamilyMembers', dbFamilyMembers);
+                    }
+
+                    authMember = familyMembersResponse.Data.AuthMember;
+                }
+            }
             
             formik.setValues({
                 ...formik.values,
+                firstName: authMember?.FirstName || '',
+                lastName: authMember?.LastName || '',
+                streetAddress: authMember?.Address || '',
+                phoneNumber: authMember?.PhoneNumber || '',
+                dateOfBirthString: '',
+                membershipNumber: '',
+                gender: authMember?.Gender || '',
+                city: authMember?.City || '',
+                state: authMember?.State || '',
+                zipCode: authMember?.ZipCode || '',
+                DateOfBirth: authMember?.DateOfBirth || '',
+                
                 skipReview: (!toBoolean(data?.RequireCardOnFile) && !toBoolean(data.IsDisclosuresRequired)),
                 uiCulture: data.UiCulture || formik.values.uiCulture,
                 requireCardOnFile: data.RequireCardOnFile,
@@ -198,14 +232,14 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
                         <FormInput label={t(`additionalInfo.form.firstName`)}
                                    formik={formik}
                                    name='firstName'
-                                   disabled={equalString(page, 'join-organization') && isNullOrEmpty(formik.values.firstName)}
+                                   disabled={equalString(page, 'join-organization') && !isNullOrEmpty(formik.values.firstName)}
                                    placeholder={t(`additionalInfo.form.firstNamePlaceholder`)}
                                    required='true'
                         />
                         <FormInput label={t(`additionalInfo.form.lastName`)}
                                    formik={formik}
                                    name='lastName'
-                                   disabled={equalString(page, 'join-organization') && isNullOrEmpty(formik.values.lastName)}
+                                   disabled={equalString(page, 'join-organization') && !isNullOrEmpty(formik.values.lastName)}
                                    placeholder={t(`additionalInfo.form.lastNamePlaceholder`)}
                                    required='true'
                         />
