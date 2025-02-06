@@ -23,6 +23,7 @@ import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOr
 import {getLastFromHistory} from "@/toolkit/HistoryStack.js";
 import {authMember} from "@/storage/AppStorage.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import JoinOrganizationFamilyMembers from "@portal/account/joinorganization/JoinOrganization.FamilyMembers.jsx";
 const {Title, Text, Paragraph, Link} = Typography;
 
 function JoinOrganization() {
@@ -181,14 +182,15 @@ function JoinOrganization() {
 
                                          setSignupData(incSignData);
 
-                                         let familyMembers = formik.FamilyMembers;
+                                         let familyMembers = formValues.FamilyMembers;
+                                         console.log(formValues);
                                          if (anyInList(familyMembers)) {
-                                             
+                                             navigateToStep('family-members');
                                          } else {
                                              let isMembershipNext = incSignData && (toBoolean(incSignData.RequireMembershipOnSignUpForm) || (toBoolean(incSignData.HasAnyMemberships) && !toBoolean(incSignData.IsOneMembershipAndIsDefault)));
                                              if (isMembershipNext) {
                                                  navigateToStep('memberships');
-                                             } else if (toBoolean(signupForm?.IsDisclosuresRequired) || toBoolean(signupForm?.RequireCardOnFile)) {
+                                             } else if (toBoolean(incSignData?.IsDisclosuresRequired) || toBoolean(incSignData?.RequireCardOnFile)) {
                                                  navigateToStep('review');
                                              } else {
                                                  formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before join to ${formik?.values?.selectedOrgName}.`)
@@ -199,6 +201,24 @@ function JoinOrganization() {
                 />
             }
 
+            {equalString(formik?.values?.step, 'family-members') &&
+                <JoinOrganizationFamilyMembers formik={formik}
+                                  page={'join-organization'}
+                                  signupData={signupData}
+                                  onSubmit={() => {
+                                      let isMembershipNext = signupData && (toBoolean(signupData.RequireMembershipOnSignUpForm) || (toBoolean(signupData.HasAnyMemberships) && !toBoolean(signupData.IsOneMembershipAndIsDefault)));
+                                      if (isMembershipNext) {
+                                          navigateToStep('memberships');
+                                      } else if (toBoolean(signupData?.IsDisclosuresRequired) || toBoolean(signupData?.RequireCardOnFile)) {
+                                          navigateToStep('review');
+                                      } else {
+                                          formik.setFieldValue('reviewModalTitle', `You are going to join organization. Review the information provided and confirm before join to ${formik?.values?.selectedOrgName}.`)
+                                          setShowReviewModal(true);
+                                      }
+                                  }}
+                />
+            }
+            
             {equalString(formik?.values?.step, 'memberships') &&
                 <LoginMemberships mainFormik={formik}
                                   page={'join-organization'}

@@ -122,7 +122,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
                 let postModel = values;
                 postModel.customFields = values.Udfs;
                 postModel.ratingCategories = values.RatingCategories;
-                
+                postModel.FamilyMembers = mainFormik?.values?.FamilyMembers || [];
                 onSignupSubmit(postModel, additionInfoData);
                 setIsLoading(false);
             }
@@ -152,9 +152,8 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
                             member.RatingCategories = data.RatingCategories || [];
                             member.Udfs = data.Udfs || [];
                         })
-                        console.log(dbFamilyMembers);
-                        
-                        formik.setFieldValue('FamilyMembers', dbFamilyMembers);
+
+                        mainFormik.setFieldValue('FamilyMembers', dbFamilyMembers);
                     }
 
                     authMember = familyMembersResponse.Data.AuthMember;
