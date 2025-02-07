@@ -36,6 +36,8 @@ function Dev() {
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_FORM)}}>Form</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_MODALS)}}>Alerts & Modals</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_CARDS)}}>Cards</Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_BUTTONS)}}>Buttons</Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_ALERT_BLOCKS)}}>Alert Blocks</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_AGREEMENTS)}}>Disclosure/Waiver & Agreements</Flex>
                 <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_OTHER)}}>Other</Flex>
             </Flex>

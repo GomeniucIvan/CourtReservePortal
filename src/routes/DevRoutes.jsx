@@ -10,6 +10,8 @@ import DevModals from "@/pages/dev/DevModals.jsx";
 import DevCards from "@/pages/dev/DevCards.jsx";
 import DevOther from "@/pages/dev/DevOther.jsx";
 import DevAgreements from "@/pages/dev/DevAgreements.jsx";
+import DevButtons from "@/pages/dev/DevButtons.jsx";
+import DevAlertBlocks from "@/pages/dev/DevAlertBlocks.jsx";
 
 const {Text} = Typography;
 
@@ -25,6 +27,8 @@ export const DevRouteNames = {
     DEV_MODALS: '/dev/modals',
     DEV_AGREEMENTS: '/dev/agreements',
     DEV_CARDS: '/dev/cards',
+    DEV_BUTTONS: '/dev/buttons',
+    DEV_ALERT_BLOCKS: '/dev/alertblocks',
 };
 
 const DevRoutes = [
@@ -92,6 +96,18 @@ const DevRoutes = [
         path: DevRouteNames.DEV_CARDS,
         element: <DevCards />,
         title: 'Cards',
+        unauthorized: true,
+    },
+    {
+        path: DevRouteNames.DEV_ALERT_BLOCKS,
+        element: <DevAlertBlocks />,
+        title: 'Alert Blocks',
+        unauthorized: true,
+    },
+    {
+        path: DevRouteNames.DEV_BUTTONS,
+        element: <DevButtons />,
+        title: 'Buttons',
         unauthorized: true,
     }
 ];

@@ -109,8 +109,9 @@ export const AntdProvider = ({ children }) => {
 
                             Button: {
                                 contentFontSize: 16,
+                                controlHeightSM: 36,
                                 controlHeight: 40,
-                                controlHeightLG: 46,
+                                controlHeightLG: 44,
                                 borderRadius: 8,
                                 paddingXS: 8,
                                 marginXS: 8,
