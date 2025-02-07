@@ -356,6 +356,7 @@ function EventList({filter}) {
             <ListFilter formik={formik}
                         show={showFilter}
                         data={eventData} 
+                        page={'event-list'}
                         onClose={onFilterClose}
                         setFilteredCount={setFilteredCount} 
                         showDates={true} showTimeOfADay={true} 

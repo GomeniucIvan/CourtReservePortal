@@ -7,16 +7,22 @@ import {useApp} from "../../context/AppProvider.jsx";
 import ListFilterItemExpander from "@/components/filter/ListFilterItemExpander.jsx";
 import FormInputsDateInterval from "@/form/input/FormInputsDateInterval.jsx";
 import FormInputsTimeInterval from "@/form/input/FormInputsTimeInterval.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 
 function ListFilter({data, 
                         show,
                         onClose,
                         formik,
+                        page,
                         showDates,
                         currentDateTime,
                         showDayOfTheWeek,
                         showTimeOfADay,
                         setFilteredCount,
+                        showFilterDates,
+                        filterDatesInterval,
+                        minDate,
+                        maxDate,
                         showEventRegistrationType}) {
 
     const {globalStyles, token} = useApp();
@@ -67,39 +73,43 @@ function ListFilter({data,
 
     useEffect(() => {
         if (formik && typeof formik.getFieldProps === 'function') {
-            let selectedEventTypeIds = eventTypes.filter(et => toBoolean(et.Selected)).map(et => et.Id);
-            let selectedEventSessionIds = eventSessions.filter(et => toBoolean(et.Selected)).map(et => et.Id);
-            let selectedInstructorIds = instructors.filter(et => toBoolean(et.Selected)).map(et => et.Id);
-            let selectedEventTagIds = eventTags.filter(et => toBoolean(et.Selected)).map(et => et.Id);
-            let selectedDates = dates.filter(et => toBoolean(et.Selected)).map(et => et.Id);
-            let selectedDayOfTheWeeks = dayOfTheWeeks.filter(et => toBoolean(et.Selected)).map(et => et.Id);
-            let selectedTimeOfADays = timeOfADays.filter(et => toBoolean(et.Selected)).map(et => et.Id);
-                
-            formik.setFieldValue("DrawerFilter.MinPrice", minPrice);
-            formik.setFieldValue("DrawerFilter.MaxPrice", maxPrice);
-            formik.setFieldValue("DrawerFilter.SessionIds", selectedEventSessionIds);
-            formik.setFieldValue("DrawerFilter.InstructorIds", selectedInstructorIds);
-            formik.setFieldValue("DrawerFilter.EventTypeIds", selectedEventTypeIds);
-            
-            formik.setFieldValue("DrawerFilter.TimeOfDay", selectedTimeOfADays);
-            formik.setFieldValue("DrawerFilter.DayOfWeeks", selectedDayOfTheWeeks);
-            formik.setFieldValue("DrawerFilter.Dates", selectedDates);
-            formik.setFieldValue("DrawerFilter.CustomDate_Start", data?.CustomDate_Start);
-            formik.setFieldValue("DrawerFilter.CustomDate_End", data?.CustomDate_End);
-            formik.setFieldValue("DrawerFilter.FilterTimeOfADayStart", data?.FilterTimeOfADayStart);
-            formik.setFieldValue("DrawerFilter.FilterTimeOfADayEnd", data?.FilterTimeOfADayEnd);
-            formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", anyInList(eventRegistrationTypes) ? eventRegistrationTypes[0] : '');
-            formik.setFieldValue("DrawerFilter.EventTagIds", selectedEventTagIds);
-            formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
-            
-            if (typeof setFilteredCount === 'function') {
-                let count = selectedEventTypeIds.length +
-                    selectedEventSessionIds.length+selectedInstructorIds.length +
-                    selectedEventTagIds.length+
-                    selectedDates.length+
-                    selectedDayOfTheWeeks.length+
-                    selectedTimeOfADays.length;
-                setFilteredCount(count);
+            if (equalString(page, 'event-list')) {
+                let selectedEventTypeIds = eventTypes.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedEventSessionIds = eventSessions.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedInstructorIds = instructors.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedEventTagIds = eventTags.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedDates = dates.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedDayOfTheWeeks = dayOfTheWeeks.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedTimeOfADays = timeOfADays.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+
+                formik.setFieldValue("DrawerFilter.MinPrice", minPrice);
+                formik.setFieldValue("DrawerFilter.MaxPrice", maxPrice);
+                formik.setFieldValue("DrawerFilter.SessionIds", selectedEventSessionIds);
+                formik.setFieldValue("DrawerFilter.InstructorIds", selectedInstructorIds);
+                formik.setFieldValue("DrawerFilter.EventTypeIds", selectedEventTypeIds);
+
+                formik.setFieldValue("DrawerFilter.TimeOfDay", selectedTimeOfADays);
+                formik.setFieldValue("DrawerFilter.DayOfWeeks", selectedDayOfTheWeeks);
+                formik.setFieldValue("DrawerFilter.Dates", selectedDates);
+                formik.setFieldValue("DrawerFilter.CustomDate_Start", data?.CustomDate_Start);
+                formik.setFieldValue("DrawerFilter.CustomDate_End", data?.CustomDate_End);
+                formik.setFieldValue("DrawerFilter.FilterTimeOfADayStart", data?.FilterTimeOfADayStart);
+                formik.setFieldValue("DrawerFilter.FilterTimeOfADayEnd", data?.FilterTimeOfADayEnd);
+                formik.setFieldValue("DrawerFilter.EventRegistrationTypeId", anyInList(eventRegistrationTypes) ? eventRegistrationTypes[0] : '');
+                formik.setFieldValue("DrawerFilter.EventTagIds", selectedEventTagIds);
+                formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
+
+                if (typeof setFilteredCount === 'function') {
+                    let count = selectedEventTypeIds.length +
+                        selectedEventSessionIds.length+selectedInstructorIds.length +
+                        selectedEventTagIds.length+
+                        selectedDates.length+
+                        selectedDayOfTheWeeks.length+
+                        selectedTimeOfADays.length;
+                    setFilteredCount(count);
+                }
+            } else if (equalString(page, 'stringing-list')) {
+               
             }
         }
     }, [minPrice, maxPrice, eventTypes, instructors, eventSessions, eventTags, dates, dayOfTheWeeks, timeOfADays, eventRegistrationTypes])
@@ -211,6 +221,21 @@ function ListFilter({data,
             }}
         >
             <>
+                {showFilterDates &&
+                   <PaddingBlock>
+                       <Flex gap={token.padding}>
+                           <FormInputsDateInterval formik={formik}
+                                                   labelStart={'Select Start Date'}
+                                                   labelEnd={'Select End Date'}
+                                                   nameStart={'DrawerFilter.StartDate'}
+                                                   nameEnd={'DrawerFilter.EndDate'}
+                                                   interval={filterDatesInterval}
+                                                   minDate={minDate}
+                                                   maxDate={maxDate}/>
+                       </Flex>
+                   </PaddingBlock>
+                }
+                
                 {anyInList(sortByOptions) &&
                     <>
                         <ListFilterItemExpander label={'Sort by'}>

@@ -74,8 +74,6 @@ const Header = forwardRef((props, ref) => {
         useKey = true;
     }
     
-    console.log(title)
-    
     return (
         <>
             {(isDashboardPage && !isNullOrEmpty(customHeader)) &&
