@@ -1,7 +1,7 @@
 ﻿import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Segmented, Space, Tag, Typography} from "antd";
 import HeaderSearch from "@/components/header/HeaderSearch.jsx";
-import {anyInList, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, containsNoCase, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";
 import * as React from "react";
 import {useNavigate} from "react-router-dom";
@@ -42,8 +42,8 @@ function ProfileStringingList() {
     const [filterMaxDate, setFilterMaxDate] = useState(undefined);
     
     const loadStringingJob = async (inValues) => {
-        let startDate = formik?.values?.StartDate;
-        let endDate = formik?.values?.EndDate;
+        let startDate = formik?.values?.DrawerFilter?.StartDate;
+        let endDate = formik?.values?.DrawerFilter?.EndDate;
         
         if (!isNullOrEmpty(inValues?.StartDate)) {
             startDate = inValues?.StartDateStringDisplay;
@@ -141,9 +141,11 @@ function ProfileStringingList() {
         if (isNullOrEmpty(searchText) ||!anyInList(stringingJobs)) {
             setFilteredStringingJobs(stringingJobs);
         } else {
+            console.log(stringingJobs);
+            
             const filtered = stringingJobs.filter(job =>
-                job.JobNumber.toLowerCase().includes(searchText.toLowerCase()) ||
-                job.PlayerFullName.toLowerCase().includes(searchText.toLowerCase())
+                containsNoCase(job.Id, searchText)  ||
+                containsNoCase(job.StringerFullName, searchText)
             );
             setFilteredStringingJobs(filtered);
         }

@@ -231,11 +231,11 @@ export const isValidEmail = (incEmail) => {
 }
 
 export const containsNoCase = (str1, str2) => {
-    if (!str1 || !str2) {
+    if (isNullOrEmpty(str1) || isNullOrEmpty(str2)) {
         return false;
     }
 
-    return str1.toLowerCase().includes(str2.toLowerCase());
+    return String(str1).toLowerCase().includes(String(str2).toLowerCase());
 };
 
 export const generateHash = async (obj) => {
