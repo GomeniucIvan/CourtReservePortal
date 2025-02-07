@@ -1,28 +1,10 @@
-import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useApp} from "@/context/AppProvider.jsx";
-import {Button, Card, Carousel, Divider, Flex, Switch, Typography} from "antd";
+import {Button, Card, Divider, Flex, Switch, Typography} from "antd";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
-import {useAuth} from "@/context/AuthProvider.jsx";
-import {anyInList, equalString, isNullOrEmpty, oneListItem, toBoolean} from "@/utils/Utils.jsx";
-import {useFormik} from "formik";
-import {logDebug} from "@/utils/ConsoleUtils.jsx";
-import LoginSearchOrganization from "@portal/account/modules/Login.SearchOrganization.jsx";
-import {useAntd} from "@/context/AntdProvider.jsx";
-import LoginAdditionalInfo from "@portal/account/login/Login.AdditionalInfo.jsx";
-import LoginMemberships from "@portal/account/modules/Login.Memberships.jsx";
-import LoginMembershipDetails from "@portal/account/modules/Login.MembershipDetails.jsx";
-import {getMembershipText} from "@/utils/TranslateUtils.jsx";
-import LoginReview from "@portal/account/modules/Login.Review.jsx";
-import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
-import * as Yup from "yup";
-import useCustomFormik from "@/components/formik/CustomFormik.jsx";
-import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOrganization.ReviewModal.jsx";
-import {getLastFromHistory} from "@/toolkit/HistoryStack.js";
-import {authMember} from "@/storage/AppStorage.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import {anyInList, equalString, toBoolean} from "@/utils/Utils.jsx";
 import FormSelect from "@/form/formselect/FormSelect.jsx";
 import {genderList} from "@/utils/SelectUtils.jsx";
 import FormInput from "@/form/input/FormInput.jsx";
@@ -31,35 +13,44 @@ import FormStateProvince from "@/form/formstateprovince/FormStateProvince.jsx";
 import {isNonUsCulture} from "@/utils/DateUtils.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {useTranslation} from "react-i18next";
-const {Title, Text, Paragraph, Link} = Typography;
+import {validateJoinFamilyMembers} from "@/utils/ValidationUtils.jsx";
+const {Title} = Typography;
 
 function JoinOrganizationFamilyMembers({formik, signupData, onSubmit}) {
     const {t} = useTranslation('login');
     const {isLoading, setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
     const {setHeaderTitleKey} = useHeader();
-    
-    const validateAndSubmit = () => {
-        setIsLoading(true);
-        onSubmit();
-        
-        setIsLoading(false);
-    }
 
     useEffect(() => {
         setHeaderTitleKey('joinFamilyMembers');
     }, []);
     
     useEffect(() => {
-        setIsFooterVisible(true);
+        const validateAndSubmit = () => {
+            setIsLoading(true);
+
+            let isValid = validateJoinFamilyMembers(t, formik, signupData);
+            if (isValid) {
+                onSubmit();
+            }
+
+            setIsLoading(false);
+        }
+
         setFooterContent(<FooterBlock topBottom={true}>
             <Button type="primary"
                     block
-                    htmlType="submit"
+                    htmlType="button"
                     loading={isLoading}
                     onClick={validateAndSubmit}>
                 {t('additionalInfo.button.continue')}
             </Button>
         </FooterBlock>);
+    }, [isLoading, formik.values.FamilyMembers])
+    
+    useEffect(() => {
+        setIsFooterVisible(true);
+
     }, [isLoading]);
     
     const toggleInitialCheck = (incMember) => {
@@ -90,8 +81,7 @@ function JoinOrganizationFamilyMembers({formik, signupData, onSubmit}) {
                                             <Title level={3}>
                                                 {member.FullName}
                                             </Title>
-                                            <Switch checked={member.Register}
-                                                    onChange={() => toggleInitialCheck(member)}/>
+                                            <Switch checked={member.Register} onChange={() => toggleInitialCheck(member)}/>
                                         </Flex>
                                         {toBoolean(member.Register) &&
                                             <>
@@ -149,13 +139,13 @@ function JoinOrganizationFamilyMembers({formik, signupData, onSubmit}) {
                                                                 <FormStateProvince formik={formik}
                                                                                    dropdown={toBoolean(signupData?.ShowStatesDropdown)}
                                                                                    uiCulture={signupData.UiCulture}
-                                                                                   nameKey={`FamilyMembers[${index}].State`}
+                                                                                   name={`FamilyMembers[${index}].State`}
                                                                                    required={signupData.IsAddressBlockRequired}
                                                                 />
 
                                                                 <FormInput label={isNonUsCulture(signupData.UiCulture) ? t(`additionalInfo.form.postalCode`) : t(`additionalInfo.form.zipCode`)}
                                                                            formik={formik}
-                                                                           nameKey={`FamilyMembers[${index}].State`}
+                                                                           name={`FamilyMembers[${index}].ZipCode`}
                                                                            required={signupData.IsAddressBlockRequired}
                                                                 />
                                                             </Flex>
@@ -171,7 +161,7 @@ function JoinOrganizationFamilyMembers({formik, signupData, onSubmit}) {
                                                             {member.RatingCategories.map((ratingCategory, index) => {
                                                                 return (
                                                                     <FormSelect
-                                                                        key={index}
+                                                                        key={`FamilyMembers[${index}].RatingCategories[${index}]_${index}`}
                                                                         label={ratingCategory.Name}
                                                                         name={toBoolean(ratingCategory.AllowMultipleRatingValues) ? `FamilyMembers[${index}].RatingCategories[${index}].SelectedRatingsIds` : `FamilyMembers[${index}].RatingCategories[${index}].SelectedRatingId`}
                                                                         propText='Name'

@@ -45,7 +45,7 @@ const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
                             case 'Textbox':
                                 return (
                                     <FormInput
-                                        key={Id}
+                                        key={fieldName}
                                         label={Label}
                                         name={fieldName}
                                         loading={loading}
@@ -59,7 +59,7 @@ const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
                                 return (
                                     <div style={{paddingBottom: `${token.paddingSM}px`}}>
                                         <FormTextArea
-                                            key={Id}
+                                            key={fieldName}
                                             label={Label}
                                             name={fieldName}
                                             loading={loading}

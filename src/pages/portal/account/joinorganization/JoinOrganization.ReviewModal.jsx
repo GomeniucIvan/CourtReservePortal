@@ -48,14 +48,14 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
         let orgIdToCreateAccount = data?.OrganizationId;
 
         const postModel = {
-            AdditionalFamilyMembers: getFamilyMembersList(familyMembersFormValues),
+            AdditionalFamilyMembers: reviewData.FamilyMembers,
             PaymentTypeId:reviewData?.card_accountType,
             
             ///
             MembershipId: membership?.Id,
             PaymentFrequency: reviewData?.paymentFrequency,
             IsMobileLayout: true,
-            SsoKey: ssoKey,
+            SsoKey: '',
             Token: await recaptchaRef.current.executeAsync(),
             SpGuideId: getGlobalSpGuideId(),
             PhoneNumber: {
@@ -120,6 +120,9 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
             DisclosuresToSign: reviewData?.disclosures,
             SaveDataForFutureUse: reviewData?.card_savePaymentProfile,
         }
+        
+        console.log(postModel);
+        return;
         
         let response = await appService.post(`/app/Online/Portal/SignUp?id=${orgIdToCreateAccount}`, postModel);
 

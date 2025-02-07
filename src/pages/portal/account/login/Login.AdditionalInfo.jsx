@@ -151,6 +151,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
                         dbFamilyMembers.forEach((member) => {
                             member.RatingCategories = data.RatingCategories || [];
                             member.Udfs = data.Udfs || [];
+                            member.Register = false;
                         })
 
                         mainFormik.setFieldValue('FamilyMembers', dbFamilyMembers);

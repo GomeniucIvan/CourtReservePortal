@@ -121,7 +121,8 @@ export const AntdProvider = ({ children }) => {
                                 borderRadius: 8,
                                 controlHeight: 40,
                                 activeShadow: 'none',
-                                activeBorderColor: '#d9d9d9'
+                                activeBorderColor: '#d9d9d9',
+                                hoverBorderColor: '#d9d9d9',
                             },
                             Select: {
                                 borderRadius: 8,

@@ -1,9 +1,15 @@
 ﻿import {anyInList, equalString, isNullOrEmpty, moreThanOneInList, toBoolean} from "./Utils.jsx";
 import {logError} from "./ConsoleUtils.jsx";
-import {matchmakerGenderList} from "./SelectUtils.jsx";
+import {genderList, matchmakerGenderList} from "./SelectUtils.jsx";
 import {countListItems} from "./ListUtils.jsx";
 import {dateOfBirthStringToArray, isNonUsCulture} from "./DateUtils.jsx";
 import {isCanadaCulture} from "./OrganizationUtils.jsx";
+import FormSelect from "@/form/formselect/FormSelect.jsx";
+import FormInput from "@/form/input/FormInput.jsx";
+import FormDateOfBirth from "@/form/formdateofbirth/FormDateOfBirth.jsx";
+import {Flex} from "antd";
+import FormStateProvince from "@/form/formstateprovince/FormStateProvince.jsx";
+import React from "react";
 
 export const setFormikError = (t, formik, fieldName, errorKey, error) => {
     if (!isNullOrEmpty(errorKey)){
@@ -80,16 +86,16 @@ export const validateRatingCategories = (t, formik) => {
         let currentRatingCategory = ratingCategories[i];
 
         if (toBoolean(currentRatingCategory?.IsRequired)) {
-            if (category.AllowMultipleRatingValues) {
-                if (!anyInList(category?.SelectedRatingsIds)){
+            if (currentRatingCategory.AllowMultipleRatingValues) {
+                if (!anyInList(currentRatingCategory?.SelectedRatingsIds)){
                     let fieldName = `RatingCategories[${i}].SelectedRatingsIds`;
-                    setFormikError(t, formik, fieldName, category.Name);
+                    setFormikError(t, formik, fieldName, currentRatingCategory.Name);
                     isValid = false;
                 }
             } else{
-                if (isNullOrEmpty(category?.SelectedRatingId)){
+                if (isNullOrEmpty(currentRatingCategory?.SelectedRatingId)){
                     let fieldName = `RatingCategories[${i}].SelectedRatingId`;
-                    setFormikError(t, formik, fieldName, category.Name);
+                    setFormikError(t, formik, fieldName, currentRatingCategory.Name);
                     isValid = false;
                 }
             }
@@ -641,4 +647,106 @@ export const invalidEventGuestsErrors = (t, formik, guestOwnerRequired = false) 
     }
 
     return errorList;
+}
+
+export const validateJoinFamilyMembers = (t, formik, signupData) => {
+    let isValid = true;
+
+    let familyMembers = formik?.values?.FamilyMembers;
+
+    if (anyInList(familyMembers)){
+        familyMembers.forEach((familyMember, index) => {
+
+            if (familyMember.Register ) {
+                if (toBoolean(signupData.IsGenderRequired) &&toBoolean(signupData?.IncludeGender)) {
+                    if (isNullOrEmpty(familyMember.Gender)){
+                        let fieldName = `FamilyMembers[${index}].Gender`;
+                        setFormikError(t, formik, fieldName, t(`additionalInfo.form.gender`));
+                        isValid = false;
+                    }
+                }
+
+                if (toBoolean(signupData.IncludePhoneNumberBlock) &&toBoolean(signupData?.IsPhoneNumberRequired)) {
+                    if (isNullOrEmpty(familyMember.PhoneNumber)){
+                        let fieldName = `FamilyMembers[${index}].PhoneNumber`;
+                        setFormikError(t, formik, fieldName, t(`additionalInfo.form.phoneNumber`));
+                        isValid = false;
+                    }
+                }
+
+                if (toBoolean(signupData.IncludeMembershipNumber) &&toBoolean(signupData?.IsMembershipNumberRequired)) {
+                    if (isNullOrEmpty(familyMember.MembershipNumber)){
+                        let fieldName = `FamilyMembers[${index}].MembershipNumber`;
+                        setFormikError(t, formik, fieldName, t(`additionalInfo.form.membershipNumber`));
+                        isValid = false;
+                    }
+                }
+
+
+                if (toBoolean(signupData.IncludeDateOfBirthBlock) &&toBoolean(signupData?.IsDateOfBirthRequired)) {
+                    if (isNullOrEmpty(familyMember.DateOfBirthString)){
+                        let fieldName = `FamilyMembers[${index}].DateOfBirthString`;
+                        setFormikError(t, formik, fieldName, t(`additionalInfo.form.dateOfBirth`));
+                        isValid = false;
+                    }
+                }
+
+                if (toBoolean(signupData.IncludeAddressBlock) &&toBoolean(signupData?.IsAddressBlockRequired)) {
+                    if (isNullOrEmpty(familyMember.Address)){
+                        let fieldName = `FamilyMembers[${index}].Address`;
+                        setFormikError(t, formik, fieldName, t(`additionalInfo.form.streetAddress`));
+                        isValid = false;
+                    }
+                    if (isNullOrEmpty(familyMember.City)){
+                        let fieldName = `FamilyMembers[${index}].City`;
+                        setFormikError(t, formik, fieldName, t(`additionalInfo.form.city`));
+                        isValid = false;
+                    }
+                    if (isNullOrEmpty(familyMember.State)){
+                        let fieldName = `FamilyMembers[${index}].State`;
+                        setFormikError(t, formik, fieldName, isCanadaCulture(signupData.UiCulture) ? t(`province`) : t('state'));
+                        isValid = false;
+                    }
+
+                    if (isNullOrEmpty(familyMember.ZipCode)){
+                        let fieldName = `FamilyMembers[${index}].ZipCode`;
+                        setFormikError(t, formik, fieldName, isNonUsCulture(signupData.UiCulture) ? t(`additionalInfo.form.postalCode`) : t(`additionalInfo.form.zipCode`));
+                        isValid = false;
+                    }
+                }
+
+                if (anyInList(familyMember.Udfs)) {
+                    familyMember.Udfs.forEach((currentUdf, udfIndex) => {
+                        if (toBoolean(currentUdf?.IsRequired) && !currentUdf?.Value?.trim()) {
+                            let fieldName = `FamilyMembers[${index}].Udfs[${udfIndex}].Value`;
+                            setFormikError(t, formik, fieldName, currentUdf.Label);
+                            isValid = false;
+                        }
+                    });
+                }
+                
+                if (anyInList(familyMember.RatingCategories)){
+                    familyMember.RatingCategories.forEach((currentRatingCategory, ratingIndex) => {
+                        if (toBoolean(currentRatingCategory?.IsRequired)) {
+                            if (currentRatingCategory.AllowMultipleRatingValues) {
+                                if (!anyInList(currentRatingCategory?.SelectedRatingsIds)){
+                                    let fieldName = `FamilyMembers[${index}].RatingCategories[${ratingIndex}].SelectedRatingsIds`;
+                                    setFormikError(t, formik, fieldName, currentRatingCategory.Name);
+                                    isValid = false;
+                                }
+                            } else{
+                                if (isNullOrEmpty(currentRatingCategory?.SelectedRatingId)){
+                                    let fieldName = `FamilyMembers[${index}].RatingCategories[${ratingIndex}].SelectedRatingId`;
+                                    setFormikError(t, formik, fieldName, currentRatingCategory.Name);
+                                    isValid = false;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    return isValid;
 }
