@@ -71,7 +71,7 @@ function JoinOrganizationFamilyMembers({formik, signupData, onSubmit}) {
                             let isLastItem = index === formik.values.FamilyMembers.length - 1;
                             
                             return (
-                                <>
+                                <React.Fragment key={index}>
                                     <Flex vertical={true} gap={token.padding} key={index}>
                                         <Flex justify={'space-between'}
                                               align={'center'}
@@ -183,7 +183,7 @@ function JoinOrganizationFamilyMembers({formik, signupData, onSubmit}) {
                                     {!isLastItem && 
                                         <Divider style={{margin: `${token.paddingSM}px 0px`}} />
                                     }
-                                </>
+                                </React.Fragment>
                             )
                         })}
                     </Card>

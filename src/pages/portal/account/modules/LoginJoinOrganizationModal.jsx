@@ -27,16 +27,16 @@ import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
 import {navigationClearHistory} from "@/toolkit/HistoryStack.js";
+import {any} from "prop-types";
+import SVG from "@/components/svg/SVG.jsx";
 
 const {Title} = Typography;
 
 function LoginJoinOrganizationModal({show, setShow, data, onSubmitClick}) {
     const {isLoading, token} = useApp();
-    
+
     const {t} = useTranslation('login');
-    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
     let selectedFrequencyValue = '';
-    const recaptchaRef = useRef(null);
     let signupData = data;
     let reviewData = data;
     let selectedRatingCategoryWithRatings = [];
@@ -44,13 +44,13 @@ function LoginJoinOrganizationModal({show, setShow, data, onSubmitClick}) {
     let userDefinedFields = [];
     let membership = reviewData?.selectedMembership;
     let uiCulture = reviewData?.UiCulture;
-    
+
     if (anyInList(signupData?.RatingCategories)){
         selectedRatingCategoryWithRatings = signupData?.RatingCategories.filter(ratingCategory => (!isNullOrEmpty(ratingCategory.SelectedRatingId) || anyInList(ratingCategory.SelectedRatingsIds)));
 
         selectedRatingCategoryWithRatings.forEach(ratingCategory => {
             let selectedRatingIds = [];
-            
+
             if (ratingCategory.AllowMultipleRatingValues) {
                 selectedRatingIds = ratingCategory.SelectedRatingsIds;
             } else{
@@ -72,12 +72,12 @@ function LoginJoinOrganizationModal({show, setShow, data, onSubmitClick}) {
             }
         })
     }
-    
+
     if (anyInList(signupData?.Udfs)){
         userDefinedFields = signupData?.Udfs
             .filter(udf => !isNullOrEmpty(udf.Value))
     }
-    
+
     if (!isNullOrEmpty(membership)){
         let selectedPaymentFrequency = reviewData?.paymentFrequency;
         if (!isNullOrEmpty(selectedPaymentFrequency) && anyInList(membership.Prices)){
@@ -85,7 +85,7 @@ function LoginJoinOrganizationModal({show, setShow, data, onSubmitClick}) {
             selectedFrequencyValue = selectedOption.FullPriceDisplay;
         }
     }
-    
+
     return (
         <>
             <Modal show={show}
@@ -94,13 +94,13 @@ function LoginJoinOrganizationModal({show, setShow, data, onSubmitClick}) {
                    loading={isLoading}
                    showConfirmButton={true}
                    title={t('review.modalTitle')}>
-                
+
                 <PaddingBlock>
                     <Title level={4} style={{paddingBottom: token.padding}}>
-                        {!isNullOrEmpty(signupData?.reviewModalTitle) ? 
+                        {!isNullOrEmpty(signupData?.reviewModalTitle) ?
                             (<div style={{fontWeight: 'initial'}} dangerouslySetInnerHTML={{__html: signupData?.reviewModalTitle}}/>):(
-                            <>{t('review.confirmMessage')}</>
-                        )}
+                                <>{t('review.confirmMessage')}</>
+                            )}
                     </Title>
 
                     <Descriptions title={t('review.orgInfo')} >
@@ -144,6 +144,22 @@ function LoginJoinOrganizationModal({show, setShow, data, onSubmitClick}) {
                             <Descriptions.Item label={t(`additionalInfo.form.gender`)}>{signupData?.gender}</Descriptions.Item>
                         }
                     </Descriptions>
+
+                    {anyInList(data?.FamilyMembers) &&
+                        <>
+                            <Divider />
+
+                            <Descriptions title={'Family Members'}>
+                                {data.FamilyMembers.map((familyMember, index) => {
+                                    return (
+                                        <Descriptions.Item label={`${familyMember.FirstName} ${familyMember.LastName}`} key={index}>
+                                            {toBoolean(familyMember.Register) ? <SVG icon={'circle-check'} preventFill={true} preventPaths={true} /> : <SVG icon={'circle-minus'} preventFill={true} preventPaths={true} />}
+                                        </Descriptions.Item>
+                                    )
+                                })}
+                            </Descriptions>
+                        </>
+                    }
 
                     {(anyInList(ratingCategories) || anyInList(userDefinedFields)) &&
                         <>
@@ -214,12 +230,6 @@ function LoginJoinOrganizationModal({show, setShow, data, onSubmitClick}) {
                             </Descriptions>
                         </>
                     }
-                    
-                    <ReCAPTCHA
-                        ref={recaptchaRef}
-                        size="invisible"
-                        sitekey={captchaKey}
-                    />
                 </PaddingBlock>
             </Modal>
         </>

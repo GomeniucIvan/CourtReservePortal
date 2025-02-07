@@ -35,7 +35,7 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
     const {setIsLoading} = useApp();
 
     const { setAuthorizationData } = useAuth();
-
+    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
     const navigate = useNavigate();
     const recaptchaRef = useRef(null);
     let signupData = data;
@@ -184,6 +184,11 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
     return (
         <>
             <LoginJoinOrganizationModal show={show} setShow={setShow} data={data} onSubmitClick={createAccount} />
+            <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey={captchaKey}
+            />
         </>
     )
 }

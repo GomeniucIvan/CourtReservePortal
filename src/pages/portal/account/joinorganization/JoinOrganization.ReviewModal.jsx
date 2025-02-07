@@ -35,6 +35,7 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
     const {setIsLoading} = useApp();
 
     const { setAuthorizationData } = useAuth();
+    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
 
     const navigate = useNavigate();
     const recaptchaRef = useRef(null);
@@ -189,6 +190,12 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
     return (
         <>
             <LoginJoinOrganizationModal show={show} setShow={setShow} data={data} onSubmitClick={joinOrganization} />
+
+            <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey={captchaKey}
+            />
         </>
     )
 }
