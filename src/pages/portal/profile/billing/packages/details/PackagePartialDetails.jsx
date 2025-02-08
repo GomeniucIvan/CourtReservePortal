@@ -17,7 +17,9 @@ function PackageDetails({pack}) {
 
     const {
         globalStyles,
-        token
+        token,
+        setIsFooterVisible,
+        setFooterContent
     } = useApp();
 
     const location = useLocation();
@@ -40,6 +42,8 @@ function PackageDetails({pack}) {
     }
 
     useEffect(() => {
+        setIsFooterVisible(true);
+        setFooterContent('');
         loadData();
     }, [])
 

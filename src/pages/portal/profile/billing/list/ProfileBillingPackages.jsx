@@ -15,6 +15,9 @@ import {costDisplay} from "@/utils/CostUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import PackagePartialDetails from "@portal/profile/billing/packages/modules/PackagePartialDetails.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import {useNavigate} from "react-router-dom";
 
 const {Title} = Typography
 
@@ -30,12 +33,11 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
     
     const {orgId} = useAuth();
     const {setHeaderRightIcons} = useHeader();
-    
+    const navigate = useNavigate();
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
     const [selectedSegmentTab, setSelectedSegmentTab] = useState(selectedTabStorage('billing_packages', 'current'));
     const [currentPackages, setCurrentPackages] = useState(null);
     const [usedPackages, setUsedPackages] = useState(null);
-    const [selectedDrawerPackage, setSelectedDrawerPackage] = useState(null);
     const [showPurchaseBtn, setShowPurchaseBtn] = useState(false);
     
     const {styles} = useStyles();
@@ -82,7 +84,7 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                             block
                             htmlType="submit"
                             onClick={() => {
-
+            
                             }}>
                         Purchase Package
                     </Button>
@@ -155,7 +157,11 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                                             <Badge.Ribbon text={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? 'Unpaid' : ''}
                                                           color={'orange'} 
                                                           className={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? globalStyles.urgentRibbon : globalStyles.hideRibbon}>
-                                                <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
+                                                <Card className={cx(globalStyles.card, globalStyles.clickableCard)}
+                                                onClick={() => {
+                                                    let route = toRoute(ProfileRouteNames.PROFILE_PACKAGE_DETAILS, 'id', orgId);
+                                                    navigate(`${route}?packageId=${pack.Id}&packageSaleId=${pack.PackageSaleId}`);
+                                                }}>
                                                     <Flex vertical={true}>
                                                         <PackagePartialDetails pack={pack}/>
                                                     </Flex>
