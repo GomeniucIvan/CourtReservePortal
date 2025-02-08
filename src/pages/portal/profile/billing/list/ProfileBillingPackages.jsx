@@ -14,6 +14,7 @@ import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import PackagePartialDetails from "@portal/profile/billing/packages/modules/PackagePartialDetails.jsx";
 
 const {Title} = Typography
 
@@ -134,28 +135,8 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                                                           className={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? globalStyles.urgentRibbon : globalStyles.hideRibbon}>
                                                 <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
                                                     <Flex vertical={true}>
-                                                        <Title level={3} className={cx(globalStyles.cardItemTitle)}>
-                                                            <Ellipsis direction='end' content={pack.Name}/>
-                                                        </Title>
-
-                                                        {!isNullOrEmpty(pack.CreatedOnDisplay) &&
-                                                            <CardIconLabel icon={'clock'} description={`Purchased On ${pack.CreatedOnDisplay}`}/>
-                                                        }
-
-                                                        {!isNullOrEmpty(pack.Price) &&
-                                                            <CardIconLabel icon={'money'} description={`${costDisplay(pack.Price)} ${(isNullOrEmpty(!pack.TaxPercent) ? `+${pack.TaxPercent}% Tax` : '')}`} />
-                                                        }
-
-                                                        {!isNullOrEmpty(pack.Assignment) &&
-                                                            <CardIconLabel icon={'team'} description={pack.Assignment} />
-                                                        }
-
-                                                        {!isNullOrEmpty(pack.PunchesValueDisplay) &&
-                                                            <CardIconLabel icon={'ticket'} description={`${pack.UsedPunchesDisplay} of ${pack.PunchesValueDisplay} punches used`} preventFill={true} preventStroke={false} />
-                                                        }
+                                                        <PackagePartialDetails pack={pack}/>
                                                     </Flex>
-
-                                                    TODO BAR USED
                                                 </Card>
                                             </Badge.Ribbon>
                                         </div>
@@ -176,28 +157,8 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                                                           className={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? globalStyles.urgentRibbon : globalStyles.hideRibbon}>
                                                 <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
                                                     <Flex vertical={true}>
-                                                        <Title level={3} className={cx(globalStyles.cardItemTitle)}>
-                                                            <Ellipsis direction='end' content={pack.Name}/>
-                                                        </Title>
-
-                                                        {!isNullOrEmpty(pack.CreatedOnDisplay) &&
-                                                            <CardIconLabel icon={'clock'} description={`Purchased On ${pack.CreatedOnDisplay}`}/>
-                                                        }
-
-                                                        {!isNullOrEmpty(pack.Price) &&
-                                                            <CardIconLabel icon={'money'} description={`${costDisplay(pack.Price)} ${(isNullOrEmpty(!pack.TaxPercent) ? `+${pack.TaxPercent}% Tax` : '')}`} />
-                                                        }
-
-                                                        {!isNullOrEmpty(pack.Assignment) &&
-                                                            <CardIconLabel icon={'team'} description={pack.Assignment} />
-                                                        }
-
-                                                        {!isNullOrEmpty(pack.PunchesValueDisplay) &&
-                                                            <CardIconLabel icon={'ticket'} description={`${pack.UsedPunchesDisplay} of ${pack.PunchesValueDisplay} punches used`} preventFill={true} preventStroke={false} />
-                                                        }
+                                                        <PackagePartialDetails pack={pack}/>
                                                     </Flex>
-
-                                                    TODO BAR USED
                                                 </Card>
                                             </Badge.Ribbon>
                                         </div>

@@ -46,14 +46,18 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     const [transactionHeaderData, setTransactionHeaderData] = useState(null);
 
     const initialValues = {
-        PaidStartDate: '',
-        PaidEndDate: '',
-        PaymentsStartDate: '',
-        PaymentsEndDate: '',
-        AdjustmentsStartDate: '',
-        AdjustmentsEndDate: '',
-        AllStartDate: '',
-        AllEndDate: '',
+        DrawerFilterKey: '',
+        DrawerFilter: {
+            PaidStartDate: '',
+            PaidEndDate: '',
+            PaymentsStartDate: '',
+            PaymentsEndDate: '',
+            AdjustmentsStartDate: '',
+            AdjustmentsEndDate: '',
+            AllStartDate: '',
+            AllEndDate: '',
+        },
+
         CurrentDate: '',
     }
 
@@ -88,20 +92,20 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                         parseSafeInt(respData.FamilyBalance)  :
                         parseSafeInt(respData.MemberBalance);
                     let credit = null;
-                    let paymentTitle = `Balance`;
+                    let paymentTitle = `Amount Due`;
 
                     if (!isNullOrEmpty(respData?.BalanceData)){
                         balance = respData.BalanceData?.Balance;
                         credit = respData.BalanceData?.Credit;
                     }
 
-                    if (!isNullOrEmpty(respData?.BalanceData)){
-                        if (toBoolean(respData.ExcludeFutureBookingsFromMemberBalance)){
-                            paymentTitle = `Current Balance`;
-                        } else {
-                            paymentTitle = `Balance`;
-                        }
-                    }
+                    // if (!isNullOrEmpty(respData?.BalanceData)){
+                    //     if (toBoolean(respData.ExcludeFutureBookingsFromMemberBalance)){
+                    //         paymentTitle = `Current Balance`;
+                    //     } else {
+                    //         paymentTitle = `Balance`;
+                    //     }
+                    // }
 
                     setTransactionHeaderData({
                         Balance: balance,
@@ -285,8 +289,8 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                                     <SGV icon={'bank-note'} preventFill={true} size={'20'}/>
                                     <Text className={cx(globalStyles.noSpace)}
                                           style={{fontSize: `${token.fontSizeLG}px`}}>
-                                        Balance: <strong style={{
-                                        color: transactionHeaderData.Balance > 0 ? token.colorError : token.colorTextTertiary
+                                        Amount Due: <strong style={{
+                                        color: (transactionHeaderData.Balance * -1) > 0 ? token.colorError : token.colorTextTertiary
                                     }}>{costDisplay(transactionHeaderData.Balance, true)}</strong>
                                     </Text>
                                 </Flex>
@@ -308,7 +312,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                                             let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgId);
                                             navigate(route);
                                         }}>
-                                    Pay All
+                                    Pay
                                 </Button>
                             }
                         </Flex>
