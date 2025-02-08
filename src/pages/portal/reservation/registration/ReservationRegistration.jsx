@@ -186,7 +186,8 @@ function ReservationRegistration() {
                 removeLastHistoryEntry();
                 
                 if (equalString(key, 'payment')){
-                    navigate(ProfileRouteNames.PROFILE_BILLING_PAYMENTS);
+                    let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgId);
+                    navigate(route);
                 } else if (equalString(key, 'details') || equalString(key, 'portal')){
                     let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', data.ReservationId);
                     setPage(setDynamicPages, data.Name, route);

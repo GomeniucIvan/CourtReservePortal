@@ -1,11 +1,11 @@
 ﻿import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
-import {toBoolean} from "@/utils/Utils.jsx";
+import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Divider, Flex, Skeleton} from "antd";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {orgCardCountryCode} from "@/utils/OrganizationUtils.jsx";
 import * as Yup from "yup";
 import FormPaymentProfile from "@/form/formpaymentprofile/FormPaymentProfile.jsx";
@@ -21,6 +21,8 @@ import {getConfigValue} from "@/config/WebConfig.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 function ProfileBillingPayment({}) {
     const navigate = useNavigate();
@@ -31,6 +33,12 @@ function ProfileBillingPayment({}) {
     const { t } = useTranslation('payment');
     const recaptchaRef = useRef(null);
     let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    
+    //url params
+    const payments = queryParams.get("payments");
     
     const initialValues = {
         card_firstName: '',
@@ -112,15 +120,37 @@ function ProfileBillingPayment({}) {
 
     const loadData = async (refresh) => {
         setIsFetching(true);
-        let response = await appService.get(navigate, `/app/Online/MyBalance/PayMyBalance?id=${orgId}`);
-        if (toBoolean(response?.IsValid)){
-            let payments = response.Data.payments;
-            
-            let paymentsResponse = await appService.get(navigate,`/app/Online/MyBalance/ProcessTransactionPayments?id=${orgId}&payments=${payments}` );
-            if (toBoolean(paymentsResponse?.IsValid)){
-                let paymentsModel = paymentsResponse.Data;
-                setPaymentModel(paymentsModel);
-                setIsFetching(false);
+        let innerPayments = payments;
+        
+        if (isNullOrEmpty(innerPayments)){
+            let response = await appService.get(navigate, `/app/Online/MyBalance/PayMyBalance?id=${orgId}`);
+            if (toBoolean(response?.IsValid)) {
+                innerPayments = response.Data.payments;
+            }
+        }
+        
+        let paymentsResponse = await appService.get(navigate,`/app/Online/MyBalance/ProcessTransactionPayments?id=${orgId}&payments=${innerPayments}` );
+        if (toBoolean(paymentsResponse?.IsValid)){
+            let paymentsModel = paymentsResponse.Data;
+            setPaymentModel(paymentsModel);
+            setIsFetching(false);
+        } else {
+            if (isNullOrEmpty(response?.Message)){
+                if (!isNullOrEmpty(response?.Data?.RedirectUrl)){
+                    navigate(response?.Data?.RedirectUrl);
+                }
+            } else {
+                displayMessageModal({
+                    title: 'Error',
+                    html: (onClose) => `${response?.Message}.`,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+                        if (!isNullOrEmpty(response?.Data?.RedirectUrl)){
+                            navigate(response?.Data?.RedirectUrl);
+                        }
+                    },
+                })
             }
         }
     }

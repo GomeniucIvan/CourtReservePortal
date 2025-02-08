@@ -76,7 +76,7 @@ function ProfilePaymentProfileList() {
                         </div>
 
                         <Flex vertical={true} justify={'center'}>
-                            <Title level={1} className={globalStyles.noMargin}>{paymentProfile.AccountTypeDisplay} ending with {paymentProfile.Last4Digits}</Title>
+                            <Title level={3} className={globalStyles.noMargin}>{paymentProfile.AccountTypeDisplay} ending with {paymentProfile.Last4Digits}</Title>
                             <Text>Added On: {paymentProfile.CreatedOnDisplay}</Text>
                         </Flex>
                     </Flex>

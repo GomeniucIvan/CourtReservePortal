@@ -12,6 +12,9 @@ import {countListItems, emptyArray} from "@/utils/ListUtils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import Modal from "@/components/modal/Modal.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 
 const {Title, Text} = Typography;
 
@@ -36,8 +39,7 @@ function ProfileStringingDetails() {
 
     const loadData = async () => {
         let response = await appService.get(navigate, `/app/Online/StringingJob/Details?id=${orgId}&stringingJobId=${stringId}`);
-
-        console.log(response);
+        
         if (toBoolean(response?.IsValid)) {
             let data = response.Data;
             setStringingModel(data);
@@ -56,6 +58,27 @@ function ProfileStringingDetails() {
 
         loadData();
     }, []);
+    
+    useEffect(() => {
+        if (!isNullOrEmpty(stringingModel)){
+            let showPaymentButton = toBoolean(stringingModel?.ShowPayBtnMemberPortal);
+            if (showPaymentButton) {
+                setIsFooterVisible(true);
+                setFooterContent(<FooterBlock topBottom={true}>
+                    <Button type="primary"
+                            block
+                            htmlType="button"
+                            onClick={() => {
+                                let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgId);
+                                navigate(`${route}?payments=${stringingModel?.FeeId}`);
+                            }}>
+                        Pay
+                    </Button>
+                </FooterBlock>);
+            }
+        }
+    }, [stringingModel])
+    
     return (
         <PaddingBlock topBottom={true}>
             {isFetching &&

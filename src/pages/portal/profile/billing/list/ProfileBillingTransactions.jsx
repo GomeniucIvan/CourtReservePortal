@@ -24,13 +24,14 @@ import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {subtractDateDays} from "@/utils/DateUtils.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
 
 function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     const {setHeaderRightIcons} = useHeader();
     const {token, globalStyles, availableHeight, isMockData, setIsFooterVisible, setFooterContent} = useApp();
     const {orgId} = useAuth();
     const navigate = useNavigate();
-    
+
     const [selectedSegmentTab, setSelectedSegmentTab] = useState(selectedTabStorage('billing_transaction', 'Unpaid'));
     const {styles} = useStyles();
     const [unpaidFees, setUnpaidFees] = useState(null);
@@ -62,12 +63,12 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
 
         },
     });
-    
+
     useEffect(() => {
         const loadTransactionData = async () => {
             if (isNullOrEmpty(transactionHeaderData)){
                 let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalance/Details?id=${orgId}`);
-                
+
                 if (toBoolean(response?.IsValid)){
                     let respData = response.Data;
 
@@ -82,7 +83,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                         AllEndDate: respData.CurrentDateString,
                         CurrentDate: respData.CurrentDateString,
                     })
-                    
+
                     let balance = toBoolean(respData.MemberFamilyId) ?
                         parseSafeInt(respData.FamilyBalance)  :
                         parseSafeInt(respData.MemberBalance);
@@ -156,7 +157,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
         }
         if ((isNullOrEmpty(adjustmentsFees) || isFilterChange) && equalString(selectedSegmentTab, 'Adjustments')){
             setAdjustmentsFees(null);
-            
+
             let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetBalanceAdjustments?id=${orgId}&startDate=${formik.values?.AdjustmentsStartDate}&endDate=${formik.values?.AdjustmentsEndDate}`);
             if (toBoolean(response?.IsValid)) {
                 setAdjustmentsFees(response.Data);
@@ -186,7 +187,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
             loadData(true);
         }
     }, [isFilterOpened]);
-    
+
     useEffect(() => {
         if (equalString(selectedTab, 'transactions')){
             setIsFooterVisible(true);
@@ -205,7 +206,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
             } else{
                 setHeaderRightIcons('')
             }
-            
+
             setFooterContent('')
         }
     }, [selectedTab, selectedSegmentTab]);
@@ -228,7 +229,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
 
         return false;
     }
-    
+
     const displayItems = (items, selectedSegmentTab) => {
         if (!anyInList(items)){
             return (
@@ -298,14 +299,15 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                                     }}>{costDisplay((transactionHeaderData.Credit * -1), true)}</strong>
                                     </Text>
                                 </Flex>
-                            </Flex> 
-                            
+                            </Flex>
+
                             {toBoolean(transactionHeaderData.ShowPay) &&
                                 <Button size={'small'} type={'primary'}
                                         className={globalStyles.stickyButton}
-                                        onClick={() =>{
-                                    navigate(ProfileRouteNames.PROFILE_BILLING_PAYMENTS);
-                                }}>
+                                        onClick={() => {
+                                            let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgId);
+                                            navigate(route);
+                                        }}>
                                     Pay All
                                 </Button>
                             }
@@ -372,24 +374,24 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                 }}
             >
                 <PaddingBlock onlyBottom={true}>
-                   <Flex vertical={true} gap={token.padding}>
-                       {!isNullOrEmpty(selectedDrawerFee?.MemberFullName) &&
-                           <FormInputDisplay value={selectedDrawerFee?.MemberFullName} label={'Member'} />
-                       }
-                       {!isNullOrEmpty(selectedDrawerFee?.ShowTrAmount) &&
-                           <FormInputDisplay value={selectedDrawerFee?.ShowTrAmount} label={'Amount'} />
-                       }
-                       {!isNullOrEmpty(selectedDrawerFee?.PaidDateTimeDisplay) &&
-                           <FormInputDisplay value={selectedDrawerFee?.PaidDateTimeDisplay} label={'Paid On'} />
-                       }
-                       {!isNullOrEmpty(selectedDrawerFee?.PaymentTypeDisplayGrid) &&
-                           <FormInputDisplay value={selectedDrawerFee?.PaymentTypeDisplayGrid} label={'Payment Type'} />
-                       }
-                       {!isNullOrEmpty(selectedDrawerFee?.TransactionItemName) &&
-                           <FormInputDisplay value={selectedDrawerFee?.TransactionItemName} label={'Item'} />
-                       }
-                   </Flex>
-                    
+                    <Flex vertical={true} gap={token.padding}>
+                        {!isNullOrEmpty(selectedDrawerFee?.MemberFullName) &&
+                            <FormInputDisplay value={selectedDrawerFee?.MemberFullName} label={'Member'} />
+                        }
+                        {!isNullOrEmpty(selectedDrawerFee?.ShowTrAmount) &&
+                            <FormInputDisplay value={selectedDrawerFee?.ShowTrAmount} label={'Amount'} />
+                        }
+                        {!isNullOrEmpty(selectedDrawerFee?.PaidDateTimeDisplay) &&
+                            <FormInputDisplay value={selectedDrawerFee?.PaidDateTimeDisplay} label={'Paid On'} />
+                        }
+                        {!isNullOrEmpty(selectedDrawerFee?.PaymentTypeDisplayGrid) &&
+                            <FormInputDisplay value={selectedDrawerFee?.PaymentTypeDisplayGrid} label={'Payment Type'} />
+                        }
+                        {!isNullOrEmpty(selectedDrawerFee?.TransactionItemName) &&
+                            <FormInputDisplay value={selectedDrawerFee?.TransactionItemName} label={'Item'} />
+                        }
+                    </Flex>
+
                 </PaddingBlock>
             </DrawerBottom>
 
@@ -405,7 +407,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
             >
                 <PaddingBlock>
                     <Flex vertical={true} gap={token.padding}>
-                        
+
                         {(!isNullOrEmpty(paidFees) && equalString(selectedSegmentTab, 'paid')) &&
                             <FormInputsDateInterval formik={formik}
                                                     labelStart={'Start Date'}
@@ -443,7 +445,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                             />
                         }
                     </Flex>
-                    
+
 
                 </PaddingBlock>
             </DrawerBottom>

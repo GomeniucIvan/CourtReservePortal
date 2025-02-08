@@ -23,11 +23,13 @@ export const ProfileRouteNames = {
     PROFILE_MEMBERSHIP: `/online/myprofile/mymembership/:id`,
     PROFILE_BILLING: `/online/mybalance/index/:id`,
     PROFILE_BILLING_INVOICES: `/online/myinvoices/index/:id`,
-    PROFILE_BILLING_PAYMENT: `/profile/payment/:id`,
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
     PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`,
+    
+    //why is different routes?!
     PROCESS_PAYMENT: `/online/payments/processpayment/:id`,
+    PROCESS_TRANSACTION_PAYMENT: `/online/payments/processtransactionpayments/:id`,
 };
 
 const ProfileRoutes = [
@@ -87,7 +89,13 @@ const ProfileRoutes = [
         disablePullDown: true
     },
     {
-        path: ProfileRouteNames.PROFILE_BILLING_PAYMENT,
+        path: ProfileRouteNames.PROCESS_PAYMENT,
+        element: <ProfileBillingPayment />,
+        title: 'billingPayment',
+        disablePullDown: true
+    },
+    {
+        path: ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT,
         element: <ProfileBillingPayment />,
         title: 'billingPayment',
         disablePullDown: true
@@ -106,7 +114,7 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST,
         element: <ProfilePaymentProfileList />,
         title: 'paymentProfiles'
-    },
+    }
 ];
 
 export default ProfileRoutes;
