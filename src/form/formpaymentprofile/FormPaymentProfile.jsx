@@ -43,6 +43,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
     const [selectedSegmentType, setSelectedSegmentType] = useState('');
 
+    
     const stripeCardElementRef = useRef(null);
     const [validationMessages, setValidationMessages] = useState({});
     const {token, globalStyles} = useApp();
@@ -50,7 +51,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     let paymentProvider = paymentProviderData?.PaymentProvider;
     let stripeKey = paymentProviderData?.StripePublishableKey;
     let isUsingCollectJs = paymentProviderData?.IsUsingCollectJs;
-    let uiCulture = paymentProviderData?.UiCulture;
+    let uiCulture = paymentProviderData?.UiCulture || paymentProviderData?.PartialUiCulture;
     let showStatesDropdown = toBoolean(paymentProviderData?.ShowStatesDropdown);
 
     const [fieldValidity, setFieldValidity] = useState({
@@ -225,26 +226,6 @@ const FormPaymentProfile = React.forwardRef(({ formik,
         }
     }));
 
-    // if (isNullOrEmpty(paymentTypes)) {
-    //     paymentTypes = [];
-    // }
-
-    // const accountTypeChange = (selectedValue) => {
-    //     setShowCardDetails(equalString(selectedValue, 1));
-    //     setShowECheckDetails(equalString(selectedValue, 2));
-    // }
-    //
-    // useEffect(() => {
-    //     if (!isNullOrEmpty(formik?.values?.card_accountType)){
-    //         accountTypeChange(formik?.values?.card_accountType);
-    //     }
-    // }, [])
-    //
-    // useEffect(() => {
-    //     let accType = formik?.values?.card_accountType;
-    //     accountTypeChange(accType);
-    // }, [formik?.values?.card_accountType]);
-
     useEffect(() => {
         setSelectedSegmentType(paymentProviderData?.SelectedSegment);
     }, [paymentProviderData?.SelectedSegment]);
@@ -259,17 +240,6 @@ const FormPaymentProfile = React.forwardRef(({ formik,
 
     return (
         <Flex vertical={true} gap={token.padding}>
-            {(anyInList(paymentTypes) && !toBoolean(hideFields?.accountType)) &&
-                <FormSelect
-                    formik={formik}
-                    name='card_accountType'
-                    label='Account Type'
-                    options={paymentTypes}
-                    required={true}
-                    propText='Text'
-                    propValue='Value' />
-            }
-
             {showBillingInformation &&
                 <>
                     <Flex vertical={true} gap={token.paddingLG}>
@@ -343,6 +313,17 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                 <Divider className={globalStyles.noMargin} />
             }
 
+            {/*{(anyInList(paymentTypes) && !toBoolean(hideFields?.accountType)) &&*/}
+            {/*    <FormSelect*/}
+            {/*        formik={formik}*/}
+            {/*        name='card_accountType'*/}
+            {/*        label='Account Type'*/}
+            {/*        options={paymentTypes}*/}
+            {/*        required={true}*/}
+            {/*        propText='Text'*/}
+            {/*        propValue='Value' />*/}
+            {/*}*/}
+            
             <>
                 <Flex vertical={true} gap={token.paddingLG}>
                     <Title level={3}>Payment Information</Title>
@@ -350,7 +331,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                     <Flex vertical={true} gap={token.padding}>
                         {(toBoolean(paymentProviderData?.ShowSegment)) &&
                             <Segmented options={['Credit Card', 'eCheck']}
-                                       defaultValue={selectedSegmentType}
+                                       value={selectedSegmentType}
                                        block
                                        onChange={(e) => { setSelectedSegmentType(e) }} />
                         }

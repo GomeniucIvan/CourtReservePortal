@@ -19,6 +19,8 @@ import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 const {Title, Text} = Typography;
 
 function ProfilePaymentProfileList() {
@@ -63,6 +65,10 @@ function ProfilePaymentProfileList() {
             <Button type="primary"
                     block
                     htmlType="submit"
+                    onClick={() => {
+                        let route = toRoute(ProfileRouteNames.PROFILE_CREATE_PAYMENT_PROFILE, 'id', orgId);
+                        navigate(route)
+                    }}
                     disabled={isFetching}
                     loading={isLoading}>
                 {t('paymentProfile.addPaymentProfile')}

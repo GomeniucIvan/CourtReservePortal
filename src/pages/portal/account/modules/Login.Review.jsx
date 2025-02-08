@@ -355,7 +355,7 @@ function LoginReview({mainFormik, signupData, page = 'create-account'}) {
                                                             isPaymentProfile={false}
                                                             includeCustomerDetails={true}
                                                             allowToSavePaymentProfile={false}
-                                                            paymentProfileRef={paymentProfileRef}
+                                                            ref={paymentProfileRef}
                                                             showStatesDropdown={toBoolean(signupData.ShowStatesDropdown)}
                                                             hideFields={{
                                                                 firstLastName: true,

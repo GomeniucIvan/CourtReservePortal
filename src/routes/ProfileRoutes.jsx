@@ -10,6 +10,7 @@ import ProfileStringingDetails from "@portal/profile/stringing/details/ProfileSt
 import ProfilePaymentProfileList from "@portal/profile/paymentprofile/list/ProfilePaymentProfileList.jsx";
 import ProfileBillingPayment from "@portal/profile/billing/payment/ProfileBillingPayment.jsx";
 import ProfileBookingList from "@portal/profile/booking/list/ProfileBookingList.jsx";
+import ProfileCreatePaymentProfile from "@portal/profile/billing/payment/ProfileCreatePaymentProfile.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
@@ -26,6 +27,7 @@ export const ProfileRouteNames = {
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
     PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`,
+    PROFILE_CREATE_PAYMENT_PROFILE: `/online/paymentoptions/addpaymentoption/:id`, //Online/PaymentOptions/AddPaymentoption/6969
     
     //why is different routes?!
     PROCESS_PAYMENT: `/online/payments/processpayment/:id`,
@@ -114,6 +116,11 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST,
         element: <ProfilePaymentProfileList />,
         title: 'paymentProfiles'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_CREATE_PAYMENT_PROFILE,
+        element: <ProfileCreatePaymentProfile />,
+        title: 'createPaymentProfiles'
     }
 ];
 
