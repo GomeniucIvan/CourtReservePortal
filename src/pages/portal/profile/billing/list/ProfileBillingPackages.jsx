@@ -18,6 +18,7 @@ import PackagePartialDetails from "@portal/profile/billing/packages/modules/Pack
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
+import HomeRoutes, {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 
 const {Title} = Typography
 
@@ -84,7 +85,8 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                             block
                             htmlType="submit"
                             onClick={() => {
-            
+                                let route = toRoute(HomeRouteNames.PACKAGE_LIST, 'id', orgId);
+                                navigate(route);
                             }}>
                         Purchase Package
                     </Button>

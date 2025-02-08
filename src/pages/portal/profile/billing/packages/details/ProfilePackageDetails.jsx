@@ -13,7 +13,7 @@ import SVG from "@/components/svg/SVG.jsx";
 
 const {Title, Text} = Typography
 
-function PackageDetails({pack}) {
+function ProfilePackageDetails({pack}) {
 
     const {
         globalStyles,
@@ -134,4 +134,4 @@ function PackageDetails({pack}) {
     )
 }
 
-export default PackageDetails
+export default ProfilePackageDetails

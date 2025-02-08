@@ -16,6 +16,12 @@ export const useStyles = createStyles(({ css, token }) => ({
         border: 1px solid ${token.colorBorder};
         position: relative;
     `,
+   cardButton: css`
+       .ant-card-body {
+           padding-bottom: ${token.paddingXXL}px;
+           padding-top: ${token.paddingXXL}px;
+       }
+   `,
    cardSMPadding: css`
         .ant-card-body {
            padding: 14px;

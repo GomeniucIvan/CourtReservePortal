@@ -11,7 +11,7 @@ import ProfilePaymentProfileList from "@portal/profile/paymentprofile/list/Profi
 import ProfileBillingPayment from "@portal/profile/billing/payment/ProfileBillingPayment.jsx";
 import ProfileBookingList from "@portal/profile/booking/list/ProfileBookingList.jsx";
 import ProfileCreatePaymentProfile from "@portal/profile/billing/payment/ProfileCreatePaymentProfile.jsx";
-import PackageDetails from "@portal/profile/billing/packages/details/PackagePartialDetails.jsx";
+import ProfilePackageDetails from "@portal/profile/billing/packages/details/ProfilePackageDetails.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
@@ -126,7 +126,7 @@ const ProfileRoutes = [
     },
     {
         path: ProfileRouteNames.PROFILE_PACKAGE_DETAILS,
-        element: <PackageDetails />,
+        element: <ProfilePackageDetails />,
         title: 'profilePackageDetails'
     }
 ];

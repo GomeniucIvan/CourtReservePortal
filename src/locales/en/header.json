@@ -42,6 +42,7 @@
   "paymentProfiles": "Payment Profiles",
   "createPaymentProfiles": "Create Payment Profile",
   "profilePackageDetails": "Package Details",
+  "packagePurchase": "Review Package",
   "waivers": "Waivers",
   "memberGroup": "Member Group",
   "notifications": "Alerts",
@@ -54,5 +55,7 @@
   "organizationList": "My Organization(s)",
   "notFound": "Not Found",
   "locationList": "My Location(s)",
-  "textMessageOptIn": "Text Messaging Opt-In"
+  "textMessageOptIn": "Text Messaging Opt-In",
+  "packages": "Packages",
+  "packageDetails": "Package Details"
 }

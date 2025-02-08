@@ -205,7 +205,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
         <>
             {isFetching &&
                 <PaddingBlock topBottom={true}>
-                    <Flex vertical={true} gap={16}>
+                    <Flex vertical={true} gap={token.padding}>
                         {emptyArray(15).map((item, index) => (
                             <div key={index}>
                                 <Flex vertical={true} gap={8}>

@@ -43,7 +43,7 @@ function AlertBlock({type = 'danger', title, description, onButtonClick, buttonT
     return (
         <Flex className={cx(styles.block, blockClassName, toBoolean(removePadding) && styles.removePaddingBlock)} style={{borderLeft: `5px solid ${config[type]?.borderColor}`}}>
            <Flex justify={'space-between'} align={'center'} flex={1} style={{paddingRight: token.padding}}>
-               <Flex gap={token.paddingLG} style={{paddingLeft: token.padding}} flex={1}>
+               <Flex gap={token.paddingLG} style={{paddingLeft: token.padding, marginTop: '12px', marginBottom: '12px'}} flex={1}>
                    {currentConfig.icon}
                    <Flex vertical={true} flex={1}>
                        <Title level={3}>{title}</Title>

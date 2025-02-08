@@ -12,6 +12,9 @@ import ProfileMyOrganizationList from "@portal/profile/organizations/list/Profil
 import NotificationDetails from "@portal/notification/details/NotificationDetails.jsx";
 import NotFoundPage from "@portal/home/403/NotFoundPage.jsx";
 import SmsAlertModal from "@portal/home/smsalert/SmsAlertModal.jsx";
+import PackageList from "@portal/package/list/PackageList.jsx";
+import PackageDetails from "@portal/package/details/PackageDetails.jsx";
+import PackagePurchase from "@portal/package/purchase/PackagePurchase.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -31,9 +34,19 @@ export const HomeRouteNames = {
     MEMBER_GROUP: `/online/publicmembergroup/MemberGroup/:id`,
     MEMBERSHIPS: `/memberships`,
     TEXT_MESSAGE_MODAL: `/online/textmessage/optin/:id`, //textmessage/optin is bindned to check current page
+    PACKAGE_LIST: `/online/packages/list/:id`,
+    PACKAGE_DETAILS: `/online/packages/details/:id`,
+    PACKAGE_PURCHASE: `/online/packages/purchasepackages/:id`,
 };
 
 const HomeRoutes = [
+    {
+        path: HomeRouteNames.NOT_FOUND,
+        element: <NotFoundPage />,
+        title: 'notFound',
+        header: true,
+        unauthorized: true
+    },
     {
         index: true,
         path: HomeRouteNames.INDEX,
@@ -111,11 +124,22 @@ const HomeRoutes = [
         header: true
     },
     {
-        path: HomeRouteNames.NOT_FOUND,
-        element: <NotFoundPage />,
-        title: 'notFound',
-        header: true,
-        unauthorized: true
+        path: HomeRouteNames.PACKAGE_LIST,
+        element: <PackageList />,
+        title: 'packages',
+        header: true
+    },
+    {
+        path: HomeRouteNames.PACKAGE_DETAILS,
+        element: <PackageDetails />,
+        title: 'packageDetails',
+        header: true
+    },
+    {
+        path: HomeRouteNames.PACKAGE_PURCHASE,
+        element: <PackagePurchase />,
+        title: 'packagePurchase',
+        header: true
     }
 ];
 
