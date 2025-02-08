@@ -60,7 +60,7 @@ function PackageDetails() {
                     disabled={isFetching}
                     onClick={() => {
                         let route =toRoute(HomeRouteNames.PACKAGE_PURCHASE, 'id', orgId);
-                        navigate(route);
+                        navigate(`${route}?packageId=${packageId}&guid=${guid}`);
                     }}>
                 Select Package
             </Button>

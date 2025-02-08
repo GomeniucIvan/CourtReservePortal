@@ -79,9 +79,14 @@ function PackageList() {
                                         }}>
                                             <PublicPackageDetails pack={pack} />
                                         </Flex>
-                                        <Button type={'primary'} block={true}>Purchase Package</Button>
+                                        <Button type={'primary'} block={true} onClick={() => {
+                                            let route =toRoute(HomeRouteNames.PACKAGE_PURCHASE, 'id', orgId);
+                                            navigate(`${route}?packageId=${pack.Id}&guid=${pack.Guid}`);
+                                        }}>
+                                            Purchase Package
+                                        </Button>
                                     </Flex>
-                                    
+
                                 </Card>
                             )
                         })}

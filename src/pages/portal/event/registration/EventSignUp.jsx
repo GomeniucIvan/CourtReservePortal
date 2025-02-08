@@ -29,17 +29,10 @@ import {useTranslation} from "react-i18next";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
-import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
-import {EventRouteNames} from "@/routes/EventRoutes.jsx";
-import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {
-    eventRegistrationRedirect,
-    eventUstaSatelliteDataRegistrationRedirect,
     eventValidResponseRedirect
 } from "@/utils/RedirectUtils.jsx";
 import EventSignUpPartial from "@portal/event/registration/modules/EventSignUpPartial.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import {pNotify} from "@/components/notification/PNotify.jsx";
 import EventSignUpDetails from "@portal/event/registration/modules/EventSignUpDetails.jsx";
 import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpSkeleton.jsx";
 

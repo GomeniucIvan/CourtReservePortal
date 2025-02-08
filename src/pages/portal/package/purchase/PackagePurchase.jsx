@@ -31,6 +31,8 @@ import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
+import {navigationClearHistory} from "@/toolkit/HistoryStack.js";
+import {pNotify} from "@/components/notification/PNotify.jsx";
 
 const {Title, Text}  = Typography ;
 
@@ -93,13 +95,16 @@ function PackagePurchase() {
             }
             
             let postModel = {
-                packageId: packageId,
-                membersFamilySelected: selectedMemberIds.join(',')
+                PackageId: packageId,
+                MembersFamilySelected: selectedMemberIds.join(',')
             }
 
-            let response = await apiService.post(`/api/member-portal/packages/purchase-package?id=${orgId}&packageId=${packageId}`, postModel);
+            let response = await apiService.post(`/api/member-portal/packages/purchase-package?id=${orgId}`, postModel);
             if (toBoolean(response.IsValid)) {
                 const data = response.data;
+                navigationClearHistory();
+                
+                pNotify('Package successfully purchased.');
                 
                 if (toBoolean(data.IsRequireOnlinePayment)) {
                     let route = toRoute(ProfileRouteNames.PROCESS_PAYMENT, 'id', orgId);
@@ -155,7 +160,7 @@ function PackagePurchase() {
                     htmlType="submit"
                     disabled={isFetching}
                     loading={isLoading}
-                    onClick={() => {}}>
+                    onClick={() => {formik.submitForm()}}>
                 Purchase Package
             </Button>
         </FooterBlock>);
