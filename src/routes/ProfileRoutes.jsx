@@ -27,7 +27,6 @@ export const ProfileRouteNames = {
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
     PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`,
-
     PROCESS_PAYMENT: `/online/payments/processpayment/:id`,
 };
 

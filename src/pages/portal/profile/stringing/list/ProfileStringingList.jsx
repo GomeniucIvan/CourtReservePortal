@@ -18,6 +18,8 @@ import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import {useFormik} from "formik";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import ListFilter from "@/components/filter/ListFilter.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 
 const {Title, Text} = Typography;
 
@@ -30,7 +32,8 @@ function ProfileStringingList() {
         setIsFooterVisible,
         globalStyles,
         token,
-        setFooterContent
+        setFooterContent,
+        setDynamicPages
     } = useApp();
     const {orgId} = useAuth();
     
@@ -169,7 +172,10 @@ function ProfileStringingList() {
                                        key={index}
                                        arrowIcon={false}
                                        onClick={() => {
-
+                                           let route = toRoute(ProfileRouteNames.PROFILE_STRINGING_DETAILS, 'id', orgId);
+                                           route = `${route}?stringId=${stringingJob.Id}`;
+                                           setPage(setDynamicPages, `Job #${stringingJob.JobNumber}`, route);
+                                           navigate(route);
                                        }}>
                                 {toBoolean(stringingJob.IsUnpaid) ? (
                                     <Badge.Ribbon text={t('unpaid')} color={'orange'} className={globalStyles.urgentRibbon}>
