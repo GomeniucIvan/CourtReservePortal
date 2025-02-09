@@ -4,21 +4,19 @@ import {useApp} from "@/context/AppProvider.jsx";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {Button, Flex, Segmented, Skeleton, Typography, Badge} from "antd";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {useStyles} from "../styles.jsx";
+import {useStyles} from "../../styles.jsx";
 import {cx} from "antd-style";
 import {Card, Ellipsis} from "antd-mobile";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import apiService from "@/api/api.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
-import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
-import {costDisplay} from "@/utils/CostUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import PackagePartialDetails from "@portal/profile/billing/packages/modules/PackagePartialDetails.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useNavigate} from "react-router-dom";
-import HomeRoutes, {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 
 const {Title} = Typography
 

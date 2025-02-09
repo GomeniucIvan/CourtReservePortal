@@ -18,6 +18,7 @@ import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import Modal from "@/components/modal/Modal.jsx";
 const {Title, Text} = Typography;
 
+//ProfileRouteNames.PROFILE_BILLING_INVOICE_DETAILS
 function ProfileBillingInvoiceDetails() {
     const navigate = useNavigate();
     const [invoiceDetails, setInvoiceDetails] = useState(null);
@@ -63,7 +64,7 @@ function ProfileBillingInvoiceDetails() {
                         htmlType="submit"
                         onClick={() => {
                             let route = toRoute(ProfileRouteNames.PROFILE_INVOICE_PAY, 'id', orgId);
-                            navigate(`${route}&invoiceId=${invoiceDetails.Id}`);
+                            navigate(`${route}?invoiceId=${invoiceDetails.Id}`);
                         }}>
                     Pay Invoice
                 </Button>
@@ -143,7 +144,7 @@ function ProfileBillingInvoiceDetails() {
                     <Modal show={!isNullOrEmpty(selectedInvoiceItem)}
                            onClose={() => {setSelectedInvoiceItem(null)}}
                            showConfirmButton={false}
-                           title={`Invoice Items`}>
+                           title={`${selectedInvoiceItem?.BuildName} Items`}>
                         <>
                             {anyInList(invoiceDetails?.InvoiceItemDetails.filter(v => equalString(v.InvoiceItemId, selectedInvoiceItem?.InvoiceItemId))) &&
                                 <>

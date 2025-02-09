@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
 import {useStyles} from "../styles.jsx";
 import {cx} from "antd-style";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 const {Title, Text} = Typography;
 import {Card, Ellipsis} from "antd-mobile";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
@@ -17,11 +17,11 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {parseSafeInt} from "@/utils/NumberUtils.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
-import {useNavigate} from "react-router-dom";
+import {data, useNavigate} from "react-router-dom";
 import SGV from "@/components/svg/SVG.jsx";
 import FormInputsDateInterval from "@/form/input/FormInputsDateInterval.jsx";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
-import {subtractDateDays} from "@/utils/DateUtils.jsx";
+import {fromDateTimeStringToDate, subtractDateDays} from "@/utils/DateUtils.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
@@ -76,17 +76,24 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                 if (toBoolean(response?.IsValid)){
                     let respData = response.Data;
 
-                    formik.setValues({
-                        PaidStartDate: subtractDateDays(respData.CurrentDateString, 30),
-                        PaidEndDate: respData.CurrentDateString,
-                        PaymentsStartDate: subtractDateDays(respData.CurrentDateString, 30),
-                        PaymentsEndDate: respData.CurrentDateString,
-                        AdjustmentsStartDate: subtractDateDays(respData.CurrentDateString, 30),
-                        AdjustmentsEndDate: respData.CurrentDateString,
-                        AllStartDate: subtractDateDays(respData.CurrentDateString, 30),
-                        AllEndDate: respData.CurrentDateString,
+                    let startDate = subtractDateDays(respData.CurrentDateString, 30);
+                    let endDate = respData.CurrentDateString;
+                    
+                    let formikModel = {
                         CurrentDate: respData.CurrentDateString,
-                    })
+                        DrawerFilter: {
+                            PaidStartDate: startDate,
+                            PaidEndDate: endDate,
+                            PaymentsStartDate: startDate,
+                            PaymentsEndDate: endDate,
+                            AdjustmentsStartDate: startDate,
+                            AdjustmentsEndDate: endDate,
+                            AllStartDate: startDate,
+                            AllEndDate: endDate,
+                        }
+                    }
+                    
+                    formik.setValues(formikModel)
 
                     let balance = toBoolean(respData.MemberFamilyId) ?
                         parseSafeInt(respData.FamilyBalance)  :
@@ -143,7 +150,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
         }
         if ((isNullOrEmpty(paidFees) || isFilterChange) && equalString(selectedSegmentTab, 'Paid')){
             setPaidFees(null);
-            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPaidTransactions?id=${orgId}&startDate=${formik.values?.PaidStartDate}&endDate=${formik.values?.PaidEndDate}`);
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPaidTransactions?id=${orgId}&startDate=${formik.values?.DrawerFilter?.PaidStartDate}&endDate=${formik.values?.DrawerFilter?.PaidEndDate}`);
             if (toBoolean(response?.IsValid)) {
                 setPaidFees(response.Data);
             } else{
@@ -152,7 +159,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
         }
         if ((isNullOrEmpty(paymentsFees) || isFilterChange) && equalString(selectedSegmentTab, 'Payments')){
             setPaymentsFees(null);
-            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPayments?id=${orgId}&startDate=${formik.values?.PaymentsStartDate}&endDate=${formik.values?.PaymentsEndDate}`);
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetPayments?id=${orgId}&startDate=${formik.values?.DrawerFilter?.PaymentsStartDate}&endDate=${formik.values?.DrawerFilter?.PaymentsEndDate}`);
             if (toBoolean(response?.IsValid)) {
                 setPaymentsFees(response.Data);
             } else{
@@ -162,7 +169,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
         if ((isNullOrEmpty(adjustmentsFees) || isFilterChange) && equalString(selectedSegmentTab, 'Adjustments')){
             setAdjustmentsFees(null);
 
-            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetBalanceAdjustments?id=${orgId}&startDate=${formik.values?.AdjustmentsStartDate}&endDate=${formik.values?.AdjustmentsEndDate}`);
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetBalanceAdjustments?id=${orgId}&startDate=${formik.values?.DrawerFilter?.AdjustmentsStartDate}&endDate=${formik.values?.DrawerFilter?.AdjustmentsEndDate}`);
             if (toBoolean(response?.IsValid)) {
                 setAdjustmentsFees(response.Data);
             } else{
@@ -171,7 +178,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
         }
         if ((isNullOrEmpty(allFees) || isFilterChange) && equalString(selectedSegmentTab, 'All')){
             setAllFees(null);
-            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetAllTransactions?id=${orgId}&startDate=${formik.values?.AllStartDate}&endDate=${formik.values?.AllEndDate}`);
+            let response = await appService.getRoute(apiRoutes.MemberTransactionsUrl, `/app/Online/MyBalanceApi/GetAllTransactions?id=${orgId}&startDate=${formik.values?.DrawerFilter?.AllStartDate}&endDate=${formik.values?.DrawerFilter?.AllEndDate}`);
             if (toBoolean(response?.IsValid)) {
                 setAllFees(response.Data);
             } else{
@@ -181,14 +188,31 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
     }
 
     useEffect(() => {
-        if (!isNullOrEmpty(formik?.values?.CurrentDate) && !isFilterOpened) {
+        loadData();
+    }, [selectedSegmentTab]);
+    
+    useEffect(() => {
+        if (!isNullOrEmpty(formik?.values?.CurrentDate)) {
             loadData();
         }
-    }, [selectedSegmentTab, formik?.values]);
+    }, [selectedSegmentTab]);
 
     useEffect(() => {
-        if (!isNullOrEmpty(formik?.values?.CurrentDate) && !isFilterOpened) {
-            loadData(true);
+        const loadDataByFilter = async () => {
+            if (isFilterOpened) {
+                formik.setFieldValue("DrawerFilterKey", await generateHash(formik.values.DrawerFilter));
+            } else {
+                let previousHash = formik.values.DrawerFilterKey;
+                let currentHash = await generateHash(formik.values.DrawerFilter);
+
+                if (!equalString(currentHash, previousHash)) {
+                    loadData(true);
+                }
+            }
+        }
+        
+        if (!isNullOrEmpty(formik?.values?.CurrentDate)) {
+            loadDataByFilter()
         }
     }, [isFilterOpened]);
 
@@ -261,7 +285,10 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                                             </Title>
                                         }
 
-                                        <CardIconLabel icon={'calendar-time'} description={fee.FeeDateTimeDisplay}/>
+                                        {!isNullOrEmpty(fee.FeeDateTimeDisplay) &&
+                                            <CardIconLabel icon={'calendar-time'} description={fee.FeeDateTimeDisplay}/>
+                                        }
+                                        
                                         <CardIconLabel icon={'team'} description={fee.MemberDisplay}/>
                                         <CardIconLabel icon={'money'} description={fee.UnpaidAmountDisplay}/>
                                     </Card>
@@ -370,7 +397,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
             <DrawerBottom
                 showDrawer={!isNullOrEmpty(selectedDrawerFee)}
                 closeDrawer={() => {setSelectedDrawerFee(null)}}
-                label={selectedDrawerFee?.ReservationType}
+                label={selectedDrawerFee?.ReservationType || 'Transaction Details'}
                 showButton={!toBoolean(selectedDrawerFee?.IsPaid) ? true : false}
                 confirmButtonText={!toBoolean(selectedDrawerFee?.IsPaid) ? 'Pay' : ''}
                 onConfirmButtonClick={() => {
@@ -410,14 +437,14 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                 }}
             >
                 <PaddingBlock>
-                    <Flex vertical={true} gap={token.padding}>
+                    <Flex gap={token.padding}>
 
                         {(!isNullOrEmpty(paidFees) && equalString(selectedSegmentTab, 'paid')) &&
                             <FormInputsDateInterval formik={formik}
                                                     labelStart={'Start Date'}
                                                     labelEnd={'End Date'}
-                                                    nameStart={'PaidStartDate'}
-                                                    nameEnd={'PaidEndDate'}
+                                                    nameStart={'DrawerFilter.PaidStartDate'}
+                                                    nameEnd={'DrawerFilter.PaidEndDate'}
                                                     maxDate={formik?.values?.CurrentDate}
                             />
                         }
@@ -425,8 +452,8 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                             <FormInputsDateInterval formik={formik}
                                                     labelStart={'Start Date'}
                                                     labelEnd={'End Date'}
-                                                    nameStart={'PaymentsStartDate'}
-                                                    nameEnd={'PaymentsEndDate'}
+                                                    nameStart={'DrawerFilter.PaymentsStartDate'}
+                                                    nameEnd={'DrawerFilter.PaymentsEndDate'}
                                                     maxDate={formik?.values?.CurrentDate}
                             />
                         }
@@ -434,8 +461,8 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                             <FormInputsDateInterval formik={formik}
                                                     labelStart={'Start Date'}
                                                     labelEnd={'End Date'}
-                                                    nameStart={'AdjustmentsStartDate'}
-                                                    nameEnd={'AdjustmentsEndDate'}
+                                                    nameStart={'DrawerFilter.AdjustmentsStartDate'}
+                                                    nameEnd={'DrawerFilter.AdjustmentsEndDate'}
                                                     maxDate={formik?.values?.CurrentDate}
                             />
                         }
@@ -443,8 +470,8 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                             <FormInputsDateInterval formik={formik}
                                                     labelStart={'Start Date'}
                                                     labelEnd={'End Date'}
-                                                    nameStart={'AllStartDate'}
-                                                    nameEnd={'AllEndDate'}
+                                                    nameStart={'DrawerFilter.AllStartDate'}
+                                                    nameEnd={'DrawerFilter.AllEndDate'}
                                                     maxDate={formik?.values?.CurrentDate}
                             />
                         }

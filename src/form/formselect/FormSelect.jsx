@@ -123,7 +123,7 @@ const FormSelect = forwardRef(({
                         {...addCypressTag(name)}
                         ref={selectRef}
                         placeholder={innerPlaceholder}
-                        value={isNullOrEmpty(field.value) ? undefined : field.value}
+                        value={isNullOrEmpty(field.value) ? undefined : `${field.value}`}
                         open={false}
                         mode={toBoolean(multi) ? 'multiple' : undefined}
                         loading={toBoolean(loading)}
@@ -165,7 +165,7 @@ const FormSelect = forwardRef(({
                     <FormDrawerRadio
                         options={options}
                         multi={toBoolean(multi)}
-                        selectedCurrentValue={field.value}
+                        selectedCurrentValue={`${field.value}`}
                         multiSelectedValues={field.value}
                         onValueSelect={onDrawerOptionSelect}
                         setMultiSelectedValues={(e) => {

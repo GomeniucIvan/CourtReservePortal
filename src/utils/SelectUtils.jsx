@@ -129,6 +129,27 @@ export const memberPaymentProfiles = (profiles, includeNewCard, newCreditLabel) 
     return paymentTypes;
 }
 
+export const addSelectEmptyOption = (incList,
+                                     text = 'None', 
+                                     value = '', 
+                                     propText = 'Text',
+                                     propValue = 'Value',) => {
+    let newList = [];
+    
+    newList.push({
+        [propText]: text,
+        [propValue]: value
+    });
+
+    if (anyInList(incList)){
+        incList.forEach(item => {
+            newList.push(item)
+        })
+    }
+
+    return newList;
+}
+
 export const bookingTypes = bookingTypesFunc();
 export const filterDates = filterDatesFunc();
 export const usaStateList = usaStates();

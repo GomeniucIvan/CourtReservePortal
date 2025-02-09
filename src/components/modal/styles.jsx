@@ -105,6 +105,8 @@ export const useStyles = createStyles(({ css, token }) => ({
         padding: ${token.padding}px 0;
         border-bottom: 1px solid ${token.colorBorder};
         margin-bottom: ${token.padding}px;
+        margin-left: ${token.padding}px;
+        margin-right: ${token.padding}px;
     `,
     body: css`
         overflow-y: auto;

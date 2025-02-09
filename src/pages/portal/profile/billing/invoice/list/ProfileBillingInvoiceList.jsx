@@ -11,6 +11,8 @@ import * as React from "react";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {cx} from "antd-style";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 const {Title} = Typography;
 
 function ProfileBillingInvoiceList({selectedTab, tabsHeight}) {
@@ -22,12 +24,12 @@ function ProfileBillingInvoiceList({selectedTab, tabsHeight}) {
         availableHeight,
         setFooterContent
     } = useApp();
-    
+
     const navigate = useNavigate();
     let { orgId } = useAuth();
     const [invoices, setInvoices] = useState(null);
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
-    
+
     const fixHeaderItems = () => {
         setBodyHeight(availableHeight - tabsHeight);
     }
@@ -92,13 +94,16 @@ function ProfileBillingInvoiceList({selectedTab, tabsHeight}) {
                                 //VoidedRegenerated
                                 ribonColor = token.colorError;
                             }
-                            
+
                             return (
                                 <div key={index}>
                                     <Badge.Ribbon text={invoice.StatusToDisplay}
                                                   color={ribonColor}
                                                   className={globalStyles.urgentRibbon}>
-                                        <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
+                                        <Card className={cx(globalStyles.card, globalStyles.clickableCard)} onClick={() => {
+                                            let route = toRoute(ProfileRouteNames.PROFILE_BILLING_INVOICE_DETAILS, 'id', orgId);
+                                            navigate(`${route}?invoiceId=${invoice.Id}`)
+                                        }}>
                                             <Flex vertical={true}>
 
                                                 {!isNullOrEmpty(invoice.Number) &&

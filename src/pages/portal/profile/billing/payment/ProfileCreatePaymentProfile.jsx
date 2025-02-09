@@ -173,7 +173,6 @@ function ProfileCreatePaymentProfile({}) {
 
             {!isFetching &&
                 <FormPaymentProfile formik={formik}
-                                    isPaymentProfile={true}
                                     includeCustomerDetails={true}
                                     allowToSavePaymentProfile={false}
                                     ref={paymentProfileRef}

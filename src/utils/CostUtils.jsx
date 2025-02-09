@@ -29,11 +29,15 @@ export const calculateConvenienceFee = (total, org, onlyFee) => {
 
     let incrementedTotal = total;
 
-    if (!isNullOrEmpty(org) && !isNullOrEmpty(org?.convenienceFeeFixedAmount)) {
-        total += org.convenienceFeeFixedAmount || 0;
+    let convenienceFeeFixedAmount = org?.convenienceFeeFixedAmount || org?.ConvenienceFeeFixedAmount;
+    let convenienceFeePercent = org?.convenienceFeePercent || org?.ConvenienceFeePercent;
+    
+    
+    if (!isNullOrEmpty(org) && !isNullOrEmpty(convenienceFeeFixedAmount)) {
+        total += convenienceFeeFixedAmount || 0;
     }
 
-    const fixedConvFee = org?.convenienceFeePercent || 0;
+    const fixedConvFee = convenienceFeePercent || 0;
     if (fixedConvFee > 0) {
         total += (total * fixedConvFee) / 100;
     }

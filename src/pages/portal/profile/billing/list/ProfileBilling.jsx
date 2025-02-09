@@ -4,11 +4,11 @@ import {selectedTabStorage, setTabStorage} from "@/storage/AppStorage.jsx";
 import {Tabs} from "antd";
 import {useEffect, useRef, useState} from "react";
 import ProfileBillingTransactions from "./ProfileBillingTransactions.jsx";
-import ProfileBillingPackages from "./ProfileBillingPackages.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
 import {getQueryParameter} from "@/utils/RouteUtils.jsx";
 import ProfileBillingInvoiceList from "@portal/profile/billing/invoice/list/ProfileBillingInvoiceList.jsx";
+import ProfileBillingPackages from "@portal/profile/billing/packages/list/ProfileBillingPackages.jsx";
 
 function ProfileBilling({tabKey}) {
     const navigate = useNavigate();
