@@ -280,7 +280,7 @@ function ProfileMyMembership() {
                             <Flex vertical={true} gap={token.paddingSM}>
                                 {(anyInList(apiData?.Badges) || toBoolean(apiData?.BillingDetails?.IsSuspended)) &&
                                     <>
-                                        <Flex gap="4px 0" wrap>
+                                        <Flex gap={4}>
                                             {anyInList(apiData?.Badges) &&
                                                 <>
                                                     {apiData.Badges.map((badge, index) => {

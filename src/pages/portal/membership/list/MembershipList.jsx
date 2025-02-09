@@ -1,13 +1,13 @@
 ﻿import {useNavigate, useParams} from "react-router-dom";
 
-function MembershipList() {
+function MembershipCard() {
     const navigate = useNavigate();
     let { orgId } = useParams();
 
     return (
-        <div>
+        <>
             MembershipList
-        </div>
+        </>
     )
 }
 

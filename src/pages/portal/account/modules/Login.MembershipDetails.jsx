@@ -80,7 +80,7 @@ function LoginMembershipDetails({ mainFormik, isLastStep, onNext }) {
                     <Flex vertical={true} gap={token.padding}>
                         <Flex vertical={true} gap={token.paddingLG}>
                             {anyInList(membership?.Badges) &&
-                                <Flex gap="4px 0" wrap>
+                                <Flex gap={4}>
                                     {membership.Badges.map((badge, index) => {
                                         return (
                                             <Tag key={index}
