@@ -31,7 +31,7 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
         setIsFooterVisible,
         setFooterContent
     } = useApp();
-    
+
     const {orgId} = useAuth();
     const {setHeaderRightIcons} = useHeader();
     const navigate = useNavigate();
@@ -40,11 +40,11 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
     const [currentPackages, setCurrentPackages] = useState(null);
     const [usedPackages, setUsedPackages] = useState(null);
     const [showPurchaseBtn, setShowPurchaseBtn] = useState(false);
-    
+
     const {styles} = useStyles();
 
     const headerRef = useRef();
-    
+
     const fixHeaderItems = () => {
         if (headerRef.current) {
             setBodyHeight(availableHeight - headerRef.current.offsetHeight - tabsHeight - token.padding);
@@ -73,7 +73,7 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
     useEffect(() => {
         fixHeaderItems();
     }, [headerRef, availableHeight]);
-    
+
     useEffect(() => {
         if (equalString(selectedTab, 'packages')) {
             setIsFooterVisible(true);
@@ -100,7 +100,7 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
     useEffect(() => {
         loadData();
     }, [])
-    
+
     return (
         <>
             <div ref={headerRef}>
@@ -137,7 +137,10 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                                             <Badge.Ribbon text={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? 'Unpaid' : ''}
                                                           color={'orange'}
                                                           className={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? globalStyles.urgentRibbon : globalStyles.hideRibbon}>
-                                                <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
+                                                <Card className={cx(globalStyles.card, globalStyles.clickableCard)}onClick={() => {
+                                                    let route = toRoute(ProfileRouteNames.PROFILE_PACKAGE_DETAILS, 'id', orgId);
+                                                    navigate(`${route}?packageId=${pack.Id}&packageSaleId=${pack.PackageSaleId}`);
+                                                }}>
                                                     <Flex vertical={true}>
                                                         <PackagePartialDetails pack={pack}/>
                                                     </Flex>
@@ -157,20 +160,20 @@ function ProfileBillingPackages({selectedTab, tabsHeight}) {
                                     {usedPackages.map((pack, index) => (
                                         <div key={index}>
                                             <Badge.Ribbon text={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? 'Unpaid' : ''}
-                                                          color={'orange'} 
+                                                          color={'orange'}
                                                           className={(equalString(pack.FeeStatus, 1) || equalString(pack.FeeStatus, 3)) ? globalStyles.urgentRibbon : globalStyles.hideRibbon}>
                                                 <Card className={cx(globalStyles.card, globalStyles.clickableCard)}
-                                                onClick={() => {
-                                                    let route = toRoute(ProfileRouteNames.PROFILE_PACKAGE_DETAILS, 'id', orgId);
-                                                    navigate(`${route}?packageId=${pack.Id}&packageSaleId=${pack.PackageSaleId}`);
-                                                }}>
+                                                      onClick={() => {
+                                                          let route = toRoute(ProfileRouteNames.PROFILE_PACKAGE_DETAILS, 'id', orgId);
+                                                          navigate(`${route}?packageId=${pack.Id}&packageSaleId=${pack.PackageSaleId}`);
+                                                      }}>
                                                     <Flex vertical={true}>
                                                         <PackagePartialDetails pack={pack}/>
                                                     </Flex>
                                                 </Card>
                                             </Badge.Ribbon>
                                         </div>
-                                        
+
                                     ))}
                                 </Flex>
                             }

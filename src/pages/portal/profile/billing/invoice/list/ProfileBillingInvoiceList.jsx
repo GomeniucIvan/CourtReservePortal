@@ -106,7 +106,7 @@ function ProfileBillingInvoiceList({selectedTab, tabsHeight}) {
                                                 }
 
                                                 {!isNullOrEmpty(invoice.MemberFullName) &&
-                                                    <CardIconLabel icon={'person'}
+                                                    <CardIconLabel icon={'user-regular'}
                                                                    description={invoice.MemberFullName}/>
                                                 }
 

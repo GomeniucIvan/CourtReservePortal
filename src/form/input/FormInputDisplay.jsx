@@ -54,8 +54,6 @@ const FormInputDisplay = ({ label,
         )
     }
     
-    console.log(value)
-    
     return (
         <div className={cx(globalStyles.formBlock, className)}>
             <label htmlFor={name} className={globalStyles.globalLabel} style={{paddingBottom: '4px'}}>
