@@ -15,6 +15,8 @@ import SmsAlertModal from "@portal/home/smsalert/SmsAlertModal.jsx";
 import PackageList from "@portal/package/list/PackageList.jsx";
 import PackageDetails from "@portal/package/details/PackageDetails.jsx";
 import PackagePurchase from "@portal/package/purchase/PackagePurchase.jsx";
+import MembershipList from "@portal/membership/list/MembershipList.jsx";
+import MembershipDetails from "@portal/membership/details/MembershipDetails.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -32,11 +34,12 @@ export const HomeRouteNames = {
     DISCLOSURE_PENDING_LOGIN: `/online/disclosures/pending/:id`,
     MY_CLUBS: `/online/myprofile/myclubs`,
     MEMBER_GROUP: `/online/publicmembergroup/MemberGroup/:id`,
-    MEMBERSHIPS: `/online/memberships/index`,
     TEXT_MESSAGE_MODAL: `/online/textmessage/optin/:id`, //textmessage/optin is bindned to check current page
     PACKAGE_LIST: `/online/packages/list/:id`,
     PACKAGE_DETAILS: `/online/packages/details/:id`,
     PACKAGE_PURCHASE: `/online/packages/purchasepackages/:id`,
+    MEMBERSHIPS: `/online/memberships/index`,
+    MEMBERSHIP_DETAILS: `/online/memberships/viewmembership/:id`
 };
 
 const HomeRoutes = [
@@ -139,6 +142,18 @@ const HomeRoutes = [
         path: HomeRouteNames.PACKAGE_PURCHASE,
         element: <PackagePurchase />,
         title: 'packagePurchase',
+        header: true
+    },
+    {
+        path: HomeRouteNames.MEMBERSHIPS,
+        element: <MembershipList />,
+        title: 'membershipList',
+        header: true
+    },
+    {
+        path: HomeRouteNames.MEMBERSHIP_DETAILS,
+        element: <MembershipDetails />,
+        title: 'membershipDetails',
         header: true
     }
 ];

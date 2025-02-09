@@ -20,15 +20,14 @@ import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
 import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOrganization.ReviewModal.jsx";
 import MembershipCard from "@/components/modules/membershipcard/MembershipCard.jsx";
+import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
 
 const {Text, Title, Link} = Typography;
 
 function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'create-account' }) {
     const {setHeaderTitleKey} = useHeader();
-    const {setIsLoading, globalStyles, token, setIsFooterVisible, setFooterContent } = useApp();
+    const {setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
     const {spGuideId} = useAuth();
-    const {t} = useTranslation('login');
-    const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
     const [memberships, setMemberships] = useState(null);
     const [showReviewModal, setShowReviewModal] = useState(null);
@@ -39,8 +38,6 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'crea
         setHeaderTitleKey('loginMembership');
     }, []);
     
-    const { styles } = useStyles();
-
     useEffect(() => {
         loadMemberships();
     }, []);
@@ -92,7 +89,7 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'crea
             {!isFetching &&
                 <>
                     {!anyInList(memberships) ? (
-                        <Empty />
+                        <EmptyBlock description={'No memberships found.'} />
                     ) : (
                         <Flex vertical={true} gap={token.padding}>
                             {memberships.map((membership, index) => {
