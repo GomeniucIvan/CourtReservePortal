@@ -23,6 +23,7 @@ import FormDateOfBirth from "@/form/formdateofbirth/FormDateOfBirth.jsx";
 import FormCheckbox from "@/form/formcheckbox/FomCheckbox.jsx";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import SVG from "@/components/svg/SVG.jsx";
+import ProgressBar from "@/components/bar/ProgressBar.jsx";
 
 const { Text, Title } = Typography;
 
@@ -33,6 +34,7 @@ function DevOther() {
                 <CardIconLabel icon={'home'} description={'Icon Description CardIconLabel'} size={16} />
                 <SVG icon={'home'} replaceColor={true} color={'red'} size={16} />
                 <SVG icon={'home'} size={16} />
+                <ProgressBar current={6} total={12} />
             </Flex>
         </PaddingBlock>
     );

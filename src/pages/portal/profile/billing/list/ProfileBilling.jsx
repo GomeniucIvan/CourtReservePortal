@@ -11,6 +11,7 @@ import {getQueryParameter} from "@/utils/RouteUtils.jsx";
 import ProfileBillingInvoiceList from "@portal/profile/billing/invoice/list/ProfileBillingInvoiceList.jsx";
 
 function ProfileBilling({tabKey}) {
+    const navigate = useNavigate();
     const location = useLocation();
     const page = getQueryParameter(location, "page");
     let tabToShow = tabKey;
@@ -30,19 +31,16 @@ function ProfileBilling({tabKey}) {
             const navElement = tabsRef.current.querySelector('.ant-tabs-nav');
             if (navElement) {
                 //should include bottom margin as well
-                setTabHeight(navElement.offsetHeight + token.padding);
+                // + token.padding
+                setTabHeight(navElement.offsetHeight);
             }
         }
     }, [tabsRef]);
 
     useEffect(() => {
-        // if (equalString(selectedTab, 'transactions')){
-        //     setHeaderTitle('Transactions')
-        // } else if (equalString(selectedTab, 'packages')){
-        //     setHeaderTitle('Packages')
-        // } else if (equalString(selectedTab, 'invoices')){
-        //     setHeaderTitle('Invoices')
-        // }
+        if (selectedTab) {
+            navigate(`?page=${selectedTab}`, { replace: true });
+        }
     },[selectedTab])
     
     return (
