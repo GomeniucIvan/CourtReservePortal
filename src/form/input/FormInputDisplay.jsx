@@ -1,12 +1,13 @@
 import React, {useRef} from "react";
-import {Input, Skeleton} from "antd";
+import {Input, Skeleton, Typography} from "antd";
 import {calculateSkeletonLabelWidth, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
 import {useStyles} from "./styles.jsx";
+const {Text} = Typography;
 
 const FormInputDisplay = ({ label,
-                       form,
+                       formik,
                        name,
                        value,
                        noBottomPadding,
@@ -23,9 +24,9 @@ const FormInputDisplay = ({ label,
     
     const inputRef = useRef(null);
 
-    if (form && typeof form.getFieldProps === 'function') {
-        field = form.getFieldProps(name);
-        meta = form.getFieldMeta(name);
+    if (formik && typeof formik.getFieldProps === 'function') {
+        field = formik.getFieldProps(name);
+        meta = formik.getFieldMeta(name);
 
         if (field.value === null) {
             field = { ...field, value: '' };
@@ -53,23 +54,30 @@ const FormInputDisplay = ({ label,
         )
     }
     
+    console.log(value)
+    
     return (
         <div className={cx(globalStyles.formBlock, className)}>
-            <label htmlFor={name} className={globalStyles.globalLabel}>
+            <label htmlFor={name} className={globalStyles.globalLabel} style={{paddingBottom: '4px'}}>
                 {label}
             </label>
 
-            <Input
-                {...props}
-                {...field}
-                readOnly={true}
-                defaultValue={value}
-                name={name}
-                className={styles.inputFilled}
-                variant="filled"
-                autoCorrect="off"
-                autoComplete="off"
-                ref={inputRef}/>
+            <Text>
+                {!isNullOrEmpty(value) &&
+                    <div dangerouslySetInnerHTML={{__html: value}} style={{color: token.colorLabelValue}}/>
+                }
+            </Text>
+            {/*<Input*/}
+            {/*    {...props}*/}
+            {/*    {...field}*/}
+            {/*    readOnly={true}*/}
+            {/*    defaultValue={value}*/}
+            {/*    name={name}*/}
+            {/*    className={styles.inputFilled}*/}
+            {/*    variant="filled"*/}
+            {/*    autoCorrect="off"*/}
+            {/*    autoComplete="off"*/}
+            {/*    ref={inputRef}/>*/}
             
         </div>
     )

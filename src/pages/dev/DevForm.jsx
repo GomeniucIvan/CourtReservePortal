@@ -48,7 +48,7 @@ function DevForm() {
             inputRequired: '',
             inputSearch: '',
             inputMask: '',
-            formInputDisplay: 'Test Input Value',
+            formInputDisplay: 'Test Input Value - by name or /value',
             
             
             textarea: '',
@@ -99,7 +99,7 @@ function DevForm() {
            </Flex>
 
             <Divider />
-            <FormInputDisplay formik={formik} name={'formInputDisplay'} label={'FormInputDisplay'} placeholder={'FormInputDisplay'} />
+            <FormInputDisplay formik={formik} name={'formInputDisplay'} label={'label'} placeholder={'FormInputDisplay'} />
             <Divider />
             <Flex vertical={true} gap={16}>
                 <FormTextarea formik={formik} name={'textarea'} label={'Textarea'} placeholder={'Textarea'} />

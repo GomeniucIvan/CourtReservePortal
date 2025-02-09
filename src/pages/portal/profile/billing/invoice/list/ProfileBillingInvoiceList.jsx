@@ -29,14 +29,12 @@ function ProfileBillingInvoiceList({selectedTab, tabsHeight}) {
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
     
     const fixHeaderItems = () => {
-        console.log(tabsHeight)
-        
         setBodyHeight(availableHeight - tabsHeight);
     }
 
     const loadData = async () => {
         let response = await appService.get(navigate, `/app/Online/MyInvoices/GetAllInvoices?id=${orgId}`);
-        console.log(response);
+
         if (toBoolean(response?.IsValid)) {
             setInvoices(response?.Data);
             fixHeaderItems()

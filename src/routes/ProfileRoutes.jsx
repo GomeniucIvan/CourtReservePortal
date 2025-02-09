@@ -12,6 +12,8 @@ import ProfileBillingPayment from "@portal/profile/billing/payment/ProfileBillin
 import ProfileBookingList from "@portal/profile/booking/list/ProfileBookingList.jsx";
 import ProfileCreatePaymentProfile from "@portal/profile/billing/payment/ProfileCreatePaymentProfile.jsx";
 import ProfilePackageDetails from "@portal/profile/billing/packages/details/ProfilePackageDetails.jsx";
+import ProfileBillingInvoiceDetails from "@portal/profile/billing/invoice/details/ProfileBillingInvoiceDetails.jsx";
+import ProfileBillingInvoicePayment from "@portal/profile/billing/invoice/payment/ProfileBillingInvoicePayment.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
@@ -25,6 +27,8 @@ export const ProfileRouteNames = {
     PROFILE_MEMBERSHIP: `/online/myprofile/mymembership/:id`,
     PROFILE_BILLING: `/online/mybalance/index/:id`,
     PROFILE_BILLING_INVOICES: `/online/myinvoices/index/:id`,
+    PROFILE_BILLING_INVOICE_DETAILS: `/online/myinvoices/viewmyinvoice/:id`,
+    PROFILE_INVOICE_PAY: `/online/myinvoices/payinvoice/:id`,
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
     PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`,
@@ -89,7 +93,19 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.PROFILE_BILLING_INVOICES,
         element: <ProfileBilling tabKey={'invoices'} />,
-        title: 'billing',
+        title: 'invoices',
+        disablePullDown: true
+    },
+    {
+        path: ProfileRouteNames.PROFILE_BILLING_INVOICE_DETAILS,
+        element: <ProfileBillingInvoiceDetails />,
+        title: 'invoiceDetails',
+        disablePullDown: true
+    },
+    {
+        path: ProfileRouteNames.PROFILE_INVOICE_PAY,
+        element: <ProfileBillingInvoicePayment />,
+        title: 'invoicePay',
         disablePullDown: true
     },
     {

@@ -6,9 +6,9 @@ import {useEffect, useRef, useState} from "react";
 import ProfileBillingTransactions from "./ProfileBillingTransactions.jsx";
 import ProfileBillingPackages from "./ProfileBillingPackages.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
-import ProfileBillingInvoiceList from "../invoice/ProfileBillingInvoiceList.jsx";
 import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
 import {getQueryParameter} from "@/utils/RouteUtils.jsx";
+import ProfileBillingInvoiceList from "@portal/profile/billing/invoice/list/ProfileBillingInvoiceList.jsx";
 
 function ProfileBilling({tabKey}) {
     const location = useLocation();

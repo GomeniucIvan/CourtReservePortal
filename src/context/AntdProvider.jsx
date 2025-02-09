@@ -96,7 +96,8 @@ export const AntdProvider = ({ children }) => {
                             colorTextTertiary: 'rgba(0, 0, 0, 0.45)',
                             colorInfoText: '#1677ff',
                             colorSplit: '#d9d9d9', //divider color
-                            colorBorderSecondary: '#d9d9d9' //cards color
+                            colorBorderSecondary: '#d9d9d9', //cards color
+                            colorLabelValue : '#616161', //FormInputDisplay
                         },
                         components: {
                             Custom: {
