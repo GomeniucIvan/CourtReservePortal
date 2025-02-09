@@ -32,7 +32,7 @@ export const HomeRouteNames = {
     DISCLOSURE_PENDING_LOGIN: `/online/disclosures/pending/:id`,
     MY_CLUBS: `/online/myprofile/myclubs`,
     MEMBER_GROUP: `/online/publicmembergroup/MemberGroup/:id`,
-    MEMBERSHIPS: `/memberships`,
+    MEMBERSHIPS: `/online/memberships/index`,
     TEXT_MESSAGE_MODAL: `/online/textmessage/optin/:id`, //textmessage/optin is bindned to check current page
     PACKAGE_LIST: `/online/packages/list/:id`,
     PACKAGE_DETAILS: `/online/packages/details/:id`,

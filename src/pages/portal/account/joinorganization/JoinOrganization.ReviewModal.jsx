@@ -122,9 +122,6 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
             SaveDataForFutureUse: reviewData?.card_savePaymentProfile,
         }
         
-        console.log(postModel);
-        return;
-        
         let response = await appService.post(`/app/Online/Portal/SignUp?id=${orgIdToCreateAccount}`, postModel);
 
         if (toBoolean(response?.IsValid)){
@@ -145,7 +142,7 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
                         break;
 
                     case 'paymymembershipfees':
-                        let paymentOptions = toRoute(ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST, 'id', orgIdToCreateAccount);
+                        let paymentOptions = toRoute(ProfileRouteNames.PROFILE_PAY_MY_MEMBERSHIP, 'id', orgIdToCreateAccount);
                         navigate(paymentOptions);
                         break;
 

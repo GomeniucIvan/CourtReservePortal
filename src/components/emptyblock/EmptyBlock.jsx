@@ -1,13 +1,12 @@
-﻿import {Empty} from "antd";
+﻿import EntityEmptyBlock from "@/components/entitycard/EntityEmptyBlock.jsx";
 
 export const emptyBlockTypes = {
     WAIVER: 'waiver'
 }
 
 function EmptyBlock({description, type}) {
-
     return (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={description} />
+        <EntityEmptyBlock text={description} height={80} />
     );
 }
 

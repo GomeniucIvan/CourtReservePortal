@@ -123,7 +123,7 @@ const FormSelect = forwardRef(({
                         {...addCypressTag(name)}
                         ref={selectRef}
                         placeholder={innerPlaceholder}
-                        value={isNullOrEmpty(field.value) ? undefined : `${field.value}`}
+                        value={isNullOrEmpty(field.value) ? undefined : toBoolean(multi) ? field.value : `${field.value}`}
                         open={false}
                         mode={toBoolean(multi) ? 'multiple' : undefined}
                         loading={toBoolean(loading)}

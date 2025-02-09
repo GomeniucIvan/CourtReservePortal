@@ -2,7 +2,6 @@ import ProfileBookingDetails from "@portal/reservation/details/ReservationDetail
 import ReservationRegistration from "@portal/reservation/registration/ReservationRegistration.jsx";
 import ProfileFamilyList from "@portal/profile/family/ProfileFamilyList.jsx";
 import ProfileCalendarFeed from "@portal/profile/calendar/ProfileCalendarFeed.jsx";
-import ProfileMembershipDetails from "@portal/profile/membership/details/ProfileMembershipDetails.jsx";
 import ProfileBilling from "@portal/profile/billing/list/ProfileBilling.jsx";
 import MyProfile from "@portal/profile/myprofile/MyProfile.jsx";
 import ProfileStringingList from "@portal/profile/stringing/list/ProfileStringingList.jsx";
@@ -14,6 +13,7 @@ import ProfileCreatePaymentProfile from "@portal/profile/billing/payment/Profile
 import ProfilePackageDetails from "@portal/profile/billing/packages/details/ProfilePackageDetails.jsx";
 import ProfileBillingInvoiceDetails from "@portal/profile/billing/invoice/details/ProfileBillingInvoiceDetails.jsx";
 import ProfileBillingInvoicePayment from "@portal/profile/billing/invoice/payment/ProfileBillingInvoicePayment.jsx";
+import ProfileMyMembership from "@portal/profile/membership/mymembership/ProfileMyMembership.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
@@ -31,7 +31,7 @@ export const ProfileRouteNames = {
     PROFILE_INVOICE_PAY: `/online/myinvoices/payinvoice/:id`,
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
-    PROFILE_PAYMENT_PROFILE_LIST: `/online/paymentoptions/index/:id`,
+    PROFILE_PAY_MY_MEMBERSHIP: `/online/paymentoptions/PayMyMembershipFees/:id`,
     PROFILE_CREATE_PAYMENT_PROFILE: `/online/paymentoptions/addpaymentoption/:id`, //Online/PaymentOptions/AddPaymentoption/6969
     PROFILE_PACKAGE_DETAILS: `/online/mybalance/portalpackagepunchdetails/:id`,
     
@@ -81,7 +81,7 @@ const ProfileRoutes = [
     },
     {
         path: ProfileRouteNames.PROFILE_MEMBERSHIP,
-        element: <ProfileMembershipDetails />,
+        element: <ProfileMyMembership />,
         title: 'myMembership'
     },
     {
@@ -131,7 +131,7 @@ const ProfileRoutes = [
         title: 'stringing'
     },
     {
-        path: ProfileRouteNames.PROFILE_PAYMENT_PROFILE_LIST,
+        path: ProfileRouteNames.PROFILE_PAY_MY_MEMBERSHIP,
         element: <ProfilePaymentProfileList />,
         title: 'paymentProfiles'
     },

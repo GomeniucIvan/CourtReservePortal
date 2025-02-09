@@ -74,9 +74,7 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'crea
         },
     });
 
-    const princingOptionModalHtml = (membership, onClose) => {
-        
-        
+    const pricingOptionModalHtml = (membership, onClose) => {
         return(
             <Flex vertical={true} gap={24}>
                 <Flex vertical={true} gap={12}>
@@ -150,7 +148,7 @@ function LoginMemberships({ mainFormik, onMembershipSelect, onSkip, page = 'crea
                                             <Flex vertical={true} gap={token.paddingLG}>
                                                 <Flex vertical={true} gap={token.paddingLG}>
                                                     {anyInList(membership?.Badges) &&
-                                                        <Flex gap="4px 0" wrap>
+                                                        <Flex gap={4}>
                                                             {membership.Badges.map((badge, index) => {
                                                                 return (
                                                                     <Tag key={index}
