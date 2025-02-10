@@ -1,7 +1,7 @@
 ﻿import { createStyles } from 'antd-style';
 
 export const useStyles = createStyles(({ css, token }) => ({
-    membershipCard: css`
+  membershipCard: css`
     box-shadow: none;
     
     .adm-card-body {
@@ -19,10 +19,10 @@ export const useStyles = createStyles(({ css, token }) => ({
       color: ${token.colorPrimary};
     }
   `,
-    membershipWithTags: css`
+  membershipWithTags: css`
     margin-top: 10px;
   `,
-    membershipTags: css`
+  membershipTags: css`
     gap: 4px 0px;
     position: absolute;
     top: -10px;
@@ -31,7 +31,7 @@ export const useStyles = createStyles(({ css, token }) => ({
       margin: 0px;
     }
   `,
-    membershipFooterBlock: css`
+  membershipFooterBlock: css`
     background-color: color-mix(in srgb, ${token.colorPrimary} 10%, transparent) ;
     border-bottom-left-radius: ${token.borderRadius}px;
     border-bottom-right-radius: ${token.borderRadius}px;
@@ -41,4 +41,10 @@ export const useStyles = createStyles(({ css, token }) => ({
       color: ${token.colorPrimary};
     }
   `,
+  membershipReviewCard: css`
+        padding: ${token.paddingLG}px ${token.padding}px;
+        background-color: ${token.colorBgLayout};
+        border: 1px solid ${token.colorBorder};
+        border-radius: ${token.borderRadius}px;
+        `
 }));

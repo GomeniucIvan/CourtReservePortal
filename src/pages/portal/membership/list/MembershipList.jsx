@@ -9,9 +9,12 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Empty, Flex, Skeleton} from "antd";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
-import MembershipCard from "@/components/modules/membershipcard/MembershipCard.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import MembershipCard from "@/components/modules/membership/MembershipCard.jsx";
 
 function MembershipList() {
+    const navigate = useNavigate();
     const {setIsLoading, token, setIsFooterVisible, setFooterContent } = useApp();
     const {orgId} = useAuth();
     const [isFetching, setIsFetching] = useState(true);
@@ -42,7 +45,8 @@ function MembershipList() {
     }, []);
 
     const onMembershipSelect = (membership) => {
-
+        let route = toRoute(HomeRouteNames.MEMBERSHIP_DETAILS, 'id', orgId);
+        navigate(`${route}?membershipId=${membership.Id}`);
     }
 
     return (

@@ -61,5 +61,7 @@
   "locationList": "My Location(s)",
   "textMessageOptIn": "Text Messaging Opt-In",
   "packages": "Packages",
-  "packageDetails": "Package Details"
+  "packageDetails": "Package Details",
+  "membershipDetails": "Membership Details",
+  "membershipReview": "Review"
 }

@@ -107,6 +107,7 @@ function ProfileBillingInvoicePayment() {
 
             let captchaToken = await recaptchaRef.current.executeAsync();
             let paymentProfileId = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : values?.PaymentProfileId;
+            let accountType =  (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : values?.card_accountType;
             
             let postModel = {
                 ...modelData,
@@ -119,7 +120,7 @@ function ProfileBillingInvoicePayment() {
                 },
                 BillingInformation: {
                     ...modelData.BillingInformation,
-                    AccountType: values?.card_accountType,
+                    AccountType: accountType,
                     Country: values?.card_country,
                     StripeBankAccountToken: values?.card_number,
                     CardNumber: values?.card_number,

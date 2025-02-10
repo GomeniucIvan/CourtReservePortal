@@ -6,20 +6,13 @@ import {Button, Descriptions, Divider, Empty, Flex, Input, Skeleton, Tag, Typogr
 import {anyInList, equalString, isNullOrEmpty, moreThanOneInList, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import apiService from "@/api/api.jsx";
-import {useNavigate} from "react-router-dom";
-import {useTranslation} from "react-i18next";
-import {cx} from "antd-style";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import {Card} from "antd-mobile";
-import {useStyles} from "./../styles.jsx";
 import * as React from "react";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
-import SVG from "@/components/svg/SVG.jsx";
-import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import LoginCreateAccountReviewModal from "@portal/account/login/Login.CreateAccountReviewModal.jsx";
 import JoinOrganizationReviewModal from "@portal/account/joinorganization/JoinOrganization.ReviewModal.jsx";
-import MembershipCard from "@/components/modules/membershipcard/MembershipCard.jsx";
+import MembershipCard from "@/components/modules/membership/MembershipCard.jsx";
 import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
 
 const {Text, Title, Link} = Typography;

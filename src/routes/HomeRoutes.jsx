@@ -17,6 +17,7 @@ import PackageDetails from "@portal/package/details/PackageDetails.jsx";
 import PackagePurchase from "@portal/package/purchase/PackagePurchase.jsx";
 import MembershipList from "@portal/membership/list/MembershipList.jsx";
 import MembershipDetails from "@portal/membership/details/MembershipDetails.jsx";
+import MembershipReview from "@portal/membership/review/MembershipReview.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -39,7 +40,8 @@ export const HomeRouteNames = {
     PACKAGE_DETAILS: `/online/packages/details/:id`,
     PACKAGE_PURCHASE: `/online/packages/purchasepackages/:id`,
     MEMBERSHIPS: `/online/memberships/index`,
-    MEMBERSHIP_DETAILS: `/online/memberships/viewmembership/:id`
+    MEMBERSHIP_DETAILS: `/online/memberships/viewmembership/:id`,
+    MEMBERSHIP_REVIEW: `/online/memberships/review/:id`
 };
 
 const HomeRoutes = [
@@ -154,6 +156,12 @@ const HomeRoutes = [
         path: HomeRouteNames.MEMBERSHIP_DETAILS,
         element: <MembershipDetails />,
         title: 'membershipDetails',
+        header: true
+    },
+    {
+        path: HomeRouteNames.MEMBERSHIP_REVIEW,
+        element: <MembershipReview />,
+        title: 'membershipReview',
         header: true
     }
 ];
