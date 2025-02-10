@@ -144,7 +144,8 @@ const MembershipPurchaseReview = ({selectedMembership,
                 <Divider />
             }
 
-            {(signupData && !isNullOrEmpty(signupData.Disclosures) && toBoolean(signupData.IsDisclosuresRequired)) &&
+            {((signupData && !isNullOrEmpty(signupData.Disclosures) && toBoolean(signupData.IsDisclosuresRequired)) ||
+                anyInList(formik?.values?.disclosures)) &&
                 <PaddingBlock topBottom={!visibleSeparatorByKey('billing-disclosure')}>
                     <FormDisclosures formik={formik}
                                      disclosureHtml={signupData.Disclosures}

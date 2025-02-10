@@ -11,7 +11,7 @@ import * as React from "react";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {cx} from "antd-style";
 import {useHeader} from "@/context/HeaderProvider.jsx";
-import {randomNumber} from "@/utils/NumberUtils.jsx";
+import {parseSafeInt, randomNumber} from "@/utils/NumberUtils.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
@@ -107,7 +107,7 @@ function ProfileBillingInvoicePayment() {
 
             let captchaToken = await recaptchaRef.current.executeAsync();
             let paymentProfileId = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : values?.PaymentProfileId;
-            let accountType =  (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : values?.card_accountType;
+            let accountType =  (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : parseSafeInt(values?.card_accountType, '');
             
             let postModel = {
                 ...modelData,

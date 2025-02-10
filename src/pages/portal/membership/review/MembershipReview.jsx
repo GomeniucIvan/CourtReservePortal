@@ -18,7 +18,7 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {Button, Divider, Flex, Skeleton, Typography} from "antd";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import {randomNumber} from "@/utils/NumberUtils.jsx";
+import {parseSafeInt, randomNumber} from "@/utils/NumberUtils.jsx";
 import MembershipDetailedDetails from "@/components/modules/membership/MembershipDetailedDetails.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
@@ -67,8 +67,8 @@ function MembershipReview() {
         disclosureAgree: false,
         hiddenFortisTokenId: '',
         disclosures: [],
-        firstName: authData?.FirstName,
-        lastName: authData?.LastName,
+        firstName: authData?.MemberFirstName,
+        lastName: authData?.MemberLastName,
         PaymentProfileId: ''
     };
 
@@ -82,8 +82,12 @@ function MembershipReview() {
             //card details
             let formikPaymentFrequency = formik?.values?.paymentFrequency;
             const isMembershipRequirePayment = (membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(signupData?.RequireCardOnFile));
-            let isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment, paymentInfoData);
+            let isValidPaymentProfile = true;
 
+            if (equalString(formik?.values?.PaymentProfileId, 1)) {
+                isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment, paymentInfoData)
+            }
+            
             if (moreThanOneInList(selectedMembership?.Prices) && isNullOrEmpty(formik?.values?.paymentFrequency)) {
                 setFormikErrorN(formik, 'paymentFrequency', 'Pricing Option is required.');
                 isValidFormik = false;
@@ -93,24 +97,26 @@ function MembershipReview() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            if (paymentProfileRef.current) {
-                let isValidTokenObj = await paymentProfileRef.current.submitCreateToken();
-                if (!isValidTokenObj.isValid) {
-                    setIsLoading(false);
-                    displayMessageModal({
-                        title: 'Error',
-                        html: (onClose) => `${isValidTokenObj?.errorMessage}`,
-                        type: "error",
-                        buttonType: modalButtonType.DEFAULT_CLOSE,
-                        onClose: () => {
-                            notValidScroll();
-                        },
-                    })
-                    return;
+            let paymentProfileId = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? 1 : values?.PaymentProfileId;
+            
+            if (equalString(paymentProfileId, 1)) {
+                if (paymentProfileRef.current) {
+                    let isValidTokenObj = await paymentProfileRef.current.submitCreateToken();
+                    if (!isValidTokenObj.isValid) {
+                        setIsLoading(false);
+                        displayMessageModal({
+                            title: 'Error',
+                            html: (onClose) => `${isValidTokenObj?.errorMessage}`,
+                            type: "error",
+                            buttonType: modalButtonType.DEFAULT_CLOSE,
+                            onClose: () => {
+                                notValidScroll();
+                            },
+                        })
+                        return;
+                    }
                 }
             }
-
-            let paymentProfileId = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : values?.PaymentProfileId;
             
             let postModel = {
                 MembershipId: membershipId,
@@ -121,8 +127,7 @@ function MembershipReview() {
                     Cvv: values.card,
                     ExpiryDate: values.expiryDate,
                     StripeBankAccountToken: values.card_number,
-                    //AccountType: values.accountType,
-                    AccountType: values.card_securityCode,
+                    AccountType: parseSafeInt(values.card_accountType, ''),
                     PaymentProfileId: paymentProfileId,
                     AccountNumber: values.card_accountNumber,
                     RoutingNumber: values.card_routingNumber,
@@ -200,8 +205,8 @@ function MembershipReview() {
                 AllowECheck: response.AllowECheck,
                 AllowSaveCreditCardProfile: response.AllowSaveCreditCardProfile,
                 WaiverSignedOnDateTimeDisplay: response.WaiverSignedOnDateTimeDisplay,
-                IsDisclosuresRequired: anyInList(firstMembership.DisclosuresToSign),
-                Disclosures: firstMembership.DisclosuresToSign,
+                //IsDisclosuresRequired: anyInList(firstMembership.DisclosuresToSign),
+                //Disclosures: firstMembership.DisclosuresToSign,
             };
             
             setSignupData(signupData);
@@ -224,6 +229,9 @@ function MembershipReview() {
             }
 
             formik.setFieldValue('card_accountType', '1');
+            formik.setFieldValue('firstName', authData.MemberFirstName);
+            formik.setFieldValue('lastName', authData.MemberLastName);
+            
             if (!isNullOrEmpty(paymentFrequencyValue)){
                 formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
                 formik.setFieldTouched("paymentFrequency", true, false);
@@ -266,6 +274,7 @@ function MembershipReview() {
             <Button type="primary"
                     block
                     disabled={isFetching}
+                    loading={isLoading}
                     onClick={() => {
                        formik.submitForm();
                     }}>
