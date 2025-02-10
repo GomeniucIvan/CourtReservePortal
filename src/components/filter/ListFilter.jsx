@@ -8,6 +8,9 @@ import ListFilterItemExpander from "@/components/filter/ListFilterItemExpander.j
 import FormInputsDateInterval from "@/form/input/FormInputsDateInterval.jsx";
 import FormInputsTimeInterval from "@/form/input/FormInputsTimeInterval.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import {e} from "@/utils/TranslateUtils.jsx";
+import {bookingTypes} from "@/utils/SelectUtils.jsx";
+import {useTranslation} from "react-i18next";
 
 function ListFilter({data, 
                         show,
@@ -26,6 +29,7 @@ function ListFilter({data,
                         showEventRegistrationType}) {
 
     const {globalStyles, token} = useApp();
+    const {t} = useTranslation('');
     
     //filter data
     const [dates, setDates] = useState([
@@ -71,6 +75,10 @@ function ListFilter({data,
     let [showCustomDatesDatePickers, setShowCustomDatesDatePickers] = useState(false);
     let [showTimeOfADayTimePickers, setShowTimeOfADayTimePickers] = useState(false);
 
+    //my bookings
+    let [familyMembers, setFamilyMembers] = useState([]);
+    let [innerBookingTypes, setInnerBookingTypes] = useState([]);
+    
     useEffect(() => {
         if (formik && typeof formik.getFieldProps === 'function') {
             if (equalString(page, 'event-list')) {
@@ -110,6 +118,16 @@ function ListFilter({data,
                 }
             } else if (equalString(page, 'stringing-list')) {
                
+            } else if (equalString(page, 'my-booking-list')) {
+                let selectedOrgMemberIds = familyMembers.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedBookingTypes = innerBookingTypes.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedDates = dates.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                
+                formik.setFieldValue("DrawerFilter.OrgMemberIds", selectedOrgMemberIds);
+                formik.setFieldValue("DrawerFilter.BookingTypes", selectedBookingTypes);
+                formik.setFieldValue("DrawerFilter.Dates", selectedDates);
+                formik.setFieldValue("DrawerFilter.CustomDate_Start", data?.CustomDate_Start);
+                formik.setFieldValue("DrawerFilter.CustomDate_End", data?.CustomDate_End);
             }
         }
     }, [minPrice, maxPrice, eventTypes, instructors, eventSessions, eventTags, dates, dayOfTheWeeks, timeOfADays, eventRegistrationTypes])
@@ -118,6 +136,28 @@ function ListFilter({data,
         if (!isNullOrEmpty(data)) {
             setMinPrice(data.MinPrice)
             setMaxPrice(data.MaxPrice)
+            
+            if (anyInList(data?.FilterFamilyMembers)) {
+                setFamilyMembers(data.FilterFamilyMembers.map(famMember => {
+                    return {
+                        Name: famMember.FullName,
+                        Id: famMember.OrgMemberId,
+                        Selected: data.OrgMemberIds.includes(famMember.OrgMemberId)
+                    }
+                }))
+            }
+            if (equalString(page, 'my-booking-list')) {
+                
+                if (anyInList(bookingTypes)) {
+                    setInnerBookingTypes(bookingTypes.map(item => {
+                        return {
+                            Name: e(t(item.Text)),
+                            Id: item.Value,
+                            Selected: data?.BookingTypes.includes(item.Value)
+                        }
+                    }))
+                }
+            }
             
             if (anyInList(data?.EventCategories)){
                 setEventTypes(data.EventCategories.map(eventType => {
@@ -262,6 +302,56 @@ function ListFilter({data,
                         </ListFilterItemExpander>
                     </>
 
+                }
+
+                {anyInList(familyMembers) &&
+                    <ListFilterItemExpander label={'My Family'}>
+                        <Selector className={globalStyles.filterSelector}
+                            //showCheckMark={false}
+                                  multiple={true}
+                                  onChange={(selectedValues) => {
+
+                                      setFamilyMembers(prevSessions =>
+                                          prevSessions.map(et => ({
+                                              ...et,
+                                              Selected: selectedValues.includes(et.Id)
+                                          }))
+                                      );
+                                  }}
+                                  options={familyMembers.map(et => ({
+                                      label: et.Name,
+                                      value: et.Id
+                                  }))}
+                                  defaultValue={familyMembers
+                                      .filter(et => et.Selected)
+                                      .map(et => et.Id)}
+                        />
+                    </ListFilterItemExpander>
+                }
+
+                {anyInList(innerBookingTypes) &&
+                    <ListFilterItemExpander label={'Booking Types'}>
+                        <Selector className={globalStyles.filterSelector}
+                            //showCheckMark={false}
+                                  multiple={true}
+                                  onChange={(selectedValues) => {
+
+                                      setInnerBookingTypes(prevSessions =>
+                                          prevSessions.map(et => ({
+                                              ...et,
+                                              Selected: selectedValues.includes(et.Id)
+                                          }))
+                                      );
+                                  }}
+                                  options={innerBookingTypes.map(et => ({
+                                      label: et.Name,
+                                      value: et.Id
+                                  }))}
+                                  defaultValue={innerBookingTypes
+                                      .filter(et => et.Selected)
+                                      .map(et => et.Id)}
+                        />
+                    </ListFilterItemExpander>
                 }
                 
                 {anyInList(eventTypes) &&

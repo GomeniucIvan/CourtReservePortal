@@ -58,18 +58,18 @@ export const eventUstaSatelliteDataRegistrationRedirect = (navigate, orgId, acti
 export const eventRegistrationRedirect = (navigate, orgId, actionType) => {
     if (equalString(actionType, 1)){
         //signup
-        pNotify('Registration successful.');
+        pNotify('Registered successful.');
     } else if (equalString(actionType, 5)){
         //signup req approval
-        pNotify('Registration successful. You will be notified once your registration has been approved.');
+        pNotify('Registered successful. You will be notified once your registration has been approved.');
     } else if (equalString(actionType, 4)){
         //req payment
     } else if (equalString(actionType, 2)){
         //change signup
-        pNotify('Registration successful.');
+        pNotify('Registered successful.');
     } else if (equalString(actionType, 3)){
         //change signup req payment
-        pNotify('Registration successful.');
+        pNotify('Registered successful.');
     }
 
     navigate(HomeRouteNames.INDEX);

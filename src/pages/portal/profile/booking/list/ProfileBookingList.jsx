@@ -1,7 +1,7 @@
 ﻿import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
-import {anyInList, containsString, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, containsString, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {cx} from "antd-style";
 import {e} from "@/utils/TranslateUtils.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
@@ -26,6 +26,10 @@ import {bookingTypes, filterDates} from "@/utils/SelectUtils.jsx";
 import HeaderSearch from "@/components/header/HeaderSearch.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {useFormik} from "formik";
+import ListFilter from "@/components/filter/ListFilter.jsx";
+import HeaderFilter from "@/components/header/HeaderFilter.jsx";
+import {fromDateTimeStringToDate} from "@/utils/DateUtils.jsx";
 
 const {Title, Text} = Typography;
 
@@ -48,30 +52,47 @@ function ProfileBookingList() {
     const [filteredBookings, setFilteredBookings] = useState(null);
     const [searchText, setSearchText] = useState(null);
     const [filterData, setFilterData] = useState(null);
-    const [isFilterOpened, setIsFilterOpened] = useState(null);
+    const [showFilter, setShowFilter] = useState(null);
     const [isListDisplay, setIsListDisplay] = useState(equalString(fromLocalStorage('booking-list-format', 'list'), 'list'));
     const [hasMore, setHasMore] = useState(false);
     const [selectedType, setSelectedType] = useState('Upcoming');
     const [isFetching, setIsFetching] = useState(true);
+    const [filteredCount, setFilteredCount] = useState(0);
     const {t} = useTranslation('');
     
     const location = useLocation();
     const typeParam = getQueryParameter(location, "type");
+
+    const formik = useFormik({
+        initialValues: {
+            DrawerFilterKey: '',
+
+            DrawerFilter: {
+                OrgMemberIds: [],
+                BookingTypes: [],
+                Dates: [],
+                CustomDate_Start: '',
+                CustomDate_End: '',
+            }
+        },
+        onSubmit: async (values, {setStatus, setSubmitting}) => {
+
+        },
+        
+    });
     
     const loadBookings = (incFilterData, type, skip) => {
-        if (isNullOrEmpty(incFilterData)) {
-            incFilterData = filterData;
-        }
+        let readValues = incFilterData || formik?.values?.DrawerFilter || {};
         setIsFetching(true);
         
         const filterModel = {
             OrganizationId: orgId,
-            OrgMemberIdsString: incFilterData.OrgMemberIds.join(','),
-            BookingTypesString: incFilterData.BookingTypes.join(','),
+            OrgMemberIdsString: readValues.OrgMemberIds.join(','),
+            BookingTypesString: readValues.BookingTypes.join(','),
             DatesString: '',
-            SkipRows: skip || incFilterData.SkipRows,
-            CustomDate_Start: incFilterData.CustomDate_Start,
-            CustomDate_End: incFilterData.CustomDate_End,
+            SkipRows: skip || readValues.SkipRows,
+            CustomDate_Start: readValues.CustomDate_Start,
+            CustomDate_End: readValues.CustomDate_End,
             IsCancelledView: equalString((type || selectedType), 'Cancelled')
         };
 
@@ -91,6 +112,29 @@ function ProfileBookingList() {
         })
     }
 
+    //filter change
+    useEffect(() => {
+        if (!isNullOrEmpty(showFilter)) {
+            const onFilterChange = async (isOpen) => {
+                if (!isNullOrEmpty(formik?.values)){
+                    if (isOpen) {
+                        formik.setFieldValue("DrawerFilterKey", await generateHash(formik.values.DrawerFilter));
+                    } else {
+
+                        let previousHash = formik.values.DrawerFilterKey;
+                        let currentHash = await generateHash(formik.values.DrawerFilter);
+
+                        if (!equalString(currentHash, previousHash)) {
+                            loadBookings();
+                        }
+                    }
+                }
+            }
+
+            onFilterChange(showFilter)
+        }
+    }, [showFilter])
+    
     const onTypeChange = (type) => {
         setIsFetching(true);
         setSelectedType(type);
@@ -109,6 +153,9 @@ function ProfileBookingList() {
             if (!refresh) {
                 appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}`).then(r => {
                     if (toBoolean(r?.IsValid)) {
+                        formik.setFieldValue('DrawerFilter.CustomDate_Start', fromDateTimeStringToDate(r.Data.CustomDate_StartStringDisplay))
+                        formik.setFieldValue('DrawerFilter.CustomDate_End', fromDateTimeStringToDate(r.Data.CustomDate_EndStringDisplay))
+
                         setFilterData(r.Data);
                         loadBookings(r.Data);
                     }
@@ -139,15 +186,19 @@ function ProfileBookingList() {
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent('');
+        loadData();
+    }, []);
+
+    useEffect(() => {
         setHeaderRightIcons(
             <Space className={globalStyles.headerRightActions}>
-                <HeaderSearch setText={setSearchText}/>
+                {/*<HeaderSearch setText={setSearchText}/>*/}
 
                 <Segmented
                     defaultValue={!isListDisplay ? 'card' : 'list'}
                     onChange={(e) => {
                         setIsListDisplay(equalString(e, 'list'));
-                        toLocalStorage('booking-list-format', e);
+                        toLocalStorage('event-list-format', e);
                     }}
                     options={[
                         {value: 'list', icon: <BarsOutlined/>},
@@ -155,15 +206,11 @@ function ProfileBookingList() {
                     ]}
                 />
 
-                <Button type="default" icon={<FilterOutlined/>} size={'medium'}
-                        onClick={() => setIsFilterOpened(true)}/>
-
+                <HeaderFilter count={filteredCount} onClick={() => setShowFilter(true)} />
             </Space>
         )
-
-        loadData();
-    }, []);
-
+    }, [filteredCount])
+    
     const bookingTemplate = (booking, isUnpaid) => {
         if (isListDisplay) {
             return (
@@ -229,23 +276,6 @@ function ProfileBookingList() {
 
     }
 
-    const onCustomDatesChange = (start, end) => {
-        setFilterData((prevData) => ({
-            ...prevData,
-            CustomDate_Start: start,
-            CustomDate_End: end
-        }));
-    }
-
-    useEffect(() => {
-        //prevent first loading
-        if (!isNullOrEmpty(isFilterOpened)) {
-            if (!toBoolean(isFilterOpened) && !toBoolean(isFetching)) {
-                loadBookings(null, null, 0);
-            }
-        }
-    }, [isFilterOpened]);
-
     return (
         <>
             <Segmented options={[
@@ -306,74 +336,16 @@ function ProfileBookingList() {
             </List>
             <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
 
-            <DrawerBottom showDrawer={toBoolean(isFilterOpened)}
-                          closeDrawer={() => setIsFilterOpened(false)}
-                          showButton={true}
-                          maxHeightVh={90}
-                          confirmButtonText={t('filter')}
-                          label={t('filter')}
-                          onConfirmButtonClick={() => {
-                              setIsFilterOpened(false);
-                          }}>
-                <PaddingBlock leftRight={false}>
-                    <Collapse defaultActiveKey={['family', 'entity', 'dates']} className={globalStyles.collapse}>
-                        <Collapse.Panel key='family' title={t('profile.myFamily')}>
-                            <Selector
-                                options={anyInList(filterData?.FilterFamilyMembers) ? filterData.FilterFamilyMembers.map(item => ({
-                                    label: item.FullName,
-                                    value: item.OrgMemberId,
-                                })) : []}
-                                defaultValue={filterData?.OrgMemberIds || []}
-                                multiple
-                                onChange={(selectedValues, extend) => {
-                                    setFilterData((prevData) => ({
-                                        ...prevData,
-                                        OrgMemberIds: selectedValues,
-                                    }));
-                                }}
-                            />
-                        </Collapse.Panel>
-                        <Collapse.Panel key='entity' title={t('profile.entityType')}>
-                            <Selector
-                                options={bookingTypes.map(item => ({
-                                    label: e(t(item.Text)),
-                                    value: item.Value,
-                                }))}
-                                defaultValue={filterData?.BookingTypes || []}
-                                multiple
-                                onChange={(selectedValues, extend) => {
-                                    setFilterData((prevData) => ({
-                                        ...prevData,
-                                        BookingTypes: selectedValues,
-                                    }));
-                                }}
-                            />
-                        </Collapse.Panel>
-                        <Collapse.Panel key='dates' title={t('dates')}>
-                            <Selector
-                                options={filterDates.map(item => ({
-                                    label: t(item.Text),
-                                    value: item.Value,
-                                }))}
-                                defaultValue={[1]}
-                                onChange={(selectedValues, extend) => {
-                                    setFilterData((prevData) => ({
-                                        ...prevData,
-                                        filterDates: selectedValues,
-                                    }));
-                                }}
-                            />
-
-                            {(anyInList(filterData?.filterDates) && filterData.filterDates.includes(5)) && (
-                                <div style={{paddingTop: `${token.padding}px`}}>
-                                    <FormRangePicker onChange={onCustomDatesChange}
-                                                     minDate={filterData?.CurrentDateTime}/>
-                                </div>
-                            )}
-                        </Collapse.Panel>
-                    </Collapse>
-                </PaddingBlock>
-            </DrawerBottom>
+            <ListFilter formik={formik}
+                        show={showFilter}
+                        data={filterData}
+                        page={'my-booking-list'}
+                        onClose={() => {setShowFilter(false)}}
+                        setFilteredCount={setFilteredCount}
+                        showDates={true}
+                        showTimeOfADay={false}
+                        showEventRegistrationType={false}
+                        showDayOfTheWeek={false} />
         </>
     )
 }

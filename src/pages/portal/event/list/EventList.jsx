@@ -151,10 +151,6 @@ function EventList({filter}) {
         }
     }, [searchText])
     
-    const onFilterClose = () => {
-        setShowFilter(false);
-    }
-    
     const loadData = async (refresh) => {
         setIsFetching(true);
 
@@ -357,7 +353,7 @@ function EventList({filter}) {
                         show={showFilter}
                         data={eventData} 
                         page={'event-list'}
-                        onClose={onFilterClose}
+                        onClose={() => {setShowFilter(false)}}
                         setFilteredCount={setFilteredCount} 
                         showDates={true} showTimeOfADay={true} 
                         showEventRegistrationType={true}
