@@ -9,11 +9,13 @@ import MembershipReceiptBlock from "@/components/receiptblock/MembershipReceiptB
 import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
 import {useTranslation} from "react-i18next";
 import {useApp} from "@/context/AppProvider.jsx";
+import {parseSafeInt} from "@/utils/NumberUtils.jsx";
+import {addSelectEmptyOption} from "@/utils/SelectUtils.jsx";
 const {Text,Title} = Typography;
 
 const MembershipPurchaseReview = ({selectedMembership,
                                       formik,
-                                      selectedMembershipRequirePayment, 
+                                      selectedMembershipRequirePayment,
                                       signupData,
                                       showPayment,
                                       convenienceFeeObj,
@@ -24,11 +26,11 @@ const MembershipPurchaseReview = ({selectedMembership,
     const {token} = useApp();
     const { t } = useTranslation('login');
     const {styles} = useStyles();
-    
+
     const visibleSeparatorByKey = (key) => {
         let isMembershipVisible = !isNullOrEmpty(selectedMembership?.Name);
-        let isBillingVisible = (selectedMembershipRequirePayment || toBoolean(signupData.RequireCardOnFile));
-        let isAgreementsVisible = (signupData && !isNullOrEmpty(signupData.Disclosures) && toBoolean(signupData.IsDisclosuresRequired));
+        let isBillingVisible = (selectedMembershipRequirePayment || toBoolean(signupData?.RequireCardOnFile));
+        let isAgreementsVisible = (signupData && !isNullOrEmpty(signupData?.Disclosures) && toBoolean(signupData?.IsDisclosuresRequired));
 
         if (equalString(key, 'membership-billing')) {
             return isMembershipVisible && isBillingVisible;
@@ -36,7 +38,7 @@ const MembershipPurchaseReview = ({selectedMembership,
             return (isMembershipVisible || isBillingVisible) && isAgreementsVisible;
         }
     }
-    
+
     return (
         <>
             {!isNullOrEmpty(selectedMembership?.Name) &&
@@ -82,22 +84,38 @@ const MembershipPurchaseReview = ({selectedMembership,
                         <Flex vertical={true} gap={token.paddingXXL}>
                             <Title level={1}>{t(`review.paymentProfileBilling`)}</Title>
 
-                            <Flex vertical={true} gap={token.padding}>
-                                <FormPaymentProfile formik={formik}
-                                                    includeCustomerDetails={true}
-                                                    allowToSavePaymentProfile={false}
-                                                    ref={paymentProfileRef}
-                                                    showStatesDropdown={toBoolean(signupData.ShowStatesDropdown)}
-                                                    hideFields={{
-                                                        firstLastName: true,
-                                                        address2: true,
-                                                        phoneNumber: true,
-                                                        accountType: true
-                                                    }}
-                                                    paymentProviderData={paymentInfoData}
-                                                    paymentTypes={signupData.PaymentTypes}
-                                />
-                            </Flex>
+                           <Flex vertical={true} gap={token.padding}>
+                               {(anyInList(signupData?.PaymentTypes)) &&
+                                   <FormSelect formik={formik}
+                                               name={`PaymentProfileId`}
+                                               label='Payment Type'
+                                               options={signupData?.PaymentTypes}
+                                               required={true}
+                                               propText='Text'
+                                               propValue='Value'/>
+                               }
+
+                               {(isNullOrEmpty(formik?.values?.PaymentProfileId) ||
+                                       equalString(formik?.values?.PaymentProfileId, 0) || 
+                                       equalString(formik?.values?.PaymentProfileId, 1)) &&
+                                   <Flex vertical={true} gap={token.padding}>
+                                       <FormPaymentProfile formik={formik}
+                                                           includeCustomerDetails={true}
+                                                           allowToSavePaymentProfile={false}
+                                                           ref={paymentProfileRef}
+                                                           showStatesDropdown={toBoolean(signupData.ShowStatesDropdown)}
+                                                           hideFields={{
+                                                               firstLastName: true,
+                                                               address2: true,
+                                                               phoneNumber: true,
+                                                               accountType: true
+                                                           }}
+                                                           paymentProviderData={paymentInfoData}
+                                                           paymentTypes={signupData.PaymentTypes}
+                                       />
+                                   </Flex>
+                               }
+                           </Flex>
                         </Flex>
                     </PaddingBlock>
                 </>

@@ -142,7 +142,7 @@ function ProfileBillingInvoicePayment() {
                     PaymentProfileId: paymentProfileId
                 },
             }
-console.log(postModel)
+
             let response = await appService.post(`/app/Online/MyInvoices/PayInvoice?id=${orgId}`, postModel);
             if (toBoolean(response?.IsValid)) {
                 navigationClearHistory();

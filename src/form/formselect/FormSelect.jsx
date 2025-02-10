@@ -137,7 +137,7 @@ const FormSelect = forwardRef(({
                             return (
                                 <Select.Option
                                     key={index}
-                                    value={option[propValue]}
+                                    value={toBoolean(multi) ? option[propValue] : `${option[propValue]}`}
                                 >
                                     {toBoolean(option?.translate) ? t(option[propText]) : option[propText]}
                                 </Select.Option>
