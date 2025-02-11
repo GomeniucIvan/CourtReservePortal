@@ -72,5 +72,9 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     radioLabel: css`
         margin: auto;
+    `,
+    cardRadioItem: css`
+        padding: ${token.padding}px;
+        height: auto;
     `
 }));

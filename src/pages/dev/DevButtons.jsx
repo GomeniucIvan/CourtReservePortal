@@ -78,6 +78,14 @@ function DevButtons() {
                         </Button>
                     </Flex>
                 </Card>
+
+                <Card className={cx(globalStyles.card)}>
+                    <Flex align={'center'} justify={'center'} vertical={true} gap={8}>
+                        <span>Light Green</span>
+                        <span>buttonStyles.lightGreen</span>
+                        <Button block={true} className={buttonStyles.lightGreen}>Light Green</Button>
+                    </Flex>
+                </Card>
                 
                 //not used
                 <Card className={cx(globalStyles.card)}>

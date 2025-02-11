@@ -63,5 +63,6 @@
   "packages": "Packages",
   "packageDetails": "Package Details",
   "membershipDetails": "Membership Details",
-  "membershipReview": "Review"
+  "membershipReview": "Review",
+  "saveMyPlaySessions": "Session Recording(s)"
 }

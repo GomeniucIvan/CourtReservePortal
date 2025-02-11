@@ -18,6 +18,7 @@ import PackagePurchase from "@portal/package/purchase/PackagePurchase.jsx";
 import MembershipList from "@portal/membership/list/MembershipList.jsx";
 import MembershipDetails from "@portal/membership/details/MembershipDetails.jsx";
 import MembershipReview from "@portal/membership/review/MembershipReview.jsx";
+import SaveMyPlaySessionRecording from "@portal/savemyplay/sessionrecording/SaveMyPlaySessionRecording.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -41,7 +42,8 @@ export const HomeRouteNames = {
     PACKAGE_PURCHASE: `/online/packages/purchasepackages/:id`,
     MEMBERSHIPS: `/online/memberships/index`,
     MEMBERSHIP_DETAILS: `/online/memberships/viewmembership/:id`,
-    MEMBERSHIP_REVIEW: `/online/memberships/review/:id`
+    MEMBERSHIP_REVIEW: `/online/memberships/review/:id`,
+    SAVE_MY_PLAY: `/online/savemyplay/index/:id`,
 };
 
 const HomeRoutes = [
@@ -162,6 +164,12 @@ const HomeRoutes = [
         path: HomeRouteNames.MEMBERSHIP_REVIEW,
         element: <MembershipReview />,
         title: 'membershipReview',
+        header: true
+    },
+    {
+        path: HomeRouteNames.SAVE_MY_PLAY,
+        element: <SaveMyPlaySessionRecording />,
+        title: 'saveMyPlaySessions',
         header: true
     }
 ];

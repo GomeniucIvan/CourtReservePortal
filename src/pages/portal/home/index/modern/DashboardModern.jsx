@@ -18,6 +18,7 @@ import {getDashboardMainLinks} from "@/storage/AppStorage.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import CardLinks from "@/components/navigationlinks/CardLinks.jsx";
+import DashboardSaveMyPlay from "@portal/home/index/modules/Dashboard.SaveMyPlay.jsx";
 
 function DashboardModern({navigationItems, 
                              dashboardData, 
@@ -97,6 +98,10 @@ function DashboardModern({navigationItems,
                 <PaddingBlock leftRight={false} onlyBottom={true}>
                     <DashboardAnnouncements dashboardData={dashboardData?.itemsData}/>
                     <DashboardBookings dashboardData={dashboardData?.itemsData}/>
+                   
+                    <PaddingBlock topBottom={true}>
+                        <DashboardSaveMyPlay dashboardData={dashboardData?.itemsData}/>
+                    </PaddingBlock>
                     
                     <DashboardLeagues dashboardData={dashboardData?.itemsData}/>
                 </PaddingBlock>

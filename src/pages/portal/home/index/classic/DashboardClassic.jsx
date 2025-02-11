@@ -10,6 +10,7 @@ import SVG from "@/components/svg/SVG.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 import {toBoolean} from "@/utils/Utils.jsx";
 import DashboardBookings from "@portal/home/index/modules/Dashboard.Bookings.jsx";
+import DashboardSaveMyPlay from "@portal/home/index/modules/Dashboard.SaveMyPlay.jsx";
 
 function DashboardClassic({navigationItems, dashboardData, organizationList, announcementsCount}) {
 	const [showAll, setShowAll] = useState(false);
@@ -63,7 +64,13 @@ function DashboardClassic({navigationItems, dashboardData, organizationList, ann
 				</PaddingBlock>
 
 				<PaddingBlock leftRight={false} onlyBottom={true}>
-					<DashboardBookings dashboardData={dashboardData?.itemsData} isFetching={false}/>
+					<Flex vertical={true} gap={token.padding}>
+						<DashboardBookings dashboardData={dashboardData?.itemsData} isFetching={false}/>
+						
+						<PaddingBlock>
+							<DashboardSaveMyPlay dashboardData={dashboardData?.itemsData}/>
+						</PaddingBlock>
+					</Flex>
 				</PaddingBlock>
 			</Flex>
 		</>

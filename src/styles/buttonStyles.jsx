@@ -45,4 +45,26 @@ export const bStyles = createStyles(({ css, token }) => ({
          }
       }
    `,
+    lightGreen: css`
+        background-color: #1ACC80;
+        color: ${token.colorBlack} !Important;
+        
+        &:not(.ant-btn-disabled):not(.ant-btn-background-ghost):hover,
+        &:not(.ant-btn-disabled):not(.ant-btn-background-ghost):active {
+            background-color: #1ACC80 !important;
+        }
+
+        &.ant-btn-background-ghost {
+            color: #1ACC80;
+            background: transparent;
+            border-color: #1ACC80;
+            box-shadow: none;
+
+            &:not(.ant-btn-disabled):hover,
+            &:not(.ant-btn-disabled):active {
+                color: #1ACC80 !important;
+                border-color: #1ACC80 !important;
+            }
+        }
+    `
 }));

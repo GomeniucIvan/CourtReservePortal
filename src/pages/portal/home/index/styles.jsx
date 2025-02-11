@@ -109,5 +109,9 @@ export const useStyles = createStyles(({ css, token }) => ({
         justify-content: space-between;
         width: 100%;
         align-items: center;
+    `,
+    saveMyPlayCard: css`
+        background: radial-gradient(37.85% 27.01% at 48.46% 73.47%, #0C2F20 0%, #1F1F1F 100%);
+        padding: ${token.paddingXXL}px;
     `
 }));
