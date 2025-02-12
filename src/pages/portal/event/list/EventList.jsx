@@ -32,6 +32,8 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useFormik} from "formik";
 import {listFilter} from "@/utils/ListUtils.jsx";
 import {fromDateTimeStringToDate, fromTimeSpanString} from "@/utils/DateUtils.jsx";
+import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
+import {eReplace} from "@/utils/TranslateUtils.jsx";
 
 const {Title, Text} = Typography;
 
@@ -101,7 +103,7 @@ function EventList({filter}) {
             ...listFilter(readValues),
             FilterText: searchText,
             EmbedCodeId: null,
-            Filter: filterKey,
+            Filter: toBoolean(filterKey) ? filterKey : null,
             preventCookieSave: true,
             FilterPublicKey: '',
             CostTypeId: authData?.CostTypeId,
@@ -251,6 +253,12 @@ function EventList({filter}) {
     
     return (
         <>
+            {(!isFetching && !anyInList(events)) &&
+                <PaddingBlock topBottom={true}>
+                    <EmptyBlock description={eReplace('No events found')} removePadding={true} />
+                </PaddingBlock>
+            }
+            
             <List className={cx(globalStyles.itemList, !isListDisplay && globalStyles.listCardList)}
                   style={{padding: isListDisplay ? 0 : `${token.padding}px`}}>
                 <>
@@ -267,6 +275,7 @@ function EventList({filter}) {
                             )}
                         </>
                     }
+
                     {(!isFetching && anyInList(events)) &&
                         <>
                             {events.map((item, index) => (
@@ -347,8 +356,10 @@ function EventList({filter}) {
                     }
                 </>
             </List>
-            
-            <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
+
+            {!isFetching &&
+                <InfiniteScroll loadMore={loadMore} hasMore={hasMore}/>
+            }
             <ListFilter formik={formik}
                         show={showFilter}
                         data={eventData} 

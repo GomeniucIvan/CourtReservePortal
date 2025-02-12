@@ -27,6 +27,7 @@ const EventRoutes = [
     {
         path: EventRouteNames.EVENT_FILTER,
         element: <EventList filter={true}/>,
+        title: 'events',
         header: true,
     },
     {
