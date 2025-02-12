@@ -38,6 +38,7 @@ import EventSignUpPartial from "@portal/event/registration/modules/EventSignUpPa
 import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpSkeleton.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import EventSignUpDetails from "@portal/event/registration/modules/EventSignUpDetails.jsx";
+import {generateEventPostModel} from "@portal/event/registration/modules/functions.jsx";
 
 function EventChangeSignUp({isFullEventReg = false}) {
     const navigate = useNavigate();
@@ -115,48 +116,30 @@ function EventChangeSignUp({isFullEventReg = false}) {
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            
-            let familyMembers = [];
-            let currentMember = values.Members[0];
-            
-            if (moreThanOneInList(values.Members)) {
-                familyMembers = values.Members;
 
-                if (!familyMembers.some(v => toBoolean(v.IsChecked))) {
-                    setIsLoading(false);
-                    displayMessageModal({
-                        title: "Registration Error",
-                        html: (onClose) => 'At least one registrant is required.',
-                        type: "error",
-                        buttonType: modalButtonType.DEFAULT_CLOSE,
-                        onClose: () => {
+            let formResponse = generateEventPostModel(formik, moreThanOneInList(values.Members), setIsLoading, eventId, reservationId);
 
-                        },
-                    });
-                    return;
-                }
-                
-                //require to separate for post
-                familyMembers = values.Members.filter(member => !equalString(member.OrganizationMemberId, currentMember.OrganizationMemberId));
-            } else {
-                currentMember = {
-                    ...currentMember,
-                    IsChecked: true,
-                }
+            if (!toBoolean(formResponse?.IsValid)) {
+                setIsLoading(false);
+                displayMessageModal({
+                    title: "Registration Error",
+                    html: (onClose) => formResponse.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+
+                    },
+                });
+                return;
             }
             
             let postModel = {
-                CurrentMember: currentMember,
-                FamilyMembers: familyMembers,
-                ReservationGuests: formik.values.ReservationGuests,
-                EventId: eventId,
-                SelectedReservation: {
-                    Id: reservationId
-                }
-            }
-            
-            let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_DropIn_Post?id=${orgId}`,postModel);
-            
+                ...event,
+                ...formResponse.PostModel
+            };
+
+            let response = await appService.post(`/app/Online/Events/ChangeSignUp?id=${orgId}`, postModel);
+
             if (toBoolean(response?.IsValid)) {
                 removeLastHistoryEntry();
                 eventValidResponseRedirect(response, navigate, {

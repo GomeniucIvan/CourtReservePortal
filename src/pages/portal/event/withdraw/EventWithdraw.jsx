@@ -1,7 +1,7 @@
 ﻿import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import {AppProvider, useApp} from "@/context/AppProvider.jsx";
-import {Button, Card, Flex, Switch, Typography} from "antd";
+import {Button, Card, Divider, Flex, Switch, Typography} from "antd";
 import * as Yup from "yup";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
@@ -24,6 +24,7 @@ import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpS
 import FormTextarea from "@/form/formtextarea/FormTextArea.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import {eReplace} from "@/utils/TranslateUtils.jsx";
 const {Title} = Typography;
 
 function EventWithdraw() {
@@ -39,7 +40,7 @@ function EventWithdraw() {
     const reservationId = queryParams.get("reservationId");
     const eventId = queryParams.get("eventId");
     const navigate = useNavigate();
-    
+
     const {
         setIsFooterVisible,
         setFooterContent,
@@ -136,11 +137,11 @@ function EventWithdraw() {
             }
 
             let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventPullOutApi/PullOutFromEvent?id=${orgId}`,postModel);
-            
+
             setIsLoading(false);
             if (toBoolean(response?.IsValid)) {
                 if (equalString(orgId, 6415)) {
-                    pNotify('Successfully Removed From Event');
+                    pNotify(eReplace('Successfully Removed From Event'));
                 } else {
                     pNotify('Successfully Withdrawn');
                 }
@@ -156,7 +157,7 @@ function EventWithdraw() {
                     },
                 })
             }
-            
+
             setIsLoading(false);
         },
     });
@@ -177,7 +178,6 @@ function EventWithdraw() {
             })
 
             allMembers = allMembers.filter(v => v.IsChecked);
-            console.log(allMembers);
             formik.setFieldValue("Members", allMembers);
         }
         setIsFetching(false);
@@ -201,7 +201,7 @@ function EventWithdraw() {
             )
         );
     }
-    
+
     return (
         <>
             <EventSignUpSkeleton isFetching={isFetching} />
@@ -218,39 +218,59 @@ function EventWithdraw() {
                                         <>
                                             {formik.values.Members.map((member, index) => {
                                                 let isDisabled = oneListItem(formik.values.Members) && !anyInList(formik.values.ReservationGuests)
-                                                
+                                                const isLastItem = index === formik.values.Members.length - 1;
+
                                                 return (
-                                                    <Flex vertical={true} gap={token.padding} flex={1} key={index}>
-                                                        <Flex justify={'space-between'} align={'center'} onClick={() => {
-                                                            if (!isDisabled) {
-                                                                toggleInitialCheck(index)
-                                                            }
-                                                        }}>
-                                                            <Title level={3}>
-                                                                {member.FullName}
-                                                            </Title>
-                                                            <Switch checked={member.IsChecked} 
-                                                                    disabled={isDisabled}
-                                                                    onChange={() => toggleInitialCheck(index)}/>
+                                                    <React.Fragment key={index}>
+                                                        <Flex vertical={true} gap={token.padding} flex={1}>
+                                                            <Flex justify={'space-between'} align={'center'} onClick={() => {
+                                                                if (!isDisabled) {
+                                                                    toggleInitialCheck(index)
+                                                                }
+                                                            }}>
+                                                                <Title level={3}>
+                                                                    {member.FullName}
+                                                                </Title>
+                                                                <Switch checked={member.IsChecked}
+                                                                        disabled={isDisabled}
+                                                                        onChange={() => toggleInitialCheck(index)}/>
+                                                            </Flex>
                                                         </Flex>
-                                                    </Flex>
+                                                        {!isLastItem &&
+                                                            <Divider style={{margin: `${token.paddingSM}px 0px`}} />
+                                                        }
+                                                    </React.Fragment>
                                                 )
                                             })}
                                         </>
                                     }
 
-                                    {formik.values.ReservationGuests.map((guest, index) => {
-                                        return (
-                                            <Flex vertical={true} gap={token.padding} flex={1} key={index}>
-                                                <Flex justify={'space-between'} align={'center'}>
-                                                    <Title level={3}>
-                                                        {guest.FullName}
-                                                    </Title>
-                                                    <Switch checked={guest.IsChecked} onChange={() => toggleGuestCheck(guest)}/>
-                                                </Flex>
-                                            </Flex>
-                                        )
-                                    })}
+                                    {anyInList(formik.values.ReservationGuests) &&
+                                        <>
+                                            <Divider style={{margin: `${token.paddingSM}px 0px`}} />
+
+                                            {formik.values.ReservationGuests.map((guest, index) => {
+                                                const isLastItem = index === formik.values.ReservationGuests.length - 1;
+                                                
+                                                return (
+                                                    <>
+                                                        <Flex vertical={true} gap={token.padding} flex={1} key={index}>
+                                                            <Flex justify={'space-between'} align={'center'}>
+                                                                <Title level={3}>
+                                                                    {guest.FullName}
+                                                                </Title>
+                                                                <Switch checked={guest.IsChecked} onChange={() => toggleGuestCheck(guest)}/>
+                                                            </Flex>
+                                                        </Flex>
+
+                                                        {!isLastItem &&
+                                                            <Divider style={{margin: `${token.paddingSM}px 0px`}} />
+                                                        }
+                                                    </>
+                                                )
+                                            })}
+                                        </>
+                                    }
                                 </Card>
                             }
 

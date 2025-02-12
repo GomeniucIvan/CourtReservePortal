@@ -17,5 +17,9 @@ export const e = (string) => {
 }
 
 export const eReplace = (string) => {
-    return string;
+    return e(string);
+}
+
+export const eTranslate = (string) => {
+    return e(string);
 }

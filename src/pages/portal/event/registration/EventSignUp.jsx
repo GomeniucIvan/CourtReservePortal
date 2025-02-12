@@ -35,6 +35,7 @@ import {
 import EventSignUpPartial from "@portal/event/registration/modules/EventSignUpPartial.jsx";
 import EventSignUpDetails from "@portal/event/registration/modules/EventSignUpDetails.jsx";
 import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpSkeleton.jsx";
+import {generateEventPostModel} from "@portal/event/registration/modules/functions.jsx";
 
 function EventSignUp() {
     const navigate = useNavigate();
@@ -116,79 +117,23 @@ function EventSignUp() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
             
-            let familyMembers = [];
-            let currentMember = values.Members[0];
+            let formResponse = generateEventPostModel(formik, isFamilyMember, setIsLoading,eventId, reservationId);
             
-            let registrationUdfs = [];
-            
-            if (isFamilyMember) {
-                familyMembers = values.Members;
+            if (!toBoolean(formResponse?.IsValid)) {
+                setIsLoading(false);
+                displayMessageModal({
+                    title: "Registration Error",
+                    html: (onClose) => formResponse.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
 
-                if (!familyMembers.some(v => toBoolean(v.IsChecked))) {
-                    setIsLoading(false);
-                    displayMessageModal({
-                        title: "Registration Error",
-                        html: (onClose) => 'At least one registrant is required.',
-                        type: "error",
-                        buttonType: modalButtonType.DEFAULT_CLOSE,
-                        onClose: () => {
-
-                        },
-                    });
-                    return;
-                }
-                
-                //require to separate for post
-                familyMembers = values.Members.filter(member => !equalString(member.OrganizationMemberId, currentMember.OrganizationMemberId));
-            } else {
-                currentMember = {
-                    ...currentMember,
-                    IsChecked: true,
-                }
-            }
-
-            //Current Member
-            if (toBoolean(currentMember?.IsChecked)) {
-                registrationUdfs.push({
-                    ...currentMember,
-                    Udfs: currentMember.MemberUdfs
+                    },
                 });
-            }
-
-            //Family Member
-            if (anyInList(familyMembers)) {
-                familyMembers.forEach((famMember) => {
-                    if (toBoolean(famMember?.IsChecked)) {
-                        registrationUdfs.push({
-                            ...famMember,
-                            Udfs: famMember.MemberUdfs
-                        });
-                    }
-                })
-            }
-
-            //Guest
-            if (anyInList(formik?.values.ReservationGuests)) {
-                formik?.values.ReservationGuests.forEach((guest) => {
-                    registrationUdfs.push({
-                        ...guest,
-                        Udfs: guest.MemberUdfs,
-                        GuestGuid: guest.Guid,
-                    });
-                })
+                return;
             }
             
-            let postModel = {
-                CurrentMember: currentMember,
-                FamilyMembers: familyMembers,
-                ReservationGuests: formik.values.ReservationGuests,
-                MemberUdfs: registrationUdfs,
-                EventId: eventId,
-                SelectedNumberOfGuests: countListItems(formik.values.ReservationGuests),
-                SelectedReservation: {
-                    Id: reservationId
-                }
-            }
+            let postModel = formResponse.PostModel;
             
             let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_DropIn_Post?id=${orgId}`,postModel);
             setIsLoading(false);

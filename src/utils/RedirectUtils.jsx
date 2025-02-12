@@ -11,20 +11,20 @@ export const eventValidResponseRedirect = (response, navigate, eventData) => {
     let eventName = eventData.eventName;
     
     let actionType = 1; //1 signup
-    if (toBoolean(response.data.RequireOnlinePayment)) {
+    if (toBoolean(response?.data?.RequireOnlinePayment)) {
         actionType = 4;
 
         let route = toRoute(ProfileRouteNames.PROCESS_PAYMENT, 'id', orgId);
         route = `${route}?evAction=${actionType}`;
         navigate(route);
     } else {
-        if (toBoolean(response.data.RequiresApproval)) {
+        if (toBoolean(response?.data?.RequiresApproval)) {
             actionType = 5;
         }
     }
 
-    if (!toBoolean(response.data.RequireOnlinePayment)) {
-        if (toBoolean(response.data.IsOrganizedPlayEvent)) {
+    if (!toBoolean(response?.data?.RequireOnlinePayment)) {
+        if (toBoolean(response?.data?.IsOrganizedPlayEvent)) {
             let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', orgId);
             route = toRoute(route, 'number', reservationNumber);
             route = `${route}?evAction=${actionType}`;
