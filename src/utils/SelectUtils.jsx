@@ -150,9 +150,22 @@ export const addSelectEmptyOption = (incList,
     return newList;
 }
 
+const saveMyPlayPeriodsFunc = () => {
+    let list = [];
+    list.push({Text: "Last 7 Days", Value: '1'});
+    list.push({Text: "Last 14 Days", Value: '2'});
+    list.push({Text: "Last 30 Days", Value: '3'});
+    list.push({Text: "Last 3 Months", Value: '4'});
+    list.push({Text: "Last 6 Months", Value: '5'});
+    list.push({Text: "Last 12 Months", Value: '6'});
+    list.push({Text: "All", Value: '0'});
+    return list;
+}
+
 export const bookingTypes = bookingTypesFunc();
 export const filterDates = filterDatesFunc();
 export const usaStateList = usaStates();
 export const genderList = genders();
 export const matchmakerGenderList = matchMakerGenders();
 export const canadianProvincesList = canadianProvinces();
+export const saveMyPlayPeriodList = saveMyPlayPeriodsFunc();

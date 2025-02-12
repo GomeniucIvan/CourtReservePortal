@@ -47,7 +47,7 @@ function SaveMyPlaySessionRecording() {
     }, [tabsRef]);
 
     return (
-        <PaddingBlock topBottom={true}>
+        <>
             <div ref={tabsRef} style={{display: 'block'}}>
                 <Tabs
                     rootClassName={cx(globalStyles.tabs)}
@@ -69,7 +69,7 @@ function SaveMyPlaySessionRecording() {
                     ]}
                 />
             </div>
-        </PaddingBlock>
+        </>
     )
 }
 

@@ -19,7 +19,6 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
-import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 
 const {Title, Text} = Typography;
 

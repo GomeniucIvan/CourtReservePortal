@@ -13,6 +13,7 @@ import {CardConstants} from "@/constants/CardConstants.jsx";
 import {setFormikErrorN, validateDisclosures, validatePaymentProfile} from "@/utils/ValidationUtils.jsx";
 import {membershipRequirePayment} from "@/utils/CostUtils.jsx";
 import FormCardRadioGroup from "@/form/formradio/FormCardRadioGroup.jsx";
+import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const {Title} = Typography;
 
 function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
@@ -57,7 +58,6 @@ function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
     });
 
     const loadData = async () => {
-        setIsLoading(true)
         setIsFetching(true)
         try {
             const response = await apiService.get(`/api/save-my-play-management/start-recording-data?orgId=${orgId}`)
@@ -74,7 +74,6 @@ function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
         } catch (e) {
             console.log('error fetch start-recording data', e)
         } finally {
-            setIsLoading(false)
             setIsFetching(false)
         }
     }
@@ -102,7 +101,7 @@ function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
     }
 
     return (
-        <>
+        <PaddingBlock>
             <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
                 <Flex vertical={true} gap={token.padding}>
                     {isFetching &&
@@ -158,7 +157,7 @@ function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
                     }
                 </Flex>
             </div>
-        </>
+        </PaddingBlock>
     )
 }
 

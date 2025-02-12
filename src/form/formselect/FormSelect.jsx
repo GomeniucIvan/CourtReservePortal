@@ -24,6 +24,7 @@ const FormSelect = forwardRef(({
                         type,
                         loading,
                         fetching,
+                        className,
                         multi,
                         ...props
                     }, ref) => {
@@ -111,7 +112,7 @@ const FormSelect = forwardRef(({
                     <Skeleton.Input block active={true} className={cx(globalStyles.skeletonInput)}/>
                 </div>
             ) : (
-                <div className={cx(globalStyles.formBlock, styles.selectGlobal)}>
+                <div className={cx(globalStyles.formBlock, styles.selectGlobal, !isNullOrEmpty(className) && className)}>
                     <label htmlFor={name} className={globalStyles.globalLabel}>
                         {label}
                         {isRequired && <span
