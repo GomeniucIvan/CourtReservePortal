@@ -19,6 +19,7 @@ import MembershipList from "@portal/membership/list/MembershipList.jsx";
 import MembershipDetails from "@portal/membership/details/MembershipDetails.jsx";
 import MembershipReview from "@portal/membership/review/MembershipReview.jsx";
 import SaveMyPlaySessionRecording from "@portal/savemyplay/sessionrecording/SaveMyPlaySessionRecording.jsx";
+import PourMyBevCode from "@portal/pourmybev/pourmybevcode/PourMyBevCode.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -44,6 +45,7 @@ export const HomeRouteNames = {
     MEMBERSHIP_DETAILS: `/online/memberships/viewmembership/:id`,
     MEMBERSHIP_REVIEW: `/online/memberships/review/:id`,
     SAVE_MY_PLAY: `/online/savemyplay/index/:id`,
+    POUR_MY_BEV_CODE: `/online/pourmybev/code/:id`,
 };
 
 const HomeRoutes = [
@@ -170,6 +172,12 @@ const HomeRoutes = [
         path: HomeRouteNames.SAVE_MY_PLAY,
         element: <SaveMyPlaySessionRecording />,
         title: 'saveMyPlaySessions',
+        header: true
+    },
+    {
+        path: HomeRouteNames.POUR_MY_BEV_CODE,
+        element: <PourMyBevCode />,
+        title: 'pourMyBevCode',
         header: true
     }
 ];

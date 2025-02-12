@@ -64,5 +64,6 @@
   "packageDetails": "Package Details",
   "membershipDetails": "Membership Details",
   "membershipReview": "Review",
-  "saveMyPlaySessions": "Session Recording(s)"
+  "saveMyPlaySessions": "Session Recording(s)",
+  "pourMyBevCode": "Scan to Pour"
 }

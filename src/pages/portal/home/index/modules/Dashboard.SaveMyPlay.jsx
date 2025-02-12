@@ -32,7 +32,7 @@ const DashboardSaveMyPlay = ({dashboardData, isFetching}) => {
                             <img
                                 width={150}
                                 height={28}
-                                src="/svg/savemyplay.svg"
+                                src="/svg/branded/savemyplay.svg"
                                 alt="Save My Play Logo"
                             />
                             <Text style={{color: '#ffffff', textAlign: 'center'}}>

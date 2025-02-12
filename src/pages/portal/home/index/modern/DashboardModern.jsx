@@ -19,6 +19,7 @@ import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import CardLinks from "@/components/navigationlinks/CardLinks.jsx";
 import DashboardSaveMyPlay from "@portal/home/index/modules/Dashboard.SaveMyPlay.jsx";
+import DashboardPourMyBev from "@portal/home/index/modules/Dashboard.PourMyBev.jsx";
 
 function DashboardModern({navigationItems, 
                              dashboardData, 
@@ -99,8 +100,11 @@ function DashboardModern({navigationItems,
                     <DashboardAnnouncements dashboardData={dashboardData?.itemsData}/>
                     <DashboardBookings dashboardData={dashboardData?.itemsData}/>
                    
-                    <PaddingBlock topBottom={true}>
-                        <DashboardSaveMyPlay dashboardData={dashboardData?.itemsData}/>
+                    <PaddingBlock>
+                        <Flex vertical={true} gap={token.paddingXXL} style={{paddingTop: `${token.paddingXXL}px`, paddingBottom: `${token.paddingXXL}px`}}>
+                            <DashboardSaveMyPlay dashboardData={dashboardData?.itemsData}/>
+                            <DashboardPourMyBev dashboardData={dashboardData?.itemsData}/>
+                        </Flex>
                     </PaddingBlock>
                     
                     <DashboardLeagues dashboardData={dashboardData?.itemsData}/>

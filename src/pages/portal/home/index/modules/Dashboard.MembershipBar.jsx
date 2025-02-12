@@ -16,7 +16,7 @@ import {useNavigate} from "react-router-dom";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 const { Title, Text } = Typography;
 
-const DashboardMembershipBar = ({dashboardData}) => {
+const DashboardMembershipBar = ({dashboardData, page = 'dashboard'}) => {
     const{ token, globalStyles } = useApp();
     const{ authData, orgId } = useAuth();
     const drawerBarcodeRef = useRef(null);
@@ -24,11 +24,13 @@ const DashboardMembershipBar = ({dashboardData}) => {
     
     return (
         <>
-            <Card className={cx(globalStyles.card, globalStyles.cardSMPadding)}>
+            <Card className={cx(globalStyles.card, globalStyles.cardSMPadding, equalString(page, 'pourmybevcode') && globalStyles.fullWidth)}>
                 <Flex justify="space-between" align={'center'}>
                     <Flex gap={token.paddingLG} flex={1} onClick={() => {
-                        let route = toRoute(ProfileRouteNames.PROFILE_PERSONAL_INFO, 'id', orgId);
-                        navigate(route);
+                        if (equalString(page, 'dashboard')) {
+                            let route = toRoute(ProfileRouteNames.PROFILE_PERSONAL_INFO, 'id', orgId);
+                            navigate(route);
+                        }
                     }}>
                         <Flex justify={'center'} align={'center'} className={globalStyles.orgCircleMember}>
                             <Title level={1} className={cx(globalStyles.noSpace)}>{fullNameInitials(authData?.MemberFullName)}</Title>
@@ -46,7 +48,7 @@ const DashboardMembershipBar = ({dashboardData}) => {
                         </Flex>
                     </Flex>
 
-                    {toBoolean(authData?.OrgShowBarcode) && (
+                    {(toBoolean(authData?.OrgShowBarcode) && equalString(page, 'dashboard')) && (
                         <>
                             <Button shape="circle" icon={<SVG icon={'barcode'} size={20} color={token.colorPrimary} />} onClick={() => {
                                 if (drawerBarcodeRef.current) {

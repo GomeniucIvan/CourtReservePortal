@@ -11,6 +11,7 @@ import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 import {toBoolean} from "@/utils/Utils.jsx";
 import DashboardBookings from "@portal/home/index/modules/Dashboard.Bookings.jsx";
 import DashboardSaveMyPlay from "@portal/home/index/modules/Dashboard.SaveMyPlay.jsx";
+import DashboardPourMyBev from "@portal/home/index/modules/Dashboard.PourMyBev.jsx";
 
 function DashboardClassic({navigationItems, dashboardData, organizationList, announcementsCount}) {
 	const [showAll, setShowAll] = useState(false);
@@ -68,7 +69,10 @@ function DashboardClassic({navigationItems, dashboardData, organizationList, ann
 						<DashboardBookings dashboardData={dashboardData?.itemsData} isFetching={false}/>
 						
 						<PaddingBlock>
-							<DashboardSaveMyPlay dashboardData={dashboardData?.itemsData}/>
+							<Flex vertical={true} gap={token.padding}>
+								<DashboardSaveMyPlay dashboardData={dashboardData?.itemsData}/>
+								<DashboardPourMyBev dashboardData={dashboardData?.itemsData}/>
+							</Flex>
 						</PaddingBlock>
 					</Flex>
 				</PaddingBlock>

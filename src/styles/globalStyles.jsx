@@ -454,5 +454,8 @@ export const useStyles = createStyles(({ css, token }) => ({
         margin-left: 4px;
         margin-bottom: 0 !important;
         font-size: ${token.fontSizeSM}px;
+    `,
+    fullWidth: css`
+        width: 100%;
     `
 }));
