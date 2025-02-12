@@ -14,12 +14,12 @@ import {useStyles} from "./styles.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const {Text} = Typography;
 
-const EntityEmptyBlock = ({text, height = 150}) => {
+const EntityEmptyBlock = ({text, height = 150, removePadding}) => {
     const {globalStyles} = useApp();
     const { styles } = useStyles();
 
     return (
-        <PaddingBlock>
+        <PaddingBlock leftRight={!toBoolean(removePadding)}>
             <Card className={cx(globalStyles.card, styles.emptyCard)}>
                 <Flex align={'center'} justify={'center'} className={styles.emptyFlexBlock} style={{height: `${height}px`}}>
                     <Text className={styles.emptyText}>{text}</Text>

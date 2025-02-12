@@ -27,6 +27,7 @@ import {cx} from "antd-style";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
+import {is} from "@/components/timepicker/npm/utils/func.jsx";
 
 const {Title,Text} = Typography;
 
@@ -50,15 +51,9 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
     const {setHeaderRightIcons} = useHeader();
     const {styles} = useStyles();
 
-    const fixHeaderItems = () => {
-        if (headerRef.current) {
-            setBodyHeight(availableHeight - headerRef.current.offsetHeight - tabsHeight - token.padding);
-        }
-    }
-
     const formik = useCustomFormik({
         initialValues: {
-            Period: '2'
+            Period: '3'
         },
         validation: () => {
 
@@ -86,8 +81,10 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
         }
     }
     useEffect(() => {
-        fixHeaderItems();
-    }, [headerRef, availableHeight]);
+        if (headerRef.current) {
+            setBodyHeight(availableHeight - headerRef.current.offsetHeight - tabsHeight - (token.padding * 2));
+        }
+    }, [headerRef, availableHeight, tabsHeight]);
 
     useEffect(() => {
         if (equalString(selectedTab, 'myrecording')) {
@@ -98,119 +95,131 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
         }
     }, [selectedTab]);
 
+    useEffect(() => {
+        loadData(true);
+    }, [formik?.values?.Period])
+    
     return (
         <PaddingBlock>
+            <Flex vertical={true} gap={token.padding}>
+            
+                
             {isFetching &&
-                <Flex vertical={true} gap={token.padding}>
-                    <Flex vertical={true} gap={4} ref={headerRef}>
-                        <Skeleton.Button active={true} block
-                                         style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
-                        <Skeleton.Button active={true} block style={{height: token.Input.controlHeight}}/>
-                    </Flex>
+                    <>
+                        <Flex vertical={true} gap={4} ref={headerRef}>
+                            <Skeleton.Button active={true} block
+                                             style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
+                            <Skeleton.Button active={true} block style={{height: token.Input.controlHeight}}/>
+                        </Flex>
+                    </>
+            }
 
+                {!isFetching &&
+                    <>
+                        <div ref={headerRef}>
+                            <FormSelect formik={formik}
+                                        name={`Period`}
+                                        className={styles.periodSelect}
+                                        label='Date'
+                                        options={saveMyPlayPeriodList}
+                                        required={true}
+                                        propText='Text'
+                                        propValue='Value'/>
+                        </div>
+                    </>
+                }
+
+                {(isFetching || isRecordingFetching) &&
+                    <>
+                        <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
+                            <Flex gap={token.padding} vertical={true}>
+                                {emptyArray(6).map((item, index) => {
+                                    return (
+                                        <Skeleton.Button key={index} active={true} block style={{height: '350px'}}/>
+                                    )
+                                })}
+                            </Flex>
+                        </div>
+                    </>
+                }
+
+                {(!isFetching && !isRecordingFetching && !anyInList(recordings)) &&
+                    <EmptyBlock description={'No Recordings found.'} removePadding={true}/>
+                }
+
+                {(!isFetching && !isRecordingFetching && anyInList(recordings)) &&
                     <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
                         <Flex gap={token.padding} vertical={true}>
-                            {emptyArray(6).map((item, index) => {
+                            {recordings.map((item, index) => {
+
                                 return (
-                                    <Skeleton.Button key={index} active={true} block style={{height: '350px'}}/>
+                                    <div key={index}>
+                                        <Card
+                                            className={cx(globalStyles.card, styles.recordingCardCover, globalStyles.cardNoPadding)}
+                                            cover={
+                                                item.ThumbnailUrl.endsWith('.gif') ? (
+                                                    <Skeleton.Button block={true} style={{ height: '168px' }} active />
+                                                ) : (
+                                                    <a
+                                                        onClick={() => {
+                                                            displayMessageModal({
+                                                                title: "External Link",
+                                                                html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                                                                    <Text>{'You are about to leave our platform and access an external website. Open external link?'}</Text>
+
+                                                                    <Flex vertical={true} gap={token.padding}>
+                                                                        <Button block={true} type={'primary'} onClick={() => {
+                                                                            openMobileExternalBrowser(item.Url);
+                                                                            onClose();
+                                                                        }}>
+                                                                            Open
+                                                                        </Button>
+
+                                                                        <Button block={true} onClick={() => {
+                                                                            onClose();
+                                                                        }}>
+                                                                            Close
+                                                                        </Button>
+                                                                    </Flex>
+                                                                </Flex>,
+                                                                type: "warning",
+                                                                onClose: () => {},
+                                                            })
+                                                        }}
+                                                    >
+                                                        <img src={item.ThumbnailUrl} alt="thumbnail" className={styles.recordingCardCoverImage} />
+                                                        <Flex className={styles.recordingPlayIconWrapper} align={'center'} justify={'center'}>
+                                                            <SVG icon={'play-solid'} color={'white'}  size={16} />
+                                                        </Flex>
+                                                    </a>
+                                                )
+                                            }
+                                        >
+                                            <Flex
+                                                vertical={true}
+                                                gap={token.padding}
+                                                style={{padding:`${token.paddingSM}px ${token.padding}px`}}
+                                            >
+                                                <Flex vertical gap={token.paddingSM}>
+                                                    <CardIconLabel gap={token.paddingXS} icon={'calendar'} description={item.StartDateTime} size={14} iconColor={token.colorSecondary}/>
+                                                    <CardIconLabel gap={token.paddingXS} icon={'clock'} description={item.EndDateTime} size={14} iconColor={token.colorSecondary}/>
+                                                </Flex>
+                                                <Button
+                                                    block
+                                                    icon={<SVG icon='link-regular'/>}
+                                                    onClick={() => copyToClipboard(item.Url)}
+                                                >
+                                                    <span>Copy Link</span>
+                                                </Button>
+                                            </Flex>
+                                        </Card>
+                                    </div>
                                 )
                             })}
                         </Flex>
                     </div>
-                </Flex>
-            }
-
-            {!isFetching &&
-                <Flex vertical={true} gap={token.padding}>
-                    <div ref={headerRef}>
-                        <FormSelect formik={formik}
-                                    name={`Period`}
-                                    className={styles.periodSelect}
-                                    label='Date'
-                                    options={saveMyPlayPeriodList}
-                                    required={true}
-                                    propText='Text'
-                                    propValue='Value'/>
-                    </div>
-
-                    {!anyInList(recordings) &&
-                        <EmptyBlock description={'No Recordings found.'} />
-                    }
-
-                    {anyInList(recordings) &&
-                        <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
-                            <Flex gap={token.padding} vertical={true}>
-                                {recordings.map((item, index) => {
-                                    
-                                    return (
-                                        <div key={index}>
-                                            <Card
-                                                className={cx(globalStyles.card, styles.recordingCardCover, globalStyles.cardNoPadding)}
-                                                cover={
-                                                    item.ThumbnailUrl.endsWith('.gif') ? (
-                                                        <Skeleton.Button block={true} style={{ height: '168px' }} active />
-                                                    ) : (
-                                                        <a
-                                                            onClick={() => {
-                                                                displayMessageModal({
-                                                                    title: "External Link",
-                                                                    html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
-                                                                        <Text>{'You are about to leave our platform and access an external website. Open external link?'}</Text>
-
-                                                                        <Flex vertical={true} gap={token.padding}>
-                                                                            <Button block={true} type={'primary'} onClick={() => {
-                                                                                openMobileExternalBrowser(item.Url);
-                                                                                onClose();
-                                                                            }}>
-                                                                                Open
-                                                                            </Button>
-
-                                                                            <Button block={true} onClick={() => {
-                                                                                onClose();
-                                                                            }}>
-                                                                                Close
-                                                                            </Button>
-                                                                        </Flex>
-                                                                    </Flex>,
-                                                                    type: "warning",
-                                                                    onClose: () => {},
-                                                                })
-                                                            }}
-                                                        >
-                                                            <img src={item.ThumbnailUrl} alt="thumbnail" className={styles.recordingCardCoverImage} />
-                                                            <div className="play-icon-wrapper">
-                                                                <i className="fa-solid fa-play"></i>
-                                                            </div>
-                                                        </a>
-                                                    )
-                                                }
-                                            >
-                                                <Flex
-                                                    vertical={true}
-                                                    gap={token.padding}
-                                                    style={{padding:`${token.paddingSM}px ${token.padding}px`}}
-                                                >
-                                                    <Flex vertical gap={token.paddingSM}>
-                                                        <CardIconLabel gap={token.paddingXS} icon={'calendar'} description={item.StartDateTime} size={14} iconColor={token.colorSecondary}/>
-                                                        <CardIconLabel gap={token.paddingXS} icon={'clock'} description={item.EndDateTime} size={14} iconColor={token.colorSecondary}/>
-                                                    </Flex>
-                                                    <Button
-                                                        block
-                                                        icon={<SVG icon='link-regular'/>}
-                                                        onClick={() => copyToClipboard(item.Url)}
-                                                    >
-                                                        <span>Copy Link</span>
-                                                    </Button>
-                                                </Flex>
-                                            </Card>
-                                        </div>
-                                    )
-                               })}
-                            </Flex>
-                        </div>
-                    }
-                </Flex>
-            }
+                }
+        </Flex>
         </PaddingBlock>
     )
 }

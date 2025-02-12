@@ -13,7 +13,7 @@ const SGV = ({
                  replaceColor = false,
                  preventPaths = false,
                  preventRects = true,
-                 pathFillColor,
+                 pathFillColor
              }) => {
     return (
         <Suspense fallback={<></>}>
