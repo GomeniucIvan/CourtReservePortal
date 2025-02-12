@@ -47,7 +47,8 @@ const DashboardPourMyBev = ({dashboardData}) => {
                                     <Button type="link"
                                             className={buttonStyles.buttonBlue}
                                             onClick={() => {
-
+                                                let route = toRoute(HomeRouteNames.POUR_MY_BEV_CART, 'id', orgId);
+                                                navigate(route);
                                             }}>
                                         Pay Tab
                                     </Button>

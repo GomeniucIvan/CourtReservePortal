@@ -65,5 +65,6 @@
   "membershipDetails": "Membership Details",
   "membershipReview": "Review",
   "saveMyPlaySessions": "Session Recording(s)",
-  "pourMyBevCode": "Scan to Pour"
+  "pourMyBevCode": "Scan to Pour",
+  "pourMyBevCart": "Pay Tab"
 }
