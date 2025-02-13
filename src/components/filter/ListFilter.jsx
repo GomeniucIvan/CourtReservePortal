@@ -128,6 +128,32 @@ function ListFilter({data,
                 formik.setFieldValue("DrawerFilter.Dates", selectedDates);
                 formik.setFieldValue("DrawerFilter.CustomDate_Start", data?.CustomDate_Start);
                 formik.setFieldValue("DrawerFilter.CustomDate_End", data?.CustomDate_End);
+            } else if (equalString(page, 'event-list')) {
+                let selectedDates = dates.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedDayOfTheWeeks = dayOfTheWeeks.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+                let selectedTimeOfADays = timeOfADays.filter(et => toBoolean(et.Selected)).map(et => et.Id);
+
+                formik.setFieldValue("DrawerFilter.MinPrice", minPrice);
+                formik.setFieldValue("DrawerFilter.MaxPrice", maxPrice);
+
+                formik.setFieldValue("DrawerFilter.TimeOfDay", selectedTimeOfADays);
+                formik.setFieldValue("DrawerFilter.DayOfWeeks", selectedDayOfTheWeeks);
+                formik.setFieldValue("DrawerFilter.Dates", selectedDates);
+                formik.setFieldValue("DrawerFilter.CustomDate_Start", data?.CustomDate_Start);
+                formik.setFieldValue("DrawerFilter.CustomDate_End", data?.CustomDate_End);
+                formik.setFieldValue("DrawerFilter.FilterTimeOfADayStart", data?.FilterTimeOfADayStart);
+                formik.setFieldValue("DrawerFilter.FilterTimeOfADayEnd", data?.FilterTimeOfADayEnd);
+                formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
+
+                if (typeof setFilteredCount === 'function') {
+                    let count = selectedEventTypeIds.length +
+                        selectedEventSessionIds.length+selectedInstructorIds.length +
+                        selectedEventTagIds.length+
+                        selectedDates.length+
+                        selectedDayOfTheWeeks.length+
+                        selectedTimeOfADays.length;
+                    setFilteredCount(count);
+                }
             }
         }
     }, [minPrice, maxPrice, eventTypes, instructors, eventSessions, eventTags, dates, dayOfTheWeeks, timeOfADays, eventRegistrationTypes])
@@ -147,7 +173,6 @@ function ListFilter({data,
                 }))
             }
             if (equalString(page, 'my-booking-list')) {
-                
                 if (anyInList(bookingTypes)) {
                     setInnerBookingTypes(bookingTypes.map(item => {
                         return {

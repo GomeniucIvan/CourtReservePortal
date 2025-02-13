@@ -28,8 +28,9 @@ const FormInputsDateInterval = ({ labelStart,
     const { token, globalStyles } = useApp();
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
     const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    
+    const [startDate, setStartDate] = useState(formik.values[nameStart] || '');
+    const [endDate, setEndDate] = useState(formik.values[nameEnd] || '');
 
 
     let fieldStart = '';
@@ -48,17 +49,15 @@ const FormInputsDateInterval = ({ labelStart,
         }
         if (fieldEnd.value === null) {
             fieldEnd = { ...fieldEnd, value: '' };
-            setEndDate(fieldEnd);
         }
     }
 
     useEffect(() => {
         setStartDate(fieldStart.value);
         setEndDate(fieldEnd.value);
-    }, [])
+    }, [fieldStart.value, fieldEnd.value])
 
     const updateDates = (start, end) => {
-        
         const startDateObj = dayjs(start);
         const endDateObj = dayjs(end);
 
@@ -135,7 +134,8 @@ const FormInputsDateInterval = ({ labelStart,
             <div>
                 <div onClick={() => setShowStartDatePicker(true)}>
                     <FormInput formik={formik}
-                               name={nameStart} label={''}
+                               name={nameStart} 
+                               label={''}
                                disabled={true}
                                suffix={<SVG icon={'calendar'} size={18} />}
                                className={styles.activeBgInput} 

@@ -70,6 +70,9 @@ export const listFilter = (incValues) => {
     let dates = incValues?.FilterSelectedDates || incValues?.Dates || [];
     let eventTagIds = incValues?.SelectedEventTags || incValues?.EventTagIds || [];
     
+    if (isNullOrEmpty(sessionIds)){
+        sessionIds = []
+    }
     
     return {
         MinPrice: minPrice,

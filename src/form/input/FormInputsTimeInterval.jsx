@@ -15,8 +15,9 @@ const FormInputsTimeInterval = ({ labelStart,
                                     ...props }) => {
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
     const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-    const [startTime, setStartTime] = useState(null);
-    const [endTime, setEndTime] = useState(null);
+
+    const [startTime, setStartTime] = useState(formik.values[nameStart] || '');
+    const [endTime, setEndTime] = useState(formik.values[nameEnd] || '');
     
     let fieldStartTime = '';
     let fieldEndTime = '';
@@ -33,32 +34,27 @@ const FormInputsTimeInterval = ({ labelStart,
         }
         if (fieldEndTime.value === null) {
             fieldEndTime = { ...fieldEndTime, value: '' };
-            setEndTime(fieldEndTime);
         }
     }
 
     useEffect(() => {
         setStartTime(fieldStartTime.value);
         setEndTime(fieldEndTime.value);
-    }, [])
-
+    }, [fieldStartTime.value, fieldEndTime.value])
+    
     const onStartChange = (e) => {
-
         formik.setFieldValue(nameStart, e);
     }
 
     const onEndChange = (e) => {
-        
         formik.setFieldValue(nameEnd, e);
     }
     
     const onStartConfirm = (e) => {
-
         setShowStartDatePicker(false)
     }
 
     const onEndConfirm = (e) => {
-        
         setShowEndDatePicker(false)
     }
 
