@@ -46,6 +46,15 @@ export const setTabStorage = (tabKey, selectedTab, setFunction) => {
 
 export const clearAllLocalStorage = () => {
     localStorage.clear();
+
+    if (window.ReactNativeWebView) {
+        const nativeToken = JSON.stringify({type: 'MobileDeleteToken'});
+        window.ReactNativeWebView.postMessage(nativeToken);
+
+        const nativeLogout = JSON.stringify({type: 'FlutterLogout'});
+        window.ReactNativeWebView.postMessage(nativeLogout);
+
+    }
 };
 
 export const setNavigationStorage = (orgId, dashboardData) => {

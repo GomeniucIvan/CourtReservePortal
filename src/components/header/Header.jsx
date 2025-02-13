@@ -42,6 +42,21 @@ const Header = forwardRef((props, ref) => {
         }
     };
 
+    useEffect(() => {
+        const handleMessage = (event) => {
+            //mobile back button click
+            if (event.data === 'mobileNavigateBack') {
+                navigateBack();
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+
+        // Cleanup function to remove the event listener
+        return () => {
+            window.removeEventListener('message', handleMessage);
+        };
+    }, []);
     const backToPreviousPage = () => {
         if (typeof onBack === 'function') {
             onBack();

@@ -59,4 +59,18 @@ export const reactNativeWebViewReload = () => {
     }
 }
 
+export const reactNativeSaveBadgeCount = (count) =>{
+    if (window.ReactNativeWebView) {
+        const message = JSON.stringify({ type: 'FlutterSetBadgeCount', count: count });
+        window.ReactNativeWebView.postMessage(message);
+    }
+}
+
+export const reactNativeInitFireBase = () =>{
+    if (window.ReactNativeWebView) {
+        const message = JSON.stringify({ type: 'FlutterInitFirebase' });
+        window.ReactNativeWebView.postMessage(message);
+    }
+}
+
 window.reactActivateStatus = reactActivateStatus;

@@ -7,11 +7,12 @@ import MessageModalProvider from "@/context/MessageModalProvider.jsx";
 import { theme } from "antd";
 import {HeaderProvider} from "@/context/HeaderProvider.jsx";
 import LayoutBackgroundReload from "@/components/layout/LayoutBackgroundReload.jsx";
+import {FooterProvider} from "@/context/FooterProvider.jsx";
 const { useToken } = theme;
 
 export const GlobalContext = ({ children }) => {
     const { token } = useToken();
-    
+
     function ErrorFallback({ error }) {
         const isDevelopment = process.env.NODE_ENV === 'development' || 1 == 1;
 
@@ -37,13 +38,15 @@ export const GlobalContext = ({ children }) => {
                 <AppProvider>
                     <HeaderProvider>
                         <AuthProvider>
-                            <SafeArea>
-                                <MessageModalProvider>
-                                    <LayoutBackgroundReload>
-                                        {children}
-                                    </LayoutBackgroundReload>
-                                </MessageModalProvider>
-                            </SafeArea>
+                            <FooterProvider>
+                                <SafeArea>
+                                    <MessageModalProvider>
+                                        <LayoutBackgroundReload>
+                                            {children}
+                                        </LayoutBackgroundReload>
+                                    </MessageModalProvider>
+                                </SafeArea>
+                            </FooterProvider>
                         </AuthProvider>
                     </HeaderProvider>
                 </AppProvider>

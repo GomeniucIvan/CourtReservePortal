@@ -30,6 +30,9 @@ import {getCookie} from "@/utils/CookieUtils.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import LayoutScripts from "@/components/layout/LayoutScripts.jsx";
+import {reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/MobileUtils.jsx";
+import apiService from "@/api/api.jsx";
+import {useFooter} from "@/context/FooterProvider.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -73,6 +76,8 @@ function Layout() {
         setNewOrgId
     } = useAuth();
 
+    const {setAlertsCount} = useFooter();
+    
     if (isNullOrEmpty(currentRoute)) {
         currentRoute = dynamicPages.find(route => equalString(route.path, location.pathname));
     }
@@ -118,7 +123,6 @@ function Layout() {
 
                 setIsFetching(false);
             }
-
             
             //authorized with active orgid
             else if (!isNullOrEmpty(workingMemberId) && !isNullOrEmpty(workingOrgId)) {
@@ -243,7 +247,29 @@ function Layout() {
         }
     };
     
+    const saveDeviceFirebaseToken = async (deviceId, token, androidDevice) => {
+        if (!isNullOrEmpty(orgId)) {
+            let postModel = {
+                deviceId: deviceId,
+                token: token,
+                androidDevice: toBoolean(androidDevice),
+                loadUnSeen: true,
+            }
+            
+            let response = await apiService.post(`/api/api/native/firebase-token?id=${orgId}`, postModel);   
+            if (response) {
+                reactNativeSaveBadgeCount(response?.unSeenCount);
+                setAlertsCount(response?.unSeenCount)
+            }
+        }
+    }
+    
+    //events
     useEffect(() => {
+        window.updateFirebaseToken = (deviceId, token, androidDevice) => {
+            saveDeviceFirebaseToken(deviceId, token, androidDevice);
+        };
+        
         // Define the function to handle keyboard show event
         window.onReactNativeKeyboardShow = (isIOS, keyboardHeight) => {
             if (isIOS) {
@@ -262,6 +288,7 @@ function Layout() {
 
         // Cleanup on unmount
         return () => {
+            delete window.updateFirebaseToken;
             delete window.onReactNativeKeyboardShow;
             delete window.onReactNativeKeyboardHide;
         };
@@ -395,6 +422,12 @@ function Layout() {
             loadOrganizationData(newOrgId);
         }
     }, [newOrgId]);
+    
+    useEffect(() => {
+        if (!isNullOrEmpty(memberId)) {
+            reactNativeInitFireBase();
+        }
+    }, [memberId])
     
     const skeletonArray = Array.from({length: 5});
 
