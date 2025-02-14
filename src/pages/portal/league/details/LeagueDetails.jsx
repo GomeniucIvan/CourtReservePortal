@@ -22,7 +22,7 @@ import LeagueDetailsGameDays from "@portal/league/details/LeagueDetails.GameDays
 import LeagueDetailsStandings from "@portal/league/details/LeagueDetails.Standings.jsx";
 const {Title, Text} = Typography;
 
-function LeagueDetails({filter}) {
+function LeagueDetails() {
     const [sessionDetails, setSessionDetails] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
     const [selectedTab, setSelectedTab] = useState('');
@@ -47,7 +47,7 @@ function LeagueDetails({filter}) {
         setIsFetching(true);
         
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Leagues/Details?id=${orgId}&sessionId=${lsid}`);
-        console.log(response)
+
         if (toBoolean(response?.IsValid)){
             let data = response.Data;
             let firstSelectedTab = data.FirstSelectedTab;
@@ -69,7 +69,7 @@ function LeagueDetails({filter}) {
         } else {
             displayMessageModal({
                 title: 'Error',
-                html: (onClose) => `${response?.Message}.`,
+                html: (onClose) => `${response?.Message}`,
                 type: "error",
                 buttonType: modalButtonType.DEFAULT_CLOSE,
                 onClose: () => {

@@ -65,7 +65,7 @@ function PackagePurchase() {
         validate: () => {
             let isValid = true;
             
-            if (stringToJson(authData?.FamilyMembesJson)){
+            if (stringToJson(authData?.FamilyMembersJson)){
                 if (toBoolean(pack.EligibleAssignByFamily)){
                     if (!anyInList(formik?.values?.FamilyMemberIds)) {
                         isValid = false;
@@ -86,7 +86,7 @@ function PackagePurchase() {
             setIsLoading(true);
 
             let selectedMemberIds =[];
-            if (stringToJson(authData?.FamilyMembesJson)) {
+            if (stringToJson(authData?.FamilyMembersJson)) {
                 if (toBoolean(pack.EligibleAssignByFamily)) {
                     selectedMemberIds = values.FamilyMemberIds;
                 } else {
@@ -135,7 +135,7 @@ function PackagePurchase() {
 
         if (toBoolean(response?.IsValid)) {
             setPack(response.Data);
-            if (stringToJson(authData?.FamilyMembesJson)) {
+            if (stringToJson(authData?.FamilyMembersJson)) {
                 let responseFamilyMembers = await apiService.get(`/api/member-portal/packages/get-my-eligible-family-members-to-purchase-package?id=${orgId}&packageId=${packageId}`); 
            
                 if (toBoolean(responseFamilyMembers.IsValid)) {

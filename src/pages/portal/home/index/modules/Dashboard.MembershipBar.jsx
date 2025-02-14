@@ -55,7 +55,7 @@ const DashboardMembershipBar = ({dashboardData, page = 'dashboard'}) => {
                                     drawerBarcodeRef.current.open();
                                 }
                             }} />
-                            <DrawerBarcode ref={drawerBarcodeRef} format={authData?.OrgBarcodeFormat} familyList={stringToJson(authData?.FamilyMembesJson)}/>
+                            <DrawerBarcode ref={drawerBarcodeRef} format={authData?.OrgBarcodeFormat} familyList={stringToJson(authData?.FamilyMembersJson)}/>
                         </>
                     )}
                 </Flex>

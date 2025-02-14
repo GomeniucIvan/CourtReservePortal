@@ -71,9 +71,9 @@ export const AuthProvider = ({children}) => {
 
     const getAuthDataOrgMemberIds = () => {
         let orgMemberIds = [];
-
+        
         if (anyInList(stringToJson(authData?.FamilyMembersJson))) {
-            orgMemberIds = authData.FamilyMembersJson.map(v => v.OrgMemberId);
+            orgMemberIds = stringToJson(authData?.FamilyMembersJson).map(v => v.OrgMemberId);
         } else {
             if (!isNullOrEmpty(authData?.OrgMemberId)) {
                 orgMemberIds.push(authData.OrgMemberId);

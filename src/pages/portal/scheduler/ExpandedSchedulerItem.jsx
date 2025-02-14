@@ -107,7 +107,7 @@ const ExpandedSchedulerItem = (props) => {
                     toBoolean(dataItem.IsOrgClosed) ||
                     toBoolean(dataItem.IsCourtClosed) ||
                     !isNullOrEmpty(dataItem.ClosureTypeId) ||
-                    (isNullOrEmpty(dataItem.EventId) && !isMemberSignUp(dataItem.MemberIds, stringToJson(authData?.FamilyMembesJson)))
+                    (isNullOrEmpty(dataItem.EventId) && !isMemberSignUp(dataItem.MemberIds, stringToJson(authData?.FamilyMembersJson)))
                 ) {
                     allowToClick = false
                 }

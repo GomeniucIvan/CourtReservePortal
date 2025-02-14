@@ -27,6 +27,7 @@ function Navigation() {
 
     const loadMyLeagues = async () => {
         let response =await appService.getRoute(apiRoutes.API4, `/app/Online/Utils/Member_GetRegisteredLeagues?orgId=${orgId}&memberId=${authData?.MemberId}`);
+        
         if (toBoolean(response?.IsValid)) {
             const data = response.Data;
             
@@ -34,7 +35,7 @@ function Navigation() {
                 return {
                     IconClass: 'trophy',
                     Text: league.Name,
-                    Url: `/Online/Leagues/Details/${league.Id}`
+                    Url: `/Online/Leagues/Details/${orgId}/${league.Id}`
                 }
             });
 
