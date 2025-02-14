@@ -1,7 +1,9 @@
 import LeagueList from "@portal/league/list/LeagueList.jsx";
+import LeagueDetails from "@portal/league/details/LeagueDetails.jsx";
 
 export const LeagueRouteNames = {
-    LEAGUE_LIST: '/online/leagues/list/:id'
+    LEAGUE_LIST: '/online/leagues/list/:id',
+    LEAGUE_DETAIL: '/online/leagues/details/:id/:lsid',
 };
 
 const LeagueRoutes = [
@@ -9,7 +11,11 @@ const LeagueRoutes = [
         path: LeagueRouteNames.LEAGUE_LIST,
         element: <LeagueList />,
         title: 'leagues',
-        entityTitle: true,
+    },
+    {
+        path: LeagueRouteNames.LEAGUE_DETAIL,
+        element: <LeagueDetails />,
+        title: 'leagueSessionDetails',
     }
 ];
 

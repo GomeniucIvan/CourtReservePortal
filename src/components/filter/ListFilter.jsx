@@ -128,7 +128,7 @@ function ListFilter({data,
                 formik.setFieldValue("DrawerFilter.Dates", selectedDates);
                 formik.setFieldValue("DrawerFilter.CustomDate_Start", data?.CustomDate_Start);
                 formik.setFieldValue("DrawerFilter.CustomDate_End", data?.CustomDate_End);
-            } else if (equalString(page, 'event-list')) {
+            } else if (equalString(page, 'league-list')) {
                 let selectedDates = dates.filter(et => toBoolean(et.Selected)).map(et => et.Id);
                 let selectedDayOfTheWeeks = dayOfTheWeeks.filter(et => toBoolean(et.Selected)).map(et => et.Id);
                 let selectedTimeOfADays = timeOfADays.filter(et => toBoolean(et.Selected)).map(et => et.Id);
@@ -146,10 +146,7 @@ function ListFilter({data,
                 formik.setFieldValue("DrawerFilter.HideIneligibleAndFullEvents", '');
 
                 if (typeof setFilteredCount === 'function') {
-                    let count = selectedEventTypeIds.length +
-                        selectedEventSessionIds.length+selectedInstructorIds.length +
-                        selectedEventTagIds.length+
-                        selectedDates.length+
+                    let count =  selectedDates.length+
                         selectedDayOfTheWeeks.length+
                         selectedTimeOfADays.length;
                     setFilteredCount(count);

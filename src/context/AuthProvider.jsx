@@ -1,12 +1,13 @@
 ﻿import {createContext, useContext, useEffect, useState} from 'react';
 import {clearAllLocalStorage, fromAuthLocalStorage, toAuthLocalStorage} from "../storage/AppStorage.jsx";
-import {isNullOrEmpty, nullToEmpty} from "../utils/Utils.jsx";
+import {anyInList, isNullOrEmpty, nullToEmpty} from "../utils/Utils.jsx";
 import {setClientUiCulture} from "../utils/DateUtils.jsx";
 import appService from "../api/app.jsx";
 import {useNavigate} from "react-router-dom";
 import {useAntd} from "./AntdProvider.jsx";
 import {setRequestData} from "../api/api.jsx";
 import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
+import {stringToJson} from "@/utils/ListUtils.jsx";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -67,6 +68,22 @@ export const AuthProvider = ({children}) => {
         setClientUiCulture(memberResponseData.UiCulture);
         return true;
     }
+
+    const getAuthDataOrgMemberIds = () => {
+        let orgMemberIds = [];
+
+        if (anyInList(stringToJson(authData?.FamilyMembersJson))) {
+            orgMemberIds = authData.FamilyMembersJson.map(v => v.OrgMemberId);
+        } else {
+            if (!isNullOrEmpty(authData?.OrgMemberId)) {
+                orgMemberIds.push(authData.OrgMemberId);
+            }
+        }
+
+        return orgMemberIds;
+    };
+    
+    const authDataOrgMemberIds = getAuthDataOrgMemberIds(); 
     
     return (
         <AuthContext.Provider value={{
@@ -83,7 +100,8 @@ export const AuthProvider = ({children}) => {
             spGuideId,
             setAuthorizationData,
             logout,
-            memberData
+            memberData,
+            authDataOrgMemberIds
         }}>
             {children}
         </AuthContext.Provider>

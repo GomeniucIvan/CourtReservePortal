@@ -23,7 +23,7 @@ function ProfileBilling({tabKey}) {
     const [selectedTab, setSelectedTab] = useState(!isNullOrEmpty(tabToShow) ? tabToShow : selectedTabStorage('profilebilling', 'transactions'));
     const {token, globalStyles} = useApp();
     const [tabsHeight, setTabHeight] = useState(0);
-    const tabsRef = useRef();
+    const tabsRef = useRef(null);
 
     useEffect(() => {
         if (tabsRef.current) {

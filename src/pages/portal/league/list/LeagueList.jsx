@@ -34,6 +34,7 @@ import {listFilter} from "@/utils/ListUtils.jsx";
 import {fromDateTimeStringToDate, fromTimeSpanString} from "@/utils/DateUtils.jsx";
 import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
 import {eReplace} from "@/utils/TranslateUtils.jsx";
+import {LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
 
 const {Title, Text} = Typography;
 
@@ -46,6 +47,7 @@ function LeagueList({filter}) {
         globalStyles,
         token,
         shouldFetch,
+        setFooterContent,
         resetFetch
     } = useApp();
 
@@ -69,9 +71,6 @@ function LeagueList({filter}) {
             DrawerFilter: {
                 MinPrice: null,
                 MaxPrice: null,
-                SessionIds: [],
-                InstructorIds: [],
-                EventTypeIds: [],
                 TimeOfDay: null,
                 DayOfWeeks: [],
                 Dates: null,
@@ -81,7 +80,6 @@ function LeagueList({filter}) {
                 FilterTimeOfADayStart: null,
                 FilterTimeOfADayEnd: null,
                 EventRegistrationTypeId: null,
-                EventTagIds: [],
                 HideIneligibleAndFullEvents: false,
                 EventSortBy: 1,
             }
@@ -94,6 +92,7 @@ function LeagueList({filter}) {
     const loadEvents = async (incData, searchText) => {
         let readValues = incData || formik?.values?.DrawerFilter || {};
         setIsFetching(true);
+
 
         let postData = {
             ...listFilter(readValues),
@@ -184,6 +183,7 @@ function LeagueList({filter}) {
 
     useEffect(() => {
         setIsFooterVisible(true);
+        setFooterContent('');
         loadData();
     }, []);
 
@@ -213,11 +213,18 @@ function LeagueList({filter}) {
 
     }
 
+    const redirectToLeague = (leagueSession) => {
+        let route = toRoute(LeagueRouteNames.LEAGUE_DETAIL, 'id', orgId);
+        route = toRoute(route, 'lsid', leagueSession.LeagueSessionId);
+        setPage(setDynamicPages, leagueSession.Name, route);
+        navigate(route);
+    }
+    
     return (
         <>
             {(!isFetching && !anyInList(events)) &&
                 <PaddingBlock topBottom={true}>
-                    <EmptyBlock description={eReplace('No leagues found')} removePadding={true} />
+                    <EmptyBlock description={eReplace('No league(s) Found')} removePadding={true} />
                 </PaddingBlock>
             }
 
@@ -245,11 +252,7 @@ function LeagueList({filter}) {
                                            key={index}
                                            arrowIcon={false}
                                            onClick={() => {
-                                               let route = toRoute(EventRouteNames.EVENT_DETAILS, 'id', item.OrganizationId);
-                                               route = toRoute(route, 'number', item.NextReservationNumber);
-                                               route = `${route}?resId=${item.NextReservationId}`;
-                                               setPage(setDynamicPages, item.EventName, route);
-                                               navigate(route);
+                                               redirectToLeague(item);
                                            }}>
                                     {isListDisplay ?
                                         (
@@ -257,19 +260,18 @@ function LeagueList({filter}) {
                                                 <Flex gap={token.Custom.cardIconPadding} align={'center'}>
                                                     <div className={globalStyles?.cardIconBlock}>
                                                         <i className={globalStyles.entityTypeCircleIcon}
-                                                           style={{backgroundColor: item.CategoryBackgroundColor}}></i>
+                                                           style={{backgroundColor: item.LeagueBackgroundColor}}></i>
                                                     </div>
 
                                                     <div>
                                                         <Title level={1}
                                                                className={cx(globalStyles.cardItemTitle, globalStyles.noBottomPadding)}>
-                                                            <Ellipsis direction='end' content={item.EventName}/>
+                                                            <Ellipsis direction='end' content={item.Name}/>
                                                         </Title>
 
                                                         <Text>
                                                             <small>
-                                                                <Ellipsis direction='end'
-                                                                          content={item.CategoryName}/>
+                                                                <Ellipsis direction='end' content={item.LeagueName}/>
                                                             </small>
                                                         </Text>
                                                     </div>
@@ -294,19 +296,19 @@ function LeagueList({filter}) {
                                         (
                                             <Card
                                                 className={cx(globalStyles.card, globalStyles.listCardGrid, globalStyles.clickableCard)}
-                                                style={{borderColor: item.CategoryBackgroundColor}}>
+                                                style={{borderColor: item.LeagueBackgroundColor}}>
                                                 <div className={globalStyles.listBgColor}
-                                                     style={{backgroundColor: item.CategoryBackgroundColor}}></div>
+                                                     style={{backgroundColor: item.LeagueBackgroundColor}}></div>
                                                 <Text>
                                                     <Ellipsis direction='end'
                                                               rows={2}
-                                                              content={item.EventName}/>
+                                                              content={item.Name}/>
                                                 </Text>
                                                 <Text>
                                                     <small>
                                                         <Ellipsis direction='end'
                                                                   rows={2}
-                                                                  content={item.EventName}/>
+                                                                  content={item.LeagueName}/>
                                                     </small>
                                                 </Text>
                                             </Card>

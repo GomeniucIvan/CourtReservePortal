@@ -137,7 +137,12 @@ const PasscodeInput = forwardRef((props, ref) => {
                     style={{fontSize: `${mergedProps.fontSize}px`}}
                     key={i}
                 >
-                    {chars[i] && mergedProps.plain ? chars[i] : ''}
+                    <input
+                        value={chars[i] && mergedProps.plain ? chars[i] : ''}
+                        className='cell-input'
+                        style={{fontSize: `${mergedProps.fontSize}px`}}
+                    />
+                    {/*{chars[i] && mergedProps.plain ? chars[i] : ''}*/}
                 </div>
             );
         }

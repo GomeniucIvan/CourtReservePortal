@@ -37,6 +37,21 @@ export const useStyles = createStyles(({ css, token }) => ({
                 &.cell-error {
                     border-color: ${token.colorError};
                 }
+                
+                .cell-input {
+                    position: relative;
+                    border: none;
+                    background: transparent;
+                    width: 100%;
+                    height: 100%;
+                    text-align: center;
+                    font-size: inherit;
+                    outline: none;
+                    z-index: 1;
+                    -webkit-user-select: text;
+                    -moz-user-select: text;
+                    user-select: text;
+                }
             }
             
             &.-seperated {
@@ -51,14 +66,21 @@ export const useStyles = createStyles(({ css, token }) => ({
                 }
             }
             
-            input {
-                position: absolute;
-                left: -200vw;
-                top: 0;
+            .native-input {
                 display: block;
-                width: 50px;
-                height: 20px;
-                opacity: .5;
+                height: 100%;
+                left: 0;
+                position: absolute;
+                top: 0;
+                width: 100%;
+                z-index: 2;
+                background-color: transparent;
+                border: none;
+                color: transparent;
+                box-shadow: none !important;
+                caret-color: transparent !important;
+                outline: none !important;
+                -webkit-tap-highlight-color: transparent !important;
             }
         }
   `,

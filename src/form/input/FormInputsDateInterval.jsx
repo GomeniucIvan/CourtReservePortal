@@ -32,7 +32,6 @@ const FormInputsDateInterval = ({ labelStart,
     const [startDate, setStartDate] = useState(formik.values[nameStart] || '');
     const [endDate, setEndDate] = useState(formik.values[nameEnd] || '');
 
-
     let fieldStart = '';
     let fieldEnd = '';
 
