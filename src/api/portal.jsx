@@ -11,7 +11,7 @@ const portalService = {
     },
     navigationData: async (navigate, orgId) => {
         let navigationType = getCookie("dashboard_navigationType");
-        return  await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}&navigationType=${navigationType}`);
+        return  await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}&navigationType=${nullToEmpty(navigationType)}`);
     },
     requestData: async (navigate, orgId) => {
         //params for bearer authorization, we pass param like requestData to auth member/user

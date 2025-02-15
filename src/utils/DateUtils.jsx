@@ -1,5 +1,6 @@
 import {equalString, isNullOrEmpty} from "./Utils.jsx";
 import moment from "moment";
+import {date} from "yup";
 
 let clientUiCulture = 'en-US';
 
@@ -310,9 +311,34 @@ export const fromDateTimeStringToDateTime = (dateString) => {
     return moment(dateString).format(`${dateFormatByUiCulture()} HH:mm:ss`);
 }
 
+const getOrdinalSuffix = (day) => {
+    if (day === 1 || day === 21 || day === 31) return 'st';
+    if (day === 2 || day === 22) return 'nd';
+    if (day === 3 || day === 23) return 'rd';
+    return 'th';
+};
+
 export const fromDateTimeStringToDate = (dateString) => {
     if (!dateString) return null;
     return moment(dateString).format(`${dateFormatByUiCulture()}`);
+}
+
+export const fromDateTimeStringToDateFormat = (dateString, view = 'friendly') => {
+    if (!dateString) return null;
+
+    if (equalString(view, 'friendly')) {
+        const date = moment(dateString);
+        const day = date.date();
+        const ordinal = getOrdinalSuffix(day);
+
+        if (date.year() !== moment().year()) {
+            return date.format(`ddd, MMM D[${ordinal}] YYYY`);
+        }
+
+        return date.format(`ddd, MMM D[${ordinal}]`);
+    }
+    
+    return '';
 }
 
 export const fromTimeSpanString = (dateString) => {

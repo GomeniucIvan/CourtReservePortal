@@ -5,6 +5,7 @@ const {Text} = Typography;
 import SVG from "../svg/SVG.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {isNullOrEmpty} from "@/utils/Utils.jsx";
+import React from "react";
 
 function CardIconLabel({description, icon, iconColor, size, preventFill = false, preventStroke = true, gap = null, textColor = null}) {
     const {globalStyles, token} = useApp();
@@ -24,7 +25,9 @@ function CardIconLabel({description, icon, iconColor, size, preventFill = false,
             </div>
 
             <Text style={{color: textColor}}>
-                {description}
+                {!isNullOrEmpty(description) &&
+                    <div dangerouslySetInnerHTML={{__html: description}} />
+                }
             </Text>
         </Flex>
     )

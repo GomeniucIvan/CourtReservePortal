@@ -15,6 +15,7 @@ import {cx} from "antd-style";
 import LeagueDetailsGameDaysPlayers from "@portal/league/details/gamedays/LeagueDetails.GameDays.Players.jsx";
 import LeagueDetailsGameDaysMyGroup from "@portal/league/details/gamedays/LeagueDetails.GameDays.MyGroup.jsx";
 import LeagueDetailsGameDaysAllMatches from "@portal/league/details/gamedays/LeagueDetails.GameDays.AllMatches.jsx";
+import {leagueHasMatches} from "@portal/league/functions.jsx";
 const {Title, Text} = Typography;
 
 function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
@@ -70,8 +71,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
     });
 
-    if (equalString(sessionDetails?.SessionGameDayGroupStatus, '2') ||
-        equalString(sessionDetails?.SessionGameDayGroupStatus, '3')) {
+    if (leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus)) {
         tabIds.push({
             key: 'mygroup',
             label: 'My Group',
