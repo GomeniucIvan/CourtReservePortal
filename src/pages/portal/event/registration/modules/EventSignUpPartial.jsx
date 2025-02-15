@@ -26,7 +26,7 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 const {Title, Text} = Typography;
 
-function EventSignUpPartial({formik,event, loadData, guestBlockRef, isFamilyMember, maxAllowedGuests}) {
+function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMember, maxAllowedGuests}) {
     const disclosureSignHandler = useRef();
     const disclosureRef = useRef();
     const [disclosureModalData, setDisclosureModalData] = useState(null);
@@ -114,6 +114,7 @@ function EventSignUpPartial({formik,event, loadData, guestBlockRef, isFamilyMemb
             }
 
 
+            {/*//TODO FIND A WAY TO MERGE WITH LEAGUES*/}
             {(moreThanOneInList(formik?.values?.Members) || toBoolean(isFamilyMember)) &&
                 <>
                     <List

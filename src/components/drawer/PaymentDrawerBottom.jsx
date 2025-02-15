@@ -140,15 +140,18 @@ const PaymentDrawerBottom = forwardRef(({
                                                     <>
                                                         {paymentData.list.map((paymentListItem, index) => {
                                                             const isLastIndex = index === paymentData.list.length - 1;
+                                                            const itemKey = `pml_${paymentListItem.label}-${index}`;
                                                             
                                                             return (
                                                                 <>
-                                                                    <Flex key={index} vertical={true}>
+                                                                    <Flex key={itemKey} vertical={true}>
                                                                         <Text level={1} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
 
                                                                         {paymentListItem.items.map((paymentItem, paymentItemIndex) => {
+                                                                            const innerItemKey = `pmi_${paymentItem.label}-${paymentItem.price}-${paymentItemIndex}`;
+                                                                            
                                                                             return (
-                                                                                <div key={paymentItemIndex}>
+                                                                                <div key={innerItemKey}>
                                                                                     <Flex align={'center'} justify={'space-between'} gap={2}>
                                                                                         <Text><strong>{paymentItem.label}</strong></Text>
                                                                                         <Text>{costDisplay(paymentItem.price)}</Text>
@@ -168,11 +171,11 @@ const PaymentDrawerBottom = forwardRef(({
                                                 ) : (
                                                     <Flex vertical={true}>
                                                         {paymentData.list.map((paymentListItem, index) => {
-
                                                             const isLastIndex = index === paymentData.list.length - 1;
+                                                            const itemKey = `pmic_${paymentListItem.label}-${index}`;
                                                             
                                                             return (
-                                                                <div key={index}>
+                                                                <div key={itemKey}>
                                                                     <Flex align={'center'} justify={'space-between'} gap={2}>
                                                                         <Text level={1} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
                                                                         <Text>{paymentListItem.value}</Text>

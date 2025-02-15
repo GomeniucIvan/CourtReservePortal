@@ -8,15 +8,13 @@ export const leagueHasMatches = (sessionGameDayGroupStatus) => {
 
 export const displayLeaguePlayerFormat = (leagueGender) => {
     if (equalString(leagueGender, 1)) {
-        return 'Rotational (Flex)';
+        return 'Men';
     } else if (equalString(leagueGender, 2)) {
-        return 'Fixed Schedule';
+        return 'Women';
     } else if (equalString(leagueGender, 3)) {
-        return 'Quads';
+        return 'Mixed';
     } else if (equalString(leagueGender, 4)) {
-        return 'Challenge Ladder';
-    } else if (equalString(leagueGender, 5)) {
-        return 'Team';
+        return 'Co-Ed';
     }
 }
 
