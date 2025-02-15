@@ -38,41 +38,92 @@ import {LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
 import {displayLeaguePlayerFormat, leagueDisplayEventDates} from "@portal/league/functions.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 
-function LeagueSessionDetailsPartial({sessionDetails}) {
+function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
     const iconSize = 20;
+    const {token} = useApp();
+
+    const getIcon = (icon) => {
+        if (equalString(page, 'restrictions')) {
+            return 'circle-filled';
+        } else {
+            return icon;
+        }
+    }
+
+    const getColor = () => {
+        if (equalString(page, 'restrictions')) {
+            return token.colorError;
+        } else {
+            return undefined;
+        }
+    }
+
+    const getPreventCircles = () => {
+        return !equalString(page, 'restrictions');
+    }
+    
+    const displayDescription = (label, value) => {
+        if (equalString(page, 'restrictions')) {
+            return `${label}: ${value}`;
+        } else {
+            return undefined;
+        }
+    }
     
     return (
-       <>
-           {!isNullOrEmpty(leagueDisplayEventDates(sessionDetails)) &&
-               <CardIconLabel icon={'event-dates'} description={leagueDisplayEventDates(sessionDetails)} size={iconSize} />
-           }
+        <>
+            {equalString(page, 'details') &&
+                <>
+                    {!isNullOrEmpty(leagueDisplayEventDates(sessionDetails)) &&
+                        <CardIconLabel icon={getIcon('event-dates')} iconColor={getColor()} description={leagueDisplayEventDates(sessionDetails)} size={iconSize} />
+                    }
 
-           {!isNullOrEmpty(sessionDetails.DisplayStartEndTimesString) &&
-               <CardIconLabel icon={'clock'} description={sessionDetails.DisplayStartEndTimesString} size={iconSize} />
-           }
-           {!isNullOrEmpty(sessionDetails.DisplayCostString) &&
-               <CardIconLabel icon={'price-tag'} description={sessionDetails.DisplayCostString} size={iconSize} />
-           }
-           {!isNullOrEmpty(sessionDetails.Note) &&
-               <CardIconLabel icon={'message'} description={sessionDetails.Note} size={iconSize} />
-           }
-           {!isNullOrEmpty(sessionDetails.RatingNames) &&
-               <CardIconLabel icon={'star-light'} description={sessionDetails.RatingNames} size={iconSize} />
-           }
-           {(!isNullOrEmpty(sessionDetails.LeagueGender) && !equalString(sessionDetails.LeagueGender, 4)) &&
-               <CardIconLabel icon={'person-half-dress-sharp-regular'} description={displayLeaguePlayerFormat(sessionDetails.LeagueGender)} size={iconSize} />
-           }
-           {(!isNullOrEmpty(sessionDetails.AgeRestrictionString)) &&
-               <CardIconLabel icon={'arrow-up-9-1-regular'} description={sessionDetails.AgeRestrictionString} size={iconSize} />
-           }
-           {(!isNullOrEmpty(sessionDetails.SlotsInfoString) && toBoolean(sessionDetails.ShowSlotsInfoBool)) &&
-               <CardIconLabel icon={'grid-sharp-light'} description={sessionDetails.SlotsInfoString} size={iconSize} />
-           }
+                    {!isNullOrEmpty(sessionDetails.DisplayStartEndTimesString) &&
+                        <CardIconLabel icon={getIcon('clock')} iconColor={getColor()} description={sessionDetails.DisplayStartEndTimesString} size={iconSize} />
+                    }
+                    {!isNullOrEmpty(sessionDetails.DisplayCostString) &&
+                        <CardIconLabel icon={getIcon('price-tag')} iconColor={getColor()} description={sessionDetails.DisplayCostString} size={iconSize} />
+                    }
+                    {!isNullOrEmpty(sessionDetails.Note) &&
+                        <CardIconLabel icon={getIcon('message')} iconColor={getColor()} description={sessionDetails.Note} size={iconSize} />
+                    }
+                </>
+            }
 
-           {!isNullOrEmpty(sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage) &&
-               <AlertBlock type={'error'} description={sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage} removePadding={true} size={iconSize} />
-           }
-       </>
+            {!isNullOrEmpty(sessionDetails.RatingNames) &&
+                <CardIconLabel icon={getIcon('star-light')} 
+                               preventCircles={getPreventCircles()}
+                               iconColor={getColor()} 
+                               description={displayDescription('Rating(s) Restriction', sessionDetails.RatingNames)}
+                               size={iconSize} />
+            }
+            {(!isNullOrEmpty(sessionDetails.LeagueGender) && !equalString(sessionDetails.LeagueGender, 4)) &&
+                <CardIconLabel icon={getIcon('person-half-dress-sharp-regular')}
+                               preventCircles={getPreventCircles()}
+                               iconColor={getColor()}
+                               description={displayDescription('Gender Restriction', displayLeaguePlayerFormat(sessionDetails.LeagueGender))}
+                               size={iconSize} />
+            }
+            {(!isNullOrEmpty(sessionDetails.AgeRestrictionString)) &&
+                <CardIconLabel icon={getIcon('arrow-up-9-1-regular')}
+                               preventCircles={getPreventCircles()} 
+                               iconColor={getColor()}
+                               description={displayDescription('Age Restriction', sessionDetails.AgeRestrictionString)}
+                               size={iconSize} />
+            }
+
+            {equalString(page, 'details') &&
+                <>
+                    {(!isNullOrEmpty(sessionDetails.SlotsInfoString) && toBoolean(sessionDetails.ShowSlotsInfoBool)) &&
+                        <CardIconLabel icon={getIcon('grid-sharp-light')} iconColor={getColor()} description={sessionDetails.SlotsInfoString} size={iconSize} />
+                    }
+
+                    {!isNullOrEmpty(sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage) &&
+                        <AlertBlock type={'error'} description={sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage} removePadding={true} size={iconSize} />
+                    }
+                </>
+            }
+        </>
     );
 }
 

@@ -28,13 +28,15 @@ import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
+import LeagueSessionRestrictionBlock from "@portal/league/modules/LeagueSessionRestrictionBlock.jsx";
 const {Title, Text} = Typography;
 
 function LeagueRegistration() {
     const [sessionDetails, setSessionDetails] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
-    
+    const [errorData, setErrorData] = useState(null);
+
     const {
         setIsFooterVisible,
         setFooterContent,
@@ -45,7 +47,7 @@ function LeagueRegistration() {
         setDynamicPages
     } = useApp();
     const {orgId, authDataOrgMemberIds} = useAuth();
-    
+
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -66,7 +68,7 @@ function LeagueRegistration() {
         validationSchema: validationSchema,
         validation: () => {
             let isValid = true;
-            
+
             if (countListItems(authDataOrgMemberIds) > 0) {
                 let checkedMembers = formik?.values?.FamilyMembers.filter(member => toBoolean(member.IsChecked));
                 isValid = countListItems(checkedMembers) > 0;
@@ -80,17 +82,17 @@ function LeagueRegistration() {
                     })
                 }
             }
-            
+
             return isValid;
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
-            
+
             let postModel = {
                 ...sessionDetails,
                 FamilyMembers: values.FamilyMembers,
             }
-            
+
             let response = await appService.post(`/app/Online/Leagues/RegisterOrEdit?id=${orgId}`, postModel);
             if (toBoolean(response?.IsValid)) {
                 //remove current page
@@ -120,13 +122,15 @@ function LeagueRegistration() {
         let response = await appService.get(navigate, `/app/Online/Leagues/RegisterOrEdit?id=${orgId}&sessionId=${sessionId}&leagueId=${leagueId}&resId=${resId}`);
         if (toBoolean(response?.IsValid)){
             let respData = response.Data;
-            
+
             setSessionDetails(respData);
             formik.setFieldValue("FamilyMembers", respData.FamilyMembers);
         } else {
-            if (isNullOrEmpty(response?.RestrictionData)){
+
+            if (!isNullOrEmpty(response?.RestrictionData)) {
+                //hide submit button
                 let respData = response.RestrictionData;
-                //TODO
+                setErrorData(respData);
             } else {
                 displayMessageModal({
                     title: 'Error',
@@ -181,18 +185,24 @@ function LeagueRegistration() {
             holdTimeForReservation: sessionDetails?.HoldTimeForReservation
         };
 
-        setFooterContent(<PaymentDrawerBottom paymentData={paymentData} group={true}>
-            <Button type="primary"
-                    block
-                    htmlType="submit"
-                    loading={isLoading}
-                    disabled={isFetching}
-                    onClick={formik.handleSubmit}>
-                Register
-            </Button>
-        </PaymentDrawerBottom>)
-    }, [isFetching, isLoading, formik.values])
-    
+        if (isNullOrEmpty(errorData)) {
+            setFooterContent(<PaymentDrawerBottom paymentData={paymentData} group={true}>
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        loading={isLoading}
+                        disabled={isFetching}
+                        onClick={formik.handleSubmit}>
+                    Register
+                </Button>
+            </PaymentDrawerBottom>)
+        } else {
+            setFooterContent('');
+        }
+
+
+    }, [isFetching, isLoading, formik.values, errorData])
+
     const toggleInitialCheck = (index) => {
         formik.setFieldValue(
             'FamilyMembers',
@@ -201,64 +211,68 @@ function LeagueRegistration() {
             )
         );
     };
-    
+
     return (
         <PaddingBlock topBottom={true}>
-           <Flex vertical={true} gap={token.padding}>
-               <Flex vertical={true} gap={token.paddingMD}>
-                   {isFetching &&
-                       <Flex vertical={true} gap={token.padding}>
-                           {emptyArray(8).map((item, index) => (
-                               <Skeleton.Button block key={index} active={true} style={{height : `60px`}} />
-                           ))}
-                       </Flex>
-                   }
+            <Flex vertical={true} gap={token.padding}>
+                <Flex vertical={true} gap={token.paddingMD}>
+                    {isFetching &&
+                        <Flex vertical={true} gap={token.padding}>
+                            {emptyArray(8).map((item, index) => (
+                                <Skeleton.Button block key={index} active={true} style={{height : `60px`}} />
+                            ))}
+                        </Flex>
+                    }
 
-                   {(!isFetching && !isNullOrEmpty(sessionDetails)) &&
-                       <>
-                           <div>
-                               <Text type="secondary">{sessionDetails?.LeagueSession.Name}</Text>
-                               <Title level={3} style={{marginBottom: 0}}>
-                                   {sessionDetails?.LeagueSession.LeagueName}
-                               </Title>
-                           </div>
+                    {(!isFetching && !isNullOrEmpty(sessionDetails)) &&
+                        <>
+                            <div>
+                                <Text type="secondary">{sessionDetails?.LeagueSession.Name}</Text>
+                                <Title level={3} style={{marginBottom: 0}}>
+                                    {sessionDetails?.LeagueSession.LeagueName}
+                                </Title>
+                            </div>
 
-                           <Flex vertical={true} gap={token.paddingXXS}>
-                               <LeagueSessionDetailsPartial sessionDetails={sessionDetails?.LeagueSession}/>
-                           </Flex>
-                       </>
-                   }
-               </Flex>
+                            <Flex vertical={true} gap={token.paddingXXS}>
+                                <LeagueSessionDetailsPartial sessionDetails={sessionDetails?.LeagueSession}/>
+                            </Flex>
+                        </>
+                    }
+
+                    {(!isFetching && !isNullOrEmpty(errorData)) &&
+                        <LeagueSessionRestrictionBlock model={errorData} memberIds={authDataOrgMemberIds} />
+                    }
+                </Flex>
 
 
-               {/*//TODO FIND A WAY TO MERGE WITH EVENTS*/}
-               {(countListItems(authDataOrgMemberIds) > 1 && anyInList(formik.values.FamilyMembers)) &&
-                   <>
-                       <List
-                           itemLayout="horizontal"
-                           dataSource={formik.values.FamilyMembers}
-                           bordered
-                           renderItem={(member, index) => {
-                               return (
-                                   <List.Item className={globalStyles.listItemSM}>
-                                       <Flex vertical={true} gap={token.padding} flex={1}>
-                                           <Flex justify={'space-between'} align={'center'}>
-                                               <Title level={3} onClick={() => {
-                                                   toggleInitialCheck(index)
-                                               }}>
-                                                   {member.FirstName} {member.LastName}
-                                               </Title>
-                                               <Switch checked={member.IsChecked} onChange={() => toggleInitialCheck(index)}/>
-                                           </Flex>
-                                       </Flex>
-                                   </List.Item>
-                               )
-                           }}
-                       />
-                   </>
-               }
-           </Flex>
-            
+                {/*//TODO FIND A WAY TO MERGE WITH EVENTS*/}
+                {(countListItems(authDataOrgMemberIds) > 1 && anyInList(formik.values.FamilyMembers)) &&
+                    <>
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={formik.values.FamilyMembers}
+                            bordered
+                            renderItem={(member, index) => {
+                                return (
+                                    <List.Item className={globalStyles.listItemSM}>
+                                        <Flex vertical={true} gap={token.padding} flex={1}>
+                                            <Flex justify={'space-between'} align={'center'}>
+                                                <Title level={3} onClick={() => {
+                                                    toggleInitialCheck(index)
+                                                }}>
+                                                    {member.FirstName} {member.LastName}
+                                                </Title>
+                                                <Switch checked={member.IsChecked} onChange={() => toggleInitialCheck(index)}/>
+                                            </Flex>
+                                        </Flex>
+                                    </List.Item>
+                                )
+                            }}
+                        />
+                    </>
+                }
+            </Flex>
+
         </PaddingBlock>
     )
 }

@@ -7,7 +7,14 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {isNullOrEmpty} from "@/utils/Utils.jsx";
 import React from "react";
 
-function CardIconLabel({description, icon, iconColor, size, preventFill = false, preventStroke = true, gap = null, textColor = null}) {
+function CardIconLabel({description, icon, 
+                           iconColor,
+                           size, 
+                           preventFill = false,
+                           preventStroke = true,
+                           preventCircles = false,
+                           gap = null, 
+                           textColor = null}) {
     const {globalStyles, token} = useApp();
     const {styles} = useStyles();
     const colorToFill = iconColor || token.colorPrimary;
@@ -20,6 +27,7 @@ function CardIconLabel({description, icon, iconColor, size, preventFill = false,
                          color={colorToFill}
                          size={size}
                          preventFill={preventFill}
+                         preventCircles={preventCircles}
                          preventStroke={preventStroke}/>
                 </Flex>
             </div>
