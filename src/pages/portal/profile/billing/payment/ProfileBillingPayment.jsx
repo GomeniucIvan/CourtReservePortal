@@ -1,6 +1,6 @@
 ﻿import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
-import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Divider, Flex, Skeleton} from "antd";
 import appService from "@/api/app.jsx";
@@ -23,6 +23,7 @@ import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {CardConstants} from "@/constants/CardConstants.jsx";
 
 function ProfileBillingPayment({}) {
     const navigate = useNavigate();
@@ -39,23 +40,12 @@ function ProfileBillingPayment({}) {
     
     //url params
     const payments = queryParams.get("payments");
+    const reservationId = queryParams.get("reservationId");
+    const resMemberId = queryParams.get("resMemberId");
+    const sessionId = queryParams.get("sessionId");
     
     const initialValues = {
-        card_firstName: '',
-        card_lastName: '',
-        card_streetAddress: '',
-        card_streetAddress2: '',
-        card_city: '',
-        card_state: '',
-        card_zipCode: '',
-        card_phoneNumber: '',
-        card_number: '',//--from here
-        card_expiryDate: '',
-        card_securityCode: '',
-        card_accountType: '1',
-        card_routingNumber: '',
-        card_accountNumber: '',
-        card_savePaymentProfile: false,
+        ...CardConstants,
         card_country: orgCardCountryCode(authData?.UiCulture),
         
         paymentFrequency: '',
@@ -123,7 +113,7 @@ function ProfileBillingPayment({}) {
         let innerPayments = payments;
         
         if (isNullOrEmpty(innerPayments)){
-            let response = await appService.get(navigate, `/app/Online/MyBalance/PayMyBalance?id=${orgId}`);
+            let response = await appService.get(navigate, `/app/Online/MyBalance/PayMyBalance?id=${orgId}&reservationId=${nullToEmpty(reservationId)}&resMemberId=${nullToEmpty(resMemberId)}&sessionId=${nullToEmpty(sessionId)}`);
             if (toBoolean(response?.IsValid)) {
                 innerPayments = response.Data.payments;
             }

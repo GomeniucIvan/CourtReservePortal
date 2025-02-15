@@ -3,6 +3,7 @@ import {clearAllLocalStorage} from "../storage/AppStorage.jsx";
 import {getRequestData} from "./api.jsx";
 import {fixResponseData} from "../utils/apiUtils.jsx";
 import {isNullOrEmpty, toBoolean} from "../utils/Utils.jsx";
+import {logNetwork} from "@/utils/ConsoleUtils.jsx";
 
 const isProduction = import.meta.env.MODE === 'production';
 const appUrl = isProduction ? import.meta.env.VITE_APP_URL : '';
@@ -60,6 +61,7 @@ const appService = {
                 
                 url = appUrl+url;
             }
+            logNetwork(url);
             
             const response = await axiosInstance.get(url, { params, ...config });
             const fixedResponse = fixResponseData(response.data);

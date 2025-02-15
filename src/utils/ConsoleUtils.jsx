@@ -3,7 +3,7 @@
 const styles = {
     red: 'color: red; font-weight: bold;',
     green: 'color: green; font-weight: bold;',
-    blue: 'color: blue; font-weight: bold;',
+    blue: 'color: #71bec4; font-weight: bold;',
     yellow: 'color: orange; font-weight: bold;',
     gray: 'color: gray; font-weight: bold;',
 };
@@ -52,7 +52,9 @@ export const logInfo = (message) => {
     console.log(`%c${consoleIcons.success}`, styles.blue)
     console.log(message);
 };
-
+export const logNetwork = (message) => {
+    console.log(`%c${consoleIcons.network} ${message}`, styles.blue);
+};
 
 export const logWarning = (message) => {
     console.warn(`%c${consoleIcons.warning} ${message}`, styles.yellow);

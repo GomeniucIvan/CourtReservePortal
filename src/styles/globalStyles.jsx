@@ -457,5 +457,20 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     fullWidth: css`
         width: 100%;
+    `,
+    table: css`
+        .ant-table-cell{
+
+        }
+    `,
+    tableSmallHead: css`
+        .ant-table-thead {
+            .ant-table-cell {
+                padding: ${token.paddingSM}px ${token.paddingMD}px !important;
+            }
+        }
+        .ant-table-cell {
+            padding: ${token.paddingMD}px ${token.paddingMD}px !important;
+        }
     `
 }));

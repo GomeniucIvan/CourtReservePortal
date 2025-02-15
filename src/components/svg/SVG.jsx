@@ -13,6 +13,7 @@ const SGV = ({
                  replaceColor = false,
                  preventPaths = false,
                  preventRects = true,
+                 preventCircles = true,
                  pathFillColor
              }) => {
     return (
@@ -27,6 +28,7 @@ const SGV = ({
                 replaceColor={replaceColor}
                 preventPaths={preventPaths}
                 preventRects={preventRects}
+                preventCircles={preventCircles}
                 pathFillColor={pathFillColor}
             />
         </Suspense>

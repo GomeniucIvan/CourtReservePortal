@@ -10,6 +10,7 @@ const SuspenseSGVExpensiveComponent = ({ icon, color = 'black',
                                    replaceColor = false,
                                    preventPaths = false,
                                    preventRects = true,
+                                   preventCircles = true,
                                    pathFillColor}) => {
     const {token} = useApp();
 
@@ -31,6 +32,7 @@ const SuspenseSGVExpensiveComponent = ({ icon, color = 'black',
                 svg.removeAttribute('height');
                 const paths = svg.querySelectorAll('path');
                 const rects = svg.querySelectorAll('rect');
+                const circles = svg.querySelectorAll('circle');
 
                 if (!isNullOrEmpty(pathFillColor)) {
                     paths.forEach(path => {
@@ -67,6 +69,24 @@ const SuspenseSGVExpensiveComponent = ({ icon, color = 'black',
 
                 if (!preventRects) {
                     rects.forEach(path => {
+                        if (replaceColor){
+                            path.setAttribute('fill', token.colorPrimary);
+                        }
+
+                        if (!toBoolean(preventFill)) {
+                            path.setAttribute('stroke', 'transparent');
+                            path.setAttribute('fill', color);
+                            svg.setAttribute('fill', color);
+                        }
+
+                        if (!toBoolean(preventStroke)){
+                            path.setAttribute('stroke', color);
+                        }
+                    });
+                }
+
+                if (!preventCircles) {
+                    circles.forEach(path => {
                         if (replaceColor){
                             path.setAttribute('fill', token.colorPrimary);
                         }

@@ -6,7 +6,7 @@ export const useStyles = createStyles(({ css, token }) => ({
         width: 100%;
     `,
     leagueSelector: css`
-        margin-bottom: ${token.padding}px;
+        margin-bottom: ${token.paddingSM}px;
         border-color: ${token.colorBorder} !important;
         box-shadow: none !important;
     `,
@@ -18,4 +18,17 @@ export const useStyles = createStyles(({ css, token }) => ({
         background: ${token.colorBgBase};
         padding: 0px 6px;
     `,
+    playersTable: css`
+        .ant-table-thead {
+            position: sticky;
+            top: -2px;
+            z-index: 1;
+        }
+    `,
+    playersTableRankColumn: css`
+        width: 80px;
+    `,
+    highlightColumn: css`
+        background-color: ${token.colorSuccessBg};
+    `
 }));

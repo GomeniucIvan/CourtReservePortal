@@ -67,7 +67,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
     tabIds.push({
         key: 'players',
         label: 'Players',
-        children: <LeagueDetailsGameDaysPlayers selectedTab={selectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
+        children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
     });
 
     if (equalString(sessionDetails?.SessionGameDayGroupStatus, '2') ||

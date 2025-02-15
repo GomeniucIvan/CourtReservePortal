@@ -4,7 +4,7 @@
 	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
 <g>
 	<g>
-		<circle cx="256" cy="256" r="256"/>
+		<circle cx="256" cy="256" r="256" fill="black"/>
 	</g>
 </g>
 <g>
