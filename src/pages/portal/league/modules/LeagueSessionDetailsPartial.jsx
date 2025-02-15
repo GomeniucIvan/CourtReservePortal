@@ -66,7 +66,7 @@ function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
         if (equalString(page, 'restrictions')) {
             return `${label}: ${value}`;
         } else {
-            return undefined;
+            return value;
         }
     }
     
