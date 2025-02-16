@@ -13,7 +13,6 @@ import {cx} from "antd-style";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import {randomNumber} from "@/utils/NumberUtils.jsx";
 import LeagueDetailsSessionInfo from "@portal/league/details/LeagueDetails.SessionInfo.jsx";
 import LeagueDetailsGameDays from "@portal/league/details/LeagueDetails.GameDays.jsx";
 import LeagueDetailsStandings from "@portal/league/details/LeagueDetails.Standings.jsx";

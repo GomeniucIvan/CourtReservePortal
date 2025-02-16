@@ -272,7 +272,6 @@ function LeagueRegistration() {
                     </>
                 }
             </Flex>
-
         </PaddingBlock>
     )
 }

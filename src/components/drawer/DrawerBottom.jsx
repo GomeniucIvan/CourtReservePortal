@@ -157,7 +157,6 @@ const DrawerBottom = forwardRef(({
                                 (<>{customFooter}</>)
                             }
                         </div>
-
                     }
                 </>
             </Popup>

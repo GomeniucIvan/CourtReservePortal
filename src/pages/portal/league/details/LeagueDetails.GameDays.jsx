@@ -10,12 +10,10 @@ import {DownOutline} from "antd-mobile-icons";
 import {useStyles} from ".././styles.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import LeagueSessionOptInButton from "@portal/league/modules/LeagueSessionOptInButton.jsx";
-import LeagueDetailsSessionInfo from "@portal/league/details/LeagueDetails.SessionInfo.jsx";
 import {cx} from "antd-style";
 import LeagueDetailsGameDaysPlayers from "@portal/league/details/gamedays/LeagueDetails.GameDays.Players.jsx";
-import LeagueDetailsGameDaysMyGroup from "@portal/league/details/gamedays/LeagueDetails.GameDays.MyGroup.jsx";
-import LeagueDetailsGameDaysAllMatches from "@portal/league/details/gamedays/LeagueDetails.GameDays.AllMatches.jsx";
 import {leagueHasMatches} from "@portal/league/functions.jsx";
+import LeagueDetailsGameDaysMatches from "@portal/league/details/gamedays/LeagueDetails.GameDays.Matches.jsx";
 const {Title, Text} = Typography;
 
 function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
@@ -75,14 +73,14 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         tabIds.push({
             key: 'mygroup',
             label: 'My Group',
-            children: <LeagueDetailsGameDaysMyGroup selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
+            children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
         });
     }
 
     tabIds.push({
         key: 'allmatches',
         label: 'All Matches',
-        children: <LeagueDetailsGameDaysAllMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
+        children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
     });
 
     return (

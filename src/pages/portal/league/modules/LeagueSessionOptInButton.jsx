@@ -42,17 +42,17 @@ const getPriceToPay = (eventDto, costTypeId = null, includeTaxes = false) => {
     let price = null;
 
     if (!costTypeId) {
-        if (eventDto.PriceType === 'OnEachOptInDate') {
+        if (equalString(eventDto.PriceType, 1)) {
             price = eventDto.LeaguePlayDatePrice;
-        } else if (eventDto.PriceType === 'OnLeagueRegistration') {
+        } else if (equalString(eventDto.PriceType, 2)) {
             price = eventDto.LeagueEntirePrice;
         }
     } else {
         const lsCostType = eventDto.CostTypes.find(v => v.CostTypeId === costTypeId);
         if (lsCostType) {
-            if (eventDto.PriceType === 'OnEachOptInDate') {
+            if (equalString(eventDto.PriceType, 1)) {
                 price = lsCostType.LeaguePlayDatePrice;
-            } else if (eventDto.PriceType === 'OnLeagueRegistration') {
+            } else if (equalString(eventDto.PriceType, 2)) {
                 price = lsCostType.LeagueEntirePrice;
             }
         }
@@ -154,30 +154,32 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
     const handleOptIn = () => { /* Implement Opt-In logic */ };
 
     return (
-        <div className={`fn-mobile-global-optin-container`}>
-            <div className={`opt-in-out-container_${reservationId} ${allowToOptIn ? '' : 'hide'}`}>
-                {onlyOneMemberRegistered && toBoolean(isOptedIn(fakeLeagueSession, orgMemberIds[0], reservationId)) ? (
-                    <Button onClick={handleOptOut} type="primary" 
-                            danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, undefined, undefined, reservationId )}>
-                        {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, undefined, undefined, reservationId )}
-                    </Button>
-                ) : isFreeCost && onlyOneMemberRegistered ? (
-                    <Button onClick={handleOptInFree} 
-                            type="primary"
-                            className="btn btn-block fn-swal fn-disable" 
-                            danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, undefined, undefined, reservationId )}>
-                        {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, undefined, undefined, reservationId )}
-                    </Button>
-                ) : (
-                    <Button onClick={handleOptIn}
-                            type="primary"
-                            className="btn btn-block btn-modal fn-disable"
-                            danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId )}>
-                        {getOptInClassOrLabel(fakeLeagueSession, 'label', registeredFamilyPlayersOrgMemberIds, isEdit, reservationId)}
-                    </Button>
-                )}
-            </div>
-        </div>
+        <>
+            {toBoolean(fakeLeagueSession?.AllowToOptIn) &&
+                <>
+                    {onlyOneMemberRegistered && toBoolean(isOptedIn(fakeLeagueSession, orgMemberIds[0], reservationId)) ? (
+                        <Button onClick={handleOptOut} type="primary"
+                                danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, undefined, undefined, reservationId )}>
+                            {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, undefined, undefined, reservationId )}
+                        </Button>
+                    ) : isFreeCost && onlyOneMemberRegistered ? (
+                        <Button onClick={handleOptInFree}
+                                type="primary"
+                                className="btn btn-block fn-swal fn-disable"
+                                danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, undefined, undefined, reservationId )}>
+                            {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, undefined, undefined, reservationId )}
+                        </Button>
+                    ) : (
+                        <Button onClick={handleOptIn}
+                                type="primary"
+                                className="btn btn-block btn-modal fn-disable"
+                                danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId )}>
+                            {getOptInClassOrLabel(fakeLeagueSession, 'label', registeredFamilyPlayersOrgMemberIds, isEdit, reservationId)}
+                        </Button>
+                    )}
+                </>
+            }
+        </>
     );
 }
 

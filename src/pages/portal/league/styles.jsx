@@ -30,5 +30,37 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     highlightColumn: css`
         background-color: ${token.colorSuccessBg};
+    `,
+    winnerTeamWrapper: css`
+        font-weight: bold;
+    `,
+    matchScoreDisabledInput: css`
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        background-color: ${token.colorBgBase} !important;
+    `,
+    matchVsText: css`
+        padding-right: 10px;
+    `,
+    matchScoreWinnerInput: css`
+        background-color: ${token.colorSuccess} !important;
+        color: #ffffff !important;
+    `,
+    matchScoreNumericInput: css`
+        width: 40px !important;
+        text-align: center !important;
+        
+        input {
+            height: 40px !important;
+            text-align: center !important;
+            
+            &:not([disabled]) {
+                background-color: ${token.colorBgBase} !important;
+            }
+        }
+    `,
+    matchScoreNumericFocusedInput: css`
+        border-color: ${token.colorPrimary} !important;
     `
 }));

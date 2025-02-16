@@ -472,5 +472,10 @@ export const useStyles = createStyles(({ css, token }) => ({
         .ant-table-cell {
             padding: ${token.paddingMD}px ${token.paddingMD}px !important;
         }
+    `,
+    checkbox: css`
+        .ant-checkbox-inner {
+            border-radius: ${token.checkboxBorderRadius}px;
+        }
     `
 }));
