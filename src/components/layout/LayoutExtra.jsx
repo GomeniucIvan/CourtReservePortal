@@ -18,6 +18,7 @@ import appService from "@/api/app.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import {DevRouteNames} from "@/routes/DevRoutes.jsx";
+import DevConsole from "@/pages/dev/DevConsole.jsx";
 
 function LayoutExtra() {
     const { isMockData } = useApp();
@@ -30,6 +31,7 @@ function LayoutExtra() {
     const [isDashboardTypeOpened, setIsDashboardTypeOpened] = useState(false);
     const [selectedDashboardType, setSelectedDashboardType] = useState('empty-set-sharp-regular');
     const [isPrimaryPageTypeOpened, setIsPrimaryPageTypeOpened] = useState(false);
+    const [showConsole, setShowConsole] = useState(false);
     const [selectedPrimaryPageType, setSelectedPrimaryPageType] = useState('empty-set-sharp-regular');
     const isDebugMode = getConfigValue('IsDebugMode');
     
@@ -266,14 +268,27 @@ function LayoutExtra() {
             }
 
             {isDebugMode &&
-                <div className={styles.dashboardTypeContainer}>
-                    <Button shape="circle" onClick={() => {
-                        navigate(DevRouteNames.DEV_ALL);
-                    }}>
-                        <SVG icon={'pincode'} size={16}/>
-                    </Button>
-                    
-                </div>
+                <>
+                    <div className={styles.dashboardTypeContainer}>
+                        <Button shape="circle" onClick={() => {
+                            navigate(DevRouteNames.DEV_ALL);
+                        }}>
+                            <SVG icon={'pincode'} size={16}/>
+                        </Button>
+
+                    </div>
+
+                    <div className={styles.dashboardTypeContainer}>
+                        <Button shape="circle" onClick={() => {
+                            setShowConsole(!showConsole);
+                        }}>
+                            <SVG icon={'message'} size={16}/>
+                        </Button>
+                        {showConsole &&
+                            <DevConsole/>
+                        }
+                    </div>
+                </>
             }
         </div>
     )

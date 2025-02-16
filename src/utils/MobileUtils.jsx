@@ -73,4 +73,24 @@ export const reactNativeInitFireBase = () =>{
     }
 }
 
+export const reactNativePickImage = (fileRef) =>{
+    if (fileRef.current) {
+        fileRef.current.click();
+    }
+    
+    // if (window.ReactNativeWebView) {
+    //     const message = JSON.stringify({ type: 'reactPickImage' });
+    //     window.ReactNativeWebView.postMessage(message);
+    // } else{
+    //
+    // }
+}
+
+export const reactNativeTakePhoto = () =>{
+    if (window.ReactNativeWebView) {
+        const message = JSON.stringify({ type: 'reactTakePhoto' });
+        window.ReactNativeWebView.postMessage(message);
+    }
+}
+
 window.reactActivateStatus = reactActivateStatus;
