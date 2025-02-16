@@ -30,9 +30,8 @@ import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import IOSKeyboard from "@/components/keyboard/IOSKeyboard.jsx";
 
-function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, isMyMatches}) {
+function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, isMyMatches, reservationId}) {
     const navigate = useNavigate();
-    const [matches, setMatches] = useState(null);
     const [isFetching, setIsFetching] = useState(leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus));
     const [noMatches, setNoMatches] = useState(false);
     const {orgId, authDataOrgMemberIds} = useAuth();
@@ -40,7 +39,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
     const {styles} = useStyles();
     const {buttonStyles} = useCombinedStyles();
     const [reportScoreMatchData, setReportScoreMatchData] = useState(null);
-
+    
     //lists
     const [distinctGroups, setDistinctGroups] = useState([]);
     const [sortedMatches, setSortedMatches] = useState([]);
@@ -56,7 +55,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
         let urlParams = {
             leagueSessionId: sessionDetails.LeagueSessionId,
             leagueId: sessionDetails.LeagueId,
-            reservationId: sessionDetails.NextReservationId,
+            reservationId: reservationId,
             isMyMatches: toBoolean(isMyMatches)
         }
 
@@ -67,9 +66,6 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                 setNoMatches(true);
             } else {
                 let respData = response.Data;
-
-                console.log(respData)
-                setMatches(respData.Model.Matches);
                 setDistinctGroups(respData.DistinctGroups);
                 setSortedMatches(respData.SortedMatches);
             }
@@ -90,12 +86,16 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
     }
 
     useEffect(() => {
-        if (equalString(selectedTab, 'allmatches') || equalString(selectedTab, 'selectedTab')) {
-            if (leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus)) {
-                loadData()
-            } else{
-                setIsFetching(false);
-                setIsLoading(false);
+        if (isMyMatches) {
+            loadData()
+        } else {
+            if (equalString(selectedTab, 'allmatches')) {
+                if (leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus)) {
+                    loadData()
+                } else{
+                    setIsFetching(false);
+                    setIsLoading(false);
+                }
             }
         }
     }, [selectedTab]);
@@ -341,7 +341,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
             Team1Score: team1Score,
             Team2Score: team2Score,
             MatchRound: match.MatchRound,
-            ReservationId: sessionDetails.NextReservationId,
+            ReservationId: reservationId,
             ScoreStatus: isIncomplete ? 2 : 1
         }
 
@@ -426,9 +426,8 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                     {distinctGroups.map((group, index) => {
                                         let groupMatches = sortedMatches.filter(v => equalString(v.LeagueSessionPlayDateGroupId, group.LeagueSessionPlayDateGroupId));
 
-
                                         if (toBoolean(isMyMatches)) {
-                                            groupMatches = groupMatches.find(v => isMemberMatch(sessionDetails, authDataOrgMemberIds, sortedMatches));
+                                            groupMatches = groupMatches.filter(listMatch => isMemberMatch(listMatch, authDataOrgMemberIds, sortedMatches));
                                             if (!anyInList(groupMatches))
                                             {
                                                 return (<></>);
@@ -486,7 +485,6 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                                                             {isTeam1Serving && <SVG icon={'circle-s-regular'} color={token.colorSecondary} size={16}  />}
                                                                         </Flex>
 
-
                                                                         {!isIncomplete &&
                                                                             <Flex align={'center'} gap={token.paddingXXS}>
                                                                                 {teamOneIsWinner &&
@@ -494,6 +492,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                                                                 }
                                                                                 <Input
                                                                                     disabled
+                                                                                    placeholder={'-'}
                                                                                     defaultValue={match.Team1Score}
                                                                                     className={cx(styles.matchScoreDisabledInput, teamOneIsWinner && styles.matchScoreWinnerInput)}
                                                                                     onChange={() => handleScoreChange('team1', match.LeagueSessionMatchId)}
@@ -522,6 +521,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                                                                 }
                                                                                 <Input
                                                                                     disabled
+                                                                                    placeholder={'-'}
                                                                                     defaultValue={match.Team2Score}
                                                                                     className={cx(styles.matchScoreDisabledInput, teamTwoIsWinner && styles.matchScoreWinnerInput)}
                                                                                     onChange={() => handleScoreChange('team2', match.LeagueSessionMatchId)}

@@ -1,7 +1,14 @@
 ﻿import * as React from "react";
-import {Segmented, Space, Flex, Typography, Progress, Tabs, Skeleton, Input, Button} from "antd";
+import {Segmented, Space, Flex, Typography, Progress, Tabs, Skeleton, Input, Button, Tag, Divider} from "antd";
 import {useEffect, useRef, useState} from "react";
-import {encodeParamsObject, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {
+    anyInList,
+    encodeParamsObject,
+    equalString,
+    isNullOrEmpty,
+    moreThanOneInList,
+    toBoolean
+} from "@/utils/Utils.jsx";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useNavigate} from "react-router-dom";
@@ -14,27 +21,32 @@ import {cx} from "antd-style";
 import LeagueDetailsGameDaysPlayers from "@portal/league/details/gamedays/LeagueDetails.GameDays.Players.jsx";
 import {leagueHasMatches} from "@portal/league/functions.jsx";
 import LeagueDetailsGameDaysMatches from "@portal/league/details/gamedays/LeagueDetails.GameDays.Matches.jsx";
+import {emptyArray} from "@/utils/ListUtils.jsx";
+import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
+import DrawerRowSVG from "@/components/drawer/DrawerRowSVG.jsx";
 const {Title, Text} = Typography;
 
 function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
+    const [showLeaguesDrawer, setShowLeaguesDrawer] = useState(false);
     const [leagueDetails, setLeagueDetails] = useState(null);
     const [selectedDay, setSelectedDay] = useState(null);
     const [gameDaySelectedTab, setGameDaySelectedTab] = useState('players');
+    const [selectedReservationId, setSelectedReservationId] = useState(sessionDetails.NextReservationId);
     const [dates, setDates] = useState(null);
     const {token, globalStyles} = useApp();
     const {orgId, authDataOrgMemberIds} = useAuth();
     const {styles} = useStyles();
     const tabsRef = useRef(null);
-    
-    const loadData = async () => {
+
+    const loadData = async (resId) => {
         setIsFetching(true);
 
         let urlData = {
             leagueId: sessionDetails.LeagueId,
             sessionId: sessionDetails.LeagueSessionId,
-            resId: sessionDetails.NextReservationId,
+            resId: resId,
             costTypeId: sessionDetails.CostTypeId,
             uiCulture: sessionDetails.UiCulture,
         }
@@ -56,35 +68,55 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         setIsFetching(false);
     }
 
+    // useEffect(() => {
+    //     if (equalString(selectedTab, 'gamedays')) {
+    //         loadData(selectedReservationId)
+    //     }
+    // }, [selectedTab])
+
     useEffect(() => {
         if (equalString(selectedTab, 'gamedays')) {
-            loadData()
+            loadData(selectedReservationId)
         }
-    }, [selectedTab])
-
+    }, [selectedReservationId])
+    
     let tabIds = [];
     tabIds.push({
         key: 'players',
         label: 'Players',
-        children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
+        children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
     });
 
     if (leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus)) {
         tabIds.push({
             key: 'mygroup',
             label: 'My Group',
-            children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
+            children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails} isMyMatches={true} reservationId={selectedReservationId}/>,
         });
     }
 
     tabIds.push({
         key: 'allmatches',
         label: 'All Matches',
-        children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>,
+        children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
     });
 
     return (
         <>
+            {isFetching &&
+                <>
+                    <PaddingBlock onlyBottom={true}>
+                        <Flex vertical={true} gap={token.padding}>
+                            {emptyArray(4).map((item, index) => (
+                                <div key={index}>
+                                    <Skeleton.Button active={true} block style={{height: `80px`}}/>
+                                </div>
+                            ))}
+                        </Flex>
+                    </PaddingBlock>
+                </>
+            }
+
             {!isFetching &&
                 <>
                     <PaddingBlock>
@@ -100,7 +132,9 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                                     readOnly={true}
                                     value={selectedDay?.DateTimesDisplay}
                                     onClick={() => {
-                                        //setShowLeaguesDrawer(true)
+                                        if (moreThanOneInList(dates)) {
+                                            setShowLeaguesDrawer(true)
+                                        }
                                     }}
                                     suffix={
                                         <DownOutline style={{color: 'rgba(0,0,0,.45)'}}/>
@@ -128,6 +162,48 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                             items={tabIds}
                         />
                     </div>
+
+                    <DrawerBottom showDrawer={showLeaguesDrawer}
+                                  maxHeightVh={60}
+                                  closeDrawer={() => setShowLeaguesDrawer(false)}
+                                  label={'Game Day'}>
+                        <PaddingBlock>
+                            {anyInList(dates) &&
+                                <PaddingBlock leftRight={false} onlyBottom={true}>
+                                    {dates.map((item, index) => {
+                                        const isLastIndex = index === dates.length - 1;  
+                                        
+                                        return (
+                                            <React.Fragment key={index}>
+                                                <Flex align={'center'} 
+                                                      justify={'space-between'} 
+                                                      onClick={() => {
+                                                          setSelectedReservationId(item.ReservationId);
+                                                          setShowLeaguesDrawer(false);
+                                                      }}
+                                                      className={globalStyles.drawerRow}>
+                                                    <Flex vertical={true}>
+                                                        <Text>{item.DateTimesDisplay}</Text>
+                                                        {!isNullOrEmpty(item.GetDateStatusString) &&
+                                                            <Text className={cx(styles.leagueDrawerStatus, `status-${item.GetDateStatusInt}`)}>
+                                                                {item.GetDateStatusString}
+                                                            </Text>
+                                                        }
+                                                    </Flex>
+
+                                                    <DrawerRowSVG checked={equalString(item.ReservationId, selectedReservationId)} />
+                                                </Flex>
+
+                                                {!isLastIndex &&
+                                                    <Divider className={globalStyles.noMargin} />
+                                                }
+                                            </React.Fragment>
+                                        )
+                                    })}
+                                </PaddingBlock>
+                            }
+                        </PaddingBlock>
+                    </DrawerBottom>
                 </>
             }
         </>

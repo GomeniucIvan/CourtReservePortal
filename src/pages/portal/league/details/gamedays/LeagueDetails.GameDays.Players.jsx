@@ -17,7 +17,7 @@ import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 const {Column} = Table;
 
-function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails}) {
+function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails, reservationId}) {
 
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
@@ -28,10 +28,10 @@ function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails})
 
     const loadData = async () => {
         setIsFetching(true);
-        let response = await appService.get(navigate, `/app/Online/Leagues/GameDayPlayersTab?id=${orgId}&sessionId=${sessionDetails.LeagueSessionId}&reservationId=${sessionDetails.NextReservationId}`);
+        let response = await appService.get(navigate, `/app/Online/Leagues/GameDayPlayersTab?id=${orgId}&sessionId=${sessionDetails.LeagueSessionId}&reservationId=${reservationId}`);
 
         if(toBoolean(response?.IsValid)) {
-            let playerResponse = await appService.get(navigate,`/app/Online/Leagues/GameDayPlayers?id=${orgId}&sessionId=${sessionDetails.LeagueSessionId}&reservationId=${sessionDetails.NextReservationId}`)
+            let playerResponse = await appService.get(navigate,`/app/Online/Leagues/GameDayPlayers?id=${orgId}&sessionId=${sessionDetails.LeagueSessionId}&reservationId=${reservationId}`)
 
             if(toBoolean(playerResponse?.IsValid)) {
                 setPlayers(playerResponse?.Data);

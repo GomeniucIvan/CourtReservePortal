@@ -62,5 +62,40 @@ export const useStyles = createStyles(({ css, token }) => ({
     `,
     matchScoreNumericFocusedInput: css`
         border-color: ${token.colorPrimary} !important;
+    `,
+    leagueDrawerStatus: css`
+        /*playing*/
+        &.status-1 {
+            //color: white;
+            color: #20C11D;
+        }
+        /*in progress*/
+        &.status-2 {
+            //color: white;
+            color: #1076FF;
+        }
+
+        /*played*/
+        &.status-3 {
+            //color: white;
+            color: #101010;
+        }
+
+        /*Partially Played*/
+        &.status-4 {
+            //color: white;
+            color: #8D8C8C;
+        }
+
+        /*Makeup*/
+        &.status-6 {
+            color: #c7efcb;
+        }
+        /*cancelled*/
+        &.status-5,
+        &.status-7 {
+            //color: white;
+            color: #EF334E;
+        }
     `
 }));
