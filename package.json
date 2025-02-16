@@ -16,6 +16,7 @@
     "@progress/kendo-date-math": "^1.5.14",
     "@progress/kendo-react-common": "^9.1.0",
     "antd": "^5.23.3",
+    "antd-img-crop": "^4.24.0",
     "antd-mobile": "^5.38.1",
     "antd-mobile-icons": "^0.3.0",
     "antd-style": "^3.7.1",

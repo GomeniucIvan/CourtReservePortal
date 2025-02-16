@@ -7,7 +7,7 @@ import {useApp} from "@/context/AppProvider.jsx";
 import * as Yup from "yup";
 import FormDateOfBirth from "@/form/formdateofbirth/FormDateOfBirth.jsx";
 import {useEffect, useRef, useState} from "react";
-import {Button, Flex, Skeleton} from "antd";
+import {Avatar, Button, Flex, Skeleton, Typography, Upload} from "antd";
 import FormStateProvince from "@/form/formstateprovince/FormStateProvince.jsx";
 import FormSwitch from "@/form/formswitch/FormSwitch.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
@@ -27,6 +27,9 @@ import {getConfigValue} from "@/config/WebConfig.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import ImageUploader from "@/components/imageuploader/ImageUploader.jsx";
+
+const {Text} = Typography;
 
 function MyProfileDetails({selectedTab}) {
     const navigate = useNavigate();
@@ -74,7 +77,7 @@ function MyProfileDetails({selectedTab}) {
             CustomFields: data.CustomFields || [],
             RatingCategories: data.RatingCategories || [],
         };
-        
+
         formik.setValues(valuesToSet);
     };
 
@@ -110,7 +113,7 @@ function MyProfileDetails({selectedTab}) {
 
         schemaFields.Password = Yup.string().when('CurrentPassword', {
             is: (currentPassword) => {
-                return !isNullOrEmpty(currentPassword); 
+                return !isNullOrEmpty(currentPassword);
             },
             then: (schema) =>
                 schema
@@ -119,7 +122,7 @@ function MyProfileDetails({selectedTab}) {
                     .max(40, t('profile.newPasswordMaxLength')),
             otherwise: (schema) => schema.nullable(),
         });
-        
+
         schemaFields.ConfirmPassword = Yup.string()
             .oneOf([Yup.ref('password'), null], t('profile.confirmPasswordNotMatch'))
             .when('Password', {
@@ -132,7 +135,7 @@ function MyProfileDetails({selectedTab}) {
 
         return Yup.object(schemaFields);
     }
-    
+
     const formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: getValidationSchema(profileData),
@@ -167,7 +170,7 @@ function MyProfileDetails({selectedTab}) {
             postModel.CustomFields = values.CustomFields;
 
             postModel.Token = await recaptchaRef.current.executeAsync();
-            
+
             let response = await appService.post(`/app/Online/MyProfile/MyProfilePost?id=${orgId}`, postModel);
             if (toBoolean(response?.IsValid)) {
                 pNotify(t('profile.successfullyUpdate'))
@@ -183,7 +186,7 @@ function MyProfileDetails({selectedTab}) {
         if (equalString(selectedTab, 'pers')) {
             setIsFooterVisible(true);
             setHeaderRightIcons(null);
-            
+
             setFooterContent(<FooterBlock topBottom={true}>
                 <Button type="primary"
                         block
@@ -196,7 +199,7 @@ function MyProfileDetails({selectedTab}) {
             </FooterBlock>);
         }
     }, [selectedTab, isFetching, isLoading]);
-    
+
     useEffect(() => {
         if (equalString(selectedTab, 'pers') && isNullOrEmpty(profileData)) {
             loadData();
@@ -216,8 +219,14 @@ function MyProfileDetails({selectedTab}) {
                         ))}
                     </>
                 }
-                
+
                 {!isFetching && (<>
+                    {authData.AllowToChangeProfilePicture &&
+                        <>
+                           <ImageUploader />
+                        </>
+                    }
+
                     <FormInput label={t('profile.firstName')}
                                formik={formik}
                                loading={isFetching}
