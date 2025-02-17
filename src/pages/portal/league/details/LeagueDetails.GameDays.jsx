@@ -41,17 +41,17 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
     const tabsRef = useRef(null);
     const gameDayPickerRef = useRef(null);
     const [innerTabsHeight, setInnerTabHeight] = useState(0);
-
+    const [innerSessionDetails, setInnerSessionDetails] = useState(sessionDetails);
 
     const loadData = async (resId) => {
         setIsFetching(true);
 
         let urlData = {
-            leagueId: sessionDetails.LeagueId,
-            sessionId: sessionDetails.LeagueSessionId,
+            leagueId: innerSessionDetails.LeagueId,
+            sessionId: innerSessionDetails.LeagueSessionId,
             resId: resId,
-            costTypeId: sessionDetails.CostTypeId,
-            uiCulture: sessionDetails.UiCulture,
+            costTypeId: innerSessionDetails.CostTypeId,
+            uiCulture: innerSessionDetails.UiCulture,
         }
 
         let response = await appService.get(navigate, `/app/Online/AjaxController/LeagueSession_GetAdditionalDates?id=${orgId}&${encodeParamsObject(urlData)}`);
@@ -101,25 +101,54 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         }
     }, [selectedReservationId])
 
+
+    const onGameDayChange = async (item) => {
+        setIsFetching(true);
+
+        let urlData = {
+            leagueId: innerSessionDetails.LeagueId,
+            leagueSessionId: innerSessionDetails.LeagueSessionId,
+            costTypeId: innerSessionDetails.CostTypeId,
+            reservationId: item.ReservationId,
+            uiCulture: innerSessionDetails.UiCulture,
+        }
+
+        let response = await appService.get(navigate, `/app/Online/AjaxController/LeagueSession_GetDateInfo?id=${orgId}&${encodeParamsObject(urlData)}`);
+        if (toBoolean(response?.IsValid)) {
+            let data = response.Data;
+
+            setInnerSessionDetails({
+                ...innerSessionDetails,
+                ...data.LeagueSession,
+                AllowToOptIn: toBoolean(data.AllowToOptIn),
+                SessionGameDayGroupStatus: toBoolean(data.ShowMyMatches) ? 2 : 1,
+                NextReservationId: item.ReservationId
+            })
+        }
+
+        setSelectedReservationId(item.ReservationId);
+        setShowLeaguesDrawer(false);
+    }
+    
     let tabIds = [];
     tabIds.push({
         key: 'players',
         label: 'Players',
-        children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
+        children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={innerSessionDetails} reservationId={selectedReservationId}/>,
     });
 
-    if (leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus)) {
+    if (leagueHasMatches(innerSessionDetails?.SessionGameDayGroupStatus)) {
         tabIds.push({
             key: 'mygroup',
             label: 'My Group',
-            children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={sessionDetails} isMyMatches={true} reservationId={selectedReservationId}/>,
+            children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={innerSessionDetails} isMyMatches={true} reservationId={selectedReservationId}/>,
         });
     }
 
     tabIds.push({
         key: 'allmatches',
         label: 'All Matches',
-        children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
+        children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={innerSessionDetails} reservationId={selectedReservationId}/>,
     });
 
     return (
@@ -164,10 +193,10 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                                     />
                                 </div>
 
-                                {toBoolean(leagueDetails?.IsLoggedInAccountRegistered) &&
+                                {toBoolean(innerSessionDetails?.IsLoggedInAccountRegistered) &&
                                     <>
                                         <LeagueSessionOptInButton orgId={orgId}
-                                                                  sessionData={sessionDetails}
+                                                                  sessionData={innerSessionDetails}
                                                                   orgMemberIds={authDataOrgMemberIds}/>
                                     </>
                                 }
@@ -201,8 +230,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                                                 <Flex align={'center'}
                                                       justify={'space-between'}
                                                       onClick={() => {
-                                                          setSelectedReservationId(item.ReservationId);
-                                                          setShowLeaguesDrawer(false);
+                                                          onGameDayChange(item)
                                                       }}
                                                       className={globalStyles.drawerRow}>
                                                     <Flex vertical={true}>

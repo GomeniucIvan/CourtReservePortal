@@ -6,8 +6,9 @@ import {useStyles} from "./styles.jsx";
 import { cx } from 'antd-style';
 import { useTranslation } from 'react-i18next';
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import {isNullOrEmpty} from "@/utils/Utils.jsx";
 
-const EntityCardWrapper = ({children, title, onClick, addPadding, isFetching}) => {
+const EntityCardWrapper = ({children, title, onClick, addPadding, isFetching, linkText}) => {
     const { token } = useToken();
     const navigate = useNavigate();
     const { styles } = useStyles();
@@ -31,7 +32,12 @@ const EntityCardWrapper = ({children, title, onClick, addPadding, isFetching}) =
                         <Title level={1}>{title}</Title>
 
                         <Title level={3} style={{color: token.colorLink}} onClick={onClick}>
-                            {t('seeAll')}
+                            {!isNullOrEmpty(linkText) &&
+                                <>{linkText}</>
+                            }
+                            {isNullOrEmpty(linkText) &&
+                                <>{t('seeAll')}</>
+                            }
                         </Title>
                     </Flex>
                 </PaddingBlock>

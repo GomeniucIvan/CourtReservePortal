@@ -12,10 +12,14 @@ import FormDrawerRadio from "@/form/formradio/FormDrawerRadio.jsx";
 import {stringToJson} from "@/utils/ListUtils.jsx";
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
 import CardSkeleton, {SkeletonEnum} from "@/components/skeleton/CardSkeleton.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const {Text} = Typography;
 
 const DashboardLeagues = ({dashboardData, isFetching}) => {
+    const navigate = useNavigate();
     let [showLeaguesDrawer, setShowLeaguesDrawer] = useState(false);
     let [leagueDatesLoading, setLeagueDatesLoading] = useState(false);
     let [leagueItems, setLeagueItems] = useState([]);
@@ -25,7 +29,7 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
     const [showLeaguesBlock, setShowLeaguesBlock] = useState(false);
     const [leaguesDates, setLeaguesDates] = useState([]);
     const [hideLeagues, setHideLeagues] = useState(false);
-
+    const {orgId} = useAuth();
     const {styles} = useStyles();
     const navigation = useNavigate();
 
@@ -60,7 +64,15 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
     }
     
     return (
-        <EntityCardWrapper title={'Leagues'} link={'/leagues'} isFetching={isFetching} addPadding={true}>
+        <EntityCardWrapper title={'My Leagues'}
+                           onClick={() => {
+                               let route = toRoute(LeagueRouteNames.LEAGUE_DETAIL, 'id', orgId);
+                               route = toRoute(route, 'lsid', dashboardData?.SelectedLeagueSessionId);
+                               navigate(`${route}?tab=3`);
+                           }}
+                           isFetching={isFetching}
+                           addPadding={true} 
+                           linkText={'Standings'}>
 
             {isFetching &&
                 <SlickSlider>

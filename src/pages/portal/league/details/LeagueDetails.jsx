@@ -4,9 +4,9 @@ import {useEffect, useRef, useState} from "react";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {anyInList, encodeParamsObject, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, encodeParamsObject, equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {cx} from "antd-style";
@@ -38,11 +38,14 @@ function LeagueDetails() {
     } = useApp();
 
     let {lsid} = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const tab = queryParams.get("tab");
     
     const loadData = async () => {
         setIsFetching(true);
         
-        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Leagues/Details?id=${orgId}&sessionId=${lsid}`);
+        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Leagues/Details?id=${orgId}&sessionId=${lsid}&tab=${nullToEmpty(tab)}`);
 
         if (toBoolean(response?.IsValid)){
             let data = response.Data;

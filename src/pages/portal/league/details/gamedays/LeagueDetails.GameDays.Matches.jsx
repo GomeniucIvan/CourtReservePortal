@@ -431,156 +431,161 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
             }
 
             {!isFetching &&
-                <PaddingBlock onlyBottom={true}>
+                <>
                     {leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus) &&
                         <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
-                            {(anyInList(distinctGroups) && anyInList(sortedMatches)) &&
-                                <Flex vertical={true} gap={token.padding}>
-                                    {distinctGroups.map((group, index) => {
-                                        let groupMatches = sortedMatches.filter(v => equalString(v.LeagueSessionPlayDateGroupId, group.LeagueSessionPlayDateGroupId));
+                            <PaddingBlock onlyBottom={true}>
+                                {(anyInList(distinctGroups) && anyInList(sortedMatches)) &&
+                                    <Flex vertical={true} gap={token.padding}>
+                                        {distinctGroups.map((group, index) => {
+                                            let groupMatches = sortedMatches.filter(v => equalString(v.LeagueSessionPlayDateGroupId, group.LeagueSessionPlayDateGroupId));
 
-                                        if (toBoolean(isMyMatches)) {
-                                            groupMatches = groupMatches.filter(listMatch => isMemberMatch(listMatch, authDataOrgMemberIds, sortedMatches));
-                                            if (!anyInList(groupMatches)) {
-                                                return (<></>);
+                                            if (toBoolean(isMyMatches)) {
+                                                groupMatches = groupMatches.filter(listMatch => isMemberMatch(listMatch, authDataOrgMemberIds, sortedMatches));
+                                                if (!anyInList(groupMatches)) {
+                                                    return (<></>);
+                                                }
                                             }
-                                        }
 
-                                        let matchNumber = 1;
-                                        let rotationType = getRotationType(group);
+                                            let matchNumber = 1;
+                                            let rotationType = getRotationType(group);
 
-                                        return (
-                                            <Flex key={index} vertical={true} gap={token.paddingLG}>
-                                                <Flex justify={'space-between'}>
-                                                    <Title level={3}>{group.CourtLabel}</Title>
-                                                    {!isNullOrEmpty(rotationType) &&
-                                                        <Tag className={globalStyles.tag}
-                                                             color="default">{rotationType}</Tag>
-                                                    }
-                                                </Flex>
+                                            return (
+                                                <Flex key={index} vertical={true} gap={token.paddingLG}>
+                                                    <Flex justify={'space-between'}>
+                                                        <Title level={3}>{group.CourtLabel}</Title>
+                                                        {!isNullOrEmpty(rotationType) &&
+                                                            <Tag className={globalStyles.tag}
+                                                                 color="default">{rotationType}</Tag>
+                                                        }
+                                                    </Flex>
 
-                                                {groupMatches.map((match) => {
-                                                    const teamOneDisplay = displayTeamFormat(match.Team1Players, '');
-                                                    const teamTwoDisplay = displayTeamFormat(match.Team2Players, '');
+                                                    {groupMatches.map((match) => {
+                                                        const teamOneDisplay = displayTeamFormat(match.Team1Players, '');
+                                                        const teamTwoDisplay = displayTeamFormat(match.Team2Players, '');
 
-                                                    const isTeam1Serving = match.Team1Players.some(player => player.IsFirstServing);
-                                                    const isTeam2Serving = match.Team2Players.some(player => player.IsFirstServing);
+                                                        const isTeam1Serving = match.Team1Players.some(player => player.IsFirstServing);
+                                                        const isTeam2Serving = match.Team2Players.some(player => player.IsFirstServing);
 
-                                                    const teamOneIsWinner = match.Team1Score > match.Team2Score;
-                                                    const teamTwoIsWinner = match.Team2Score > match.Team1Score;
-                                                    let isIncomplete = equalString(match.ScoreStatus, 2);
+                                                        const teamOneIsWinner = match.Team1Score > match.Team2Score;
+                                                        const teamTwoIsWinner = match.Team2Score > match.Team1Score;
+                                                        let isIncomplete = equalString(match.ScoreStatus, 2);
 
-                                                    return (
-                                                        <Card key={match.LeagueSessionMatchId}>
-                                                            <Flex vertical={true} gap={token.paddingXXL}>
-                                                                <Flex align={'center'} justify={'space-between'}>
-                                                                    <Flex gap={token.paddingXS} align={'center'}>
-                                                                        <SVG icon={'pickleball-solid'}
-                                                                             color={token.colorSecondary}/>
-                                                                        <Title level={3}>
-                                                                            Match #{matchNumber++}
-                                                                        </Title>
+                                                        return (
+                                                            <Card key={match.LeagueSessionMatchId}>
+                                                                <Flex vertical={true} gap={token.paddingXXL}>
+                                                                    <Flex align={'center'} justify={'space-between'}>
+                                                                        <Flex gap={token.paddingXS} align={'center'}>
+                                                                            <SVG icon={'pickleball-solid'}
+                                                                                 color={token.colorSecondary}/>
+                                                                            <Title level={3}>
+                                                                                Match #{matchNumber++}
+                                                                            </Title>
+                                                                        </Flex>
+                                                                        {toBoolean(allowScoreReport(match)) &&
+                                                                            <Button type="primary"
+                                                                                    ghost={true}
+                                                                                    size={'small'}
+                                                                                    className={buttonStyles.buttonBlue}
+                                                                                    onClick={() => reportScore(match)}>
+                                                                                Report Score
+                                                                            </Button>
+                                                                        }
                                                                     </Flex>
-                                                                    {toBoolean(allowScoreReport(match)) &&
-                                                                        <Button type="primary"
-                                                                                ghost={true}
-                                                                                size={'small'}
-                                                                                className={buttonStyles.buttonBlue}
-                                                                                onClick={() => reportScore(match)}>
-                                                                            Report Score
-                                                                        </Button>
-                                                                    }
-                                                                </Flex>
 
-                                                                <Flex vertical={true} gap={token.paddingXS}>
-                                                                    <Flex
-                                                                        className={(teamOneIsWinner) && styles.winnerTeamWrapper}
-                                                                        justify={'space-between'}>
-                                                                        <Flex align={'center'} gap={token.paddingXS}>
-                                                                            <Text level={4}>{teamOneDisplay}</Text>
-                                                                            {isTeam1Serving &&
+                                                                    <Flex vertical={true} gap={token.paddingXS}>
+                                                                        <Flex
+                                                                            className={(teamOneIsWinner) && styles.winnerTeamWrapper}
+                                                                            justify={'space-between'}>
+                                                                            <Flex align={'center'} gap={token.paddingXS}>
+                                                                                <Text level={4}>{teamOneDisplay}</Text>
+                                                                                {isTeam1Serving &&
+                                                                                    <SVG icon={'circle-s-regular'}
+                                                                                         color={token.colorSecondary}
+                                                                                         size={16}/>}
+                                                                            </Flex>
+
+                                                                            {!isIncomplete &&
+                                                                                <Flex align={'center'}
+                                                                                      gap={token.paddingXXS}>
+                                                                                    {teamOneIsWinner &&
+                                                                                        <SVG icon={'badge-check-solid'}
+                                                                                             color={token.colorSuccess}
+                                                                                             size={20}/>
+                                                                                    }
+                                                                                    <Input
+                                                                                        disabled
+                                                                                        placeholder={'-'}
+                                                                                        defaultValue={match.Team1Score}
+                                                                                        className={cx(styles.matchScoreDisabledInput, teamOneIsWinner && styles.matchScoreWinnerInput)}
+                                                                                        onChange={() => handleScoreChange('team1', match.LeagueSessionMatchId)}
+                                                                                    />
+                                                                                </Flex>
+                                                                            }
+                                                                        </Flex>
+
+                                                                        <Flex justify={'end'}>
+                                                                            {!isIncomplete &&
+                                                                                <Text strong
+                                                                                      className={styles.matchVsText}>VS</Text>
+                                                                            }
+                                                                            {isIncomplete &&
+                                                                                <Tag color="orange"
+                                                                                     className={globalStyles.tag}>Incomplete</Tag>
+                                                                            }
+                                                                        </Flex>
+
+                                                                        <Flex
+                                                                            className={(teamTwoIsWinner) && styles.winnerTeamWrapper}
+                                                                            justify={'space-between'}>
+                                                                            <Text level={4}>{teamTwoDisplay}</Text>
+                                                                            {isTeam2Serving &&
                                                                                 <SVG icon={'circle-s-regular'}
                                                                                      color={token.colorSecondary}
                                                                                      size={16}/>}
+
+                                                                            {!isIncomplete &&
+                                                                                <Flex align={'center'}
+                                                                                      gap={token.paddingXXS}>
+                                                                                    {teamTwoIsWinner &&
+                                                                                        <SVG icon={'badge-check-solid'}
+                                                                                             color={token.colorSuccess}
+                                                                                             size={20}/>
+                                                                                    }
+                                                                                    <Input
+                                                                                        disabled
+                                                                                        placeholder={'-'}
+                                                                                        defaultValue={match.Team2Score}
+                                                                                        className={cx(styles.matchScoreDisabledInput, teamTwoIsWinner && styles.matchScoreWinnerInput)}
+                                                                                        onChange={() => handleScoreChange('team2', match.LeagueSessionMatchId)}
+                                                                                    />
+                                                                                </Flex>
+                                                                            }
                                                                         </Flex>
 
-                                                                        {!isIncomplete &&
-                                                                            <Flex align={'center'}
-                                                                                  gap={token.paddingXXS}>
-                                                                                {teamOneIsWinner &&
-                                                                                    <SVG icon={'badge-check-solid'}
-                                                                                         color={token.colorSuccess}
-                                                                                         size={20}/>
-                                                                                }
-                                                                                <Input
-                                                                                    disabled
-                                                                                    placeholder={'-'}
-                                                                                    defaultValue={match.Team1Score}
-                                                                                    className={cx(styles.matchScoreDisabledInput, teamOneIsWinner && styles.matchScoreWinnerInput)}
-                                                                                    onChange={() => handleScoreChange('team1', match.LeagueSessionMatchId)}
-                                                                                />
-                                                                            </Flex>
-                                                                        }
+                                                                        {match.RestingPlayers.length > 0 && (
+                                                                            <Text
+                                                                                type="secondary">Bye: {match.RestingPlayers.map(player => player.FullName).join(', ')}</Text>
+                                                                        )}
                                                                     </Flex>
-
-                                                                    <Flex justify={'end'}>
-                                                                        {!isIncomplete &&
-                                                                            <Text strong
-                                                                                  className={styles.matchVsText}>VS</Text>
-                                                                        }
-                                                                        {isIncomplete &&
-                                                                            <Tag color="orange"
-                                                                                 className={globalStyles.tag}>Incomplete</Tag>
-                                                                        }
-                                                                    </Flex>
-
-                                                                    <Flex
-                                                                        className={(teamTwoIsWinner) && styles.winnerTeamWrapper}
-                                                                        justify={'space-between'}>
-                                                                        <Text level={4}>{teamTwoDisplay}</Text>
-                                                                        {isTeam2Serving &&
-                                                                            <SVG icon={'circle-s-regular'}
-                                                                                 color={token.colorSecondary}
-                                                                                 size={16}/>}
-
-                                                                        {!isIncomplete &&
-                                                                            <Flex align={'center'}
-                                                                                  gap={token.paddingXXS}>
-                                                                                {teamTwoIsWinner &&
-                                                                                    <SVG icon={'badge-check-solid'}
-                                                                                         color={token.colorSuccess}
-                                                                                         size={20}/>
-                                                                                }
-                                                                                <Input
-                                                                                    disabled
-                                                                                    placeholder={'-'}
-                                                                                    defaultValue={match.Team2Score}
-                                                                                    className={cx(styles.matchScoreDisabledInput, teamTwoIsWinner && styles.matchScoreWinnerInput)}
-                                                                                    onChange={() => handleScoreChange('team2', match.LeagueSessionMatchId)}
-                                                                                />
-                                                                            </Flex>
-                                                                        }
-                                                                    </Flex>
-
-                                                                    {match.RestingPlayers.length > 0 && (
-                                                                        <Text
-                                                                            type="secondary">Bye: {match.RestingPlayers.map(player => player.FullName).join(', ')}</Text>
-                                                                    )}
                                                                 </Flex>
-                                                            </Flex>
-                                                        </Card>
-                                                    );
-                                                })}
-                                            </Flex>
-                                        )
-                                    })}
-                                </Flex>
-                            }
+                                                            </Card>
+                                                        );
+                                                    })}
+                                                </Flex>
+                                            )
+                                        })}
+                                    </Flex>
+                                }
+                            </PaddingBlock>
+
                         </div>
                     }
 
                     {(!leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus) || toBoolean(noMatches)) &&
-                        <EmptyBlock description={toBoolean(isMyMatches) ? 'No Matches.' : 'Match(s) not created.'} removePadding={true} />
+                        <PaddingBlock onlyBottom={true}>
+                            <EmptyBlock description={toBoolean(isMyMatches) ? 'No Matches.' : 'Match(s) not created.'} removePadding={true} />
+                        </PaddingBlock>
                     }
 
                     <DrawerBottom showDrawer={!isNullOrEmpty(reportScoreMatchData)}
@@ -664,7 +669,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                             </Flex>
                         </PaddingBlock>
                     </DrawerBottom>
-                </PaddingBlock>
+                </>
             }
         </>
     )

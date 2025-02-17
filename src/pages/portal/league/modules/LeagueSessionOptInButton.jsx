@@ -76,12 +76,12 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
 
     const fakeLeagueSession = sessionData;
     
-    const isFreeCost = isCostFree(fakeLeagueSession);
     const registeredFamilyPlayersOrgMember = fakeLeagueSession.RegisteredPlayers.filter(player => orgMemberIds.includes(player.OrganizationMemberId));
     const registeredFamilyPlayersOrgMemberIds = registeredFamilyPlayersOrgMember.map(player => player.OrganizationMemberId);
     const firstMemberRegistrationId = fakeLeagueSession.RegisteredPlayers.find(player => orgMemberIds.includes(player.OrganizationMemberId))?.RegistrationId;
     const onlyOneMemberRegistered = fakeLeagueSession.RegisteredPlayers.filter(player => orgMemberIds.includes(player.OrganizationMemberId)).length === 1;
 
+    const isFreeCost = isCostFree(fakeLeagueSession);
     const isEdit = registeredFamilyPlayersOrgMember.some(v => v.IsOptIn) && registeredFamilyPlayersOrgMember.some(v => !v.IsOptIn);
     
     const reservationId = dateId || fakeLeagueSession.NextReservationId;
@@ -142,7 +142,10 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         }
 
         if (type === 'label') {
-            if (isEdit) return 'Edit Opt-In';
+            console.log(isEdit)
+            if (isEdit) {
+                return 'Edit Opt-In';
+            }
             return allRegisteredFamilyMembersAreOptedIn && registeredFamMembers.length ? 'Opt-Out' : 'Opt-In';
         }
 
@@ -174,7 +177,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
                                 type="primary"
                                 className="btn btn-block btn-modal fn-disable"
                                 danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId )}>
-                            {getOptInClassOrLabel(fakeLeagueSession, 'label', registeredFamilyPlayersOrgMemberIds, isEdit, reservationId)}
+                            {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId)}
                         </Button>
                     )}
                 </>
