@@ -145,14 +145,18 @@ function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails, 
             }
             
             {!isFetching &&
-                <div>
+                <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
                     <Flex vertical={true} gap={token.padding}>
                         {anyInList(playingPlayers) &&
                             <PaddingBlock>
                                 <Flex vertical={true} gap={token.paddingXS}>
                                     <Flex gap={token.paddingXS} align={'center'}>
-                                        <SVG icon="circle-filled" color={token.colorSuccess} size={16} preventCircles={false} />
-                                        <Title level={4}>Playing <Text style={{color: token.colorSecondary, fontWeight: 400}}>({countListItems(playingPlayers)})</Text></Title>
+                                        <SVG icon="circle-filled" color={token.colorSuccess} size={16}
+                                             preventCircles={false}/>
+                                        <Title level={4}>Playing <Text style={{
+                                            color: token.colorSecondary,
+                                            fontWeight: 400
+                                        }}>({countListItems(playingPlayers)})</Text></Title>
                                     </Flex>
 
                                     {tableBlock(playingPlayers)}
@@ -164,8 +168,12 @@ function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails, 
                             <PaddingBlock>
                                 <Flex vertical={true} gap={token.paddingXS}>
                                     <Flex gap={token.paddingXS} align={'center'}>
-                                        <SVG icon="circle-filled" color={token.colorWarning} size={16} preventCircles={false} />
-                                        <Title level={4}>Undecided <Text style={{color: token.colorSecondary, fontWeight: 400}}>({countListItems(undecidedPlayers)})</Text></Title>
+                                        <SVG icon="circle-filled" color={token.colorWarning} size={16}
+                                             preventCircles={false}/>
+                                        <Title level={4}>Undecided <Text style={{
+                                            color: token.colorSecondary,
+                                            fontWeight: 400
+                                        }}>({countListItems(undecidedPlayers)})</Text></Title>
                                     </Flex>
 
                                     {tableBlock(undecidedPlayers)}

@@ -101,7 +101,7 @@ function DashboardModern({navigationItems,
                     <DashboardBookings dashboardData={dashboardData?.itemsData}/>
                    
                     <PaddingBlock>
-                        <Flex vertical={true} gap={token.paddingXXL} style={{paddingTop: `${token.paddingXXL}px`, paddingBottom: `${token.paddingXXL}px`}}>
+                        <Flex vertical={true} gap={token.paddingXXL} style={{paddingTop: `${token.paddingXXL}px`}}>
                             <DashboardSaveMyPlay dashboardData={dashboardData?.itemsData}/>
                             <DashboardPourMyBev dashboardData={dashboardData?.itemsData}/>
                         </Flex>

@@ -1,5 +1,6 @@
-import {isNullOrEmpty} from "./Utils.jsx";
-import {removeCookieById} from "./CookieUtils.jsx";
+import {isNullOrEmpty, toBoolean} from "./Utils.jsx";
+import {getCookie, removeCookieById} from "./CookieUtils.jsx";
+import {saveCookie} from "@/utils/CookieUtils.jsx";
 
 export const isMobileKeyboardOpen = () => {
     const currentInnerHeight = window.innerHeight;
@@ -68,8 +69,12 @@ export const reactNativeSaveBadgeCount = (count) =>{
 
 export const reactNativeInitFireBase = () =>{
     if (window.ReactNativeWebView) {
-        const message = JSON.stringify({ type: 'FlutterInitFirebase' });
-        window.ReactNativeWebView.postMessage(message);
+        let isInitFirebase = getCookie('isInitFirebase');
+        if (!toBoolean(isInitFirebase)) {
+            saveCookie('isInitFirebase', true, 1140);
+            const message = JSON.stringify({ type: 'FlutterInitFirebase' });
+            window.ReactNativeWebView.postMessage(message);
+        }
     }
 }
 

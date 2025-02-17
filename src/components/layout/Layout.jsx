@@ -122,6 +122,7 @@ function Layout() {
                 }
 
                 setIsFetching(false);
+                reactNativeInitFireBase();
             }
             
             //authorized with active orgid
@@ -141,7 +142,7 @@ function Layout() {
                         navigate(textMessageRoute);
                     }
                 }
-
+                reactNativeInitFireBase();
                 //set from organization load
                 //setIsFetching(false);
             }

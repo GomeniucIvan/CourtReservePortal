@@ -90,7 +90,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
             }
 
             if (currentComponentHeaderHeight > 0) {
-                setInnerTabHeight(currentComponentHeaderHeight + tabsHeight + (token.padding * 2) + token.paddingSM); //2 gaps token
+                setInnerTabHeight(currentComponentHeaderHeight + tabsHeight + (token.padding * 2) + token.paddingSM - 2); //2 gaps token
             }
         }
     }, [tabsRef, gameDayPickerRef, gameDaySelectedTab]);
