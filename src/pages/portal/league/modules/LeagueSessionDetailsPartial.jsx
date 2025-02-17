@@ -72,7 +72,7 @@ function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
     
     return (
         <>
-            {equalString(page, 'details') &&
+            {(equalString(page, 'details') || equalString(page, 'optin')) &&
                 <>
                     {!isNullOrEmpty(leagueDisplayEventDates(sessionDetails)) &&
                         <CardIconLabel icon={getIcon('event-dates')} iconColor={getColor()} description={leagueDisplayEventDates(sessionDetails)} size={iconSize} />

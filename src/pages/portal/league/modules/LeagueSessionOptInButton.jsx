@@ -34,7 +34,7 @@ import {listFilter} from "@/utils/ListUtils.jsx";
 import {fromDateTimeStringToDate, fromTimeSpanString} from "@/utils/DateUtils.jsx";
 import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
 import {eReplace} from "@/utils/TranslateUtils.jsx";
-import {LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
+import {LeagueRouteNames as RouteNames, LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import toast from "react-hot-toast";
@@ -156,8 +156,6 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         return '';
     };
 
-
-
     const handleOptOut = async () => {
         const handleOptOutPost = async () => {
             let urlData = {
@@ -182,11 +180,12 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
 
             if (toBoolean(response?.IsValid)) {
                 if (typeof onPlayerOptInOptOut == 'function') {
+                    pNotify('Successfully Opt-Out.')
                     onPlayerOptInOptOut();
                 }
             } else {
                 displayMessageModal({
-                    title: "Opt-out error",
+                    title: "Opt-Out error",
                     html: (onClose) => response.Message,
                     type: "error",
                     buttonType: modalButtonType.DEFAULT_CLOSE,
@@ -196,10 +195,10 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         }
 
         displayMessageModal({
-            title: "Opt-out",
+            title: "Opt-Out",
             html: (onClose) => <Flex>
                 <Flex vertical={true} gap={token.paddingXXL}>
-                    <Text>Are you sure you want to Opt-out?</Text>
+                    <Text>Are you sure you want to Opt-Out?</Text>
 
                     <Flex vertical={true} gap={token.padding}>
                         <Button type={'primary'}
@@ -209,7 +208,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
                                     handleOptOutPost();
                                     onClose();
                                 }}>
-                            Opt-out
+                            Opt-Out
                         </Button>
 
                         <Button block={true}
@@ -227,6 +226,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
             onClose: () => {},
         })
     };
+    
     const handleOptInFree = async () => {
         let urlData = {
             leagueId: sessionData.LeagueId,
@@ -240,11 +240,12 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         let response = await appService.post(`/app/Online/Leagues/OptinFree?id=${orgId}&${encodeParamsObject(urlData)}`)
         if (toBoolean(response?.IsValid)) {
             if (typeof onPlayerOptInOptOut == 'function') {
+                pNotify('Successfully Opt-In.')
                 onPlayerOptInOptOut();
             }
         } else {
             displayMessageModal({
-                title: "Opt-out error",
+                title: "Opt-Out error",
                 html: (onClose) => response.Message,
                 type: "error",
                 buttonType: modalButtonType.DEFAULT_CLOSE,
@@ -253,7 +254,10 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         }
     };
 
-    const handleOptIn = () => { /* Implement Opt-In logic */ };
+    const handleOptIn = async () => {
+        let route = toRoute(RouteNames.LEAGUE_OPTIN, 'id', orgId);
+        navigate(`${route}?sessionId=${sessionData.LeagueSessionId}&leagueId=${sessionData.LeagueId}&resId=${sessionData.NextReservationId}`)
+    };
 
     return (
         <>
