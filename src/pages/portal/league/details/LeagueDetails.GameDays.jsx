@@ -101,7 +101,6 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         }
     }, [selectedReservationId])
 
-
     const onGameDayChange = async (item) => {
         setIsFetching(true);
 
@@ -151,6 +150,10 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={innerSessionDetails} reservationId={selectedReservationId}/>,
     });
 
+    const onPlayerOptInOptOut = () => {
+        loadData(selectedReservationId);
+    }
+    
     return (
         <>
             {isFetching &&
@@ -197,6 +200,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                                     <>
                                         <LeagueSessionOptInButton orgId={orgId}
                                                                   sessionData={innerSessionDetails}
+                                                                  onPlayerOptInOptOut={onPlayerOptInOptOut}
                                                                   orgMemberIds={authDataOrgMemberIds}/>
                                     </>
                                 }
