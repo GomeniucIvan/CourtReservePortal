@@ -20,9 +20,10 @@ let enableDebug = !isProduction;
 //enableDebug = true;
 
 export default defineConfig({
+    base: isProduction ? '/ClientApp/dist/' : '/',
+    
     plugins: [
         react(),
-
         // Custom plugin to modify asset paths in index.html
         {
             name: 'modify-html-assets-path',
