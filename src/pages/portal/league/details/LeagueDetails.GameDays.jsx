@@ -39,6 +39,9 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
     const {orgId, authDataOrgMemberIds} = useAuth();
     const {styles} = useStyles();
     const tabsRef = useRef(null);
+    const gameDayPickerRef = useRef(null);
+    const [innerTabsHeight, setInnerTabHeight] = useState(0);
+
 
     const loadData = async (resId) => {
         setIsFetching(true);
@@ -68,37 +71,55 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         setIsFetching(false);
     }
 
-    // useEffect(() => {
-    //     if (equalString(selectedTab, 'gamedays')) {
-    //         loadData(selectedReservationId)
-    //     }
-    // }, [selectedTab])
+    useEffect(() => {
+        if (equalString(selectedTab, 'gamedays')) {
+            let currentComponentHeaderHeight = 0;
+
+            if (tabsRef.current) {
+                // Access the 'ant-tabs-nav' element within tabsRef
+                const navElement = tabsRef.current.querySelector('.ant-tabs-nav');
+                if (navElement) {
+                    //should include bottom margin as well
+                    // + token.padding
+                    currentComponentHeaderHeight = navElement.offsetHeight;
+                }
+            }
+
+            if (gameDayPickerRef.current) {
+                currentComponentHeaderHeight = currentComponentHeaderHeight + gameDayPickerRef.current.offsetHeight;
+            }
+
+            if (currentComponentHeaderHeight > 0) {
+                setInnerTabHeight(currentComponentHeaderHeight + tabsHeight + (token.padding * 2) + token.paddingSM); //2 gaps token
+            }
+        }
+    }, [tabsRef, gameDayPickerRef, gameDaySelectedTab]);
 
     useEffect(() => {
         if (equalString(selectedTab, 'gamedays')) {
             loadData(selectedReservationId)
         }
     }, [selectedReservationId])
-    
+
     let tabIds = [];
     tabIds.push({
         key: 'players',
         label: 'Players',
-        children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
+        children: <LeagueDetailsGameDaysPlayers selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
     });
 
     if (leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus)) {
         tabIds.push({
             key: 'mygroup',
             label: 'My Group',
-            children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails} isMyMatches={true} reservationId={selectedReservationId}/>,
+            children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={sessionDetails} isMyMatches={true} reservationId={selectedReservationId}/>,
         });
     }
 
     tabIds.push({
         key: 'allmatches',
         label: 'All Matches',
-        children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={tabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
+        children: <LeagueDetailsGameDaysMatches selectedTab={gameDaySelectedTab} tabsHeight={innerTabsHeight} sessionDetails={sessionDetails} reservationId={selectedReservationId}/>,
     });
 
     return (
@@ -119,38 +140,40 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
 
             {!isFetching &&
                 <>
-                    <PaddingBlock>
-                        <Flex gap={token.paddingSM}>
-                            <div className={styles.leagueBlock}>
-                                <Text className={styles.selectLeagueLabel}>
-                                    <small>
-                                        Game Day
-                                    </small>
-                                </Text>
-                                <Input
-                                    rootClassName={styles.leagueSelector}
-                                    readOnly={true}
-                                    value={selectedDay?.DateTimesDisplay}
-                                    onClick={() => {
-                                        if (moreThanOneInList(dates)) {
-                                            setShowLeaguesDrawer(true)
+                    <div ref={gameDayPickerRef}>
+                        <PaddingBlock>
+                            <Flex gap={token.paddingSM}>
+                                <div className={cx(styles.leagueBlock)}>
+                                    <Text className={styles.selectLeagueLabel}>
+                                        <small>
+                                            Game Day
+                                        </small>
+                                    </Text>
+                                    <Input
+                                        rootClassName={cx(styles.leagueSelector, styles.leagueGameDaySelector)}
+                                        readOnly={true}
+                                        value={selectedDay?.DateTimesDisplay}
+                                        onClick={() => {
+                                            if (moreThanOneInList(dates)) {
+                                                setShowLeaguesDrawer(true)
+                                            }
+                                        }}
+                                        suffix={
+                                            <DownOutline style={{color: 'rgba(0,0,0,.45)'}}/>
                                         }
-                                    }}
-                                    suffix={
-                                        <DownOutline style={{color: 'rgba(0,0,0,.45)'}}/>
-                                    }
-                                />
-                            </div>
+                                    />
+                                </div>
 
-                            {toBoolean(leagueDetails?.IsLoggedInAccountRegistered) &&
-                                <>
-                                    <LeagueSessionOptInButton orgId={orgId}
-                                                              sessionData={sessionDetails}
-                                                              orgMemberIds={authDataOrgMemberIds}/>
-                                </>
-                            }
-                        </Flex>
-                    </PaddingBlock>
+                                {toBoolean(leagueDetails?.IsLoggedInAccountRegistered) &&
+                                    <>
+                                        <LeagueSessionOptInButton orgId={orgId}
+                                                                  sessionData={sessionDetails}
+                                                                  orgMemberIds={authDataOrgMemberIds}/>
+                                    </>
+                                }
+                            </Flex>
+                        </PaddingBlock>
+                    </div>
 
                     <div ref={tabsRef} style={{display: 'block'}}>
                         <Tabs
@@ -171,12 +194,12 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                             {anyInList(dates) &&
                                 <PaddingBlock leftRight={false} onlyBottom={true}>
                                     {dates.map((item, index) => {
-                                        const isLastIndex = index === dates.length - 1;  
-                                        
+                                        const isLastIndex = index === dates.length - 1;
+
                                         return (
                                             <React.Fragment key={index}>
-                                                <Flex align={'center'} 
-                                                      justify={'space-between'} 
+                                                <Flex align={'center'}
+                                                      justify={'space-between'}
                                                       onClick={() => {
                                                           setSelectedReservationId(item.ReservationId);
                                                           setShowLeaguesDrawer(false);
@@ -185,17 +208,19 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                                                     <Flex vertical={true}>
                                                         <Text>{item.DateTimesDisplay}</Text>
                                                         {!isNullOrEmpty(item.GetDateStatusString) &&
-                                                            <Text className={cx(styles.leagueDrawerStatus, `status-${item.GetDateStatusInt}`)}>
+                                                            <Text
+                                                                className={cx(styles.leagueDrawerStatus, `status-${item.GetDateStatusInt}`)}>
                                                                 {item.GetDateStatusString}
                                                             </Text>
                                                         }
                                                     </Flex>
 
-                                                    <DrawerRowSVG checked={equalString(item.ReservationId, selectedReservationId)} />
+                                                    <DrawerRowSVG
+                                                        checked={equalString(item.ReservationId, selectedReservationId)}/>
                                                 </Flex>
 
                                                 {!isLastIndex &&
-                                                    <Divider className={globalStyles.noMargin} />
+                                                    <Divider className={globalStyles.noMargin}/>
                                                 }
                                             </React.Fragment>
                                         )

@@ -23,9 +23,16 @@ function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails, 
     const [isFetching, setIsFetching] = useState(true);
     const [players, setPlayers] = useState([]);
     const{orgId, authData, authDataOrgMemberIds} = useAuth();
-    const {token, globalStyles} = useApp();
+    const {token, globalStyles, availableHeight} = useApp();
     const {styles} = useStyles();
+    const [bodyHeight, setBodyHeight] = useState(null);
 
+    const fixHeaderItems = () => {
+        if (tabsHeight > 0) {
+            setBodyHeight(availableHeight - tabsHeight);
+        }
+    }
+    
     const loadData = async () => {
         setIsFetching(true);
         let response = await appService.get(navigate, `/app/Online/Leagues/GameDayPlayersTab?id=${orgId}&sessionId=${sessionDetails.LeagueSessionId}&reservationId=${reservationId}`);
@@ -35,6 +42,7 @@ function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails, 
 
             if(toBoolean(playerResponse?.IsValid)) {
                 setPlayers(playerResponse?.Data);
+                fixHeaderItems();
             }
         }
 
@@ -43,6 +51,7 @@ function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails, 
 
     useEffect(() => {
         if (equalString(selectedTab, 'players')) {
+            fixHeaderItems();
             loadData();
         }
     }, [selectedTab])
@@ -136,33 +145,35 @@ function LeagueDetailsGameDaysPlayers({selectedTab, tabsHeight, sessionDetails, 
             }
             
             {!isFetching &&
-                <Flex vertical={true} gap={token.padding}>
-                    {anyInList(playingPlayers) &&
-                        <PaddingBlock>
-                            <Flex vertical={true} gap={token.paddingXS}>
-                                <Flex gap={token.paddingXS} align={'center'}>
-                                    <SVG icon="circle-filled" color={token.colorSuccess} size={16} preventCircles={false} />
-                                    <Title level={4}>Playing <Text style={{color: token.colorSecondary, fontWeight: 400}}>({countListItems(playingPlayers)})</Text></Title>
+                <div>
+                    <Flex vertical={true} gap={token.padding}>
+                        {anyInList(playingPlayers) &&
+                            <PaddingBlock>
+                                <Flex vertical={true} gap={token.paddingXS}>
+                                    <Flex gap={token.paddingXS} align={'center'}>
+                                        <SVG icon="circle-filled" color={token.colorSuccess} size={16} preventCircles={false} />
+                                        <Title level={4}>Playing <Text style={{color: token.colorSecondary, fontWeight: 400}}>({countListItems(playingPlayers)})</Text></Title>
+                                    </Flex>
+
+                                    {tableBlock(playingPlayers)}
                                 </Flex>
+                            </PaddingBlock>
+                        }
 
-                                {tableBlock(playingPlayers)}
-                            </Flex>
-                        </PaddingBlock>
-                    }
+                        {anyInList(undecidedPlayers) &&
+                            <PaddingBlock>
+                                <Flex vertical={true} gap={token.paddingXS}>
+                                    <Flex gap={token.paddingXS} align={'center'}>
+                                        <SVG icon="circle-filled" color={token.colorWarning} size={16} preventCircles={false} />
+                                        <Title level={4}>Undecided <Text style={{color: token.colorSecondary, fontWeight: 400}}>({countListItems(undecidedPlayers)})</Text></Title>
+                                    </Flex>
 
-                    {anyInList(undecidedPlayers) &&
-                        <PaddingBlock>
-                            <Flex vertical={true} gap={token.paddingXS}>
-                                <Flex gap={token.paddingXS} align={'center'}>
-                                    <SVG icon="circle-filled" color={token.colorWarning} size={16} preventCircles={false} />
-                                    <Title level={4}>Undecided <Text style={{color: token.colorSecondary, fontWeight: 400}}>({countListItems(undecidedPlayers)})</Text></Title>
+                                    {tableBlock(undecidedPlayers)}
                                 </Flex>
-
-                                {tableBlock(undecidedPlayers)}
-                            </Flex>
-                        </PaddingBlock>
-                    }
-                </Flex>
+                            </PaddingBlock>
+                        }
+                    </Flex>
+                </div>
             }
         </>
     )

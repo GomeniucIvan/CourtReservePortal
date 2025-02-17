@@ -10,6 +10,9 @@ export const useStyles = createStyles(({ css, token }) => ({
         border-color: ${token.colorBorder} !important;
         box-shadow: none !important;
     `,
+    leagueGameDaySelector: css`
+        margin-bottom: 0;
+    `,
     selectLeagueLabel: css`
         position: absolute;
         top: -12px;

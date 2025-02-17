@@ -35,10 +35,17 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
     const [isFetching, setIsFetching] = useState(leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus));
     const [noMatches, setNoMatches] = useState(false);
     const {orgId, authDataOrgMemberIds} = useAuth();
-    const {globalStyles, token, isLoading, setIsLoading} = useApp();
+    const {globalStyles, token, isLoading, setIsLoading, availableHeight} = useApp();
     const {styles} = useStyles();
     const {buttonStyles} = useCombinedStyles();
     const [reportScoreMatchData, setReportScoreMatchData] = useState(null);
+    const [bodyHeight, setBodyHeight] = useState(null);
+    
+    const fixHeaderItems = () => {
+        if (tabsHeight > 0) {
+            setBodyHeight(availableHeight - tabsHeight);
+        }
+    }
     
     //lists
     const [distinctGroups, setDistinctGroups] = useState([]);
@@ -68,6 +75,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                 let respData = response.Data;
                 setDistinctGroups(respData.DistinctGroups);
                 setSortedMatches(respData.SortedMatches);
+                fixHeaderItems()
             }
         } else {
             displayMessageModal({
@@ -84,7 +92,10 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
         setIsFetching(false);
         setIsLoading(false);
     }
-
+    useEffect(() => {
+        fixHeaderItems()
+    }, [tabsHeight]);
+    
     useEffect(() => {
         if (isMyMatches) {
             loadData()
@@ -408,11 +419,13 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
             {isFetching &&
                 <>
                     <PaddingBlock>
-                        <Flex vertical={true} gap={8}>
-                            {emptyArray(6).map((item, index) => (
-                                <Skeleton.Button key={index} active={true} block style={{height: '56px'}}/>
-                            ))}
-                        </Flex>
+                        <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
+                            <Flex vertical={true} gap={8}>
+                                {emptyArray(6).map((item, index) => (
+                                    <Skeleton.Button key={index} active={true} block style={{height: '56px'}}/>
+                                ))}
+                            </Flex>
+                        </div>
                     </PaddingBlock>
                 </>
             }
@@ -420,7 +433,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
             {!isFetching &&
                 <PaddingBlock onlyBottom={true}>
                     {leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus) &&
-                        <>
+                        <div style={{height: `${bodyHeight}px`, overflow: 'hidden auto'}}>
                             {(anyInList(distinctGroups) && anyInList(sortedMatches)) &&
                                 <Flex vertical={true} gap={token.padding}>
                                     {distinctGroups.map((group, index) => {
@@ -428,8 +441,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
 
                                         if (toBoolean(isMyMatches)) {
                                             groupMatches = groupMatches.filter(listMatch => isMemberMatch(listMatch, authDataOrgMemberIds, sortedMatches));
-                                            if (!anyInList(groupMatches))
-                                            {
+                                            if (!anyInList(groupMatches)) {
                                                 return (<></>);
                                             }
                                         }
@@ -442,7 +454,8 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                                 <Flex justify={'space-between'}>
                                                     <Title level={3}>{group.CourtLabel}</Title>
                                                     {!isNullOrEmpty(rotationType) &&
-                                                        <Tag className={globalStyles.tag} color="default">{rotationType}</Tag>
+                                                        <Tag className={globalStyles.tag}
+                                                             color="default">{rotationType}</Tag>
                                                     }
                                                 </Flex>
 
@@ -453,16 +466,17 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                                     const isTeam1Serving = match.Team1Players.some(player => player.IsFirstServing);
                                                     const isTeam2Serving = match.Team2Players.some(player => player.IsFirstServing);
 
-                                                    const teamOneIsWinner =  match.Team1Score > match.Team2Score;
-                                                    const teamTwoIsWinner =  match.Team2Score > match.Team1Score;
+                                                    const teamOneIsWinner = match.Team1Score > match.Team2Score;
+                                                    const teamTwoIsWinner = match.Team2Score > match.Team1Score;
                                                     let isIncomplete = equalString(match.ScoreStatus, 2);
-                                                    
+
                                                     return (
                                                         <Card key={match.LeagueSessionMatchId}>
                                                             <Flex vertical={true} gap={token.paddingXXL}>
                                                                 <Flex align={'center'} justify={'space-between'}>
                                                                     <Flex gap={token.paddingXS} align={'center'}>
-                                                                        <SVG icon={'pickleball-solid'} color={token.colorSecondary} />
+                                                                        <SVG icon={'pickleball-solid'}
+                                                                             color={token.colorSecondary}/>
                                                                         <Title level={3}>
                                                                             Match #{matchNumber++}
                                                                         </Title>
@@ -479,16 +493,24 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                                                 </Flex>
 
                                                                 <Flex vertical={true} gap={token.paddingXS}>
-                                                                    <Flex className={(teamOneIsWinner) && styles.winnerTeamWrapper} justify={'space-between'}>
+                                                                    <Flex
+                                                                        className={(teamOneIsWinner) && styles.winnerTeamWrapper}
+                                                                        justify={'space-between'}>
                                                                         <Flex align={'center'} gap={token.paddingXS}>
                                                                             <Text level={4}>{teamOneDisplay}</Text>
-                                                                            {isTeam1Serving && <SVG icon={'circle-s-regular'} color={token.colorSecondary} size={16}  />}
+                                                                            {isTeam1Serving &&
+                                                                                <SVG icon={'circle-s-regular'}
+                                                                                     color={token.colorSecondary}
+                                                                                     size={16}/>}
                                                                         </Flex>
 
                                                                         {!isIncomplete &&
-                                                                            <Flex align={'center'} gap={token.paddingXXS}>
+                                                                            <Flex align={'center'}
+                                                                                  gap={token.paddingXXS}>
                                                                                 {teamOneIsWinner &&
-                                                                                    <SVG icon={'badge-check-solid'} color={token.colorSuccess} size={20}  />
+                                                                                    <SVG icon={'badge-check-solid'}
+                                                                                         color={token.colorSuccess}
+                                                                                         size={20}/>
                                                                                 }
                                                                                 <Input
                                                                                     disabled
@@ -503,21 +525,31 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
 
                                                                     <Flex justify={'end'}>
                                                                         {!isIncomplete &&
-                                                                            <Text strong className={styles.matchVsText}>VS</Text>
+                                                                            <Text strong
+                                                                                  className={styles.matchVsText}>VS</Text>
                                                                         }
                                                                         {isIncomplete &&
-                                                                            <Tag color="orange" className={globalStyles.tag}>Incomplete</Tag>
+                                                                            <Tag color="orange"
+                                                                                 className={globalStyles.tag}>Incomplete</Tag>
                                                                         }
                                                                     </Flex>
 
-                                                                    <Flex className={(teamTwoIsWinner) && styles.winnerTeamWrapper} justify={'space-between'}>
+                                                                    <Flex
+                                                                        className={(teamTwoIsWinner) && styles.winnerTeamWrapper}
+                                                                        justify={'space-between'}>
                                                                         <Text level={4}>{teamTwoDisplay}</Text>
-                                                                        {isTeam2Serving && <SVG icon={'circle-s-regular'} color={token.colorSecondary} size={16}  />}
+                                                                        {isTeam2Serving &&
+                                                                            <SVG icon={'circle-s-regular'}
+                                                                                 color={token.colorSecondary}
+                                                                                 size={16}/>}
 
                                                                         {!isIncomplete &&
-                                                                            <Flex align={'center'} gap={token.paddingXXS}>
+                                                                            <Flex align={'center'}
+                                                                                  gap={token.paddingXXS}>
                                                                                 {teamTwoIsWinner &&
-                                                                                    <SVG icon={'badge-check-solid'} color={token.colorSuccess} size={20}  />
+                                                                                    <SVG icon={'badge-check-solid'}
+                                                                                         color={token.colorSuccess}
+                                                                                         size={20}/>
                                                                                 }
                                                                                 <Input
                                                                                     disabled
@@ -531,7 +563,8 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                                                     </Flex>
 
                                                                     {match.RestingPlayers.length > 0 && (
-                                                                        <Text type="secondary">Bye: {match.RestingPlayers.map(player => player.FullName).join(', ')}</Text>
+                                                                        <Text
+                                                                            type="secondary">Bye: {match.RestingPlayers.map(player => player.FullName).join(', ')}</Text>
                                                                     )}
                                                                 </Flex>
                                                             </Flex>
@@ -543,7 +576,7 @@ function LeagueDetailsGameDaysMatches({selectedTab, tabsHeight, sessionDetails, 
                                     })}
                                 </Flex>
                             }
-                        </>
+                        </div>
                     }
 
                     {(!leagueHasMatches(sessionDetails?.SessionGameDayGroupStatus) || toBoolean(noMatches)) &&

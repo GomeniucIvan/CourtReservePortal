@@ -7,6 +7,7 @@ export const useStyles = createStyles(({ css, token }) => {
             color: ${token.colorText};
             height: 60px;
             box-shadow: ${token.boxShadow};
+            position: relative;
             
             .adm-tab-bar-item-active {
                 svg {
