@@ -113,6 +113,7 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
                                           }}>
 
                                 <FormDrawerRadio
+                                    show={showLeaguesDrawer}
                                     options={leagueItems}
                                     selectedCurrentValue={selectedLeagueId}
                                     propText={'Name'}

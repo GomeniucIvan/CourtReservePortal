@@ -54,6 +54,7 @@ const HeaderFilter = ({count, onClick, showCalendarOptions, selectedView, onCale
                         selectedValue={selectedViewOptionValue}
                     >
                         <FormDrawerRadio
+                            show={isDrawerOpen}
                             options={calendarViewOptions}
                             selectedCurrentValue={selectedViewOptionValue}
                             onValueSelect={onCalendarViewOptionChange}

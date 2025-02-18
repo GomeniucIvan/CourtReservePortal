@@ -36,12 +36,10 @@ const FormDrawerRadio = ({
                 
                 if (parentElement) {
                     setTimeout(() => {
-                        setTimeout(() => {
-                            selectedElement.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center',
-                            });
-                        }, 100);
+                        selectedElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                        });
                     }, 100);
                 }
             } 
