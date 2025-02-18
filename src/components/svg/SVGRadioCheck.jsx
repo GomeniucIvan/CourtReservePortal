@@ -3,8 +3,22 @@ import {toBoolean} from "@/utils/Utils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 
-const DrawerRowSVG = ({checked}) => {
+const SVGRadioCheck = ({checked, multi}) => {
     const {token} = useApp();
+    
+    if (toBoolean(multi)) {
+       return (
+           <>
+               {toBoolean(checked) &&
+                   <SVG icon={'square-check-solid'} color={token.colorPrimary} />
+               }
+
+               {!toBoolean(checked) &&
+                   <SVG icon={'square-light'} color={token.colorSecondary} />
+               }
+           </>
+       )
+    }
     
     return (
         <>
@@ -19,4 +33,4 @@ const DrawerRowSVG = ({checked}) => {
     )
 }
 
-export default DrawerRowSVG
+export default SVGRadioCheck

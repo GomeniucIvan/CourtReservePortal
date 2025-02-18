@@ -4,12 +4,6 @@ import {genderList, matchmakerGenderList} from "./SelectUtils.jsx";
 import {countListItems} from "./ListUtils.jsx";
 import {dateOfBirthStringToArray, isNonUsCulture} from "./DateUtils.jsx";
 import {isCanadaCulture} from "./OrganizationUtils.jsx";
-import FormSelect from "@/form/formselect/FormSelect.jsx";
-import FormInput from "@/form/input/FormInput.jsx";
-import FormDateOfBirth from "@/form/formdateofbirth/FormDateOfBirth.jsx";
-import {Flex} from "antd";
-import FormStateProvince from "@/form/formstateprovince/FormStateProvince.jsx";
-import React from "react";
 
 export const setFormikError = (t, formik, fieldName, errorKey, error) => {
     if (!isNullOrEmpty(errorKey)){

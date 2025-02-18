@@ -54,7 +54,8 @@ export const handleDataChange = (e) => {
 export const expandedOpenReservationCreateModal = (navigate, props, dataItem) => {
     let start = props.start;
     let end = props.end;
-
+    let customSchedulerId = props.customSchedulerId;
+debugger
     navigate(ProfileRouteNames.RESERVATION_CREATE, {
         state: {
             dataItem,

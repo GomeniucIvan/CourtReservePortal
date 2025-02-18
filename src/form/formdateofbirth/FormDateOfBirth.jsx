@@ -47,8 +47,6 @@ const FormDateOfBirth = React.forwardRef(({
     const [showMonthClear, setShowMonthClear] = useState(false);
     const [showYearClear, setShowYearClear] = useState(false);
     
-    
-    
     const minYear = 1950;
     const maxYear = new Date().getFullYear();
     const isRequired = toBoolean(required);
@@ -404,6 +402,7 @@ const FormDateOfBirth = React.forwardRef(({
             >
                 <FormDrawerRadio
                     options={daysOptions}
+                    show={isDayDrawerOpen}
                     selectedCurrentValue={selectedDay}
                     onValueSelect={(option) => {
                         handleSelectOption(/*day*/ option.Value, /*month*/ null)
@@ -426,6 +425,7 @@ const FormDateOfBirth = React.forwardRef(({
                 }}
             >
                 <FormDrawerRadio
+                    show={isMonthDrawerOpen}
                     options={monthsOptions}
                     selectedCurrentValue={selectedMonth}
                     onValueSelect={(option) => {
@@ -448,6 +448,7 @@ const FormDateOfBirth = React.forwardRef(({
                 }}
             >
                 <FormDrawerRadio
+                    show={isYearDrawerOpen}
                     options={yearOptions}
                     selectedCurrentValue={selectedYear}
                     onValueSelect={(option) => {

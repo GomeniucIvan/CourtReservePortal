@@ -50,7 +50,7 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
         resp = await appService.get(null, `/app/Online/Reservations/ReadConsolidated?id=${orgId}&jsonData=${JSON.stringify(result)}`);
     }
     
-    formattedEvents = resp.Data.map(event => ({
+    formattedEvents = resp?.Data?.map(event => ({
         ...event,
         Start: equalString(type, 'consolidated') ? new Date(event.StartTimeString) :  new Date(event.Start),
         start: equalString(type, 'consolidated') ? new Date(event.StartTimeString) :  new Date(event.Start),
@@ -59,7 +59,7 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
 
         isAllDay: false,
         IsAllDay: false,
-    }));
+    })) || [];
 
     return formattedEvents;
 }

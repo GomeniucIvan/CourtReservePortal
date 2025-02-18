@@ -165,6 +165,7 @@ const FormSelect = forwardRef(({
                 >
                     <FormDrawerRadio
                         options={options}
+                        show={isDrawerOpen}
                         multi={toBoolean(multi)}
                         selectedCurrentValue={`${field.value}`}
                         multiSelectedValues={field.value}

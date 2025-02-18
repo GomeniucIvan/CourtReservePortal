@@ -23,7 +23,7 @@ import {leagueHasMatches} from "@portal/league/functions.jsx";
 import LeagueDetailsGameDaysMatches from "@portal/league/details/gamedays/LeagueDetails.GameDays.Matches.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
-import DrawerRowSVG from "@/components/drawer/DrawerRowSVG.jsx";
+import SVGRadioCheck from "@/components/svg/SVGRadioCheck.jsx";
 const {Title, Text} = Typography;
 
 function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
@@ -247,8 +247,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                                                         }
                                                     </Flex>
 
-                                                    <DrawerRowSVG
-                                                        checked={equalString(item.ReservationId, selectedReservationId)}/>
+                                                    <SVGRadioCheck checked={equalString(item.ReservationId, selectedReservationId)}/>
                                                 </Flex>
 
                                                 {!isLastIndex &&

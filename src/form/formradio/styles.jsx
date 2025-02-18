@@ -5,6 +5,11 @@ export const useStyles = createStyles(({ css, token }) => ({
         display: flex;
         flex-direction: column;
     `,
+    radioSingleItemSelection: css`
+        label {
+            width: 100%;
+        }
+    `,
     radioItem: css`
         height: 64px;
         display: flex;
@@ -16,23 +21,31 @@ export const useStyles = createStyles(({ css, token }) => ({
         padding: 0 ${token.padding}px;
         border-bottom: 1px solid ${token.colorBorder};
 
+        span {
+            width: 100%;
+        }
+        
+        .ant-radio, .ant-checkbox {
+            display: none;
+        }
+        
         &:last-child{
             border-bottom: none;
         }
         
-        &.ant-radio-wrapper-checked{
-            &:before {
-                content: '';
-                width: 100%;
-                height: 100%;
-                top: 0;
-                left: 0;
-                position: absolute;
-                background-color: ${token.colorPrimary};
-                z-index: -1;
-                opacity: 0.2;
-            }
-        }
+        // &.ant-radio-wrapper-checked{
+        //     &:before {
+        //         content: '';
+        //         width: 100%;
+        //         height: 100%;
+        //         top: 0;
+        //         left: 0;
+        //         position: absolute;
+        //         background-color: ${token.colorPrimary};
+        //         z-index: -1;
+        //         opacity: 0.2;
+        //     }
+        // }
 
         span:not(.ant-radio){
             margin-right: auto;
