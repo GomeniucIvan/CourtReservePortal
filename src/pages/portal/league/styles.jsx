@@ -100,5 +100,25 @@ export const useStyles = createStyles(({ css, token }) => ({
             //color: white;
             color: #EF334E;
         }
+    `,
+    standingsTable: css`
+        .table-body,
+        .table-content {
+            scrollbar-width: thin;
+            scrollbar-color: ${token.colorScrollbar} transparent;
+            scrollbar-gutter: stable;
+        }
+
+        .ant-table-cell {
+            padding: ${token.paddingXL}px ${token.paddingMD}px !important;
+        }
+        
+        .registration-rank-neutral {
+            width: 8px;
+            height: 8px;
+            display: block;
+            margin-left: 3px;
+            background: ${token.colorBorder};
+        }
     `
 }));

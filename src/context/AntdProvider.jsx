@@ -84,6 +84,7 @@ export const AntdProvider = ({ children }) => {
                             fontSizeXL: 20,
                             colorSecondary: '#a1a1a1',
                             colorBlack: '#1F1F1F',
+                            colorScrollbar: '#eaeaea',
                             colorError: colorError,
                             colorTextDisabled: toBoolean(isDarkMode) ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
                             padding: 16,

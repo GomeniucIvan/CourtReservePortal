@@ -63,7 +63,6 @@ function LeagueDetails() {
             } else if (equalString(firstSelectedTab, 3)) {
                 setSelectedTab('standings')
             }
-            
             setSessionDetails(response?.Data);
         } else {
             displayMessageModal({

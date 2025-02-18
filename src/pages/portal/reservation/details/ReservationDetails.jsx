@@ -21,14 +21,13 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
-function ProfileBookingDetails() {
-    let {id} = useParams();
+function ProfileBookingDetails() {    let {id} = useParams();
     const [booking, setBooking] = useState(null);
     const {t} = useTranslation('');
     const [showCancelReservation, setShowCancelReservation] = useState(false);
 
     const {setHeaderRightIcons} = useHeader();
-    
+
     const {
         setIsFooterVisible,
         setFooterContent,
@@ -40,6 +39,7 @@ function ProfileBookingDetails() {
         isLoading,
     } = useApp();
     const {orgId} = useAuth();
+
 
     const loadData = (refresh) => {
         if (isMockData) {
