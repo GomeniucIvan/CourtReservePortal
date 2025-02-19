@@ -112,12 +112,12 @@ function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
                                size={iconSize} />
             }
 
-            {equalString(page, 'details') &&
+            {(equalString(page, 'details') || equalString(page, 'optin')) &&
                 <>
                     {(!isNullOrEmpty(sessionDetails.SlotsInfoString) && toBoolean(sessionDetails.ShowSlotsInfoBool)) &&
                         <CardIconLabel icon={getIcon('grid-sharp-light')} iconColor={getColor()} description={sessionDetails.SlotsInfoString} size={iconSize} />
                     }
-
+                    
                     {!isNullOrEmpty(sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage) &&
                         <AlertBlock type={'error'} description={sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage} removePadding={true} size={iconSize} />
                     }

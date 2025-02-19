@@ -119,6 +119,7 @@ export const useStyles = createStyles(({ css, token }) => ({
             display: block;
             margin-left: 3px;
             background: ${token.colorBorder};
+            border-radius: 8px;
         }
     `
 }));

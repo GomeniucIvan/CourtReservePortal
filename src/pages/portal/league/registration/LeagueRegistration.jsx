@@ -29,6 +29,7 @@ import {pNotify} from "@/components/notification/PNotify.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
 import LeagueSessionRestrictionBlock from "@portal/league/modules/LeagueSessionRestrictionBlock.jsx";
+import EventLeagueFamilyMembersBlock from "@/components/registration/EventLeagueFamilyMembersBlock.jsx";
 const {Title, Text} = Typography;
 
 function LeagueRegistration() {
@@ -248,27 +249,7 @@ function LeagueRegistration() {
                 {/*//TODO FIND A WAY TO MERGE WITH EVENTS*/}
                 {(countListItems(authDataOrgMemberIds) > 1 && anyInList(formik.values.FamilyMembers)) &&
                     <>
-                        <List
-                            itemLayout="horizontal"
-                            dataSource={formik.values.FamilyMembers}
-                            bordered
-                            renderItem={(member, index) => {
-                                return (
-                                    <List.Item className={globalStyles.listItemSM}>
-                                        <Flex vertical={true} gap={token.padding} flex={1}>
-                                            <Flex justify={'space-between'} align={'center'}>
-                                                <Title level={3} onClick={() => {
-                                                    toggleInitialCheck(index)
-                                                }}>
-                                                    {member.FirstName} {member.LastName}
-                                                </Title>
-                                                <Switch checked={member.IsChecked} onChange={() => toggleInitialCheck(index)}/>
-                                            </Flex>
-                                        </Flex>
-                                    </List.Item>
-                                )
-                            }}
-                        />
+                        <EventLeagueFamilyMembersBlock formik={formik} members={authDataOrgMemberIds} toggleInitialCheck={toggleInitialCheck} />
                     </>
                 }
             </Flex>
