@@ -109,7 +109,7 @@ const DashboardLeagues = ({dashboardData, isFetching}) => {
                                           label='Leagues'
                                           onConfirmButtonClick={() => {
                                               setShowLeaguesDrawer(false);
-                                              navigation(HomeRouteNames.LEAGUES_LIST);
+                                              navigation(LeagueRouteNames.LEAGUE_LIST);
                                           }}>
 
                                 <FormDrawerRadio
