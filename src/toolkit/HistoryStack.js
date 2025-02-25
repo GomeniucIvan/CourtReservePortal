@@ -38,6 +38,18 @@ export const getLastFromHistory = () => {
     return null;
 };
 
+export const getLastFromHistoryPath = () => {
+    if (historyStack.length > 1) {
+        const newHistoryStack = historyStack.slice(0, -1);
+        const lastItem = newHistoryStack[newHistoryStack.length - 1];
+        historyStack = newHistoryStack;
+        return lastItem?.path || '/';
+    }
+
+    // Return null if there's only one page or the stack is empty
+    return '/';
+};
+
 export const navigationClearHistory = () => {
     historyStack = [];
 };

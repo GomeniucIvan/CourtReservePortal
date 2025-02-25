@@ -53,12 +53,17 @@ function LeagueDetailsSessionInfo({selectedTab, tabsHeight, sessionDetails}) {
         leagueId: sessionDetails.LeagueId,
         resId: sessionDetails.NextReservationId
     }
-    
+
+    const registeredOrWaitlistedFamMembersCount = sessionDetails?.WaitListPlayers.filter(v => authDataOrgMemberIds.includes(v.OrganizationMemberId)).length +
+        sessionDetails?.RegisteredPlayers.filter(v => authDataOrgMemberIds.includes(v.OrganizationMemberId)).length;
+
     return (
         <PaddingBlock>
             {!isNullOrEmpty(sessionDetails) &&
-                <Flex vertical={true} gap={token.paddingXXS}>
-                    <LeagueSessionDetailsPartial sessionDetails={sessionDetails}/>
+                <Flex vertical={true} gap={token.paddingXXL}>
+                    <Flex vertical={true} gap={token.paddingXXS}>
+                        <LeagueSessionDetailsPartial sessionDetails={sessionDetails}/>
+                    </Flex>
 
                     {!toBoolean(sessionDetails.GameDayCall) &&
                         <>
@@ -125,6 +130,48 @@ function LeagueDetailsSessionInfo({selectedTab, tabsHeight, sessionDetails}) {
                                         </>
                                     }
                                 </>
+                            }
+
+                            {toBoolean(sessionDetails.IsLoggedInAccountWaitlisted) &&
+                                <Flex vertical={true} gap={token.padding}>
+                                    <>
+                                        {(countListItems(authDataOrgMemberIds) > registeredOrWaitlistedFamMembersCount && countListItems(authDataOrgMemberIds) > 1) &&
+                                            <>
+                                                <Button block={true} 
+                                                        type={'primary'}
+                                                        onClick={() => {
+                                                            let route = toRoute(LeagueRouteNames.LEAGUE_JOIN_WAITLIST, 'id', orgId);
+                                                            navigate(`${route}?${encodeParamsObject(urlParams)}&action=waitlist-edit`);
+                                                        }}>
+                                                    Waitlist Other Family Member
+                                                </Button>
+                                            </>
+                                        }
+
+                                        <Button block={true}
+                                                danger={true}
+                                                onClick={() => {
+                                                    let route = toRoute(LeagueRouteNames.LEAGUE_JOIN_WAITLIST, 'id', orgId);
+                                                    navigate(`${route}?${encodeParamsObject(urlParams)}&action=waitlist-unsubscribe`);
+                                                }}>
+                                            Unsubscribe From Waitlist
+                                        </Button>
+                                    </>
+                                </Flex>
+                            }
+
+                            {(!toBoolean(sessionDetails.IsLoggedInAccountRegistered) &&
+                                    !toBoolean(sessionDetails?.IsLoggedInAccountWaitlisted) &&
+                                    toBoolean(sessionDetails?.AllowWaitlist) &&
+                                    sessionDetails?.MaxPlayers <= sessionDetails?.LeagueSessionRegistrantsCount) &&
+                                <Button block={true}
+                                        type={'primary'}
+                                        onClick={() => {
+                                            let route = toRoute(LeagueRouteNames.LEAGUE_JOIN_WAITLIST, 'id', orgId);
+                                            navigate(`${route}?${encodeParamsObject(urlParams)}&action=waitlist`);
+                                        }}>
+                                    Join Waitlist
+                                </Button>
                             }
                         </>
                     }

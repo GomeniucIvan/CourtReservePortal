@@ -25,6 +25,10 @@ function AlertBlock({type = 'danger', title, description, onButtonClick, buttonT
             icon: <SVG icon={'alert-triangle'} size={28} color={token.colorError} />,
             borderColor: '#e68e8e'
         },
+        error: {
+            icon: <SVG icon={'alert-triangle'} size={28} color={token.colorError} />,
+            borderColor: '#e68e8e'
+        },
     };
 
     const currentConfig = config[type] || config.warning;

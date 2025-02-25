@@ -20,6 +20,7 @@ function    CardLinks({links}) {
     const {logout} = useAuth();
     const { styles } = useStyles();
     const navigate = useNavigate();
+    const {orgId} = useAuth();
     
     return (
         <Row gutter={[token.padding, token.padding]}>

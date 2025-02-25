@@ -21,20 +21,21 @@ import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
 
 const {Title, Text} = Typography;
 
-function LeagueOptIn() {
+function LeagueJoinWaitlist() {
     const [isFetching, setIsFetching] = useState(true);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const sessionId = queryParams.get("sessionId");
     const leagueId = queryParams.get("leagueId");
     const resId = queryParams.get("resId");
-    const action = queryParams.get("action");
+    const parAction = queryParams.get("action");
+    
     const navigate = useNavigate();
     const [sessionDetails, setSessionDetails] = useState(null);
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
     const {orgId, authDataOrgMemberIds} = useAuth();
     const [errorData, setErrorData] = useState(null);
-    const [optAction, setOptAction] = useState(action || 'optin'); //editoptin, optin, optout
+    const [action, setAction] = useState(parAction || 'waitlist'); //waitlist-unsubscribe, waitlist-edit
     
     const {
         setIsFooterVisible,
@@ -65,8 +66,8 @@ function LeagueOptIn() {
                 isValid = countListItems(checkedMembers) > 0;
                 if (countListItems(checkedMembers) === 0) {
                     displayMessageModal({
-                        title: "Registration Error",
-                        html: (onClose) => toBoolean(optOut) ? 'Select Member(s) to Opt-Out.' : 'Select Member(s) to Opt-In.',
+                        title: "Error",
+                        html: (onClose) => toBoolean(optOut) ? 'Select Member(s) to Unsubscribe.' : 'Select Member(s) to Waitlist.',
                         type: "error",
                         buttonType: modalButtonType.DEFAULT_CLOSE,
                         onClose: () => {},
@@ -85,21 +86,27 @@ function LeagueOptIn() {
                 FamilyMembers: values.FamilyMembers,
             }
 
-            let response = await appService.post(`/app/Online/Leagues/OptIn?id=${orgId}`, postModel);
+            let response = null;
+            if (equalString(action, 'waitlist-unsubscribe')) {
+                response = await appService.post(`/app/Online/Leagues/WaitlistWithdrawn?id=${orgId}`, postModel);
+            } else {
+                response = await appService.post(`/app/Online/Leagues/JoinWaitlist?id=${orgId}`, postModel);
+            }
+            
             if (toBoolean(response?.IsValid)) {
                 //remove current page
                 //removeLastHistoryEntry();
                 navigate(getLastFromHistoryPath());
-                let actionType = equalString(optAction, 'optin') ? 'Opt-In' : 'Opt-Out';
-                if (equalString(optAction, 'editoptin')) {
-                    actionType = 'Edit Opt-In';
+                let actionType = equalString(action, 'waitlist') ? 'Waitlist' : 'Unsubscribe';
+                if (equalString(action, 'waitlist-edit')) {
+                    actionType = 'Waitlist';
                 }
                 
                 pNotify(`Successfully ${actionType}`);
 
             } else {
                 displayMessageModal({
-                    title: toBoolean(optOut) ? 'Opt-Out Error' : "Opt-In Error",
+                    title: toBoolean(optOut) ? 'Waitlist Error' : "Unsubscribe Error",
                     html: (onClose) => response.Message,
                     type: "error",
                     buttonType: modalButtonType.DEFAULT_CLOSE,
@@ -113,7 +120,12 @@ function LeagueOptIn() {
     const loadData = async () => {
         setIsFetching(true);
 
-        let response = await appService.get(navigate, `/app/Online/Leagues/OptIn?id=${orgId}&sessionId=${sessionId}&leagueId=${leagueId}&resId=${resId}`);
+        let readUrl = `/app/Online/Leagues/JoinWaitlist?id=${orgId}&sessionId=${sessionId}&leagueId=${leagueId}&resId=${resId}`;
+        if (equalString(action, 'waitlist-unsubscribe')) {
+            readUrl = `/app/Online/Leagues/WaitlistWithdrawn?id=${orgId}&sessionId=${sessionId}&leagueId=${leagueId}&resId=${resId}`;
+        }
+        
+        let response = await appService.get(navigate, readUrl);
         if (toBoolean(response?.IsValid)) {
             setSessionDetails(response.Data);
             formik.setFieldValue("FamilyMembers", response.Data.FamilyMembers);
@@ -147,7 +159,7 @@ function LeagueOptIn() {
 
         let paymentLists = [];
         
-        if (anyInList(membersWithDue) && !isNullOrEmpty(optAction, 'optout')){
+        if (anyInList(membersWithDue) && !isNullOrEmpty(action, 'waitlist-unsubscribe')){
             paymentLists.push({
                 label: 'Member(s)',
                 items: membersWithDue.map(member => ({
@@ -165,16 +177,16 @@ function LeagueOptIn() {
             holdTimeForReservation: sessionDetails?.HoldTimeForReservation
         };
 
-        let actionType = equalString(optAction, 'optin') ? 'Opt-In' : 'Opt-Out';
-        if (equalString(optAction, 'editoptin')) {
-            actionType = 'Edit Opt-In';
+        let actionType = equalString(action, 'waitlist') ? 'Waitlist' : 'Unsubscribe';
+        if (equalString(action, 'waitlist-edit')) {
+            actionType = 'Waitlist';
         }
         
         if (isNullOrEmpty(errorData)) {
             setFooterContent(<PaymentDrawerBottom paymentData={paymentData} group={true}>
                 <Button type="primary"
                         block
-                        danger={equalString(optAction, 'optout')}
+                        danger={equalString(action, 'waitlist-unsubscribe')}
                         htmlType="submit"
                         loading={isLoading}
                         disabled={isFetching}
@@ -191,9 +203,9 @@ function LeagueOptIn() {
     useEffect(() => {
         setIsFooterVisible(true);
         setHeaderRightIcons('');
-        let actionType = equalString(optAction, 'optin') ? 'Opt-In' : 'Opt-Out';
-        if (equalString(optAction, 'editoptin')) {
-            actionType = 'Edit Opt-In';
+        let actionType = equalString(action, 'waitlist') ? 'Waitlist' : 'Unsubscribe from Waitlist';
+        if (equalString(action, 'waitlist-edit')) {
+            actionType = 'Waitlist';
         }
         
         setHeaderTitle(actionType);
@@ -237,16 +249,12 @@ function LeagueOptIn() {
                         </div>
 
                         <Flex vertical={true}>
-                            <LeagueSessionDetailsPartial sessionDetails={sessionDetails.LeagueSession} page={optAction}/>
+                            <LeagueSessionDetailsPartial sessionDetails={sessionDetails.LeagueSession} page={action}/>
                         </Flex>
 
-                        {(countListItems(sessionDetails?.FamilyMembers) > 1) &&
+                        {(countListItems(authDataOrgMemberIds) > 1 && anyInList(formik.values.FamilyMembers)) &&
                             <>
-                                {(countListItems(authDataOrgMemberIds) > 1 && anyInList(formik.values.FamilyMembers)) &&
-                                    <>
-                                        <EventLeagueFamilyMembersBlock formik={formik} members={authDataOrgMemberIds} toggleInitialCheck={toggleInitialCheck} />
-                                    </>
-                                }
+                                <EventLeagueFamilyMembersBlock formik={formik} members={authDataOrgMemberIds} toggleInitialCheck={toggleInitialCheck} />
                             </>
                         }
                     </Flex>
@@ -256,4 +264,4 @@ function LeagueOptIn() {
     )
 }
 
-export default LeagueOptIn
+export default LeagueJoinWaitlist

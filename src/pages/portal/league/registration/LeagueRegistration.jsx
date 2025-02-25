@@ -21,7 +21,7 @@ import * as Yup from "yup";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {invalidEventGuestsErrors, validateEventMembersUdfs} from "@/utils/ValidationUtils.jsx";
 import {generateEventPostModel} from "@portal/event/registration/modules/functions.jsx";
-import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
+import {getLastFromHistory, getLastFromHistoryPath, removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
 import {eventValidResponseRedirect} from "@/utils/RedirectUtils.jsx";
 import {any} from "prop-types";
 import PaymentDrawerBottom from "@/components/drawer/PaymentDrawerBottom.jsx";
@@ -97,13 +97,14 @@ function LeagueRegistration() {
             let response = await appService.post(`/app/Online/Leagues/RegisterOrEdit?id=${orgId}`, postModel);
             if (toBoolean(response?.IsValid)) {
                 //remove current page
-                removeLastHistoryEntry();
+                //removeLastHistoryEntry();
+                navigate(getLastFromHistoryPath());
                 pNotify('Successfully Registered');
 
-                let route = toRoute(LeagueRouteNames.LEAGUE_DETAIL, 'id', orgId);
-                route = toRoute(route, 'lsid', sessionId);
-                setPage(setDynamicPages, sessionDetails?.LeagueSession.Name, route);
-                navigate(route);
+                // let route = toRoute(LeagueRouteNames.LEAGUE_DETAIL, 'id', orgId);
+                // route = toRoute(route, 'lsid', sessionId);
+                // setPage(setDynamicPages, sessionDetails?.LeagueSession.Name, route);
+                // navigate(route);
             } else {
                 displayMessageModal({
                     title: "Registration Error",

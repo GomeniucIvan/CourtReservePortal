@@ -47,6 +47,7 @@ function LeagueDetails() {
         
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Leagues/Details?id=${orgId}&sessionId=${lsid}&tab=${nullToEmpty(tab)}`);
 
+        console.log(response)
         if (toBoolean(response?.IsValid)){
             let data = response.Data;
             let firstSelectedTab = data.FirstSelectedTab;
@@ -150,9 +151,9 @@ function LeagueDetails() {
 
             {!isFetching &&
                 <>
-                    {(!toBoolean(sessionDetails?.IsLoggedInAccountRegistered) && toBoolean(sessionDetails?.IsStandingHidden)) &&
-                        <PaddingBlock topBottom={true}>
-                            <EmptyBlock description={'No information'} removePadding={true} />
+                    {(!toBoolean(sessionDetails?.IsLoggedInAccountRegistered)) &&
+                        <PaddingBlock topBottom={true} leftRight={false}>
+                            <LeagueDetailsSessionInfo selectedTab={'sessioninfo'} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>
                         </PaddingBlock>
                     }
 

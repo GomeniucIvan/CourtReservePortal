@@ -48,7 +48,8 @@ function LeagueList({filter}) {
         token,
         shouldFetch,
         setFooterContent,
-        resetFetch
+        resetFetch,
+        setIsLoading,
     } = useApp();
 
     const navigate = useNavigate();
@@ -113,6 +114,7 @@ function LeagueList({filter}) {
         }
 
         setIsFetching(false);
+        setIsLoading(false);
     }
 
     //filter change
@@ -224,7 +226,7 @@ function LeagueList({filter}) {
         <>
             {(!isFetching && !anyInList(events)) &&
                 <PaddingBlock topBottom={true}>
-                    <EmptyBlock description={eReplace('No league(s) Found')} removePadding={true} />
+                    <EmptyBlock description={eReplace('No league(s) found')} removePadding={true} />
                 </PaddingBlock>
             }
 

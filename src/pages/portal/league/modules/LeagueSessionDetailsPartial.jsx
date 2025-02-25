@@ -70,9 +70,11 @@ function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
         }
     }
     
+    console.log(sessionDetails)
+    
     return (
         <>
-            {(equalString(page, 'details') || equalString(page, 'optin')) &&
+            {1 == 1 &&
                 <>
                     {!isNullOrEmpty(leagueDisplayEventDates(sessionDetails)) &&
                         <CardIconLabel icon={getIcon('event-dates')} iconColor={getColor()} description={leagueDisplayEventDates(sessionDetails)} size={iconSize} />
@@ -81,39 +83,50 @@ function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
                     {!isNullOrEmpty(sessionDetails.DisplayStartEndTimesString) &&
                         <CardIconLabel icon={getIcon('clock')} iconColor={getColor()} description={sessionDetails.DisplayStartEndTimesString} size={iconSize} />
                     }
-                    {!isNullOrEmpty(sessionDetails.DisplayCostString) &&
-                        <CardIconLabel icon={getIcon('price-tag')} iconColor={getColor()} description={sessionDetails.DisplayCostString} size={iconSize} />
+
+                    {(!equalString(page, 'waitlist-unsubscribe') && !equalString(page, 'optout')) &&
+                        <>
+                            {!isNullOrEmpty(sessionDetails.DisplayCostString) &&
+                                <CardIconLabel icon={getIcon('price-tag')} iconColor={getColor()} description={sessionDetails.DisplayCostString} size={iconSize} />
+                            }
+                        </>
                     }
+                    
                     {!isNullOrEmpty(sessionDetails.Note) &&
                         <CardIconLabel icon={getIcon('message')} iconColor={getColor()} description={sessionDetails.Note} size={iconSize} />
                     }
                 </>
             }
 
-            {!isNullOrEmpty(sessionDetails.RatingNames) &&
-                <CardIconLabel icon={getIcon('star-light')} 
-                               preventCircles={getPreventCircles()}
-                               iconColor={getColor()} 
-                               description={displayDescription('Rating(s) Restriction', sessionDetails.RatingNames)}
-                               size={iconSize} />
-            }
-            {(!isNullOrEmpty(sessionDetails.LeagueGender) && !equalString(sessionDetails.LeagueGender, 4)) &&
-                <CardIconLabel icon={getIcon('person-half-dress-sharp-regular')}
-                               preventCircles={getPreventCircles()}
-                               iconColor={getColor()}
-                               description={displayDescription('Gender Restriction', displayLeaguePlayerFormat(sessionDetails.LeagueGender))}
-                               size={iconSize} />
-            }
-            {(!isNullOrEmpty(sessionDetails.AgeRestrictionString)) &&
-                <CardIconLabel icon={getIcon('arrow-up-9-1-regular')}
-                               preventCircles={getPreventCircles()} 
-                               iconColor={getColor()}
-                               description={displayDescription('Age Restriction', sessionDetails.AgeRestrictionString)}
-                               size={iconSize} />
-            }
-
-            {(equalString(page, 'details') || equalString(page, 'optin')) &&
+            {(equalString(page, 'details') || 
+                    equalString(page, 'optin') ||
+                    equalString(page, 'editoptin') ||
+                    equalString(page, 'waitlist') ||
+                    equalString(page, 'waitlist-edit')) &&
                 <>
+                    {!isNullOrEmpty(sessionDetails.RatingNames) &&
+                        <CardIconLabel icon={getIcon('star-light')}
+                                       preventCircles={getPreventCircles()}
+                                       iconColor={getColor()}
+                                       description={displayDescription('Rating(s) Restriction', sessionDetails.RatingNames)}
+                                       size={iconSize} />
+                    }
+                    
+                    {(!isNullOrEmpty(sessionDetails.LeagueGender) && !equalString(sessionDetails.LeagueGender, 4)) &&
+                        <CardIconLabel icon={getIcon('person-half-dress-sharp-regular')}
+                                       preventCircles={getPreventCircles()}
+                                       iconColor={getColor()}
+                                       description={displayDescription('Gender Restriction', displayLeaguePlayerFormat(sessionDetails.LeagueGender))}
+                                       size={iconSize} />
+                    }
+                    {(!isNullOrEmpty(sessionDetails.AgeRestrictionString)) &&
+                        <CardIconLabel icon={getIcon('arrow-up-9-1-regular')}
+                                       preventCircles={getPreventCircles()}
+                                       iconColor={getColor()}
+                                       description={displayDescription('Age Restriction', sessionDetails.AgeRestrictionString)}
+                                       size={iconSize} />
+                    }
+                    
                     {(!isNullOrEmpty(sessionDetails.SlotsInfoString) && toBoolean(sessionDetails.ShowSlotsInfoBool)) &&
                         <CardIconLabel icon={getIcon('grid-sharp-light')} iconColor={getColor()} description={sessionDetails.SlotsInfoString} size={iconSize} />
                     }
@@ -121,6 +134,15 @@ function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
                     {!isNullOrEmpty(sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage) &&
                         <AlertBlock type={'error'} description={sessionDetails.OccurrenceSignUpNotYetOpenErrorMessage} removePadding={true} size={iconSize} />
                     }
+                </>
+            }
+
+            {(equalString(page, 'waitlist') || equalString(page, 'waitlist-edit')) &&
+                <>
+                    <CardIconLabel icon={getIcon('circle-sharp-solid')} 
+                                   iconColor={getColor()} 
+                                   description={`Current Player(s) on Waitlist: <b>${sessionDetails?.LeagueSessionWaitlistRegistrantsCount}</b>`}
+                                   size={iconSize} />
                 </>
             }
         </>

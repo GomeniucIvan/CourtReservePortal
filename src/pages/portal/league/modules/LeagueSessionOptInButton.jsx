@@ -77,7 +77,7 @@ const isCostFree = (eventDto) =>
 
 function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isCancelled, allowToOptIn, onPlayerOptInOptOut}) {
     if (isCancelled) return null;
-    const {token} = useApp();
+    const {token, setDynamicPages} = useApp();
     const navigate = useNavigate();
     const fakeLeagueSession = sessionData;
 
@@ -90,7 +90,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
     const isEdit = registeredFamilyPlayersOrgMember.some(v => v.IsOptIn) && registeredFamilyPlayersOrgMember.some(v => !v.IsOptIn);
 
     const reservationId = dateId || fakeLeagueSession.NextReservationId;
-
+    
     const isOptedIn = (eventDto, orgMemberId, resID) => {
         const registeredMember = eventDto.RegisteredPlayers.find(v => equalString(orgMemberId, v.OrganizationMemberId));
         let registrationId = registeredMember?.RegistrationId;
@@ -153,6 +153,13 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
             return allRegisteredFamilyMembersAreOptedIn && registeredFamMembers.length ? 'Opt-Out' : 'Opt-In';
         }
 
+        if (type === 'action') {
+            if (isEdit) {
+                return 'editoptin';
+            }
+            return allRegisteredFamilyMembersAreOptedIn && registeredFamMembers.length ? 'optout' : 'optin';
+        }
+        
         return '';
     };
 
@@ -254,9 +261,17 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         }
     };
 
-    const handleOptIn = async () => {
-        let route = toRoute(RouteNames.LEAGUE_OPTIN, 'id', orgId);
-        navigate(`${route}?sessionId=${sessionData.LeagueSessionId}&leagueId=${sessionData.LeagueId}&resId=${sessionData.NextReservationId}`)
+    const handleOptIn = async (action) => {
+        let route = toRoute(RouteNames.LEAGUE_OPTIN, 'id', orgId);;
+
+        let pageTitle = equalString(action, 'optin') ? 'Opt-In' : 'Opt-Out';
+        if (equalString(action, 'editoptin')) {
+            pageTitle = 'Edit Opt-In';
+        }
+        console.log(pageTitle)
+        route = `${route}?sessionId=${sessionData.LeagueSessionId}&leagueId=${sessionData.LeagueId}&resId=${sessionData.NextReservationId}&action=${action}`;
+        setPage(setDynamicPages, pageTitle, route);
+        navigate(route)
     };
 
     return (
@@ -275,7 +290,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
                             {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, undefined, undefined, reservationId )}
                         </Button>
                     ) : (
-                        <Button onClick={handleOptIn}
+                        <Button onClick={() => handleOptIn(getOptInClassOrLabel(fakeLeagueSession, 'action', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId ))}
                                 type="primary"
                                 danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId )}>
                             {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId)}
