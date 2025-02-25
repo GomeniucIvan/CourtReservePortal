@@ -33,6 +33,7 @@ import LayoutScripts from "@/components/layout/LayoutScripts.jsx";
 import {reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/MobileUtils.jsx";
 import apiService from "@/api/api.jsx";
 import {useFooter} from "@/context/FooterProvider.jsx";
+import LayoutIcons from "@/components/layout/LayoutIcons.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -465,6 +466,7 @@ function Layout() {
                     <>
                         <LayoutExtra />
                         <LayoutScripts />
+                        <LayoutIcons />
                         <Toaster
                             toastOptions={{
                                 className: 'safe-area-top-margin',
