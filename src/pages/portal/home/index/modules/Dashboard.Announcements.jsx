@@ -21,6 +21,8 @@ import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import SwiperSlider from "@/components/swiperslider/SwiperSlider.jsx";
 import EntityEmptyBlock from "@/components/entitycard/EntityEmptyBlock.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 
 const {Text, Title} = Typography;
 
@@ -102,7 +104,13 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
 
     return (
         <>
-            <EntityCardWrapper title={t('announcement.title')} link={'/announcement/list'} isFetching={isFetching} addPadding={true}>
+            <EntityCardWrapper title={t('announcement.title')}
+                               onClick={() => {
+                                   let route = toRoute(HomeRouteNames.ANNOUNCEMENT_LIST, 'id', orgId);
+                                   navigate(route);
+                               }}
+                               isFetching={isFetching}
+                               addPadding={true}>
                 {isFetching &&
                     <SlickSlider>
                         <CardSkeleton type={SkeletonEnum.DASHBOARD_ANNOUNCEMENT} count={1} marginBottom={true}/>

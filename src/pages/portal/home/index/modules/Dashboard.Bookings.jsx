@@ -2,7 +2,6 @@
 import {SlickSlider} from "@/components/slickslider/SlickSlider.jsx";
 import EntityCardWrapper from "@/components/entitycard/EntityCardWrapper.jsx";
 import {Tag, Typography} from "antd";
-import {Card, Ellipsis, ErrorBlock} from "antd-mobile";
 import {cx} from "antd-style";
 const { Text, Title } = Typography;
 import {useApp} from "@/context/AppProvider.jsx";
@@ -14,12 +13,17 @@ import { Swiper } from 'antd-mobile'
 import SwiperSlider from "@/components/swiperslider/SwiperSlider.jsx";
 import EntityCardBooking from "@/components/entitycard/EntityCard.Booking.jsx";
 import EntityEmptyBlock from "@/components/entitycard/EntityEmptyBlock.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {useNavigate} from "react-router-dom";
+import {useAuth} from "@/context/AuthProvider.jsx";
 
 const DashboardBookings = ({dashboardData, isFetching}) => {
     let bookings = stringToJson(dashboardData?.BookingsJson);
     let showMyBookings = toBoolean(dashboardData?.ShowMyBookings) || isFetching;
     const {globalStyles} = useApp();
+    const {orgId} = useAuth();
     const { t } = useTranslation('');
+    const navigate = useNavigate();
     
     if (!toBoolean(showMyBookings)) {
         return '';
@@ -41,7 +45,13 @@ const DashboardBookings = ({dashboardData, isFetching}) => {
     const isFullHeight = hasAnyTagInArray(bookings);
     
     return (
-        <EntityCardWrapper title={t('booking.myBookings')} link={ProfileRouteNames.BOOKING_LIST} isFetching={isFetching} addPadding={true}>
+        <EntityCardWrapper title={t('booking.myBookings')}
+                           onClick={() => {
+                               let route = toRoute(ProfileRouteNames.BOOKING_LIST, 'id', orgId);
+                               navigate(route);
+                           }} 
+                           link={ProfileRouteNames.BOOKING_LIST} 
+                           isFetching={isFetching} addPadding={true}>
             {isFetching &&
                 <SlickSlider>
                     <CardSkeleton type={SkeletonEnum.RESERVATION} count={1} marginBottom={true}/>
@@ -65,7 +75,7 @@ const DashboardBookings = ({dashboardData, isFetching}) => {
                         })}
                     </SwiperSlider>
             ) : (
-                <EntityEmptyBlock text='You have no upcoming bookings' height={136} />
+                <EntityEmptyBlock text='You have no upcoming bookings.' height={136} />
             )}
         </EntityCardWrapper>
     );

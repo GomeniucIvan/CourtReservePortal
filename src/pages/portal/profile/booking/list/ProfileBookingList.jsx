@@ -40,7 +40,6 @@ function ProfileBookingList() {
     const {
         setIsFooterVisible,
         resetFetch,
-        isMockData,
         globalStyles,
         setDynamicPages,
         token,
@@ -81,7 +80,7 @@ function ProfileBookingList() {
         
     });
     
-    const loadBookings = (incFilterData, type, skip) => {
+    const loadBookings = async (incFilterData, type, skip) => {
         let readValues = incFilterData || formik?.values?.DrawerFilter || {};
         setIsFetching(true);
         
@@ -100,16 +99,16 @@ function ProfileBookingList() {
             ...filterModel,
         };
 
-        appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData).then(r => {
-            if (toBoolean(r?.IsValid)) {
-                const responseData = r.Data;
+        let response = appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData);
 
-                setHasMore(responseData.TotalRecords > responseData.SkipRows);
-                setBookings(responseData.List);
-                setFilteredBookings(responseData.List);
-                setIsFetching(false);
-            }
-        })
+        if (toBoolean(response?.IsValid)) {
+            const responseData = response.Data;
+
+            setHasMore(responseData.TotalRecords > responseData.SkipRows);
+            setBookings(responseData.List);
+            setFilteredBookings(responseData.List);
+            setIsFetching(false);
+        }
     }
 
     //filter change
@@ -141,28 +140,26 @@ function ProfileBookingList() {
         loadBookings(null, type);
     }
 
-    const loadData = (refresh) => {
-        if (isMockData) {
-            const list = mockData.list.List;
-            const totalRecords = mockData.list.TotalRecords;
-            const skipRows = mockData.list.SkipRows;
+    const loadData = async (refresh) => {
+        if (!refresh) {
+            let response = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}&type=${typeParam}`);
 
-            setHasMore(parseInt(totalRecords) > parseInt(skipRows));
-            setBookings(list);
-        } else {
-            if (!refresh) {
-                appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}`).then(r => {
-                    if (toBoolean(r?.IsValid)) {
-                        formik.setFieldValue('DrawerFilter.CustomDate_Start', fromDateTimeStringToDate(r.Data.CustomDate_StartStringDisplay))
-                        formik.setFieldValue('DrawerFilter.CustomDate_End', fromDateTimeStringToDate(r.Data.CustomDate_EndStringDisplay))
+            if (toBoolean(response?.IsValid)) {
+                let data = response.Data;
 
-                        setFilterData(r.Data);
-                        loadBookings(r.Data);
-                    }
-                })
-            } else {
-                loadBookings();
+                let filterData = {
+                    ...data,
+                    CustomDate_Start: fromDateTimeStringToDate(data.CustomDate_StartStringDisplay),
+                    CustomDate_End: fromDateTimeStringToDate(data.CustomDate_EndStringDisplay),
+                }
+                setFilterData(filterData);
+                loadBookings(filterData);
+
+                await formik.setFieldValue('DrawerFilter.CustomDate_Start', fromDateTimeStringToDate(data.CustomDate_StartStringDisplay))
+                await formik.setFieldValue('DrawerFilter.CustomDate_End', fromDateTimeStringToDate(data.CustomDate_EndStringDisplay))
             }
+        } else {
+            loadBookings();
         }
 
         resetFetch();

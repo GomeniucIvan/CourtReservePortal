@@ -243,7 +243,7 @@ function EventCalendar() {
     }
 
     const onFilterClose = (filter) => {
-        let filteredEventTypes = filter.EventTypeIds;
+        let filteredEventTypes = filter?.EventTypeIds || [];
         let filteredCount = filteredEventTypes.length;
 
         loadEvents();
