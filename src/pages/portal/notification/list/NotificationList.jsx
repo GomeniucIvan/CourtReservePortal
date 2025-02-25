@@ -5,7 +5,7 @@ import {Card, Flex, Segmented, Skeleton, Space, Typography} from "antd";
 import HeaderSearch from "@/components/header/HeaderSearch.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import {anyInList, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, filterList, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {cx} from "antd-style";
 import {imageSrc} from "@/utils/ImageUtils.jsx";
 import appService from "@/api/app.jsx";
@@ -17,11 +17,13 @@ import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
 
 function NotificationList({}) {
     const [searchText, setSearchText] = useState('');
     const [isFetching, setIsFetching] = useState(true);
     const [notifications, setNotifications] = useState([]);
+    const [filteredNotifications, setFilteredNotifications] = useState([]);
     const {setHeaderRightIcons} = useHeader();
     const{setIsFooterVisible, shouldFetch, resetFetch, token, setIsLoading, globalStyles, setDynamicPages} = useApp();
     const {orgId} = useAuth();
@@ -57,6 +59,15 @@ function NotificationList({}) {
         }
     }, [shouldFetch, resetFetch]);
 
+
+    useEffect(() => {
+        if (isNullOrEmpty(searchText) ||!anyInList(notifications)) {
+            setFilteredNotifications(notifications);
+        } else {
+            setFilteredNotifications(filterList(['Title','Subject'], notifications, searchText));
+        }
+    }, [searchText, notifications]);
+
     return (
         <PaddingBlock topBottom={true}>
             <Flex vertical={true} gap={token.padding}>
@@ -70,37 +81,45 @@ function NotificationList({}) {
                     </>
                 }
 
-                {(!isFetching && anyInList(notifications)) &&
+                {(!isFetching) &&
                     <>
-                        {notifications.map((notification) => {
-                            return (
-                                <Card className={cx(globalStyles.card, globalStyles.clickableCard, globalStyles.cardSMPadding, isNullOrEmpty(notification.ViewedOnUtc) && styles.unreadNotification)}
-                                      key={notification.Id}
-                                      onClick={() => {
-                                          let route = toRoute(HomeRouteNames.NOTIFICATION_DETAILS, 'id', orgId);
-                                          route = `${route}?pushNotificationHistoryId=${notification.Id}`;
-                                          setPage(setDynamicPages, notification.Title, route);
-                                          navigate(route);
-                                      }}>
-                                    <Flex gap={token.padding}>
-                                        {!isNullOrEmpty(notification.PushNotificationLogoUrl) &&
-                                            <img src={imageSrc(notification?.PushNotificationLogoUrl, orgId)}
-                                                 className={styles.image}
-                                                 alt={notification.Subject}/>
-                                        }
-                                        <Flex vertical={true}>
-                                            <Title level={3}>{notification.Title}</Title>
-                                            {!isNullOrEmpty(notification.Subject) &&
-                                                <>
-                                                    <Text>{notification.Subject}</Text>
-                                                    <Text>{notification.DifferentIntervalDisplay}</Text>
-                                                </>
-                                            }
-                                        </Flex>
-                                    </Flex>
-                                </Card>
-                            )
-                        })}
+                        {anyInList(filteredNotifications) &&
+                            <>
+                                {filteredNotifications.map((notification) => {
+                                    return (
+                                        <Card className={cx(globalStyles.card, globalStyles.clickableCard, globalStyles.cardSMPadding, isNullOrEmpty(notification.ViewedOnUtc) && styles.unreadNotification)}
+                                              key={notification.Id}
+                                              onClick={() => {
+                                                  let route = toRoute(HomeRouteNames.NOTIFICATION_DETAILS, 'id', orgId);
+                                                  route = `${route}?pushNotificationHistoryId=${notification.Id}`;
+                                                  setPage(setDynamicPages, notification.Title, route);
+                                                  navigate(route);
+                                              }}>
+                                            <Flex gap={token.padding}>
+                                                {!isNullOrEmpty(notification.PushNotificationLogoUrl) &&
+                                                    <img src={imageSrc(notification?.PushNotificationLogoUrl, orgId)}
+                                                         className={styles.image}
+                                                         alt={notification.Subject}/>
+                                                }
+                                                <Flex vertical={true}>
+                                                    <Title level={3}>{notification.Title}</Title>
+                                                    {!isNullOrEmpty(notification.Subject) &&
+                                                        <>
+                                                            <Text>{notification.Subject}</Text>
+                                                            <Text>{notification.DifferentIntervalDisplay}</Text>
+                                                        </>
+                                                    }
+                                                </Flex>
+                                            </Flex>
+                                        </Card>
+                                    )
+                                })}
+                            </>
+                        }
+
+                        {!anyInList(filteredNotifications) &&
+                            <EmptyBlock description={isNullOrEmpty(searchText)  ? `No notifications found.` : `No notifications found by filter.`} removePadding={true} />
+                        }
                     </>
                 }
             </Flex>

@@ -256,3 +256,9 @@ export const generateHash = async (obj) => {
     // Return a shorter version (first 10 characters for quick comparison)
     return hashHex.slice(0, 10);
 }
+
+export const filterList = (keys, list, searchText) => {
+    return list.filter(item =>
+        keys.some(key => containsNoCase(item[key], searchText))
+    );
+};

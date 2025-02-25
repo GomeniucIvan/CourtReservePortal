@@ -631,7 +631,7 @@ function ProfileMyMembership() {
                             }
 
                             {(!isNullOrEmpty(networkLocations) && !anyInList(networkLocations)) &&
-                                <EmptyBlock description={ 'No Network Locations'} />
+                                <EmptyBlock description={ 'No network locations.'} />
                             }
                         </>
                     }

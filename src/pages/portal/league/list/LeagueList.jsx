@@ -226,7 +226,7 @@ function LeagueList({filter}) {
         <>
             {(!isFetching && !anyInList(events)) &&
                 <PaddingBlock topBottom={true}>
-                    <EmptyBlock description={eReplace('No league(s) found')} removePadding={true} />
+                    <EmptyBlock description={eReplace('No league(s) found.')} removePadding={true} />
                 </PaddingBlock>
             }
 

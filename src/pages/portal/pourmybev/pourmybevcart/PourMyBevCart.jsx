@@ -162,7 +162,7 @@ function PourMyBevCart() {
                     }
 
                     {!anyInList(groupedData) &&
-                        <EmptyBlock description={'No Items to Pay'} removePadding={true} />
+                        <EmptyBlock description={'No items to pay.'} removePadding={true} />
                     }
                 </>
             }

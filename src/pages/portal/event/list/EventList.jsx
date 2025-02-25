@@ -255,7 +255,7 @@ function EventList({filter}) {
         <>
             {(!isFetching && !anyInList(events)) &&
                 <PaddingBlock topBottom={true}>
-                    <EmptyBlock description={eReplace('No events found')} removePadding={true} />
+                    <EmptyBlock description={eReplace('No events found.')} removePadding={true} />
                 </PaddingBlock>
             }
             

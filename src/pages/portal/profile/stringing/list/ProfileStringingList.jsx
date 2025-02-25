@@ -1,7 +1,15 @@
 ﻿import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Segmented, Space, Tag, Typography} from "antd";
 import HeaderSearch from "@/components/header/HeaderSearch.jsx";
-import {anyInList, containsNoCase, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {
+    anyInList,
+    containsNoCase,
+    equalString,
+    filterList,
+    generateHash,
+    isNullOrEmpty,
+    toBoolean
+} from "@/utils/Utils.jsx";
 import {AppstoreOutlined, BarsOutlined, FilterOutlined} from "@ant-design/icons";
 import * as React from "react";
 import {useNavigate} from "react-router-dom";
@@ -144,13 +152,7 @@ function ProfileStringingList() {
         if (isNullOrEmpty(searchText) ||!anyInList(stringingJobs)) {
             setFilteredStringingJobs(stringingJobs);
         } else {
-            console.log(stringingJobs);
-            
-            const filtered = stringingJobs.filter(job =>
-                containsNoCase(job.Id, searchText)  ||
-                containsNoCase(job.StringerFullName, searchText)
-            );
-            setFilteredStringingJobs(filtered);
+            setFilteredStringingJobs(filterList(['Id','StringerFullName'], stringingJobs, searchText));
         }
     }, [searchText, stringingJobs]);
     
