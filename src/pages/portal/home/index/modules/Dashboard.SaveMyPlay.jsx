@@ -1,7 +1,5 @@
 ﻿import {useStyles} from ".././styles.jsx";
-import {Typography, Badge, Flex, Button} from "antd";
-import {Ellipsis, ErrorBlock, Swiper} from 'antd-mobile'
-import {Card} from 'antd-mobile'
+import {Typography, Badge, Flex, Button, Card} from "antd";
 import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
@@ -12,6 +10,7 @@ import SVG from "@/components/svg/SVG.jsx";
 import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import { cx } from 'antd-style';
 
 const {Text, Title} = Typography;
 
@@ -27,7 +26,7 @@ const DashboardSaveMyPlay = ({dashboardData, isFetching}) => {
         <>
             {toBoolean(dashboardData?.ShowSaveMyPlayRow) &&
                 <>
-                    <Card className={styles.saveMyPlayCard}>
+                    <Card className={cx(styles.saveMyPlayCard, globalStyles.cardNoPadding)}>
                         <Flex vertical={true} gap={token.paddingLG} align={'center'}>
                             <img
                                 width={150}

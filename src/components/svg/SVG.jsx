@@ -1,11 +1,12 @@
-﻿
-import {lazy, Suspense} from "react";
+﻿import {lazy, Suspense} from "react";
+import {useApp} from "@/context/AppProvider.jsx";
+import {isNullOrEmpty} from "@/utils/Utils.jsx";
 const SuspenseSGVExpensiveComponent = lazy(() => import('./SuspenseSGVExpensiveComponent'));
 
 //todo make fallback display skeleton with size width and height
 const SGV = ({
                  icon,
-                 color = 'black',
+                 color,
                  size = 24,
                  style = '',
                  preventFill = false,
@@ -16,6 +17,13 @@ const SGV = ({
                  preventCircles = true,
                  pathFillColor
              }) => {
+
+    const {token} = useApp();
+    
+    if (isNullOrEmpty(color)) {
+        color = token.colorBlack;
+    }
+
     return (
         <Suspense fallback={<></>}>
             <SuspenseSGVExpensiveComponent

@@ -1,26 +1,44 @@
 import {ReactSVG} from "react-svg";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
+import {memo, useEffect, useState} from "react";
 
-const SuspenseSGVExpensiveComponent = ({ icon, color = 'black',
-                                   size = 24,
-                                   style= '',
-                                   preventFill = false,
-                                   preventStroke = true,
-                                   replaceColor = false,
-                                   preventPaths = false,
-                                   preventRects = true,
-                                   preventCircles = true,
-                                   pathFillColor}) => {
+const svgCache = new Map(); // Global cache to store SVGs
+
+const SuspenseSGVExpensiveComponent = memo(({ icon,
+                                                color = 'black',
+                                                size = 24,
+                                                style= '',
+                                                preventFill = false,
+                                                preventStroke = true,
+                                                replaceColor = false,
+                                                preventPaths = false,
+                                                preventRects = true,
+                                                preventCircles = true,
+                                                pathFillColor}) => {
+    
+    const [svgContent, setSvgContent] = useState(svgCache.get(icon) || null);
     const {token} = useApp();
 
     if (equalString(color, 'black')) {
         color = token.colorText;
     }
 
-    return (
+    useEffect(() => {
+        if (!svgCache.has(icon)) {
+            fetch(`/svg/${icon}.svg`)
+                .then(res => res.text())
+                .then(data => {
+                    svgCache.set(icon, data);
+                    setSvgContent(data);
+                })
+                .catch(err => console.error("Failed to load SVG:", err));
+        }
+    }, [icon]);
+
+    return svgContent ? (
         <ReactSVG
-            src={`/svg/${icon}.svg`}
+            src={`data:image/svg+xml,${encodeURIComponent(svgContent)}`}
             beforeInjection={(svg) => {
                 if (isNullOrEmpty(style)) {
                     svg.setAttribute('style', `width: ${size}px; height: ${size}px;display:flex;`);
@@ -104,7 +122,7 @@ const SuspenseSGVExpensiveComponent = ({ icon, color = 'black',
                 }
             }}
         />
-    )
-}
+    ) : null;
+});
 
 export default SuspenseSGVExpensiveComponent;

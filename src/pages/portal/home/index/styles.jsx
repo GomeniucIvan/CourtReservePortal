@@ -113,5 +113,8 @@ export const useStyles = createStyles(({ css, token }) => ({
     saveMyPlayCard: css`
         background: radial-gradient(37.85% 27.01% at 48.46% 73.47%, #0C2F20 0%, #1F1F1F 100%);
         padding: ${token.paddingXXL}px;
+    `,
+    pourMyBevCard: css`
+        padding: ${token.paddingXXL}px;  
     `
 }));

@@ -1,6 +1,7 @@
 import {isNullOrEmpty, toBoolean} from "./Utils.jsx";
 import {getCookie, removeCookieById} from "./CookieUtils.jsx";
 import {saveCookie} from "@/utils/CookieUtils.jsx";
+import {logMobile} from "@/utils/ConsoleUtils.jsx";
 
 export const isMobileKeyboardOpen = () => {
     const currentInnerHeight = window.innerHeight;
@@ -10,6 +11,7 @@ export const isMobileKeyboardOpen = () => {
 
 export const updateMobileStatusBar = (style) => {
     if (window.ReactNativeWebView) {
+        logMobile('updateMobileStatusBar');
         const message = JSON.stringify({ type: 'updateMobileStatusBar', style: style });
         window.ReactNativeWebView.postMessage(message);
     }
@@ -18,6 +20,8 @@ export const updateMobileStatusBar = (style) => {
 export const saveMobileTokenKey = (tokenKey, tokenIdKey) => {
     if (!isNullOrEmpty(tokenKey)) {
         if (window.ReactNativeWebView) {
+            logMobile('saveMobileTokenKey');
+            
             const message = JSON.stringify({ type: 'saveMobileTokenKey', key: tokenKey, id: tokenIdKey });
             window.ReactNativeWebView.postMessage(message);
             removeCookieById('MobileTokenKey');
@@ -55,6 +59,8 @@ export const reactNavigateToMainRoute = (redirectUrl) => {
 
 export const reactNativeWebViewReload = () => {
     if (window.ReactNativeWebView){
+        logMobile('ReactNativeReload');
+        
         const message = JSON.stringify({ type: 'ReactNativeReload' });
         window.ReactNativeWebView.postMessage(message);
     }
@@ -62,6 +68,8 @@ export const reactNativeWebViewReload = () => {
 
 export const reactNativeSaveBadgeCount = (count) =>{
     if (window.ReactNativeWebView) {
+        logMobile('FlutterSetBadgeCount');
+        
         const message = JSON.stringify({ type: 'FlutterSetBadgeCount', count: count });
         window.ReactNativeWebView.postMessage(message);
     }
@@ -70,7 +78,10 @@ export const reactNativeSaveBadgeCount = (count) =>{
 export const reactNativeInitFireBase = () =>{
     if (window.ReactNativeWebView) {
         let isInitFirebase = getCookie('isInitFirebase');
+        logMobile('func isInitFirebase');
+        
         if (!toBoolean(isInitFirebase)) {
+            logMobile('isInitFirebase');
             saveCookie('isInitFirebase', true, 1140);
             const message = JSON.stringify({ type: 'FlutterInitFirebase' });
             window.ReactNativeWebView.postMessage(message);
@@ -93,6 +104,8 @@ export const reactNativePickImage = (fileRef) =>{
 
 export const reactNativeTakePhoto = () =>{
     if (window.ReactNativeWebView) {
+        logMobile('reactTakePhoto');
+        
         const message = JSON.stringify({ type: 'reactTakePhoto' });
         window.ReactNativeWebView.postMessage(message);
     }

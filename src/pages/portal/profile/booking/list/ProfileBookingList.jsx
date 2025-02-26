@@ -99,7 +99,7 @@ function ProfileBookingList() {
             ...filterModel,
         };
 
-        let response = appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData);
+        let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData);
 
         if (toBoolean(response?.IsValid)) {
             const responseData = response.Data;

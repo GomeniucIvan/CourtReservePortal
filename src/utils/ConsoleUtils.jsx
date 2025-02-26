@@ -6,6 +6,7 @@ const styles = {
     blue: 'color: #71bec4; font-weight: bold;',
     yellow: 'color: orange; font-weight: bold;',
     gray: 'color: gray; font-weight: bold;',
+    violet: 'color: violet; font-weight: bold;',
 };
 
 const consoleIcons = {
@@ -30,6 +31,7 @@ const consoleIcons = {
     user: '👤',
     settings: '⚙️',
     formikError: '🛑',
+    mobile: '📱'
 };
 
 export const logError = (message) => {
@@ -62,4 +64,8 @@ export const logWarning = (message) => {
 
 export const logFormikErrors = () => {
     console.log(`%c${consoleIcons.formikError} Formik Errors:`, styles.gray);
+};
+
+export const logMobile = (message) => {
+    console.warn(`%c${consoleIcons.mobile} ${message}`, styles.violet);
 };

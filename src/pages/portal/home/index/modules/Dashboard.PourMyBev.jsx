@@ -1,17 +1,15 @@
 ﻿import {useStyles} from ".././styles.jsx";
-import {Typography, Badge, Flex, Button} from "antd";
-import {Ellipsis, ErrorBlock, Swiper} from 'antd-mobile'
-import {Card} from 'antd-mobile'
+import {Typography, Card, Flex, Button} from "antd";
 import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import { toBoolean} from "@/utils/Utils.jsx";
-import SVG from "@/components/svg/SVG.jsx";
 import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import { cx } from 'antd-style';
 
 const {Text, Title} = Typography;
 
@@ -27,7 +25,7 @@ const DashboardPourMyBev = ({dashboardData}) => {
         <>
             {toBoolean(dashboardData?.ShowPourMyBevRow) &&
                 <>
-                    <Card className={globalStyles.card}>
+                    <Card className={cx(styles.pourMyBevCard, globalStyles.cardNoPadding)}>
                         <Flex vertical={true} gap={token.paddingLG}>
                             <Flex vertical gap={token.paddingLG} justify="center" align="center">
                                 <img width={150} height={28} src="/svg/branded/pourmybev.svg" alt="PourMyBev logo" />
