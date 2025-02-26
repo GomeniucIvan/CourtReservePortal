@@ -454,68 +454,72 @@ function Layout() {
     }
 
     return (
-        <div className={styles.root}>
-            <div ref={headerRef}>
-                <Header route={currentRoute}/>
+        <>
+            <LayoutIcons />
+
+            <div className={styles.root}>
+                <div ref={headerRef}>
+                    <Header route={currentRoute}/>
+                </div>
+
+                <div id={'page-body'}
+                     className={styles.pageBody}
+                     style={{height: `${maxHeight}px`}}>
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
+                        <>
+                            <LayoutExtra />
+                            <LayoutScripts />
+
+                            <Toaster
+                                toastOptions={{
+                                    className: 'safe-area-top-margin',
+                                }}
+                            />
+
+                            {toBoolean(isFetching) ? (
+                                <>
+                                    {/*<div className={'safe-area-top'}></div>*/}
+
+                                    <PaddingBlock topBottom={true}>
+                                        <Flex vertical={true} gap={token.padding}>
+                                            {skeletonArray.map((_, index) => (
+                                                <Skeleton key={index} animated className={styles.skeleton}/>
+                                            ))}
+                                        </Flex>
+                                    </PaddingBlock>
+                                </>
+                            ) : (
+                                <PullToRefresh onRefresh={refreshData}
+                                               disabled={toBoolean(disablePullDownToRefresh)}
+                                               pullingText={'Pull down to refresh.'}
+                                               refreshingText={'Loading...'}
+                                               completeText={'Refresh successful.'}
+                                               canReleaseText={'Release to refresh immediately.'}>
+                                    <Routes>
+                                        {AppRoutes.map((route, index) => {
+                                            const {element, path, ...rest} = route;
+
+                                            return <Route
+                                                onUpdate={() => window.scrollTo(0, 0)}
+                                                key={index}
+                                                path={path}
+                                                {...rest}
+                                                element={element}/>;
+                                        })}
+                                    </Routes>
+                                </PullToRefresh>
+                            )}
+                        </>
+                    </ErrorBoundary>
+                </div>
+
+                <div ref={footerRef}>
+                    <Footer isFooterVisible={isFooterVisible}
+                            footerContent={footerContent}
+                            isFetching={isFetching}/>
+                </div>
             </div>
-
-            <div id={'page-body'} 
-                 className={styles.pageBody}
-                 style={{height: `${maxHeight}px`}}>
-                <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <>
-                        <LayoutExtra />
-                        <LayoutScripts />
-                        <LayoutIcons />
-                        <Toaster
-                            toastOptions={{
-                                className: 'safe-area-top-margin',
-                            }}
-                        />
-                        
-                        {toBoolean(isFetching) ? (
-                            <>
-                                {/*<div className={'safe-area-top'}></div>*/}
-
-                                <PaddingBlock topBottom={true}>
-                                    <Flex vertical={true} gap={token.padding}>
-                                        {skeletonArray.map((_, index) => (
-                                            <Skeleton key={index} animated className={styles.skeleton}/>
-                                        ))}
-                                    </Flex>
-                                </PaddingBlock>
-                            </>
-                        ) : (
-                            <PullToRefresh onRefresh={refreshData}
-                                           disabled={toBoolean(disablePullDownToRefresh)}
-                                           pullingText={'Pull down to refresh.'}
-                                           refreshingText={'Loading...'}
-                                           completeText={'Refresh successful.'}
-                                           canReleaseText={'Release to refresh immediately.'}>
-                                <Routes>
-                                    {AppRoutes.map((route, index) => {
-                                        const {element, path, ...rest} = route;
-
-                                        return <Route
-                                            onUpdate={() => window.scrollTo(0, 0)}
-                                            key={index}
-                                            path={path}
-                                            {...rest}
-                                            element={element}/>;
-                                    })}
-                                </Routes>
-                            </PullToRefresh>
-                        )}
-                    </>
-                </ErrorBoundary>
-            </div>
-
-            <div ref={footerRef}>
-                <Footer isFooterVisible={isFooterVisible}
-                        footerContent={footerContent} 
-                        isFetching={isFetching}/>
-            </div>
-        </div>
+        </>
     )
 }
 

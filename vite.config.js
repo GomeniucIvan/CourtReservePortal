@@ -10,6 +10,8 @@ let appUrl = process.env.VITE_APP_URL;
 let backendUrl = process.env.VITE_BACKEND_URL;
 const isProduction = process.env.NODE_ENV === 'production';
 
+const showConsoleLog = true;
+
 if (!isProduction){
     appUrl = 'http://localhost:2129/';
     backendUrl = 'https://localhost:7130/';
@@ -82,7 +84,7 @@ export default defineConfig({
         minify: 'terser',
         terserOptions: {
             compress: {
-                drop_console: !enableDebug, // true, //prod true !! Set to true in production to remove console logs
+                drop_console: showConsoleLog !== true, // true, //prod true !! Set to true in production to remove console logs
             },
             output: {
                 comments: enableDebug, //false, //prod false !!// Include comments in development for debugging

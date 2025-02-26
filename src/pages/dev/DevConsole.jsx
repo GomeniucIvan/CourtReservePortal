@@ -1,7 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import {toBoolean} from "@/utils/Utils.jsx";
 
-const DevConsole = () => {
+const DevConsole = ({show}) => {
     const [logs, setLogs] = useState([]);
 
     useEffect(() => {
@@ -11,7 +12,6 @@ const DevConsole = () => {
 
         const logQueue = [];
 
-        // Helper to schedule updates without triggering render-phase warnings
         const scheduleLogUpdate = () => {
             if (logQueue.length > 0) {
                 const logsToAdd = [...logQueue];
@@ -26,7 +26,6 @@ const DevConsole = () => {
                 .join(' ');
             logQueue.push({ type, message });
 
-            // Defer state updates
             setTimeout(scheduleLogUpdate, 0);
         };
 
@@ -45,7 +44,6 @@ const DevConsole = () => {
             originalError(...args);
         };
 
-        // Cleanup
         return () => {
             console.log = originalLog;
             console.warn = originalWarn;
@@ -56,37 +54,57 @@ const DevConsole = () => {
     const clearLogs = () => setLogs([]);
 
     const consoleElement = (
-        <div style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            width: '100%',
-            height: '200px',
-            backgroundColor: '#000',
-            color: '#fff',
-            overflowY: 'scroll',
-            zIndex: 9999,
-            fontSize: '12px',
-            padding: '5px'
-        }}>
+        <div
+            style={{
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                maxHeight: '34vh',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent background
+                color: '#fff',
+                zIndex: 9999,
+                opacity: toBoolean(show) ? 1 : 0,
+                fontSize: '12px',
+                padding: '5px',
+                pointerEvents: 'none', // Allows interaction with elements behind
+                display: 'flex',
+                flexDirection: 'column',
+                top: toBoolean(show) ? undefined : '100vh'
+            }}
+        >
             <button
                 style={{
                     backgroundColor: '#444',
                     color: '#fff',
                     border: 'none',
                     padding: '5px',
-                    marginBottom: '5px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    pointerEvents: 'auto' // Keeps button clickable
                 }}
                 onClick={clearLogs}
             >
                 Clear Console
             </button>
-            {logs.map((log, index) => (
-                <div key={index} style={{ color: log.type === 'error' ? 'red' : log.type === 'warn' ? 'yellow' : 'white' }}>
-                    [{log.type.toUpperCase()}] {log.message}
-                </div>
-            ))}
+            <div
+                style={{
+                    flex: 1, // Takes available space
+                    overflowY: 'auto', // Enables scrolling
+                    pointerEvents: 'auto', // Allows user to scroll
+                    padding: '5px'
+                }}
+            >
+                {logs.map((log, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            color: log.type === 'error' ? 'red' : log.type === 'warn' ? 'yellow' : 'white',
+                        }}
+                    >
+                        [{log.type.toUpperCase()}] {log.message}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 

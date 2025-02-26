@@ -23,7 +23,7 @@ function LayoutIcons() {
 
         setTimeout(function () {
             setSvgLoaded(true);
-        }, 1000)
+        }, 10000)
     }, []);
 
     return (

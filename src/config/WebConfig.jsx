@@ -5,12 +5,6 @@ import devConfig from './Config.dev.jsx';
 
 let isProduction = import.meta.env.VITE_ENV === 'production';
 
-const ConfigComponent = lazy(() =>
-    isProduction
-        ? import('./Config.prod.jsx')
-        : import('./Config.dev.jsx')
-);
-
 export const getConfigValue = (key) => {
     if (isNullOrEmpty(key)) return null;
 

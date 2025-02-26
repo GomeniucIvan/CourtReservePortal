@@ -284,9 +284,7 @@ function LayoutExtra() {
                         }}>
                             <SVG icon={'message'} size={16}/>
                         </Button>
-                        {showConsole &&
-                            <DevConsole/>
-                        }
+                        <DevConsole show={showConsole}/>
                     </div>
                 </>
             }
