@@ -47,7 +47,6 @@ function LeagueDetails() {
         
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Leagues/Details?id=${orgId}&sessionId=${lsid}&tab=${nullToEmpty(tab)}`);
 
-        console.log(response)
         if (toBoolean(response?.IsValid)){
             let data = response.Data;
             let firstSelectedTab = data.FirstSelectedTab;
@@ -64,7 +63,13 @@ function LeagueDetails() {
             } else if (equalString(firstSelectedTab, 3)) {
                 setSelectedTab('standings')
             }
-            setSessionDetails(response?.Data);
+            
+            let setData = {
+                ...response?.Data,
+                AllowToOptIn: toBoolean(response?.Data?.AllowToOptInBool),
+            }
+            
+            setSessionDetails(setData);
         } else {
             displayMessageModal({
                 title: 'Error',

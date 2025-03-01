@@ -75,7 +75,7 @@ const isCostFree = (eventDto) =>
     return isNullOrEmpty(cost) || equalString(cost, 0);
 }
 
-function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isCancelled, allowToOptIn, onPlayerOptInOptOut}) {
+function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isCancelled, onPlayerOptInOptOut, allDates}) {
     if (isCancelled) return null;
     const {token, setDynamicPages} = useApp();
     const navigate = useNavigate();
@@ -83,13 +83,14 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
 
     const registeredFamilyPlayersOrgMember = fakeLeagueSession.RegisteredPlayers.filter(player => orgMemberIds.includes(player.OrganizationMemberId));
     const registeredFamilyPlayersOrgMemberIds = registeredFamilyPlayersOrgMember.map(player => player.OrganizationMemberId);
-    const firstMemberRegistration = fakeLeagueSession.RegisteredPlayers.find(player => orgMemberIds.includes(player.OrganizationMemberId))?.RegistrationId;
+    const firstMemberRegistration = fakeLeagueSession.RegisteredPlayers.find(player => orgMemberIds.includes(player.OrganizationMemberId));
     const onlyOneMemberRegistered = fakeLeagueSession.RegisteredPlayers.filter(player => orgMemberIds.includes(player.OrganizationMemberId)).length === 1;
-
+    
     const isFreeCost = isCostFree(fakeLeagueSession);
     const isEdit = registeredFamilyPlayersOrgMember.some(v => v.IsOptIn) && registeredFamilyPlayersOrgMember.some(v => !v.IsOptIn);
 
     const reservationId = dateId || fakeLeagueSession.NextReservationId;
+    const [isOptOut, setIsOptOut] = useState(false);
     
     const isOptedIn = (eventDto, orgMemberId, resID) => {
         const registeredMember = eventDto.RegisteredPlayers.find(v => equalString(orgMemberId, v.OrganizationMemberId));
@@ -98,7 +99,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         if (eventDto.CheckOnlyByOptInOrgMemberIdsString) {
             return eventDto.OptInOrgMemberIds.includes(orgMemberId);
         } else {
-            const date = eventDto.AllDates.find(c => c.ReservationId === resID);
+            const date = allDates.find(c => c.ReservationId === resID);
 
             if (!date && registeredMember?.IsOptIn) {
                 return true;
@@ -113,6 +114,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
     const getOptInClassOrLabel = (eventDto, type, orgMemberIds, useSuccessClass = false, isEdit = false, resID = null) => {
         let registeredFamMembers = eventDto.RegisteredPlayers.filter(v => orgMemberIds.includes(v.OrganizationMemberId));
 
+        
         if (eventDto.CheckOnlyByOptInOrgMemberIdsString) {
             registeredFamMembers = registeredFamMembers.filter(v => eventDto.OptInOrgMemberIds.includes(v.OrganizationMemberId));
         }
@@ -121,7 +123,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         let optedInPlayers = eventDto.OptInOrgMemberIds;
 
         if (resID && resID > 0) {
-            const date = eventDto.AllDates.find(d => d.ReservationId === resID);
+            const date = allDates.find(d => equalString(d.ReservationId, resID));
             if (date) optedInPlayers = date.OptInOrgMemberIds;
         }
 
@@ -164,18 +166,20 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
     };
 
     const handleOptOut = async () => {
-        const handleOptOutPost = async () => {
+        const handleOptOutPost = async (onClose) => {
             let urlData = {
                 leagueId: sessionData.LeagueId,
                 sessionId: sessionData.LeagueSessionId,
                 resId: sessionData.NextReservationId,
-                orgMemberId: firstMemberRegistration?.OrganizationMemberId,
-                orgMemberRegistrationId: firstMemberRegistration?.RegistrationId,
+                orgMemberId: nullToEmpty(firstMemberRegistration?.OrganizationMemberId),
+                orgMemberRegistrationId: nullToEmpty(firstMemberRegistration?.RegistrationId),
                 uiCulture: sessionData.UiCulture,
             }
+            setIsOptOut(true);
+            onClose();
             
             const response = await toast.promise(
-                appService.get(navigate, `/app/Online/Leagues/OptOutOrgMemberPost?id=${orgId}&${encodeParamsObject(urlData)}`),
+                appService.post(`/app/Online/Leagues/OptOutOrgMemberPost?id=${orgId}&${encodeParamsObject(urlData)}`),
                 {
                     position: 'top-center',
                     loading: 'Loading...',
@@ -190,6 +194,7 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
                     pNotify('Successfully Opt-Out.')
                     onPlayerOptInOptOut();
                 }
+                setIsOptOut(false);
             } else {
                 displayMessageModal({
                     title: "Opt-Out error",
@@ -198,38 +203,36 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
                     buttonType: modalButtonType.DEFAULT_CLOSE,
                     onClose: () => {},
                 })
+                setIsOptOut(false);
             }
         }
 
         displayMessageModal({
             title: "Opt-Out",
-            html: (onClose) => <Flex>
-                <Flex vertical={true} gap={token.paddingXXL}>
-                    <Text>Are you sure you want to Opt-Out?</Text>
+            html: (onClose) =>  <Flex vertical={true} gap={token.paddingXXL}>
+                <Text>Are you sure you want to Opt-Out?</Text>
 
-                    <Flex vertical={true} gap={token.padding}>
-                        <Button type={'primary'}
-                                block={true}
-                                danger={true}
-                                onClick={() => {
-                                    handleOptOutPost();
-                                    onClose();
-                                }}>
-                            Opt-Out
-                        </Button>
+                <Flex vertical={true} gap={token.padding}>
+                    <Button type={'primary'}
+                            block={true}
+                            danger={true}
+                            loading={isOptOut}
+                            onClick={() => {
+                                handleOptOutPost(onClose);
+                            }}>
+                        Opt-Out
+                    </Button>
 
-                        <Button block={true}
-                                danger={true}
-                                onClick={() => {
-                                    onClose();
-                                }}>
-                            Close
-                        </Button>
-                    </Flex>
+                    <Button block={true}
+                            onClick={() => {
+                                onClose();
+                            }}>
+                        Close
+                    </Button>
                 </Flex>
             </Flex>,
             type: "warning",
-            buttonType: modalButtonType.DEFAULT_CLOSE,
+            buttonType: '',
             onClose: () => {},
         })
     };
@@ -268,30 +271,34 @@ function LeagueSessionOptInButton({sessionData, orgMemberIds, orgId, dateId, isC
         if (equalString(action, 'editoptin')) {
             pageTitle = 'Edit Opt-In';
         }
-        console.log(pageTitle)
+
         route = `${route}?sessionId=${sessionData.LeagueSessionId}&leagueId=${sessionData.LeagueId}&resId=${sessionData.NextReservationId}&action=${action}`;
         setPage(setDynamicPages, pageTitle, route);
         navigate(route)
     };
 
+console.log('fakeLeagueSession', fakeLeagueSession)
     return (
         <>
-            {toBoolean(fakeLeagueSession?.AllowToOptIn) &&
+            {toBoolean(sessionData?.AllowToOptIn) &&
                 <>
                     {onlyOneMemberRegistered && toBoolean(isOptedIn(fakeLeagueSession, orgMemberIds[0], reservationId)) ? (
                         <Button onClick={handleOptOut} type="primary"
+                                loading={isOptOut}
                                 danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, undefined, undefined, reservationId )}>
                             {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, undefined, undefined, reservationId )}
                         </Button>
                     ) : isFreeCost && onlyOneMemberRegistered ? (
                         <Button onClick={handleOptInFree}
                                 type="primary"
+                                loading={isOptOut}
                                 danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, undefined, undefined, reservationId )}>
                             {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, undefined, undefined, reservationId )}
                         </Button>
                     ) : (
                         <Button onClick={() => handleOptIn(getOptInClassOrLabel(fakeLeagueSession, 'action', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId ))}
                                 type="primary"
+                                loading={isOptOut}
                                 danger={getOptInClassOrLabel(fakeLeagueSession, 'class', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId )}>
                             {getOptInClassOrLabel(fakeLeagueSession, 'label', orgMemberIds, registeredFamilyPlayersOrgMemberIds, isEdit, reservationId)}
                         </Button>

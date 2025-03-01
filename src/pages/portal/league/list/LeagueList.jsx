@@ -159,14 +159,14 @@ function LeagueList({filter}) {
         }
 
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Leagues/List?id=${orgId}&${encodeParamsObject(postModel)}`);
-
+        
         if (toBoolean(response?.IsValid)) {
             let filterData = {
                 ...response.Data,
                 CustomDate_Start: fromDateTimeStringToDate(response.Data.CustomDate_StartStringDisplay),
                 CustomDate_End: fromDateTimeStringToDate(response.Data.CustomDate_EndStringDisplay),
-                FilterTimeOfADayStart: response.Data.FilterTimeOfADayStartStringDisplay,
-                FilterTimeOfADayEnd: response.Data.FilterTimeOfADayEndStringDisplay,
+                FilterTimeOfADayStart: fromTimeSpanString(response.Data.FilterTimeOfADayStartStringDisplay),
+                FilterTimeOfADayEnd: fromTimeSpanString(response.Data.FilterTimeOfADayEndStringDisplay),
             }
 
             setEventData(filterData);

@@ -240,13 +240,9 @@ function LeagueOptIn() {
                             <LeagueSessionDetailsPartial sessionDetails={sessionDetails.LeagueSession} page={optAction}/>
                         </Flex>
 
-                        {(countListItems(sessionDetails?.FamilyMembers) > 1) &&
+                        {(countListItems(authDataOrgMemberIds) > 1 && anyInList(formik.values.FamilyMembers)) &&
                             <>
-                                {(countListItems(authDataOrgMemberIds) > 1 && anyInList(formik.values.FamilyMembers)) &&
-                                    <>
-                                        <EventLeagueFamilyMembersBlock formik={formik} members={authDataOrgMemberIds} toggleInitialCheck={toggleInitialCheck} />
-                                    </>
-                                }
+                                <EventLeagueFamilyMembersBlock formik={formik} members={authDataOrgMemberIds} toggleInitialCheck={toggleInitialCheck} />
                             </>
                         }
                     </Flex>

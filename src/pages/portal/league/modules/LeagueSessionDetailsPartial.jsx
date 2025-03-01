@@ -99,8 +99,8 @@ function LeagueSessionDetailsPartial({sessionDetails, page = 'details'}) {
             }
 
             {(equalString(page, 'details') || 
-                    equalString(page, 'optin') ||
-                    equalString(page, 'editoptin') ||
+                    //equalString(page, 'optin') ||
+                    //equalString(page, 'editoptin') ||
                     equalString(page, 'waitlist') ||
                     equalString(page, 'waitlist-edit')) &&
                 <>

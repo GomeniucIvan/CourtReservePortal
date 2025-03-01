@@ -49,9 +49,9 @@ function LeagueDetailsSessionInfo({selectedTab, tabsHeight, sessionDetails}) {
     }
 
     let urlParams = {
-        sessionId: sessionDetails.LeagueSessionId,
-        leagueId: sessionDetails.LeagueId,
-        resId: sessionDetails.NextReservationId
+        sessionId: sessionDetails?.LeagueSessionId,
+        leagueId: sessionDetails?.LeagueId,
+        resId: sessionDetails?.NextReservationId
     }
 
     const registeredOrWaitlistedFamMembersCount = sessionDetails?.WaitListPlayers.filter(v => authDataOrgMemberIds.includes(v.OrganizationMemberId)).length +

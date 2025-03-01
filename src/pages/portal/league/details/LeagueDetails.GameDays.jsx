@@ -64,7 +64,6 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
             if (!isNullOrEmpty(selDate?.DateTimesDisplay)) {
                 setSelectedDay(selDate);
             }
-
             setLeagueDetails(responseData);
         }
 
@@ -113,6 +112,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
         }
 
         let response = await appService.get(navigate, `/app/Online/AjaxController/LeagueSession_GetDateInfo?id=${orgId}&${encodeParamsObject(urlData)}`);
+        
         if (toBoolean(response?.IsValid)) {
             let data = response.Data;
 
@@ -123,11 +123,14 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                 SessionGameDayGroupStatus: toBoolean(data.ShowMyMatches) ? 2 : 1,
                 NextReservationId: item.ReservationId
             })
+
         }
 
         setSelectedReservationId(item.ReservationId);
         setShowLeaguesDrawer(false);
     }
+
+    
     
     let tabIds = [];
     tabIds.push({
@@ -201,6 +204,7 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
                                         <LeagueSessionOptInButton orgId={orgId}
                                                                   sessionData={innerSessionDetails}
                                                                   onPlayerOptInOptOut={onPlayerOptInOptOut}
+                                                                  allDates={leagueDetails?.AllDates}
                                                                   orgMemberIds={authDataOrgMemberIds}/>
                                     </>
                                 }
