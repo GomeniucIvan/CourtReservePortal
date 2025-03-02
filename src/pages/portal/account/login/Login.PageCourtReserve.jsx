@@ -30,7 +30,7 @@ function LoginCourtReserve({ onGetStartedClick, onLoginClick }) {
             <Flex vertical={true} justify={'space-between'} gap={token.padding} style={{paddingTop: `calc(${token.padding}px + 5%)`}}>
 
                 <Flex justify={'center'}>
-                    <SVG preventFill={true} icon={'court-reserve'} style={'width: 210px'} />
+                    <SVG preventFill={true} icon={'court-reserve'} style={{width: '210px'}} size={'auto'} />
                 </Flex>
 
                 <Swiper autoplay={false} className={globalStyles.swiper}>
@@ -42,7 +42,14 @@ function LoginCourtReserve({ onGetStartedClick, onLoginClick }) {
                             </Flex>
 
                            <Flex style={{height: '440px'}} vertical={true} justify={'center'}>
-                               <SVG icon={`login-slide-${index+1}`} preventFill={true} style={'max-height: 80vh;width:100%'} replaceColor={true}/>
+                               <SVG icon={`login-slide-${index+1}`} 
+                                    preventFill={true} 
+                                    style={{
+                                        maxHeight: '80vh',
+                                        width:'100%'
+                                    }} 
+                                    size={'auto'}
+                                    replaceColor={true}/>
                            </Flex>
                         </Swiper.Item>
                     ))}

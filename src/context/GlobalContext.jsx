@@ -8,6 +8,7 @@ import { theme } from "antd";
 import {HeaderProvider} from "@/context/HeaderProvider.jsx";
 import LayoutBackgroundReload from "@/components/layout/LayoutBackgroundReload.jsx";
 import {FooterProvider} from "@/context/FooterProvider.jsx";
+import {SvgCacheProvider} from "@/context/SvgCacheContext.jsx";
 const { useToken } = theme;
 
 export const GlobalContext = ({ children }) => {
@@ -40,11 +41,13 @@ export const GlobalContext = ({ children }) => {
                         <AuthProvider>
                             <FooterProvider>
                                 <SafeArea>
-                                    <MessageModalProvider>
-                                        <LayoutBackgroundReload>
-                                            {children}
-                                        </LayoutBackgroundReload>
-                                    </MessageModalProvider>
+                                    <SvgCacheProvider>
+                                        <MessageModalProvider>
+                                            <LayoutBackgroundReload>
+                                                {children}
+                                            </LayoutBackgroundReload>
+                                        </MessageModalProvider>
+                                    </SvgCacheProvider>
                                 </SafeArea>
                             </FooterProvider>
                         </AuthProvider>

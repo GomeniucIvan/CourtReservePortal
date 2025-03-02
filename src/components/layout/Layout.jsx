@@ -28,13 +28,10 @@ import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
-import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import LayoutScripts from "@/components/layout/LayoutScripts.jsx";
 import {reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/MobileUtils.jsx";
 import apiService from "@/api/api.jsx";
 import {useFooter} from "@/context/FooterProvider.jsx";
-import LayoutIcons from "@/components/layout/LayoutIcons.jsx";
-import {setTranslateData} from "@/utils/TranslateUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -456,8 +453,6 @@ function Layout() {
 
     return (
         <>
-            <LayoutIcons />
-
             <div className={styles.root}>
                 <div ref={headerRef}>
                     <Header route={currentRoute}/>
