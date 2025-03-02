@@ -36,6 +36,7 @@ export const AuthProvider = ({children}) => {
             setOrgId(memberData.OrgId);
             if (!isNullOrEmpty(memberData.DashboardButtonBgColor)) {
                 setPrimaryColor(memberData.DashboardButtonBgColor);
+                setTranslateData(memberData);
             }
         }
         return memberData;
@@ -62,9 +63,9 @@ export const AuthProvider = ({children}) => {
         
         if (!isNullOrEmpty(memberResponseData.DashboardButtonBgColor)) {
             setPrimaryColor(memberResponseData.DashboardButtonBgColor);
+            setTranslateData(memberResponseData);
         }
-
-        setTranslateData(memberResponseData);
+        
         setAuthData(memberResponseData);
         toAuthLocalStorage('memberData', memberResponseData);
         setOrgId(memberResponseData.OrgId);

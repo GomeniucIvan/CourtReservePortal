@@ -3,6 +3,7 @@ import appService from "@/api/app.jsx";
 import apiService, {loadBearerToken, setRequestData} from "@/api/api.jsx";
 import {setNavigationStorage} from "@/storage/AppStorage.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
+import {setTranslateData} from "@/utils/TranslateUtils.jsx";
 
 
 const portalService = {

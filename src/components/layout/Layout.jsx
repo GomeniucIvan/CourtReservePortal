@@ -440,7 +440,7 @@ function Layout() {
 
         return (
             <PaddingBlock topBottom={true}>
-                <h2>Something went wrong:</h2>
+                <h2>Something went wrong2:</h2>
                 <div>
                     <p><strong>Error Message:</strong> {error.message}</p>
                     
@@ -466,7 +466,7 @@ function Layout() {
                 <div id={'page-body'}
                      className={styles.pageBody}
                      style={{height: `${maxHeight}px`}}>
-                    <ErrorBoundary FallbackComponent={ErrorFallback}>
+                    <ErrorBoundary FallbackComponent={ErrorFallback} key={location.pathname}>
                         <>
                             <LayoutExtra />
                             <LayoutScripts />

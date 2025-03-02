@@ -9,6 +9,7 @@ import {authMember} from "../../storage/AppStorage.jsx";
 import {useTranslation} from "react-i18next";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {eTranslate} from "@/utils/TranslateUtils.jsx";
 
 const Header = forwardRef((props, ref) => {
     const location = useLocation();
@@ -87,6 +88,10 @@ const Header = forwardRef((props, ref) => {
     if (isNullOrEmpty(title) && !isNullOrEmpty(headerTitleKey) || (toBoolean(props.route?.useHeaderKeys) && !isNullOrEmpty(headerTitleKey))) {
         title = headerTitleKey;
         useKey = true;
+    }
+    
+    if (toBoolean(props.route?.entityTitle)){
+        title = eTranslate(title);
     }
     
     return (

@@ -8,7 +8,7 @@ import ListFilterItemExpander from "@/components/filter/ListFilterItemExpander.j
 import FormInputsDateInterval from "@/form/input/FormInputsDateInterval.jsx";
 import FormInputsTimeInterval from "@/form/input/FormInputsTimeInterval.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {e} from "@/utils/TranslateUtils.jsx";
+import {e, eTranslate} from "@/utils/TranslateUtils.jsx";
 import {bookingTypes} from "@/utils/SelectUtils.jsx";
 import {useTranslation} from "react-i18next";
 
@@ -61,7 +61,7 @@ function ListFilter({data,
 
     const [eventRegistrationTypes, setEventRegistrationTypes] = useState([
         { Name: 'Drop-in', Id: 1, Selected: false },
-        { Name: 'Full Event', Id: 2, Selected: false }
+        { Name: eTranslate('Full Event'), Id: 2, Selected: false }
     ]);
     
     //formik values
@@ -572,7 +572,7 @@ function ListFilter({data,
                 }
 
                 {(anyInList(eventRegistrationTypes) && showEventRegistrationType) &&
-                    <ListFilterItemExpander label={'Event Type'}>
+                    <ListFilterItemExpander label={eTranslate('Event Type')}>
                         <Selector className={globalStyles.filterSelector}
                                   multiple={false}
                                   onChange={(selectedValues) => {

@@ -29,6 +29,7 @@ const EventRoutes = [
         element: <EventList filter={true}/>,
         title: 'events',
         header: true,
+        entityTitle: true,
     },
     {
         path: EventRouteNames.EVENT_CATEGORIES,

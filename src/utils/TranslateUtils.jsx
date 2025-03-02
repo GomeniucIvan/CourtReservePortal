@@ -10,7 +10,6 @@ let entityReplacements = {
 
 export const setTranslateData = (incData) => {
     if (!isNullOrEmpty(incData)) {
-        console.log(incData)
         entityReplacements = {
             court: "Court",
             member: "Member",
@@ -58,8 +57,10 @@ const shouldPluralize = (word, alternateName) => {
     );
 };
 
-const processText = (text, data) => {
-    if (!text) return "";
+const processText = (text) => {
+    if (isNullOrEmpty(text)){
+        return text;
+    }
 
     return text
         .split(" ")
@@ -70,10 +71,10 @@ const processText = (text, data) => {
 
             let lowerWord = word.toLowerCase();
             for (const [keyword, entityKey] of Object.entries(entityReplacements)) {
-                if (!lowerWord.includes(keyword) || !data[entityKey]) continue;
+                if (!lowerWord.includes(keyword) || !entityKey) continue;
 
                 let entityType = EntityStringEnum.Default;
-                let replacement = toEntityStringType(data[entityKey], entityType);
+                let replacement = toEntityStringType(entityKey, entityType);
 
                 // Special handling for "event" pluralization
                 if (keyword === "event") {
@@ -82,12 +83,12 @@ const processText = (text, data) => {
                             .split("/")
                             .map((subword) =>
                                 subword.includes("event")
-                                    ? subword.replace("event", shouldPluralize(subword, data[entityKey]) ? replacement + "es" : replacement)
+                                    ? subword.replace("event", shouldPluralize(subword, entityKey) ? replacement + "es" : replacement)
                     : subword
                     )
                     .join("/");
                     }
-                    if (shouldPluralize(word, data[entityKey])) {
+                    if (shouldPluralize(word, entityKey)) {
                         lowerWord = lowerWord.slice(0, -1) + "es";
                     }
                 }
