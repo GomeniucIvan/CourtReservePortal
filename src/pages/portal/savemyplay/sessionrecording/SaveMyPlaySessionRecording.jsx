@@ -28,7 +28,6 @@ function SaveMyPlaySessionRecording() {
     const {setHeaderRightIcons} = useHeader();
     const{setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
     const [tabsHeight, setTabHeight] = useState(0);
-
     
     useEffect(() => {
         setIsFooterVisible(true);

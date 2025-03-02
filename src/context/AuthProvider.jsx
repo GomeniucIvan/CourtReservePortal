@@ -8,6 +8,7 @@ import {useAntd} from "./AntdProvider.jsx";
 import {setRequestData} from "../api/api.jsx";
 import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
 import {stringToJson} from "@/utils/ListUtils.jsx";
+import {setTranslateData} from "@/utils/TranslateUtils.jsx";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -63,6 +64,7 @@ export const AuthProvider = ({children}) => {
             setPrimaryColor(memberResponseData.DashboardButtonBgColor);
         }
 
+        setTranslateData(memberResponseData);
         setAuthData(memberResponseData);
         toAuthLocalStorage('memberData', memberResponseData);
         setOrgId(memberResponseData.OrgId);

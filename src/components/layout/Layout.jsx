@@ -34,6 +34,7 @@ import {reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/Mobile
 import apiService from "@/api/api.jsx";
 import {useFooter} from "@/context/FooterProvider.jsx";
 import LayoutIcons from "@/components/layout/LayoutIcons.jsx";
+import {setTranslateData} from "@/utils/TranslateUtils.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -99,7 +100,7 @@ function Layout() {
             let authData = await memberData();
             const workingMemberId = authData?.MemberId || memberId;
             const workingOrgId = authData?.OrgId || orgId;
-
+            
             let isUnsubscribeModal = !isNullOrEmpty(location.pathname) && location.pathname.includes('textmessage/optin');
             let isDisclosurePending = !isNullOrEmpty(location.pathname) && location.pathname.includes('disclosures/pending');
             let textMessageRoute = toRoute(HomeRouteNames.TEXT_MESSAGE_MODAL, 'id', workingOrgId);
@@ -402,7 +403,7 @@ function Layout() {
         }
 
         let requestData = await portalService.requestData(navigate, orgId);
-        
+
         if (toBoolean(requestData?.IsValid)) {
             await setAuthorizationData(requestData.OrganizationData);
             setIsFetching(false);
@@ -440,7 +441,7 @@ function Layout() {
         return (
             <PaddingBlock topBottom={true}>
                 <h2>Something went wrong:</h2>
-                <div style={{maxWidth: '80vw'}}>
+                <div>
                     <p><strong>Error Message:</strong> {error.message}</p>
                     
                     {isDevelopment && (

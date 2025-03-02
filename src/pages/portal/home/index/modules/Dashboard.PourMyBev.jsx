@@ -10,6 +10,7 @@ import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import { cx } from 'antd-style';
+import SVG from "@/components/svg/SVG.jsx";
 
 const {Text, Title} = Typography;
 
@@ -33,17 +34,18 @@ const DashboardPourMyBev = ({dashboardData}) => {
                             </Flex>
                             <Button className={buttonStyles.buttonBlue}
                                     ghost={true}
+                                    icon={<SVG icon='qrcode-light' color={'#0558d6'} />}
                                     onClick={() => {
                                         let route = toRoute(HomeRouteNames.POUR_MY_BEV_CODE, 'id', orgId);
                                         navigate(route);
                                     }}>
-                                <i className="fa-regular fa-qrcode" />
                                 Scan to Pour
                             </Button>
                             {toBoolean(dashboardData?.ShowPourMyBevPayTab) &&
                                 <>
                                     <Button type="link"
                                             className={buttonStyles.buttonBlue}
+                                            icon={<SVG icon='money-bill-wave-regular' color={'white'}/>}
                                             onClick={() => {
                                                 let route = toRoute(HomeRouteNames.POUR_MY_BEV_CART, 'id', orgId);
                                                 navigate(route);

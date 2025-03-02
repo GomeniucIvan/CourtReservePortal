@@ -19,7 +19,7 @@ export const GlobalContext = ({ children }) => {
         return (
             <div role="alert" style={{paddingTop: '50px', color: token.colorText}}>
                 <h2>Something went wrong:</h2>
-                <div style={{maxWidth: '80vw'}}>
+                <div>
                     <p><strong>Error Message:</strong> {error.message}</p>
 
                     {isDevelopment && (
