@@ -91,7 +91,7 @@ const Header = forwardRef((props, ref) => {
     }
     
     if (toBoolean(props.route?.entityTitle)){
-        title = eTranslate(title);
+        title = useKey ? eTranslate(t(title)) : eTranslate(title);
     }
     
     return (

@@ -17,7 +17,7 @@ import {
     dateFormatByUiCulture,
     dateToTimeString,
     fromDateTimeStringToDate,
-    fromDateTimeStringToDateTime,
+    fromDateTimeStringToDateTime, fromTimeSpanString,
     toReactDate
 } from "@/utils/DateUtils.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
@@ -201,7 +201,7 @@ function ExpandedScheduler({index}) {
             if (!isNullOrEmpty(selectedDate) && schedulerData){
 
                 const dayOfWeek = equalString(moment(selectedDate).day(), 0) ? 7 : moment(selectedDate).day();
-                const scheduleForDay = schedulerHours.find(item => item.Day === dayOfWeek);
+                const scheduleForDay = schedulerHours.find(item => equalString(item.Day, dayOfWeek));
 
                 if (!isNullOrEmpty(scheduleForDay)){
                     let isClosed = toBoolean(scheduleForDay?.IsClosed);
@@ -215,8 +215,8 @@ function ExpandedScheduler({index}) {
                         setStartTimeString('00:00');
                         setEndTimeString(`${formattedHours}:${formattedMinutes}`);
                     } else {
-                        let newOpenTimeString = dateToTimeString(scheduleForDay.OpenTimeDate, true);
-                        let newCloseTimeString = dateToTimeString(scheduleForDay.CloseTimeDate, true);
+                        let newOpenTimeString = fromTimeSpanString(scheduleForDay.OpenTimeDateStringDisplay);
+                        let newCloseTimeString = fromTimeSpanString(scheduleForDay.CloseTimeDateStringDisplay);
 
                         if (!equalString(newOpenTimeString, startTimeString) || !equalString(newCloseTimeString, endTimeString)){
                             setStartTimeString(newOpenTimeString);

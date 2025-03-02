@@ -10,7 +10,7 @@ import {dateFormatByUiCulture} from "../../utils/DateUtils.jsx";
 const {Title} = Typography;
 
 function ModalDatePicker({ show, 
-                             selectedDate,
+                             selectedDate: initialSelectedDate,
                              minDate,
                              maxDate,
                              dateFormat = dateFormatByUiCulture(),
@@ -18,27 +18,44 @@ function ModalDatePicker({ show,
                              onConfirm}) {
     const { token } = useApp();
     const {styles} = useStyles();
+    const datePickerWrapperRef = useRef(null);
     const datePickerRef = useRef(null);
+
+    const [selectedDate, setSelectedDate] = useState(
+        initialSelectedDate ? dayjs(initialSelectedDate) : null
+    );
     
     const getPopupContainer = () => {
-        return datePickerRef.current || document.body;
+        return datePickerWrapperRef.current || document.body;
     };
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+        if (onChange) {
+            onChange(date);
+        }
+    };
+    
+    const onInnerConfirm = () => {
+        onConfirm(selectedDate ? selectedDate.toDate() : null);
+    }
     
     return (
         <Modal show={show} full={false} rootClass={cx(styles.datePickerModal)} hideFooter={true}>
-            <div ref={datePickerRef}>
+            <div ref={datePickerWrapperRef}>
                 <DatePicker
+                    ref={datePickerRef}
                     rootClassName={styles.datePicker}
                     value={selectedDate ? dayjs(selectedDate) : null}
                     minDate={minDate ? dayjs(minDate) : null}
                     maxDate={maxDate ? dayjs(maxDate) : null}
                     format={dateFormat}
                     open={true}
-                    onChange={onChange}
+                    onChange={handleDateChange}
                     getPopupContainer={getPopupContainer}
                 />
             </div>
-            <Button block={true} type={'primary'} className={styles.datePickerButtonConfirm} onClick={onConfirm}>
+            <Button block={true} type={'primary'} className={styles.datePickerButtonConfirm} onClick={onInnerConfirm}>
                 Confirm
             </Button>
         </Modal>

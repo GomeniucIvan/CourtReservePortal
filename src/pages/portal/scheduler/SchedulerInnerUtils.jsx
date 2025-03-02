@@ -2,6 +2,7 @@ import {dateFormatByUiCulture} from "@/utils/DateUtils.jsx";
 import {saveCookie} from "@/utils/CookieUtils.jsx";
 import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import moment from "moment";
 
 export const expandedModelFields = {
     id: "UqId",

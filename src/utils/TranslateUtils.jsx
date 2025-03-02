@@ -61,7 +61,7 @@ const processText = (text) => {
     if (isNullOrEmpty(text)){
         return text;
     }
-
+    
     return text
         .split(" ")
         .map((word) => {
@@ -96,6 +96,7 @@ const processText = (text) => {
                 return lowerWord.replace(keyword, replacement);
             }
 
+            
             return word;
         })
         .join(" ");

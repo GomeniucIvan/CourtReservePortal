@@ -278,14 +278,16 @@ function LayoutExtra() {
 
                     </div>
 
-                    <div className={styles.dashboardTypeContainer}>
-                        <Button shape="circle" onClick={() => {
-                            setShowConsole(!showConsole);
-                        }}>
-                            <SVG icon={'message'} size={16}/>
-                        </Button>
-                        <DevConsole show={showConsole}/>
-                    </div>
+                    {1 == 2 &&
+                        <div className={styles.dashboardTypeContainer}>
+                            <Button shape="circle" onClick={() => {
+                                setShowConsole(!showConsole);
+                            }}>
+                                <SVG icon={'message'} size={16}/>
+                            </Button>
+                            <DevConsole show={showConsole}/>
+                        </div>
+                    }
                 </>
             }
         </div>

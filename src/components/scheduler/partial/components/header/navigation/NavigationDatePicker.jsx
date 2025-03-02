@@ -14,6 +14,7 @@ import {
 import {toUTCDateTime} from "../../../utils/index.jsx";
 import {Radio} from "antd";
 import DrawerDatePicker from "../../../../../../components/drawer/DrawerDatePicker.jsx";
+import ModalDatePicker from "@/components/modal/ModalDatePicker.jsx";
 
 export const NavigationDatePicker = React.forwardRef((
     props,
@@ -148,6 +149,18 @@ export const NavigationDatePicker = React.forwardRef((
 
     // const {onFocus, onBlur} = useAsyncFocusBlur({onFocus: handleFocus, onBlur: handleBlur});
     //            //media === 'desktop' ? text :
+
+    const onEndClose = (e) => {
+
+    }
+    
+    const onConfirm = (e) => {
+        handleChange({
+            value: e
+        });
+        setShow(false);
+    }
+    
     return (
         <>
 
@@ -160,18 +173,26 @@ export const NavigationDatePicker = React.forwardRef((
                 {shortText}
             </Radio.Button>
 
-            <DrawerDatePicker show={show}
-                              value={value}
-                              minDate={minDate}
-                              maxDate={maxDate}
-                              onChange={(e) => {
-                                  handleChange({
-                                      value: e
-                                  });
-                              }}
-                              onClose={() => {
-                                  setShow(false);
-                              }}/>
+            <ModalDatePicker selectedDate={value}
+                             show={show}
+                             //onChange={onEndChange}
+                             onConfirm={onConfirm}
+                             onClose={onEndClose}
+                             minDate={minDate}
+                             maxDate={maxDate} />
+            
+            {/*<DrawerDatePicker show={show}*/}
+            {/*                  value={value}*/}
+            {/*                  minDate={minDate}*/}
+            {/*                  maxDate={maxDate}*/}
+            {/*                  onChange={(e) => {*/}
+            {/*                      handleChange({*/}
+            {/*                          value: e*/}
+            {/*                      });*/}
+            {/*                  }}*/}
+            {/*                  onClose={() => {*/}
+            {/*                      setShow(false);*/}
+            {/*                  }}/>*/}
         </>
     )
 });

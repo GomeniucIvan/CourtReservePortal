@@ -21,12 +21,16 @@ const DevConsole = ({show}) => {
         };
 
         const logMessage = (type, args) => {
-            const message = args
-                .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : arg))
-                .join(' ');
-            logQueue.push({ type, message });
+            try {
+                const message = args
+                    .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : arg))
+                    .join(' ');
+                logQueue.push({ type, message });
 
-            setTimeout(scheduleLogUpdate, 0);
+                setTimeout(scheduleLogUpdate, 0);
+            } catch (e) {
+                
+            }
         };
 
         console.log = (...args) => {
