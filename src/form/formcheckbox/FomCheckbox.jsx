@@ -3,7 +3,7 @@ import React from "react";
 import {isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {addCypressTag} from "@/utils/TestUtils.jsx";
-
+import { cx } from 'antd-style';
 const {Paragraph} = Typography;
 
 const FormCheckbox = ({label, text, formik, name, description, descriptionClick}) => {

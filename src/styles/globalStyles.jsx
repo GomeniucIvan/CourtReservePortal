@@ -477,5 +477,8 @@ export const useStyles = createStyles(({ css, token }) => ({
         .ant-checkbox-inner {
             border-radius: ${token.checkboxBorderRadius}px;
         }
+    `,
+    textCapitalize: css`
+        text-transform: capitalize;
     `
 }));

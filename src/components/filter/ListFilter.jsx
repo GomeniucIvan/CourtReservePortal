@@ -594,7 +594,7 @@ function ListFilter({data,
                     </ListFilterItemExpander>
                 }
 
-                {(!isNullOrEmpty(minPrice) && !isNullOrEmpty(maxPrice)) &&
+                {(!isNullOrEmpty(minPrice) && !isNullOrEmpty(maxPrice) && !equalString(minPrice, maxPrice)) &&
                     <ListFilterItemExpander label={'Price'}>
                         <Slider range defaultValue={[minPrice, maxPrice]} min={minPrice} max={maxPrice}/>
                     </ListFilterItemExpander>

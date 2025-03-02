@@ -137,7 +137,7 @@ function EventCalendar() {
                                   onClick={() => setShowFilter(true)} 
                                   showCalendarOptions={true} 
                                   selectedView={schedulerData?.ViewType} 
-                                  onCalendarOptionChange={(e) => {
+                                  onOptionChange={(e) => {
                                       setSelectedView(e);
                                       persistSelectedView(e);
                                   }}  />
