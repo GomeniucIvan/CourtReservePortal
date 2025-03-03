@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
-import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {
     fromAuthLocalStorage, getShowUnsubscribeModal
 } from "../../storage/AppStorage.jsx";
@@ -24,9 +24,8 @@ import {Toaster} from "react-hot-toast";
 import portalService from "@/api/portal.jsx";
 import {locationCurrentRoute, toRoute} from "@/utils/RouteUtils.jsx";
 import {getGlobalRedirectUrl} from "@/utils/AppUtils.jsx";
-import {pNotify} from "@/components/notification/PNotify.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
-import {getCookie} from "@/utils/CookieUtils.jsx";
+import {getCookie, saveCookie} from "@/utils/CookieUtils.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import LayoutScripts from "@/components/layout/LayoutScripts.jsx";
 import {reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/MobileUtils.jsx";
@@ -43,6 +42,7 @@ function Layout() {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
     const [maxHeight, setMaxHeight] = useState(0);
+    const [pushTokenInitialized, setPushTokenInitialized] = useState(false);
     
     //used only for ios keyboard open
     const [isPrevIsFooterVisible, setIsPrevIsFooterVisible] = useState(null);
@@ -72,7 +72,8 @@ function Layout() {
         setAuthorizationData,
         memberData,
         newOrgId,
-        setNewOrgId
+        setNewOrgId,
+        spGuideId
     } = useAuth();
 
     const {setAlertsCount} = useFooter();
@@ -89,6 +90,12 @@ function Layout() {
         if (isNumberRegex) {
             const replacePath = location.pathname.replace(lastPart, ':id');
             currentRoute = AppRoutes.find(route => route.path === replacePath);
+        }
+    }
+    
+    const initializeFireBasePushToken = () => {
+        if (!pushTokenInitialized && !isNullOrEmpty(orgId)) {
+            reactNativeInitFireBase();
         }
     }
     
@@ -121,7 +128,7 @@ function Layout() {
                 }
 
                 setIsFetching(false);
-                reactNativeInitFireBase();
+                initializeFireBasePushToken();
             }
             
             //authorized with active orgid
@@ -141,7 +148,7 @@ function Layout() {
                         navigate(textMessageRoute);
                     }
                 }
-                reactNativeInitFireBase();
+                initializeFireBasePushToken();
                 //set from organization load
                 //setIsFetching(false);
             }
@@ -247,27 +254,40 @@ function Layout() {
         }
     };
     
-    const saveDeviceFirebaseToken = async (deviceId, token, androidDevice) => {
-        if (!isNullOrEmpty(orgId)) {
+    const saveDeviceFirebaseToken = async (deviceId, token, androidDevice, innerOrgId) => {
+        let orgIdToSet = orgId;
+        
+        if (isNullOrEmpty(orgIdToSet)) {
+            const memberData = fromAuthLocalStorage('memberData', {});
+            orgIdToSet = memberData?.OrgId;
+        }
+
+        alert(orgIdToSet)
+        
+        if (!isNullOrEmpty(orgIdToSet)) {
             let postModel = {
                 deviceId: deviceId,
                 token: token,
                 androidDevice: toBoolean(androidDevice),
                 loadUnSeen: true,
+                spGuideId: nullToEmpty(spGuideId)
             }
             
-            let response = await apiService.post(`/api/api/native/firebase-token?id=${orgId}`, postModel);   
+            let response = await apiService.post(`/api/native/firebase-token?id=${orgIdToSet}`, postModel);   
+
             if (response) {
                 reactNativeSaveBadgeCount(response?.unSeenCount);
-                setAlertsCount(response?.unSeenCount)
+                setAlertsCount(response?.unSeenCount);
+                setPushTokenInitialized(true);
+                saveCookie('isInitFirebase', true, 1140);
             }
         }
     }
     
     //events
     useEffect(() => {
-        window.updateFirebaseToken = (deviceId, token, androidDevice) => {
-            saveDeviceFirebaseToken(deviceId, token, androidDevice);
+        window.updateFirebaseToken = async (deviceId, token, androidDevice) => {
+           await saveDeviceFirebaseToken(deviceId, token, androidDevice, orgId);
         };
         
         // Define the function to handle keyboard show event
@@ -424,10 +444,10 @@ function Layout() {
     }, [newOrgId]);
     
     useEffect(() => {
-        if (!isNullOrEmpty(memberId)) {
-            reactNativeInitFireBase();
+        if (!isNullOrEmpty(memberId) && !isNullOrEmpty(orgId)) {
+            initializeFireBasePushToken();
         }
-    }, [memberId])
+    }, [memberId, orgId])
     
     const skeletonArray = Array.from({length: 5});
 
@@ -436,7 +456,7 @@ function Layout() {
         const isDevelopment = process.env.NODE_ENV === 'development' || 1 == 1;
 
         return (
-            <PaddingBlock topBottom={true}>
+            <PaddingBlock topBottom={true} leftRight={true}>
                 <h2>Something went wrong2:</h2>
                 <div>
                     <p><strong>Error Message:</strong> {error.message}</p>

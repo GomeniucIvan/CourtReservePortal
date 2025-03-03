@@ -36,7 +36,7 @@ export const generateEventPostModel = (formik, isFamilyMember, setIsLoading,even
     }
 
     //Current Member
-    if (toBoolean(currentMember?.IsChecked)) {
+    if (toBoolean(currentMember?.IsChecked) && anyInList(currentMember.MemberUdfs)) {
         registrationUdfs.push({
             ...currentMember,
             Udfs: currentMember.MemberUdfs
@@ -46,7 +46,7 @@ export const generateEventPostModel = (formik, isFamilyMember, setIsLoading,even
     //Family Member
     if (anyInList(familyMembers)) {
         familyMembers.forEach((famMember) => {
-            if (toBoolean(famMember?.IsChecked)) {
+            if (toBoolean(famMember?.IsChecked) && anyInList(famMember.MemberUdfs)) {
                 registrationUdfs.push({
                     ...famMember,
                     Udfs: famMember.MemberUdfs

@@ -19,7 +19,7 @@ import {openMobileExternalBrowser} from "@/utils/MobileUtils.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 
 function ListLinks({links, className, classNameLi, hideChevron, announcementsCount}) {
-    const {token, setDynamicPages, globalStyles, } = useApp();
+    const {token, setDynamicPages, globalStyles, setIsLoading } = useApp();
     const {logout, orgId} = useAuth();
     const { styles } = useStyles();
     const navigate = useNavigate();
@@ -28,6 +28,7 @@ function ListLinks({links, className, classNameLi, hideChevron, announcementsCou
         logout();
         onClose();
         navigate(AuthRouteNames.LOGIN);
+        setIsLoading(false);
     }
     
     const onLogoutClick = async () => {

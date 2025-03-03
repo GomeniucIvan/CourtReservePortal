@@ -448,7 +448,9 @@ function MyProfileNotification({selectedTab}) {
                     {showEmail &&
                         <Column className={styles.columnEmail}
                                 title={
-                                    <Checkbox indeterminate={indeterminateEmail} checked={notifications.every(v => toBoolean(v.email))}
+                                    <Checkbox indeterminate={indeterminateEmail}
+                                              checked={notifications.every(v => toBoolean(v.email))}
+                                              className={globalStyles.checkbox}
                                               onClick={(e) => {
                                                   handleSelectAllChange('email', e.target.checked)
                                               }}>
@@ -459,7 +461,9 @@ function MyProfileNotification({selectedTab}) {
                                 key="email"
                                 render={(text, record) => {
                                     return (
-                                        <Checkbox checked={record.email} onClick={(e) => {
+                                        <Checkbox checked={record.email}
+                                                  className={globalStyles.checkbox}
+                                                  onClick={(e) => {
                                             handleSelectionChange('email', record, e.target.checked)
                                         }}/>
                                     );
@@ -469,7 +473,9 @@ function MyProfileNotification({selectedTab}) {
                     {showPush &&
                         <Column dataIndex="push"
                                 title={
-                                    <Checkbox indeterminate={indeterminatePush} checked={notifications.every(v => toBoolean(v.push))}
+                                    <Checkbox indeterminate={indeterminatePush}
+                                              className={globalStyles.checkbox}
+                                              checked={notifications.every(v => toBoolean(v.push))}
                                               onClick={(e) => {
                                         handleSelectAllChange('push', e.target.checked)
                                     }}>
@@ -479,7 +485,9 @@ function MyProfileNotification({selectedTab}) {
                                 key="push"
                                 className={styles.columnPush}
                                 render={(text, record) => (
-                                    <Checkbox checked={record.push} onClick={(e) => {
+                                    <Checkbox checked={record.push}
+                                              className={globalStyles.checkbox}
+                                              onClick={(e) => {
                                         handleSelectionChange('push', record, e.target.checked)
                                     }}/>
                                 )}/>
@@ -489,7 +497,9 @@ function MyProfileNotification({selectedTab}) {
                     {showText &&
                         <Column key="text"
                                 title={
-                                    <Checkbox indeterminate={indeterminateText} checked={notifications.every(v => toBoolean(v.text))}
+                                    <Checkbox indeterminate={indeterminateText}
+                                              className={globalStyles.checkbox}
+                                              checked={notifications.every(v => toBoolean(v.text))}
                                               
                                               onClick={(e) => {
                                         handleSelectAllChange('text', e.target.checked)
@@ -499,7 +509,9 @@ function MyProfileNotification({selectedTab}) {
                                 }
                                 className={styles.columnPush}
                                 render={(text, record) => (
-                                    <Checkbox checked={record.text} onClick={(e) => {
+                                    <Checkbox checked={record.text}
+                                              className={globalStyles.checkbox}
+                                              onClick={(e) => {
                                         handleSelectionChange('text', record, e.target.checked)
                                     }}/>
                                 )}

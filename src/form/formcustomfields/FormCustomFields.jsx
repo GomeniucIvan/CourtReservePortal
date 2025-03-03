@@ -11,7 +11,7 @@ const {Title} = Typography;
 const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
     const { globalStyles, token } = useApp();
 
-    if (isNullOrEmpty(customFields)) {
+    if (isNullOrEmpty(customFields) || !anyInList(customFields)) {
         return <></>;
     }
 

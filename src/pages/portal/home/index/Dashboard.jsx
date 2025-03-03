@@ -18,6 +18,7 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import * as React from "react";
 import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
 import {getGlobalDeviceId} from "@/utils/AppUtils.jsx";
+import appService from "@/api/app.jsx";
 
 function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
@@ -52,6 +53,9 @@ function Dashboard() {
         }
         
         const deviceId = getGlobalDeviceId();
+        
+        //should ping to check if is no any disclosures on home page
+        let response = await appService.get(navigate, `/app/Online/AuthData/Ping?id=${orgId}`);
         
         let dashboardData = await portalService.dashboardData(orgId,
             authData.CostTypeId,

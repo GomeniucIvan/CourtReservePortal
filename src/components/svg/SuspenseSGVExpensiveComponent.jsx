@@ -35,8 +35,10 @@ const SuspenseSGVExpensiveComponent = memo(({ icon,
         const svg = svgContainerRef.current.querySelector("svg");
         if (!svg) return;
 
-        svg.setAttribute('width', `${size}px`);
-        svg.setAttribute('height', `${size}px`);
+        if (!equalString(size, 'auto')) {
+            svg.setAttribute('width', `${size}px`);
+            svg.setAttribute('height', `${size}px`);
+        }
 
         const paths = svg.querySelectorAll('path');
         const rects = svg.querySelectorAll('rect');

@@ -1,4 +1,5 @@
 import {toBoolean} from "@/utils/Utils.jsx";
+import {clearAllCookies} from "@/utils/CookieUtils.jsx";
 
 const appLocalStorage = 'courtreserve-online';
 const authLocalStorage = 'courtreserve-auth';
@@ -46,14 +47,14 @@ export const setTabStorage = (tabKey, selectedTab, setFunction) => {
 
 export const clearAllLocalStorage = () => {
     localStorage.clear();
-
+    clearAllCookies();
+    
     if (window.ReactNativeWebView) {
         const nativeToken = JSON.stringify({type: 'MobileDeleteToken'});
         window.ReactNativeWebView.postMessage(nativeToken);
 
         const nativeLogout = JSON.stringify({type: 'FlutterLogout'});
         window.ReactNativeWebView.postMessage(nativeLogout);
-
     }
 };
 

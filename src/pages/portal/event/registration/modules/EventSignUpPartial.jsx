@@ -163,7 +163,8 @@ function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMem
                                         {toBoolean(member.IsChecked) &&
                                             <>
                                                 <FormCustomFields customFields={member.MemberUdfs}
-                                                                  formik={formik} index={index}
+                                                                  formik={formik} 
+                                                                  index={index}
                                                                   name={'Members[{index}].MemberUdfs[{udfIndex}].Value'}/>
                                             </>
                                         }

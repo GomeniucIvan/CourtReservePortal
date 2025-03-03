@@ -24,3 +24,11 @@ export const getCookieWithDefault = (cookieName, value) => {
     
     return cookieValue;
 }
+
+export const clearAllCookies = () => {
+    Object.keys(Cookies.get()).forEach((cookie) => {
+        Cookies.remove(cookie, { path: '/' });
+    });
+    
+    return true;
+}

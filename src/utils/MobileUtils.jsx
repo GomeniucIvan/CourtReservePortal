@@ -75,18 +75,30 @@ export const reactNativeSaveBadgeCount = (count) =>{
     }
 }
 
-export const reactNativeInitFireBase = () =>{
+function waitForWebViewBridge(callback, retries = 10) {
+    if (window.ReactNativeWebView) {
+        callback();
+    } else if (retries > 0) {
+        setTimeout(() => waitForWebViewBridge(callback, retries - 1), 100);
+    } else {
+        console.warn('ReactNativeWebView not available');
+    }
+}
+
+const reactNativeInitFireBaseBridge = () => {
     if (window.ReactNativeWebView) {
         let isInitFirebase = getCookie('isInitFirebase');
-        logMobile('func isInitFirebase');
         
-        if (!toBoolean(isInitFirebase)) {
-            logMobile('isInitFirebase');
-            saveCookie('isInitFirebase', true, 1140);
+        if (!toBoolean(isInitFirebase) || 1 == 1) {
             const message = JSON.stringify({ type: 'FlutterInitFirebase' });
             window.ReactNativeWebView.postMessage(message);
         }
     }
+}
+export const reactNativeInitFireBase = () => {
+    waitForWebViewBridge(() => {
+        reactNativeInitFireBaseBridge();
+    });
 }
 
 export const reactNativePickImage = (fileRef) =>{

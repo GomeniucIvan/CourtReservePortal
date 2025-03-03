@@ -9,6 +9,7 @@ import {setRequestData} from "../api/api.jsx";
 import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
 import {stringToJson} from "@/utils/ListUtils.jsx";
 import {setTranslateData} from "@/utils/TranslateUtils.jsx";
+import {clearAllCookies} from "@/utils/CookieUtils.jsx";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -44,6 +45,7 @@ export const AuthProvider = ({children}) => {
 
     const logout = async () => {
         clearAllLocalStorage();
+        clearAllCookies();
         
         setOrgId(null);
         setAuthData(null);

@@ -66,9 +66,8 @@ const appService = {
             const response = await axiosInstance.get(url, { params, ...config });
             const fixedResponse = fixResponseData(response.data);
 
-            
-            if (!isNullOrEmpty(fixedResponse?.baseRedirectPath) && typeof navigate === 'function'){
-                navigate(fixedResponse?.baseRedirectPath);
+            if (!isNullOrEmpty(fixedResponse?.BaseRedirectPath) && typeof navigate === 'function'){
+                navigate(fixedResponse?.BaseRedirectPath);
                 return;
             }
 

@@ -10,7 +10,7 @@ import PageForm from "@/form/pageform/PageForm.jsx";
 import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import apiService, {setRequestData} from "@/api/api.jsx";
-import {equalString, toBoolean} from "@/utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import appService from "@/api/app.jsx";
 import {useTranslation} from "react-i18next";
 import portalService from "@/api/portal.jsx";
@@ -118,9 +118,19 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
                 const authResponse = await portalService.requestData(navigate, responseData.OrgId);
                 
                 if (toBoolean(authResponse?.IsValid)) {
+
                     await setAuthorizationData(authResponse.OrganizationData);
-                    navigate(loginApiResponse.Path);
+                    setIsLoading(false);
+
+                    //should set orgId before pending disclosures is called
+
+                    if (!isNullOrEmpty(authResponse?.BaseRedirectPath) && typeof navigate === 'function'){
+                        navigate(authResponse?.BaseRedirectPath);
+                    } else {
+                        navigate(loginApiResponse.Path);
+                    }
                 }
+                setIsLoading(false);
             }
         },
     });
