@@ -8,7 +8,10 @@ export const generateEventPostModel = (formik, isFamilyMember, setIsLoading,even
 
     let familyMembers = [];
     let values = formik.values;
-    let currentMember = values.Members[0];
+    let currentMember = {
+        ...values.Members[0],
+        PullOutReason: formik.values?.PullOutReason || '',
+    };
 
     let registrationUdfs = [];
 
@@ -46,6 +49,7 @@ export const generateEventPostModel = (formik, isFamilyMember, setIsLoading,even
     //Family Member
     if (anyInList(familyMembers)) {
         familyMembers.forEach((famMember) => {
+            famMember.PullOutReason = formik.values?.PullOutReason || '';
             if (toBoolean(famMember?.IsChecked) && anyInList(famMember.MemberUdfs)) {
                 registrationUdfs.push({
                     ...famMember,

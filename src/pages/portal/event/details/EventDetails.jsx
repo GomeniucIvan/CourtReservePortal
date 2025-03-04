@@ -3,7 +3,7 @@ import {useApp} from "@/context/AppProvider.jsx";
 import React, {useEffect, useState} from "react";
 import mockData from "@/mocks/event-data.json";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {Button, Card, Flex, Skeleton, Tabs, Tag, Typography} from "antd";
+import {Button, Card, Divider, Flex, Skeleton, Tabs, Tag, Typography} from "antd";
 import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
 import {cx} from "antd-style";
@@ -21,6 +21,8 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import {eReplace} from "@/utils/TranslateUtils.jsx";
+import {any} from "prop-types";
+import EventDetailsMyRegistration from "@portal/event/details/EventDetails.MyRegistration.jsx";
 
 const {Title, Text} = Typography;
 
@@ -112,12 +114,84 @@ function EventDetails() {
     }, [additionalDatesLoading]);
     
     const tabContent = (key) => {
-
+        if (equalString(key, 1)) {
+            //description
+            return (
+                <PaddingBlock onlyBottom={true}>
+                    <EventDetailsMyRegistration model={event} />
+                </PaddingBlock>
+            )
+        }
+        
         if (equalString(key, 2)) {
             //description
             return (
                 <PaddingBlock onlyBottom={true}>
                     <IframeContent content={event?.EventDescription} id={'event-description'} />
+                </PaddingBlock>
+            )
+        }
+
+        if (equalString(key, 3)) {
+            //registrants
+            const registeringResMembers = event?.AllRegisteredMembers.filter(d => toBoolean(d.IsApproved));
+            let registeringMembers = [];
+
+            registeringResMembers.forEach(resMember => {
+                registeringMembers.push(resMember);
+
+                if (anyInList(event?.ReservationGuests)){
+                    const memberGuests = event.ReservationGuests.filter(v => equalString(v.GetGuestOrgMemberId, resMember.OrganizationMemberId));
+                    memberGuests.forEach(resGuest => {
+                        registeringMembers.push({
+                            FirstName: resGuest.FirstName,
+                            LastName: `${resGuest.LastName} (G)`,
+                            Email: resGuest.Email,
+                            UdfString: resGuest.UdfJson,
+                            OrganizationMemberId: resGuest.OrganizationMemberId ?? 0,
+                            GuestOwnerFullName: resGuest.OwnerFullName,
+                        });
+                    });
+                }
+            });
+
+            if (anyInList(event?.ReservationGuests)) {
+                registeringMembers.push(
+                    ...event.ReservationGuests
+                        .filter(c => (c.GetGuestOrgMemberId ?? 0) === 0)
+                        .map(resGuest => ({
+                            FirstName: resGuest.FirstName,
+                            LastName: `${resGuest.LastName} (G)`,
+                            Email: resGuest.Email,
+                            UdfString: resGuest.UdfJson,
+                            OrganizationMemberId: resGuest.OrganizationMemberId ?? 0,
+                            GuestOwnerFullName: resGuest.OwnerFullName,
+                        }))
+                );
+            }
+            
+            return (
+                <PaddingBlock onlyBottom={true}>
+                    {anyInList(registeringMembers) &&
+                        <>
+                            {registeringMembers.map((member, index) => {
+                                const isLastIndex = index === registeringMembers.length - 1;
+                                
+                                return (
+                                    <Flex key={index}>
+                                       <Card style={{width:'100%'}}>
+                                           <Flex justify={'space-between'} align={'center'}>
+                                               <Text>{member.FirstName} {member.LastName}</Text>
+                                           </Flex>
+                                           {(!isLastIndex) &&
+                                               <Divider className={globalStyles.noMargin}/>
+                                           }
+                                       </Card>
+                                    </Flex>
+                                )
+                            })}
+                        </>
+                    }
                 </PaddingBlock>
             )
         }
@@ -214,7 +288,7 @@ function EventDetails() {
             tabs = tabs.filter(registrationTab => !equalString(registrationTab.key, "2"));
         }
 
-        if (!toBoolean(registration?.ShowRegistrationTab)){
+        if (!toBoolean(registration?.ShowRegistrantsTab)){
             tabs = tabs.filter(registrationTab => !equalString(registrationTab.key, "3"));
         }
         
@@ -487,28 +561,6 @@ function EventDetails() {
                         rootClassName={cx(globalStyles.tabs, registrationTabs().length <= 2 && globalStyles.leftTabs, registrationTabs().length > 3 && globalStyles.scrollableTabs)}
                         defaultActiveKey="1"
                         items={registrationTabs()}
-                        // items={[
-                        //     {
-                        //         label: 'Players (3)',
-                        //         key: 'players',
-                        //         children: tabContent('players')
-                        //     },
-                        //     {
-                        //         label: 'Match Details',
-                        //         key: 'matchdetails',
-                        //         children: tabContent('matchdetails')
-                        //     },
-                        //     {
-                        //         label: 'Misc. Items',
-                        //         key: 'misc',
-                        //         children: tabContent('misc')
-                        //     },
-                        //     {
-                        //         label: 'Additional',
-                        //         key: 'additional',
-                        //         children: tabContent('additional')
-                        //     },
-                        // ]}
                     />
                 }
             </>

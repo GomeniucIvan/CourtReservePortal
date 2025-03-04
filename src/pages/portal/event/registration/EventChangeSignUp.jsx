@@ -39,6 +39,7 @@ import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpS
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import EventSignUpDetails from "@portal/event/registration/modules/EventSignUpDetails.jsx";
 import {generateEventPostModel} from "@portal/event/registration/modules/functions.jsx";
+import FormTextarea from "@/form/formtextarea/FormTextArea.jsx";
 
 function EventChangeSignUp({isFullEventReg = false}) {
     const navigate = useNavigate();
@@ -55,6 +56,7 @@ function EventChangeSignUp({isFullEventReg = false}) {
     const {t} = useTranslation('');
     const guestBlockRef = useRef(null);
     const [maxAllowedGuests, setMaxAllowedGuests] = useState(0);
+    const [showEventCancellationReason, setShowEventCancellationReason] = useState(false);
     
     const {
         setIsFooterVisible,
@@ -82,6 +84,7 @@ function EventChangeSignUp({isFullEventReg = false}) {
     const initialValues = {
         ReservationGuests: [],
         Members: [],
+        PullOutReason: ''
     };
 
     const validationSchema = Yup.object({
@@ -173,6 +176,8 @@ function EventChangeSignUp({isFullEventReg = false}) {
         if (anyInList(formik?.values?.ReservationGuests)) {
             guests = formik.values?.ReservationGuests;
         }
+
+        setShowEventCancellationReason(members.some(member => toBoolean(member.InitialCheck) && !toBoolean(member.IsChecked)));
         
         let checkedMembers = members.filter(member => toBoolean(member.IsChecked));
         let checkedMembersWithMaxGuests = checkedMembers.filter(member => !isNullOrEmpty(member.MaxGuests));
@@ -254,7 +259,7 @@ function EventChangeSignUp({isFullEventReg = false}) {
                     loading={isLoading}
                     disabled={isFetching}
                     onClick={formik.handleSubmit}>
-                Register
+                Change
             </Button>
         </PaymentDrawerBottom>)
     }, [isFetching, isLoading, formik.values])
@@ -343,6 +348,10 @@ function EventChangeSignUp({isFullEventReg = false}) {
                                             maxAllowedGuests={maxAllowedGuests}
                                             loadData={loadData}
                                             guestBlockRef={guestBlockRef} />
+
+                        {showEventCancellationReason &&
+                            <FormTextarea formik={formik} label={'Withdraw Reason'} name={'PullOutReason'} max={350} isRequired={toBoolean(authData.RequireReasonForEventCancellations)}/>
+                        }
                     </Flex>
                 </PaddingBlock>
             }
