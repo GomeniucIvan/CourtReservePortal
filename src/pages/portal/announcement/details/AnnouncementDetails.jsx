@@ -21,7 +21,7 @@ function AnnouncementDetails() {
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
     const {isMockData, setIsFooterVisible, shouldFetch, resetFetch, setFooterContent} = useApp();
     const [isFetching, setIsFetching] = useState(true);
-    
+    const {globalStyles} = useApp();
     const {orgId} = useAuth();
     const [announcement, setAnnouncement] = useState(null);
     const { t } = useTranslation('');
@@ -65,7 +65,7 @@ function AnnouncementDetails() {
     }, [id]);
 
     return (
-        <PaddingBlock>
+        <PaddingBlock topBottom={true}>
             {isFetching &&
                 <CardSkeleton count={1} type={SkeletonEnum.ANNOUNCEMENT_ITEM} />
             }

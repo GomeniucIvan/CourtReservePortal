@@ -262,8 +262,6 @@ function Layout() {
             orgIdToSet = memberData?.OrgId;
         }
 
-        alert(orgIdToSet)
-        
         if (!isNullOrEmpty(orgIdToSet)) {
             let postModel = {
                 deviceId: deviceId,

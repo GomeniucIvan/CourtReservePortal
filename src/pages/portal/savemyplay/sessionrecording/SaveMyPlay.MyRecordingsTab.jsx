@@ -28,6 +28,7 @@ import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {is} from "@/components/timepicker/npm/utils/func.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
 
 const {Title,Text} = Typography;
 
@@ -53,7 +54,7 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
 
     const formik = useCustomFormik({
         initialValues: {
-            Period: '3'
+            Period: '3',
         },
         validation: () => {
 
@@ -90,11 +91,16 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
         if (equalString(selectedTab, 'myrecording')) {
             setIsFooterVisible(true);
             setHeaderRightIcons('')
-            setFooterContent('');
             loadData()
         }
     }, [selectedTab]);
 
+    useEffect(() => {
+        if (equalString(selectedTab, 'myrecording')) {
+            setFooterContent('');
+        }
+    }, [selectedTab, isFetching, isLoading]);
+    
     useEffect(() => {
         loadData(true);
     }, [formik?.values?.Period])
@@ -189,7 +195,7 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
                                                     >
                                                         <img src={item.ThumbnailUrl} alt="thumbnail" className={styles.recordingCardCoverImage} />
                                                         <Flex className={styles.recordingPlayIconWrapper} align={'center'} justify={'center'}>
-                                                            <SVG icon={'play-solid'} color={'white'}  size={16} />
+                                                            <SVG icon={'play-solid'} color={'white'} />
                                                         </Flex>
                                                     </a>
                                                 )

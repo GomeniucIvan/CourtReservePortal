@@ -21,7 +21,7 @@ const SGV = ({
     const {token} = useApp();
     
     if (isNullOrEmpty(color)) {
-        color = token.colorBlack;
+        color = token.colorText;
     }
 
     return (

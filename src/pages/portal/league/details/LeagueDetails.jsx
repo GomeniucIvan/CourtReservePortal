@@ -24,7 +24,7 @@ function LeagueDetails() {
     const [selectedTab, setSelectedTab] = useState('');
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
     const {authDataOrgMemberIds, orgId} = useAuth();
-    const [tabsHeight, setTabHeight] = useState(0);
+    const [tabsHeight, setTabsHeight] = useState(0);
     const tabsRef = useRef(null);
     
     const {
@@ -100,14 +100,28 @@ function LeagueDetails() {
     }, []);
 
     useEffect(() => {
-        if (tabsRef.current) {
-            // Access the 'ant-tabs-nav' element within tabsRef
-            const navElement = tabsRef.current.querySelector('.ant-tabs-nav');
-            if (navElement) {
-                setTabHeight(navElement.offsetHeight);
+        const updateTabsHeight = () => {
+            if (tabsRef.current) {
+                const navElement = tabsRef.current.querySelector('.ant-tabs-nav');
+                if (navElement) {
+                    setTabsHeight(navElement.offsetHeight);
+                }
             }
+        };
+
+        // Delay the execution to ensure elements are rendered
+        setTimeout(updateTabsHeight, 0);
+
+        // Attach a resize observer to update height dynamically
+        const observer = new ResizeObserver(updateTabsHeight);
+        if (tabsRef.current) {
+            observer.observe(tabsRef.current);
         }
-    }, [tabsRef]);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [sessionDetails, selectedTab]);
     
     let tabIds = [];
     
@@ -164,7 +178,7 @@ function LeagueDetails() {
 
                     {(toBoolean(sessionDetails?.IsLoggedInAccountRegistered) || !toBoolean(sessionDetails?.IsStandingHidden)) &&
                         <div ref={tabsRef} style={{display: 'block'}}>
-                            <Tabs
+                            <Tabs 
                                 rootClassName={cx(globalStyles.tabs)}
                                 onChange={(e) => {
                                     setSelectedTab(e);

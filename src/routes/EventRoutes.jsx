@@ -5,6 +5,7 @@ import EventList from "@portal/event/list/EventList.jsx";
 import EventSignUp from "@portal/event/registration/EventSignUp.jsx";
 import EventChangeSignUp from "@portal/event/registration/EventChangeSignUp.jsx";
 import EventWithdraw from "@portal/event/withdraw/EventWithdraw.jsx";
+import EventJoinWaitlist from "@portal/event/waitlist/join/EventJoinWaitlist.jsx";
 
 export const EventRouteNames = {
     EVENT_LIST: '/online/events/list/:id',
@@ -15,6 +16,7 @@ export const EventRouteNames = {
     EVENT_SIGNUP: '/online/events/signuptoevent/:id',
     EVENT_CHANGE_SIGNUP: '/online/events/changesignup/:id',
     EVENT_WITHDRAWN: '/online/events/withdraw/:id',
+    EVENT_JOIN_WAITLIST: '/online/events/joinwaitlist/:id',
 };
 
 const EventRoutes = [
@@ -78,6 +80,12 @@ const EventRoutes = [
         title: 'eventWithdraw',
         entityTitle: true,
         disablePullDown: true
+    },
+    {
+        path: EventRouteNames.EVENT_JOIN_WAITLIST,
+        element: <EventJoinWaitlist />,
+        title: 'eventWaitlist',
+        entityTitle: true
     }
 ];
 

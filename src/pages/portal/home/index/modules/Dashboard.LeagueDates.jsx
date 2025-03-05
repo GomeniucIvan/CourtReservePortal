@@ -12,19 +12,21 @@ import {countListItems} from "@/utils/ListUtils.jsx";
 import EntityCardBooking from "@/components/entitycard/EntityCard.Booking.jsx";
 import appService from "@/api/app.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
-const { Title } = Typography;
+import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {openMobileExternalBrowser} from "@/utils/MobileUtils.jsx";
+const { Title, Text } = Typography;
 
 const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
-    const {globalStyles} = useApp();
+    const {globalStyles, token} = useApp();
     const {orgId} = useAuth();
     const { styles } = useStyles();
     const {tagStyles} = useCombinedStyles();
     const [isOptInLoading, setIsOptInLoading] = useState(false);
     const [innerLeaguesDates, setInnerLeaguesDates] = useState(leaguesDates);
-    
+
     if (!anyInList(leaguesDates)){
         return '';
     }
@@ -32,7 +34,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
     useEffect(() => {
         setInnerLeaguesDates(leaguesDates);
     }, [leaguesDates])
-    
+
     const optInAjax = async (data, isFree) => {
         let leagueId = data.LeagueId;
         let isDisabled = !data.AllowToOptIn;
@@ -59,6 +61,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
                         )
                     );
                     setIsOptInLoading(false);
+                    pNotify('Successfully Opt-In.');
                 }
             } else {
                 displayMessageModal({
@@ -69,6 +72,35 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
                 })
                 setIsOptInLoading(false);
             }
+        }
+    }
+
+    const optOutAjaxPost = async (leagueId, leagueSessionId, reservationId, orgMemberId, leagueSessionRegistrationId, resId) => {
+        setIsOptInLoading(true);
+
+        let optInResponse = await appService.post(`/app/Online/Leagues/OptOutOrgMemberPost?id=${orgId}&leagueId=${leagueId}&sessionId=${leagueSessionId}&resId=${reservationId}&orgMemberId=${orgMemberId}&orgMemberRegistrationId=${leagueSessionRegistrationId}&resId=${resId}&isAjaxCall=true`)
+        setIsOptInLoading(false);
+
+        if (toBoolean(optInResponse?.isValid)) {
+            let respData = optInResponse?.Data?.Data;
+
+            setInnerLeaguesDates(prevDates =>
+                prevDates.map(date =>
+                    date.ReservationId === resId
+                        ? { ...date, IsOptIn: false, PlayingDisplay: respData?.LeagueSession?.PlayingDisplay, IsUnpaid: false }
+                        : date
+                )
+            );
+            pNotify('Successfully Opt-Out.');
+        } else {
+            setTimeout(function () {
+                displayMessageModal({
+                    title: "Opt-Out Error",
+                    description: (optInResponse?.Message),
+                    type: "error",
+                    size: "s"
+                })
+            }, 500)
         }
     }
 
@@ -84,42 +116,32 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
 
         if (isFree) {
             displayMessageModal({
-                title: 'Opt-Out',
-                description: 'Are you sure you want to Opt-Out?',
+                title: "Opt-Out",
+                html: (onClose) => <Flex vertical={true} gap={token.padding * 2}>
+                    <Text>{'Are you sure you want to Opt-Out?'}</Text>
+
+                    <Flex vertical={true} gap={token.padding}>
+                        <Button block={true}
+                                type={'primary'}
+                                danger={true}
+                                onClick={() => {
+                                    optOutAjaxPost(leagueId, leagueSessionId, reservationId, orgMemberId, leagueSessionRegistrationId, resId);
+                                    onClose();
+                                }}>
+                            Opt-Out
+                        </Button>
+
+                        <Button block={true}
+                                onClick={() => {
+                            onClose();
+                        }}>
+                            Close
+                        </Button>
+                    </Flex>
+                </Flex>,
                 type: "info",
-                size: "s",
-                submitButtonText: 'Yes, Opt-Out',
-                onSubmit: async () => {
-                    await new Promise(async (resolve) => {
-                        setIsOptInLoading(true);
-
-                        let optInResponse = await appService.post(`/app/Online/Leagues/OptOutOrgMemberPost?id=${orgId}&leagueId=${leagueId}&sessionId=${leagueSessionId}&resId=${reservationId}&orgMemberId=${orgMemberId}&orgMemberRegistrationId=${leagueSessionRegistrationId}&resId=${resId}&isAjaxCall=true`)
-                        setIsOptInLoading(false);
-                        resolve(true);
-
-                        if (toBoolean(optInResponse?.isValid)) {
-                            let respData = optInResponse?.Data?.Data;
-
-                            setInnerLeaguesDates(prevDates =>
-                                prevDates.map(date =>
-                                    date.ReservationId === resId
-                                        ? { ...date, IsOptIn: false, PlayingDisplay: respData?.LeagueSession?.PlayingDisplay, IsUnpaid: false }
-                                        : date
-                                )
-                            );
-                            pNotify('Successfully Opt-Out.');
-                        } else {
-                            setTimeout(function () {
-                                displayMessageModal({
-                                    title: "Opt-Out Error",
-                                    description: (optInResponse?.Message),
-                                    type: "error",
-                                    size: "s"
-                                })
-                            }, 500)
-                        }
-                    });
-                },
+                buttonType: '',
+                onClose: () => {},
             })
         }
     }
@@ -199,7 +221,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
             }
         }
     }
-    
+
     return (
         <SwiperSlider count={countListItems(innerLeaguesDates)} arrows={true} fullWidth={true}>
             {innerLeaguesDates.map((leagueSessionDate, index) => {
@@ -222,7 +244,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
                 )
                 const isLastItem = index === leaguesDates.length - 1;
                 const isOneItem = oneListItem(leaguesDates);
-                
+
                 return (
                     <Swiper.Item key={index} className={cx((!isOneItem && !isLastItem) && globalStyles.swiperItem, (!isOneItem && isLastItem) && globalStyles.swiperLastItem)}>
                         <>

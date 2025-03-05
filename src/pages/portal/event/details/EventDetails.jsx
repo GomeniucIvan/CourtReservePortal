@@ -11,7 +11,7 @@ import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
-import {anyInList, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, encodeParamsObject, equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {isNullOrEmptyHtmlCode} from "@/utils/HtmlUtils.jsx";
 import IframeContent from "@/components/iframecontent/IframeContent.jsx";
 import {dateTimeToFormat, dateTimeToTimes} from "@/utils/DateUtils.jsx";
@@ -23,6 +23,9 @@ import {getConfigValue} from "@/config/WebConfig.jsx";
 import {eReplace} from "@/utils/TranslateUtils.jsx";
 import {any} from "prop-types";
 import EventDetailsMyRegistration from "@portal/event/details/EventDetails.MyRegistration.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
+import {LeagueRouteNames} from "@/routes/LeagueRoutes.jsx";
+import EventDetailsPartial from "@portal/event/modules/EventDetailsPartial.jsx";
 
 const {Title, Text} = Typography;
 
@@ -100,7 +103,7 @@ function EventDetails() {
 
     const loadAdditionalDates = async () => {
        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/Event_GetAdditionalDates?id=${orgId}&uiCulture=${authData.UiCulture}&eventId=${event.EventId}&allowDropIns=${event.AllowDropIns}&leftReservationsCount=${event.LeftReservationsCount}&costTypeID=${event.MembershipId}&isHybridEvent=${(event.AllowDropIns && event.AllowFullEventPrice)}&hidePricing=${event.HidePricing}&showSlotInfo=${event.ShowSlowInfo}&allowWaitList=${event.AllowWaitList}`)
-        console.log(response)
+
         if (toBoolean(response?.IsValid)){
             setAdditionalDates(response.Data.Dates);
         }
@@ -115,7 +118,7 @@ function EventDetails() {
     
     const tabContent = (key) => {
         if (equalString(key, 1)) {
-            //description
+            //my registration
             return (
                 <PaddingBlock onlyBottom={true}>
                     <EventDetailsMyRegistration model={event} />
@@ -173,24 +176,22 @@ function EventDetails() {
             return (
                 <PaddingBlock onlyBottom={true}>
                     {anyInList(registeringMembers) &&
-                        <>
+                        <Card className={globalStyles.card}>
                             {registeringMembers.map((member, index) => {
                                 const isLastIndex = index === registeringMembers.length - 1;
                                 
                                 return (
-                                    <Flex key={index}>
-                                       <Card style={{width:'100%'}}>
-                                           <Flex justify={'space-between'} align={'center'}>
-                                               <Text>{member.FirstName} {member.LastName}</Text>
-                                           </Flex>
-                                           {(!isLastIndex) &&
-                                               <Divider className={globalStyles.noMargin}/>
-                                           }
-                                       </Card>
+                                    <Flex key={index} vertical={true}>
+                                        <Flex justify={'space-between'} align={'center'}>
+                                            <Text>{member.FirstName} {member.LastName}</Text>
+                                        </Flex>
+                                        {(!isLastIndex) &&
+                                            <Divider style={{marginTop: token.paddingLG, marginBottom: token.paddingLG}}/>
+                                        }
                                     </Flex>
                                 )
                             })}
-                        </>
+                        </Card>
                     }
                 </PaddingBlock>
             )
@@ -333,91 +334,7 @@ function EventDetails() {
             {!isFetching &&
             <>
                 <PaddingBlock onlyTop={true}>
-                    {anyInList(event?.EventTags) &&
-                        <Flex gap={token.padding/2}>
-                            {event.EventTags.map(eventTag => (
-                                <Tag color={eventTag.TextColor} key={eventTag.EventTagId} style={{ backgroundColor: eventTag.BackgroundColor }} className={globalStyles.tag}>{eventTag.Name}</Tag>
-                            ))}
-                        </Flex>
-                    }
-                    
-                    <div style={{marginBottom: `${token.padding}px`}}>
-                        <Title level={3} style={{marginBottom: 0}}>
-                            {event?.EventName}
-
-                            {toBoolean(event?.IsFeatured) &&
-                                <Tag color="default" className={globalStyles.tag}>Featured</Tag>
-                            }
-                        </Title>
-                        <Text type="secondary">{event?.EventType}</Text>
-                    </div>
-
-                    <Flex vertical gap={4}>
-                        {!isNullOrEmpty(registration?.CalendarDate) &&
-                            <CardIconLabel icon={'calendar'} description={registration?.CalendarDate}/>
-                        }
-
-                        {!isNullOrEmpty(registration?.CalendarDates) &&
-                            <CardIconLabel icon={'dates'} description={registration?.CalendarDates}/>
-                        }
-                        
-                        {!isNullOrEmpty(registration?.Clock) &&
-                            <CardIconLabel icon={'clock'} description={registration?.Clock}/>
-                        }
-
-                        {!isNullOrEmpty(registration?.FullPriceData) &&
-                            <CardIconLabel icon={'price-tag'} description={registration?.FullPriceData}/>
-                        }
-
-                        {!isNullOrEmpty(registration?.SinglePriceData) &&
-                            <CardIconLabel icon={'price-tag'} description={registration?.SinglePriceData}/>
-                        }
-
-                        {!isNullOrEmpty(registration?.SignUpNoDropInMessage) &&
-                            <CardIconLabel icon={'alert'} description={registration?.SignUpNoDropInMessage}/>
-                        }
-
-                        {!isNullOrEmpty(registration?.SignUpDropInMessage) &&
-                            <CardIconLabel icon={'alert'} description={registration?.SignUpDropInMessage}/>
-                        }
-
-                        {!isNullOrEmpty(registration?.SlotsInfo) &&
-                            <CardIconLabel icon={'alert'} description={registration?.SlotsInfo}/>
-                        }
-
-                        {!isNullOrEmpty(event?.DisplayRequiredParticipant) &&
-                            <CardIconLabel icon={'hourglass'} description={event?.DisplayRequiredParticipant}/>
-                        }
-
-                        {(toBoolean(event?.DisplayOrganizersOnMemberPortal) && 
-                                toBoolean(event?.DisplayOrganizersOnPublicCalendars) &&
-                                !isNullOrEmpty(event?.OrganizersDisplay)) &&
-                            <CardIconLabel icon={'instructor'} description={event?.OrganizersDisplay}/>
-                        }
-                        {!isNullOrEmpty(event?.PinCode) &&
-                            <CardIconLabel icon={'event-pincode'} description={event?.PinCode}/>
-                        }
-                        {(!isNullOrEmpty(event?.Courts) && !toBoolean(event?.IsCourtAssignmentHiddenOnPortal))  &&
-                            <CardIconLabel icon={'event-courts'} description={event?.Courts}/>
-                        }
-
-                        {anyInList(event?.EventUdfs) &&
-                            <>
-                                {event.EventUdfs
-                                    .filter((udf) =>  !isNullOrEmpty(udf.Val)) 
-                                    .map((udf, index) => (
-                                        <CardIconLabel icon={'event-courts'} description={`<strong>${udf.Name}</strong> ${udf?.Val}`}/>
-                                    ))}
-                            </>
-                        }
-
-                        {anyInList(event?.MemberGroups) && (
-                            <CardIconLabel icon={'member-group'} description={event.MemberGroups.map((group) => group.Name).join(", ")} />
-                        )}
-                        {!isNullOrEmpty(event?.EventNote) &&
-                            <CardIconLabel icon={'note'} description={event?.EventNote}/>
-                        }
-                    </Flex>
+                    <EventDetailsPartial event={event} registration={registration} />
 
                     {buttonsCount > 0 &&
                         <PaddingBlock topBottom={true} leftRight={false}>
@@ -426,6 +343,10 @@ function EventDetails() {
                                     <Button type="primary"
                                             block
                                             className={buttonStyles.buttonYellow}
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_JOIN_WAITLIST, 'id', orgId);
+                                                navigate(`${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}&action=waitlist`);
+                                            }}
                                             htmlType={'button'}>
                                         Join Waitlist
                                     </Button>
@@ -491,6 +412,10 @@ function EventDetails() {
                                     <Button type="primary"
                                             block
                                             className={buttonStyles.buttonBlue}
+                                            onClick={() => {
+                                                let route = toRoute(ProfileRouteNames.PROCESS_PAYMENT, 'id', orgId);
+                                                navigate(`${route}?reservationId=${event.ReservationId}`);
+                                            }}
                                             htmlType={'button'}>
                                         Pay
                                     </Button>
@@ -499,6 +424,10 @@ function EventDetails() {
                                 {toBoolean(registration?.ShowRequireUpfrontPaymentBtn) &&
                                     <Button type="primary"
                                             block
+                                            onClick={() => {
+                                                let route = toRoute(ProfileRouteNames.PROCESS_PAYMENT, 'id', orgId);
+                                                navigate(route);
+                                            }}
                                             className={buttonStyles.buttonBlue}
                                             htmlType={'button'}>
                                         Pay
@@ -527,6 +456,10 @@ function EventDetails() {
                                             block
                                             ghost
                                             className={buttonStyles.buttonYellow}
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_JOIN_WAITLIST, 'id', orgId);
+                                                navigate(`${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}&action=waitlist-unsubscribe`);
+                                            }}
                                             htmlType={'button'}>
                                         Withdraw from Waitlist
                                     </Button>
@@ -537,6 +470,10 @@ function EventDetails() {
                                             block
                                             ghost
                                             className={buttonStyles.buttonYellow}
+                                            onClick={() => {
+                                                let route = toRoute(EventRouteNames.EVENT_JOIN_WAITLIST, 'id', orgId);
+                                                navigate(`${route}?eventId=${event.EventId}&reservationId=${event.ReservationId}&action=waitlist-edit`);
+                                            }}
                                             htmlType={'button'}>
                                         Edit Waitlist
                                     </Button>

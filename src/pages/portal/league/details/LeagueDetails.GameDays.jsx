@@ -89,11 +89,12 @@ function LeagueDetailsGameDays({selectedTab, tabsHeight, sessionDetails}) {
             }
 
             if (currentComponentHeaderHeight > 0) {
-                setInnerTabHeight(currentComponentHeaderHeight + tabsHeight + (token.padding * 2) + token.paddingSM - 2); //2 gaps token
+                let innerHeightToSet = currentComponentHeaderHeight + tabsHeight + (token.padding * 2) + token.paddingSM - 2;
+                setInnerTabHeight(innerHeightToSet); //2 gaps token
             }
         }
-    }, [tabsRef, gameDayPickerRef, gameDaySelectedTab]);
-
+    }, [tabsRef, gameDayPickerRef, gameDaySelectedTab, tabsHeight]);
+    
     useEffect(() => {
         if (equalString(selectedTab, 'gamedays')) {
             loadData(selectedReservationId)

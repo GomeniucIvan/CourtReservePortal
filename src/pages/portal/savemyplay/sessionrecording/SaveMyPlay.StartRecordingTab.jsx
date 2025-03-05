@@ -1,5 +1,5 @@
 ﻿import {useStyles} from "./../styles.jsx";
-import {Flex, List, Skeleton, Tabs, Tag, Typography} from "antd";
+import {Button, Flex, List, Skeleton, Tabs, Tag, Typography} from "antd";
 import React, {useEffect, useState, useRef} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
 import apiService from "@/api/api.jsx";
@@ -14,10 +14,18 @@ import {setFormikErrorN, validateDisclosures, validatePaymentProfile} from "@/ut
 import {membershipRequirePayment} from "@/utils/CostUtils.jsx";
 import FormCardRadioGroup from "@/form/formradio/FormCardRadioGroup.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
+import FooterBlock from "@/components/footer/FooterBlock.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
 const {Title} = Typography;
 
 function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
-    const {token, globalStyles, availableHeight, setIsLoading} = useApp();
+    const {token,
+        globalStyles, 
+        availableHeight,
+        isLoading,
+        setIsLoading,
+        setIsFooterVisible,
+        setFooterContent,} = useApp();
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
     const [isFetching, setIsFetching] = useState(true);
     const [initialPrice, setInitialPrice] = useState(null);
@@ -53,7 +61,7 @@ function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
             return isValidFormik;
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
-
+            pNotify('TODO?!')
         },
     });
 
@@ -84,6 +92,21 @@ function SaveMyPlayStartRecordingTab({selectedTab, tabsHeight}) {
         }
     }, [selectedTab])
 
+    useEffect(() => {
+        if (equalString(selectedTab, 'startrecording')) {
+            setFooterContent(<FooterBlock topBottom={true}>
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        disabled={(isFetching || !anyInList(formik?.values?.CourtIds) || isNullOrEmpty(formik?.values?.Duration))}
+                        loading={isLoading}
+                        onClick={formik.handleSubmit}>
+                    Start Recording
+                </Button>
+            </FooterBlock>);
+        }
+    }, [selectedTab, isFetching, isLoading, formik?.values]);
+    
     const predefinedCourts = existingRecordingData?.map((court) => ({
         Id: court.CourtId,
         Name: court.CourtLabel,

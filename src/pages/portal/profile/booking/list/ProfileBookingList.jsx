@@ -1,7 +1,15 @@
 ﻿import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Badge, Button, Flex, Input, Segmented, Space, Tag, Typography} from "antd";
-import {anyInList, containsString, equalString, generateHash, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {
+    anyInList,
+    containsString,
+    equalString,
+    generateHash,
+    isNullOrEmpty,
+    nullToEmpty,
+    toBoolean
+} from "@/utils/Utils.jsx";
 import {cx} from "antd-style";
 import {e} from "@/utils/TranslateUtils.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
@@ -83,12 +91,19 @@ function ProfileBookingList() {
     const loadBookings = async (incFilterData, type, skip) => {
         let readValues = incFilterData || formik?.values?.DrawerFilter || {};
         setIsFetching(true);
+
+        let datesString = '';
+        if (incFilterData) {
+            datesString = incFilterData.DatesString; 
+        } else{
+            datesString = readValues.Dates.join(',');
+        }
         
         const filterModel = {
             OrganizationId: orgId,
             OrgMemberIdsString: readValues.OrgMemberIds.join(','),
             BookingTypesString: readValues.BookingTypes.join(','),
-            DatesString: '',
+            DatesString: datesString,
             SkipRows: skip || readValues.SkipRows,
             CustomDate_Start: readValues.CustomDate_Start,
             CustomDate_End: readValues.CustomDate_End,
@@ -99,7 +114,7 @@ function ProfileBookingList() {
             ...filterModel,
         };
 
-        let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData);
+        let response = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiLoadBookings?id=${orgId}`, postData);
 
         if (toBoolean(response?.IsValid)) {
             const responseData = response.Data;
@@ -142,7 +157,7 @@ function ProfileBookingList() {
 
     const loadData = async (refresh) => {
         if (!refresh) {
-            let response = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}&type=${typeParam}`);
+            let response = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/BookingsApi/ApiList?id=${orgId}&type=${nullToEmpty(typeParam)}`);
 
             if (toBoolean(response?.IsValid)) {
                 let data = response.Data;
@@ -151,6 +166,7 @@ function ProfileBookingList() {
                     ...data,
                     CustomDate_Start: fromDateTimeStringToDate(data.CustomDate_StartStringDisplay),
                     CustomDate_End: fromDateTimeStringToDate(data.CustomDate_EndStringDisplay),
+                    BookingTypes: data.BookingTypeIds
                 }
                 setFilterData(filterData);
                 loadBookings(filterData);

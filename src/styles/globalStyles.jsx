@@ -254,8 +254,15 @@ export const useStyles = createStyles(({ css, token }) => ({
    leftTabs: css `
       .ant-tabs-nav-wrap {
          .ant-tabs-nav-list {
+             gap: ${token.paddingSM}px;
             .ant-tabs-tab {
                margin: initial;
+                padding-left: ${token.paddingSM}px;
+                padding-right: ${token.paddingSM}px;
+                
+                &:first-child {
+                    //padding-left: 0;
+                }
             }
          }
       }

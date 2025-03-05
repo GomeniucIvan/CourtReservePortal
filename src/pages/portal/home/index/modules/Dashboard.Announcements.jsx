@@ -81,7 +81,7 @@ const DashboardAnnouncements = ({dashboardData, isFetching}) => {
 
     const announcementCard = (globalAnn, isUrgent) => {
         return (
-            <Card className={cx(globalStyles.card, globalStyles.clickableCard)}
+            <Card className={cx(globalStyles.card)}
                   onClick={() => {
                       setSelectedAnnouncement(globalAnn);
                   }}>

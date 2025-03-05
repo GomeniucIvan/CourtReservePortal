@@ -32,6 +32,7 @@
   "eventDetails": "Event Details",
   "eventSignup": "Event Signup",
   "bookings": "Booking(s)",
+  "eventWaitlist": "Waitlist",
   "reservationDetails": "Reservation Details",
   "createReservation": "Create Reservation",
   "profile": "Profile",
