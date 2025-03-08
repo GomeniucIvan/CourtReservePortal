@@ -92,12 +92,14 @@ function MembershipReview() {
                 setFormikErrorN(formik, 'paymentFrequency', 'Pricing Option is required.');
                 isValidFormik = false;
             }
+            
             return isValidPaymentProfile && isValidDisclosures && isValidFormik;
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            let paymentProfileId = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? 1 : values?.PaymentProfileId;
+            let isNewCard = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0);
+            let paymentProfileId = isNewCard ? 1 : values?.PaymentProfileId;
             
             if (equalString(paymentProfileId, 1)) {
                 if (paymentProfileRef.current) {
@@ -124,8 +126,8 @@ function MembershipReview() {
                 CardDetails: {
                     //Number: "",
                     CardNumber: values.card_number,
-                    Cvv: values.card,
-                    ExpiryDate: values.expiryDate,
+                    Cvv: values.card_securityCode,
+                    ExpiryDate: values.card_expiryDate,
                     StripeBankAccountToken: values.card_number,
                     AccountType: parseSafeInt(values.card_accountType, ''),
                     PaymentProfileId: paymentProfileId,
@@ -142,7 +144,7 @@ function MembershipReview() {
                 },
                 Country: values?.card_country,
                 SaveDataForFutureUse: values?.card_savePaymentProfile,
-                PaymentTypeId: paymentProfileId,
+                PaymentTypeId: equalString(paymentProfileId, 1) ? null : paymentProfileId,
                 Disclosures: values?.disclosures
             }
             
@@ -231,8 +233,13 @@ function MembershipReview() {
             }
 
             formik.setFieldValue('card_accountType', '1');
+            
             formik.setFieldValue('firstName', authData.MemberFirstName);
             formik.setFieldValue('lastName', authData.MemberLastName);
+            
+            //hidden fields
+            formik.setFieldValue('card_firstName', authData.MemberFirstName);
+            formik.setFieldValue('card_lastName', authData.MemberLastName);
             
             if (!isNullOrEmpty(paymentFrequencyValue)){
                 formik.setFieldValue("paymentFrequency", paymentFrequencyValue);
