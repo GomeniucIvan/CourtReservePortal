@@ -24,7 +24,7 @@ export const ProfileRouteNames = {
     PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
     PROFILE_CALENDAR_FEED: `/online/myprofile/mycalendar/:id`,
-    PROFILE_MEMBERSHIP: `/online/myprofile/mymembership/:id`,
+    PROFILE_MEMBERSHIP: `/online/myprofile/mymembership/:id`, //ProfileMyMembership
     PROFILE_BILLING: `/online/mybalance/index/:id`,
     PROFILE_BILLING_INVOICES: `/online/myinvoices/index/:id`,
     PROFILE_BILLING_INVOICE_DETAILS: `/online/myinvoices/viewmyinvoice/:id`,

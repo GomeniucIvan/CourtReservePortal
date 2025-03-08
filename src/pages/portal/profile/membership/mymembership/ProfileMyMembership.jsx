@@ -1,6 +1,6 @@
 ﻿import {useNavigate} from "react-router-dom";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {Button, Divider, Flex, Skeleton, Tabs, Tag, Typography} from "antd";
+import {Button, Card, Divider, Flex, Skeleton, Tabs, Tag, Typography} from "antd";
 import mockData from "@/mocks/personal-data.json";
 import React, {useEffect, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
@@ -33,6 +33,7 @@ import {any} from "prop-types";
 import Modal from "@/components/modal/Modal.jsx";
 import EntityEmptyBlock from "@/components/entitycard/EntityEmptyBlock.jsx";
 import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
+import {costDisplay} from "@/utils/CostUtils.jsx";
 const {Title,Link,Text} = Typography;
 
 function ProfileMyMembership() {
@@ -47,7 +48,7 @@ function ProfileMyMembership() {
     const [networkLocations, setNetworkLocations] = useState(null);
     const {orgId, authData} = useAuth();
     const {tagStyles} = useCombinedStyles();
-
+    
     const {setHeaderRightIcons} = useHeader();
 
     const {
@@ -138,6 +139,35 @@ function ProfileMyMembership() {
                             </>
                         }
                     </Flex>
+                </PaddingBlock>
+            )
+        }
+        
+        if (equalString(key, 'billingcycles')) {
+            return (
+                <PaddingBlock>
+                    {anyInList(billingItems) &&
+                        <>
+                            {billingItems.slice(0, 5).map((billingItem, index) => {
+                                return (
+                                    <Card key={index} className={globalStyles.card}>
+                                        <Flex vertical={true} gap={4}>
+                                            <Flex justify='space-between'>
+                                                <Title level={3}>{billingItem.PeriodDisplay}</Title>
+                                                <Tag className={cx(globalStyles.tag, toBoolean(billingItem?.IsPaid)&& tagStyles.success, !toBoolean(billingItem?.IsPaid) && tagStyles.error)}>
+                                                    {toBoolean(billingItem?.IsPaid) ? 'Paid' : 'Unpaid'}
+                                                </Tag>
+                                            </Flex>
+                                            <Flex justify='space-between'>
+                                                <Text>{billingItem.AmtDisplay}</Text>
+                                                <Text>{billingItem.PaidOnDisplay}</Text>
+                                            </Flex>
+                                        </Flex>
+                                    </Card>
+                                )
+                            })}
+                        </>
+                    }
                 </PaddingBlock>
             )
         }
@@ -243,7 +273,7 @@ function ProfileMyMembership() {
 
     if (anyInList(billingItems)) {
         tabItems.push({
-            label: 'Billing Cycles',
+            label: toBoolean(authData?.AllowNetworkMemberships) ? 'Billing' : 'Billing Cycles',
             key: 'billingcycles',
             children: tabContent('billingcycles')
         });
@@ -377,7 +407,7 @@ function ProfileMyMembership() {
 
                                         {membershipData?.BillingDetails?.Amount > 0 &&
                                             <CardIconLabel icon={'money'} description={<>
-                                                <Text>Membership Price: {displayCost(membershipData?.BillingDetails?.Amount)} / {membershipData?.BillingDetails?.FrequencyDisplay}</Text>
+                                                <Text>Membership Price: {costDisplay(membershipData?.BillingDetails?.Amount)} / {membershipData?.BillingDetails?.FrequencyDisplay}</Text>
 
                                                 {!isNullOrEmpty(membershipData?.BillingDetails?.TaxMessage) &&
                                                     <span dangerouslySetInnerHTML={{ __html: membershipData?.BillingDetails?.TaxMessage }}></span>

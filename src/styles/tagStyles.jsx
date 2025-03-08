@@ -2,9 +2,14 @@
 
 export const tStyles = createStyles(({ css, token }) => ({
     error: css`
-        color: #6B1517;
-        background-color: #FFCCC7;
-        border-color: #FFCCC7;
+        color: ${token.colorError};
+        background-color: ${token.colorErrorBg};
+        border-color: ${token.colorErrorBg};
+    `,
+    success: css`
+        color: ${token.colorSuccessActive};
+        background-color: ${token.colorSuccessBgHover};
+        border-color: ${token.colorSuccessBgHover};
     `,
     grey: css`
         background-color: #F0F0F0;

@@ -151,7 +151,7 @@ function MembershipReview() {
             let response = await appService.post(`/app/Online/Memberships/PurchaseMembership_Post?id=${orgId}`, postModel);
             
             if (response && response?.data?.redirectUrl) {
-                pNotify('Successfully purchased membership.');
+                pNotify('Successfully joined the membership.');
                 navigate(response.data.redirectUrl);
                 setIsLoading(false);
                 
