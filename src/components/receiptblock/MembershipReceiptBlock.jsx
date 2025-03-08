@@ -9,6 +9,7 @@ import {Card, Divider, Flex, Typography} from "antd";
 import {useApp} from "@/context/AppProvider.jsx";
 import {Ellipsis} from "antd-mobile";
 import React from "react";
+import ReceiptBlock from "@/components/receiptblock/ReceiptBlock.jsx";
 
 const {Title, Text} = Typography;
 
@@ -67,84 +68,71 @@ function MembershipReceiptBlock({selectedMembership,
         }
     }
 
+    let receiptItems = [];
+
+    if (selectedMembership != null) {
+        if(!isNullOrEmpty(selectedMembership?.InitiationFeePriceDisplay)){
+            receiptItems.push({
+                Key: 'Text',
+                Label: 'Initiation Fee',
+                Value: costDisplay(selectedMembership?.InitiationFeePrice)
+            })
+        }
+
+        receiptItems.push({
+            Key: 'Text',
+            Label: <Ellipsis direction='end' content={selectedMembership.Name}/>,
+            Value: selectedPrice?.FullPriceDisplay
+        })
+
+        receiptItems.push({
+            Key: 'divider'
+        })
+
+        if(!isNullOrEmpty(subTotal)){
+            receiptItems.push({
+                Key: '',
+                Label: 'Subtotal',
+                Value: costDisplay(subTotal)
+            })
+        }
+
+        if(!isNullOrEmpty(taxTotal)){
+            receiptItems.push({
+                Key: 'Text',
+                Label: 'Tax',
+                Value: costDisplay(taxTotal)
+            })
+        }
+
+        if(!isNullOrEmpty(convenienceFeeObj) && !isNullOrEmpty(convenienceFeeObj.convenienceFeePercent) && convenienceFee > 0) {
+            receiptItems.push({
+                Key: 'Text',
+                Label: <Text>
+                            Credit Card Convenience Fee <Text style={{color: token.colorError}}>{' '} ({convenienceFeeObj.convenienceFeePercent}%)</Text>
+                        </Text>,
+                Value: costDisplay(convenienceFee)
+            })
+        }
+
+        if(!isNullOrEmpty(taxTotal)) {
+            receiptItems.push({
+                Key: 'divider'
+            })
+            
+            receiptItems.push({
+                Key: '',
+                Label: 'Total',
+                Value: costDisplay(total)
+            })
+        }
+        
+    }
+    
     return (
         <>
             {!isNullOrEmpty(selectedMembership) &&
-                <Card style={{margin: '0px'}}>
-                    <Flex vertical={true} gap={8}>
-                        <Flex vertical={true} gap={4}>
-                            {!isNullOrEmpty(selectedMembership.InitiationFeePriceDisplay) &&
-                                <Flex align={'center'} justify={'space-between'}>
-                                    <Text>Initiation Fee</Text>
-                                    <Text style={{textAlign: 'end'}}>{costDisplay(selectedMembership.InitiationFeePrice)}</Text>
-                                </Flex>
-                            }
-
-                            <Flex align={'center'} justify={'space-between'}>
-                                <Text>
-                                    <Ellipsis direction='end' content={selectedMembership.Name}/>
-                                </Text>
-                                <Title level={4} style={{textAlign: 'end'}}>
-                                    {selectedPrice?.FullPriceDisplay}
-                                </Title>
-                            </Flex>
-                        </Flex>
-
-                        <Divider className={globalStyles.noMargin} />
-
-                        <Flex vertical={true} gap={4}>
-                            {subTotal &&
-                                <Flex align={'center'} justify={'space-between'}>
-                                    <Title level={4} style={{textAlign: 'end'}}>
-                                        Subtotal
-                                    </Title>
-
-                                    <Title level={4} style={{textAlign: 'end'}}>
-                                        {costDisplay(subTotal)}
-                                    </Title>
-                                </Flex>
-                            }
-
-                            {taxTotal &&
-                                <Flex align={'center'} justify={'space-between'}>
-                                    <Text>
-                                        Tax
-                                    </Text>
-                                    <Text style={{textAlign: 'end'}}>
-                                        {costDisplay(taxTotal)}
-                                    </Text>
-                                </Flex>
-                            }
-
-                            {(!isNullOrEmpty(convenienceFeeObj) && !isNullOrEmpty(convenienceFeeObj.convenienceFeePercent) && convenienceFee > 0) &&
-                                <Flex align={'center'} justify={'space-between'}>
-                                    <Text>
-                                        Credit Card Convenience Fee <Text style={{color: token.colorError}}>{' '} ({convenienceFeeObj.convenienceFeePercent}%)</Text>
-                                    </Text>
-                                    <Text style={{textAlign: 'end'}}>
-                                        {costDisplay(convenienceFee)}
-                                    </Text>
-                                </Flex>
-                            }
-                        </Flex>
-
-                        {!isNullOrEmpty(total) &&
-                            <>
-                                <Divider className={globalStyles.noMargin} />
-
-                                <Flex align={'center'} justify={'space-between'}>
-                                    <Title level={4} style={{textAlign: 'end'}}>
-                                        Total
-                                    </Title>
-
-                                    <Title level={4} style={{textAlign: 'end'}}>
-                                        {costDisplay(total)}
-                                    </Title>
-                                </Flex>
-                            </>
-                        }
-                    </Flex>
-                </Card>
+               <ReceiptBlock receiptItems={receiptItems} />
             }
         </>
     );

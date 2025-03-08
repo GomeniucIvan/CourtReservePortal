@@ -1,15 +1,15 @@
 ﻿import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "@/context/AppProvider.jsx";
-import {isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {Button, Divider, Flex, Skeleton} from "antd";
+import {Button, Divider, Flex, Skeleton, Typography} from "antd";
 import appService from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import {orgCardCountryCode} from "@/utils/OrganizationUtils.jsx";
 import * as Yup from "yup";
 import FormPaymentProfile from "@/form/formpaymentprofile/FormPaymentProfile.jsx";
-import {costDisplay} from "@/utils/CostUtils.jsx";
+import {calculateConvenienceFee, costDisplay} from "@/utils/CostUtils.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import {memberPaymentProfiles} from "@/utils/SelectUtils.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
@@ -24,11 +24,15 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {CardConstants} from "@/constants/CardConstants.jsx";
+import ReceiptBlock from "@/components/receiptblock/ReceiptBlock.jsx";
+
+const {Title, Text} = Typography;
 
 function ProfileBillingPayment({}) {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
     const [paymentModel, setPaymentModel] = useState(null);
+    const [organizationData, setOrganizationData] = useState(null);
     const {setIsLoading, isLoading, token} = useApp();
     const {orgId, authData} = useAuth();
     const { t } = useTranslation('payment');
@@ -73,7 +77,7 @@ function ProfileBillingPayment({}) {
            
            let response = await appService.post(`/app/Online/ProcessPayment?id=${orgId}`, postModel);
            if (toBoolean(response?.IsValid)){
-               
+
            } else{
                
            }
@@ -103,7 +107,7 @@ function ProfileBillingPayment({}) {
                     onClick={() => {
                         formik.submitForm();
                     }}>
-                {isFetching ? 'Pay' : `Pay ${costDisplay(paymentModel?.CalculateTotal)}`}
+                {(isFetching || 1 == 1) ? 'Pay' : `Pay ${costDisplay(paymentModel?.CalculateTotal)}`}
             </Button>
         </FooterBlock>)
     }, [isFetching, isLoading]);
@@ -121,8 +125,25 @@ function ProfileBillingPayment({}) {
         
         let paymentsResponse = await appService.get(navigate,`/app/Online/MyBalance/ProcessTransactionPayments?id=${orgId}&payments=${innerPayments}` );
         if (toBoolean(paymentsResponse?.IsValid)){
-            let paymentsModel = paymentsResponse.Data;
+            let paymentsData = paymentsResponse.Data;
+            let paymentsModel = paymentsData.Model;
             setPaymentModel(paymentsModel);
+            setOrganizationData(paymentsData.OrganizationData);
+
+            if (anyInList(paymentsModel?.Profiles)) {
+                let firstProfile = paymentsModel?.Profiles[0];
+                formik.setFieldValue('card_paymentProfileId', firstProfile.Id);
+                formik.setFieldValue('card_accountType', 1);
+            }
+
+            formik.setFieldValue('card_FirstName', paymentsModel?.BillingInformation?.FirstName);
+            formik.setFieldValue('card_LastName', paymentsModel?.BillingInformation?.LastName);
+            formik.setFieldValue('card_streetAddress', paymentsModel?.BillingInformation?.Address1);
+            formik.setFieldValue('card_city', paymentsModel?.BillingInformation?.City);
+            formik.setFieldValue('card_state', paymentsModel?.BillingInformation?.State);
+            formik.setFieldValue('card_zipCode', paymentsModel?.BillingInformation?.ZipCode);
+            formik.setFieldValue('card_phoneNumber', paymentsModel?.BillingInformation?.PhoneNumber);
+            
             setIsFetching(false);
         } else {
             if (isNullOrEmpty(response?.Message)){
@@ -154,6 +175,65 @@ function ProfileBillingPayment({}) {
     useEffect(() => {
         loadData();
     }, []);
+
+    let receiptItems = [];
+
+    if(!isNullOrEmpty(paymentModel?.CalculateTotal)) {
+        receiptItems.push({
+            Key: '',
+            Label: 'Subtotal',
+            Value: costDisplay(paymentModel?.CalculateTotal)
+        })
+    }
+
+    let showConvenienceFee = false;
+
+    if (anyInList(paymentModel?.Profiles)) {
+        let selectedPaymentType = paymentModel.Profiles.find(v => equalString(v.Value, formik?.values?.card_accountType));
+
+        if (!isNullOrEmpty(selectedPaymentType) && equalString(selectedPaymentType?.AccountType, 1)) {
+            showConvenienceFee = true;
+        }
+    }
+
+    let convenienceFee = null;
+    let total = paymentModel?.CalculateTotal;
+    
+    if (!showConvenienceFee && equalString(formik?.values?.card_accountType, 1)) {
+        showConvenienceFee = true;
+    }
+
+    if (showConvenienceFee) {
+        const calculatedConvenienceFee = calculateConvenienceFee(/*total*/ total, /*org*/ organizationData, /*onlyFee*/ true);
+        if (!isNullOrEmpty(calculatedConvenienceFee)) {
+            convenienceFee = calculatedConvenienceFee;
+            total += calculatedConvenienceFee;
+        }
+    }
+
+    if(!isNullOrEmpty(organizationData?.ConvenienceFeePercent) && convenienceFee > 0) {
+        receiptItems.push({
+            Key: 'Text',
+            Label: <Text>
+                Credit Card Convenience Fee <Text style={{color: token.colorError}}>{' '} ({organizationData?.ConvenienceFeePercent}%)</Text>
+            </Text>,
+            Value: costDisplay(convenienceFee)
+        })
+    }
+    
+    receiptItems.push({
+        Key: 'divider'
+    })
+    
+    if(!isNullOrEmpty(paymentModel?.CalculateTotal)) {
+        receiptItems.push({
+            Key: '',
+            Label: 'Total',
+            Value: costDisplay(total)
+        })
+    }
+    
+    console.log(paymentModel)
     
     return (
         <PaddingBlock topBottom={true}>
@@ -176,13 +256,21 @@ function ProfileBillingPayment({}) {
                     <FormPaymentProfile formik={formik}
                                         includeCustomerDetails={true}
                                         allowToSavePaymentProfile={true}
+                                        paymentProviderData={organizationData}
                                         paymentTypes={memberPaymentProfiles(paymentModel.Profiles, true)}
                     />
 
-                    <Divider />
-                    
-                    <FormInputDisplay label={'Subtotal'} value={costDisplay(paymentModel.CalculateTotal)}/>
-                    <FormInputDisplay label={'Total Due'} value={costDisplay(paymentModel.CalculateTotal)}/>
+                    <Divider style={{margin: `${token.padding} 0px`}} />
+
+                    <PaddingBlock leftRight={false}>
+                        <Flex vertical={true} gap={token.paddingXXL}>
+                            <Title level={3}>Payment Summary</Title>
+
+                            <Flex vertical={true} gap={token.padding}>
+                                <ReceiptBlock receiptItems={receiptItems} />
+                            </Flex>
+                        </Flex>
+                    </PaddingBlock>
 
                     <ReCAPTCHA
                         ref={recaptchaRef}

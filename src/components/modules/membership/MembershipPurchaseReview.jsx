@@ -10,7 +10,7 @@ import FormDisclosures from "@/form/formdisclosures/FormDisclosures.jsx";
 import {useTranslation} from "react-i18next";
 import {useApp} from "@/context/AppProvider.jsx";
 import {parseSafeInt} from "@/utils/NumberUtils.jsx";
-import {addSelectEmptyOption} from "@/utils/SelectUtils.jsx";
+import {addSelectEmptyOption, memberPaymentProfiles} from "@/utils/SelectUtils.jsx";
 const {Text,Title} = Typography;
 
 const MembershipPurchaseReview = ({selectedMembership,
@@ -85,36 +85,20 @@ const MembershipPurchaseReview = ({selectedMembership,
                             <Title level={1}>{t(`review.paymentProfileBilling`)}</Title>
 
                            <Flex vertical={true} gap={token.padding}>
-                               {(anyInList(signupData?.PaymentTypes)) &&
-                                   <FormSelect formik={formik}
-                                               name={`PaymentProfileId`}
-                                               label='Payment Type'
-                                               options={signupData?.PaymentTypes}
-                                               required={true}
-                                               propText='Text'
-                                               propValue='Value'/>
-                               }
-
-                               {(isNullOrEmpty(formik?.values?.PaymentProfileId) ||
-                                       equalString(formik?.values?.PaymentProfileId, 0) || 
-                                       equalString(formik?.values?.PaymentProfileId, 1)) &&
-                                   <Flex vertical={true} gap={token.padding}>
-                                       <FormPaymentProfile formik={formik}
-                                                           includeCustomerDetails={true}
-                                                           allowToSavePaymentProfile={false}
-                                                           ref={paymentProfileRef}
-                                                           showStatesDropdown={toBoolean(signupData.ShowStatesDropdown)}
-                                                           hideFields={{
-                                                               firstLastName: true,
-                                                               address2: true,
-                                                               phoneNumber: true,
-                                                               accountType: true
-                                                           }}
-                                                           paymentProviderData={paymentInfoData}
-                                                           paymentTypes={signupData.PaymentTypes}
-                                       />
-                                   </Flex>
-                               }
+                               <FormPaymentProfile formik={formik}
+                                                   includeCustomerDetails={true}
+                                                   allowToSavePaymentProfile={false}
+                                                   ref={paymentProfileRef}
+                                                   showStatesDropdown={toBoolean(signupData.ShowStatesDropdown)}
+                                                   hideFields={{
+                                                       firstLastName: true,
+                                                       address2: true,
+                                                       phoneNumber: true,
+                                                       accountType: true
+                                                   }}
+                                                   paymentProviderData={paymentInfoData}
+                                                   paymentTypes={signupData?.PaymentTypes}
+                               />
                            </Flex>
                         </Flex>
                     </PaddingBlock>

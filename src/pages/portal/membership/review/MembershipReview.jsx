@@ -69,7 +69,6 @@ function MembershipReview() {
         disclosures: [],
         firstName: authData?.MemberFirstName,
         lastName: authData?.MemberLastName,
-        PaymentProfileId: ''
     };
 
     const formik = useCustomFormik({
@@ -84,7 +83,7 @@ function MembershipReview() {
             const isMembershipRequirePayment = (membershipRequirePayment(selectedMembership, formikPaymentFrequency) || toBoolean(signupData?.RequireCardOnFile));
             let isValidPaymentProfile = true;
 
-            if (equalString(formik?.values?.PaymentProfileId, 1)) {
+            if (equalString(formik?.values?.card_paymentProfileId, 1)) {
                 isValidPaymentProfile = validatePaymentProfile(t, formik, isMembershipRequirePayment, paymentInfoData)
             }
             
@@ -98,8 +97,8 @@ function MembershipReview() {
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
-            let isNewCard = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0);
-            let paymentProfileId = isNewCard ? 1 : values?.PaymentProfileId;
+            let isNewCard = (isNullOrEmpty(values?.card_paymentProfileId)) || equalString(values?.card_paymentProfileId, 0);
+            let paymentProfileId = isNewCard ? 1 : values?.card_paymentProfileId;
             
             if (equalString(paymentProfileId, 1)) {
                 if (paymentProfileRef.current) {

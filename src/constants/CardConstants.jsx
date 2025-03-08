@@ -11,9 +11,10 @@ export const CardConstants = {
     card_number: '',//--from here
     card_expiryDate: '',
     card_securityCode: '',
-    card_accountType: '',
+    card_accountType: '', //card - echeck
     card_routingNumber: '',
     card_accountNumber: '',
     card_savePaymentProfile: false,
-    card_country: ''
+    card_country: '',
+    card_paymentProfileId: '' //profile
 }

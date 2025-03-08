@@ -99,7 +99,7 @@ export const numberList = (minValue, maxValue) => {
     return list;
 }
 
-export const memberPaymentProfiles = (profiles, includeNewCard, newCreditLabel) => {
+export const memberPaymentProfiles = (profiles, includeNewCard, newCreditLabel = 'New Credit Card') => {
     if (isNullOrEmpty(profiles)){
         profiles = [];
     }
@@ -115,8 +115,8 @@ export const memberPaymentProfiles = (profiles, includeNewCard, newCreditLabel) 
     if (toBoolean(includeNewCard)) {
         let newPaymentTypes = [];
         newPaymentTypes.push({
-            Text: 'New Credit Card',
-            Value: 1
+            Text: newCreditLabel,
+            Value: 0
         });
 
         if (anyInList(paymentTypes)) {

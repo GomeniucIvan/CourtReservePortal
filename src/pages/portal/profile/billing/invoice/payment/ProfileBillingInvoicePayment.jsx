@@ -30,7 +30,7 @@ import FormPaymentProfile from "@/form/formpaymentprofile/FormPaymentProfile.jsx
 import {orgCardCountryCode} from "@/utils/OrganizationUtils.jsx";
 import PaymentReceiptBlock from "@/components/receiptblock/PaymentReceiptBlock.jsx";
 import FormSelect from "@/form/formselect/FormSelect.jsx";
-import {addSelectEmptyOption} from "@/utils/SelectUtils.jsx";
+import {addSelectEmptyOption, memberPaymentProfiles} from "@/utils/SelectUtils.jsx";
 import {is} from "@/components/timepicker/npm/utils/func.jsx";
 import ReCAPTCHA from "react-google-recaptcha";
 import {getConfigValue} from "@/config/WebConfig.jsx";
@@ -63,8 +63,7 @@ function ProfileBillingInvoicePayment() {
     } = useApp();
 
     const initialValues = {
-        ...CardConstants,
-        PaymentProfileId: ''
+        ...CardConstants
     };
 
     const validationSchema = Yup.object({
@@ -76,7 +75,7 @@ function ProfileBillingInvoicePayment() {
         validationSchema: validationSchema,
         validation: () => {
             let isValidPaymentProfile = true;
-            if (isNullOrEmpty(formik?.values?.PaymentProfileId) || equalString(formik?.values?.PaymentProfileId, 0)) {
+            if (isNullOrEmpty(formik?.values?.card_paymentProfileId) || equalString(formik?.values?.card_paymentProfileId, 0)) {
                 isValidPaymentProfile = validatePaymentProfile(t, formik, true, modelData)
             }
             return isValidPaymentProfile;
@@ -85,7 +84,7 @@ function ProfileBillingInvoicePayment() {
             setIsLoading(true);
             console.log(values)
             
-            if ((isNullOrEmpty(formik?.values?.PaymentProfileId)) || equalString(formik?.values?.PaymentProfileId, 0)) {
+            if ((isNullOrEmpty(formik?.values?.card_paymentProfileId)) || equalString(formik?.values?.card_paymentProfileId, 0)) {
                 // validate card
                 let isValidTokenObj = await paymentProfileRef.current.submitCreateToken();
                 
@@ -106,8 +105,8 @@ function ProfileBillingInvoicePayment() {
             }
 
             let captchaToken = await recaptchaRef.current.executeAsync();
-            let paymentProfileId = (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : values?.PaymentProfileId;
-            let accountType =  (isNullOrEmpty(values?.PaymentProfileId)) || equalString(values?.PaymentProfileId, 0) ? null : parseSafeInt(values?.card_accountType, '');
+            let paymentProfileId = (isNullOrEmpty(values?.card_paymentProfileId)) || equalString(values?.card_paymentProfileId, 0) ? null : values?.card_paymentProfileId;
+            let accountType =  (isNullOrEmpty(values?.card_paymentProfileId)) || equalString(values?.card_paymentProfileId, 0) ? null : parseSafeInt(values?.card_accountType, '');
             
             let postModel = {
                 ...modelData,
@@ -184,7 +183,7 @@ function ProfileBillingInvoicePayment() {
             formik.setFieldValue('card_streetAddress', data.Address1);
             formik.setFieldValue('card_accountType', data.BillingInformation.AccountType);
             formik.setFieldValue('card_country', orgCardCountryCode(data.PartialUiCulture));
-            formik.setFieldValue('PaymentProfileId', data.PaymentProfileId);
+            formik.setFieldValue('card_paymentProfileId', data.PaymentProfileId);
             setPayWithMoneyBalance(toBoolean(data.BillingInformation.PayWithMoneyBalance));
             
             setModelData(data);
@@ -248,45 +247,27 @@ function ProfileBillingInvoicePayment() {
             <>
                 {!isFetching &&
                     <Flex vertical={true} gap={token.padding}>
-                        {anyInList(modelData?.PaymentProfilesSelectListItems) &&
-                            <>
-                                <FormSelect formik={formik}
-                                            name={`PaymentProfileId`}
-                                            label='Payment Type'
-                                            options={addSelectEmptyOption(modelData?.PaymentProfilesSelectListItems, 'New Card', '0')}
-                                            required={true}
-                                            propText='Text'
-                                            propValue='Value'/>
-                                {(isNullOrEmpty(formik?.values.PaymentProfileId) || equalString(formik?.values.PaymentProfileId, 0)) &&
-                                    <Divider className={globalStyles.noMargin} />
-                                }
-                            </>
-                        }
-
-                        {(isNullOrEmpty(formik?.values.PaymentProfileId) || equalString(formik?.values.PaymentProfileId, 0)) &&
-                            <FormPaymentProfile formik={formik}
-                                                includeCustomerDetails={true}
-                                                allowToSavePaymentProfile={!toBoolean(modelData.PreventPlayersFromCreatingACreditCardPaymentProfile)}
-                                                ref={paymentProfileRef}
-                                                showStatesDropdown={toBoolean(modelData?.ShowStatesDropdown)}
-                                                hideFields={{
-                                                    firstLastName: false,
-                                                    address2: true,
-                                                    phoneNumber: false,
-                                                    accountType: false
-                                                }}
-                                                paymentProviderData={{
-                                                    ...modelData,
-                                                    SelectedSegment: !toBoolean(modelData.PreventPlayersFromCreatingACreditCardPaymentProfile) ? 'Credit Card' : toBoolean(modelData.AllowMembersToCreateAchProfiles) ? 'eCheck' : '',
-                                                    ShowSegment: (!toBoolean(modelData.PreventPlayersFromCreatingACreditCardPaymentProfile) && toBoolean(modelData.AllowMembersToCreateAchProfiles))
-                                                }}
-                                                paymentTypes={modelData?.AccountTypesSelectListItems}
-                            />
-                        }
-
+                        <FormPaymentProfile formik={formik}
+                                            includeCustomerDetails={true}
+                                            allowToSavePaymentProfile={!toBoolean(modelData.PreventPlayersFromCreatingACreditCardPaymentProfile)}
+                                            ref={paymentProfileRef}
+                                            showStatesDropdown={toBoolean(modelData?.ShowStatesDropdown)}
+                                            hideFields={{
+                                                firstLastName: false,
+                                                address2: true,
+                                                phoneNumber: false,
+                                                accountType: false
+                                            }}
+                                            paymentProviderData={{
+                                                ...modelData,
+                                                SelectedSegment: !toBoolean(modelData.PreventPlayersFromCreatingACreditCardPaymentProfile) ? 'Credit Card' : toBoolean(modelData.AllowMembersToCreateAchProfiles) ? 'eCheck' : '',
+                                                ShowSegment: (!toBoolean(modelData.PreventPlayersFromCreatingACreditCardPaymentProfile) && toBoolean(modelData.AllowMembersToCreateAchProfiles))
+                                            }}
+                                            paymentTypes={anyInList(modelData?.PaymentProfilesSelectListItems) ? memberPaymentProfiles(modelData?.PaymentProfilesSelectListItems, true) : []}
+                        />
                         
                         
-                        {(isNullOrEmpty(formik?.values.PaymentProfileId) || equalString(formik?.values.PaymentProfileId, 0)) &&
+                        {(isNullOrEmpty(formik?.values.card_paymentProfileId) || equalString(formik?.values.card_paymentProfileId, 0)) &&
                             <Divider className={globalStyles.noMargin} />
                         }
                         

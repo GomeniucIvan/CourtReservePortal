@@ -28,7 +28,7 @@ export const ProfileRouteNames = {
     PROFILE_BILLING: `/online/mybalance/index/:id`,
     PROFILE_BILLING_INVOICES: `/online/myinvoices/index/:id`,
     PROFILE_BILLING_INVOICE_DETAILS: `/online/myinvoices/viewmyinvoice/:id`,
-    PROFILE_INVOICE_PAY: `/online/myinvoices/payinvoice/:id`,
+    PROFILE_INVOICE_PAY: `/online/myinvoices/payinvoice/:id`, //ProfileBillingInvoicePayment
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
     PROFILE_PAYMENT_OPTIONS: `/online/paymentoptions/index/:id`,
@@ -36,8 +36,8 @@ export const ProfileRouteNames = {
     PROFILE_PACKAGE_DETAILS: `/online/mybalance/portalpackagepunchdetails/:id`,
     
     //why is different routes?!
-    PROCESS_PAYMENT: `/online/payments/processpayment/:id`,
-    PROCESS_TRANSACTION_PAYMENT: `/online/mybalance/processtransactionpayments/:id`,
+    PROCESS_PAYMENT: `/online/payments/processpayment/:id`, // ProfileBillingPayment
+    PROCESS_TRANSACTION_PAYMENT: `/online/mybalance/processtransactionpayments/:id`, //ProfileBillingPayment
 };
 
 const ProfileRoutes = [
