@@ -45,6 +45,7 @@ function ProfileMyMembership() {
     const [showCancelMembership, setShowCancelMembership] = useState(false);
     const [cancelMembershipData, setCancelMembershipData] = useState(false);
     const [openNetworkLocations, setOpenNetworkLocations] = useState(false);
+    const [isPayMembershipLoading, setIsPayMembershipLoading] = useState(false);
     const [networkLocations, setNetworkLocations] = useState(null);
     const {orgId, authData} = useAuth();
     const {tagStyles} = useCombinedStyles();
@@ -287,6 +288,18 @@ function ProfileMyMembership() {
         });
     }
 
+    const onPayMembershipClick = async () => {
+        setIsPayMembershipLoading(true);
+        
+        let response = await appService.get(navigate, `/app/Online/MyBalance/PayMyMembershipFees?id=${orgId}`)
+        
+        if (toBoolean(response?.IsValid)) {
+            navigate(response.Path);
+        }
+
+        setIsPayMembershipLoading(false);
+    }
+    
     return (
         <>
             <PaddingBlock topBottom={true}>
@@ -504,10 +517,8 @@ function ProfileMyMembership() {
                                             {showPayMembershipDues &&
                                                 <Button type='primary'
                                                         block={true}
-                                                        onClick={() => {
-                                                            let route = toRoute(ProfileRouteNames.PROFILE_PAY_MY_MEMBERSHIP, 'id', orgId);
-                                                            navigate(route);
-                                                        }}
+                                                        loading={isPayMembershipLoading}
+                                                        onClick={onPayMembershipClick}
                                                 >
                                                     Pay Membership Dues
                                                 </Button>

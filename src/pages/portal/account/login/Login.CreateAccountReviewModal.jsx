@@ -139,7 +139,7 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
                         break;
 
                     case 'paymymembershipfees':
-                        let route = toRoute(ProfileRouteNames.PROFILE_PAY_MY_MEMBERSHIP, 'id', orgIdToCreateAccount);
+                        let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgIdToCreateAccount);
                         navigate(route);
                         break;
 

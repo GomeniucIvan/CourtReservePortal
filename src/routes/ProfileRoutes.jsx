@@ -32,13 +32,12 @@ export const ProfileRouteNames = {
     PROFILE_STRINGING_LIST: `/online/stringingjob/index/:id`,
     PROFILE_STRINGING_DETAILS: `/online/stringingjob/details/:id`,
     PROFILE_PAYMENT_OPTIONS: `/online/paymentoptions/index/:id`,
-    PROFILE_PAY_MY_MEMBERSHIP: `/online/paymentoptions/PayMyMembershipFees/:id`,
     PROFILE_CREATE_PAYMENT_PROFILE: `/online/paymentoptions/addpaymentoption/:id`, //Online/PaymentOptions/AddPaymentoption/6969
     PROFILE_PACKAGE_DETAILS: `/online/mybalance/portalpackagepunchdetails/:id`,
     
     //why is different routes?!
     PROCESS_PAYMENT: `/online/payments/processpayment/:id`,
-    PROCESS_TRANSACTION_PAYMENT: `/online/payments/processtransactionpayments/:id`,
+    PROCESS_TRANSACTION_PAYMENT: `/online/mybalance/processtransactionpayments/:id`,
 };
 
 const ProfileRoutes = [

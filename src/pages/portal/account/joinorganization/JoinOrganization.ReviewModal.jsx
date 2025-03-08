@@ -142,7 +142,7 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
                         break;
 
                     case 'paymymembershipfees':
-                        let paymentOptions = toRoute(ProfileRouteNames.PROFILE_PAY_MY_MEMBERSHIP, 'id', orgIdToCreateAccount);
+                        let paymentOptions = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgIdToCreateAccount);
                         navigate(paymentOptions);
                         break;
 
