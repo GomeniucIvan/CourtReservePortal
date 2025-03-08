@@ -153,7 +153,7 @@ function ProfileMyMembership() {
                                     <Card key={index} className={globalStyles.card}>
                                         <Flex vertical={true} gap={4}>
                                             <Flex justify='space-between'>
-                                                <Title level={3}>{billingItem.PeriodDisplay}</Title>
+                                                <Title level={4}>{billingItem.PeriodDisplay}</Title>
                                                 <Tag className={cx(globalStyles.tag, toBoolean(billingItem?.IsPaid)&& tagStyles.success, !toBoolean(billingItem?.IsPaid) && tagStyles.error)}>
                                                     {toBoolean(billingItem?.IsPaid) ? 'Paid' : 'Unpaid'}
                                                 </Tag>

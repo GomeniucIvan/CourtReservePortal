@@ -248,7 +248,7 @@ const ModernDashboardLeaguesDates = ({ leaguesDates, isFetching }) => {
                 return (
                     <Swiper.Item key={index} className={cx((!isOneItem && !isLastItem) && globalStyles.swiperItem, (!isOneItem && isLastItem) && globalStyles.swiperLastItem)}>
                         <>
-                            <Card className={cx(globalStyles.card, globalStyles.clickableCard)}>
+                            <Card className={cx(globalStyles.card)}>
                                 <Flex vertical={true} gap={12}>
                                     <Flex vertical={true} gap={8} onClick={() => navigate(`/league/details/${leagueSessionDate.Id}`)}>
                                         <Flex justify="space-between" align="center" >

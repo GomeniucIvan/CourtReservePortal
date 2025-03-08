@@ -161,6 +161,9 @@ export const AntdProvider = ({ children }) => {
                             Descriptions: {
                                 itemPaddingBottom: 8
                             },
+                            Skeleton: {
+                                blockRadius: 2
+                            },
                         },
                     }}
                 >

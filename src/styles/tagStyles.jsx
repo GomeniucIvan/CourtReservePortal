@@ -7,7 +7,7 @@ export const tStyles = createStyles(({ css, token }) => ({
         border-color: ${token.colorErrorBg};
     `,
     success: css`
-        color: ${token.colorSuccessActive};
+        color: ${token.colorSuccessTextActive};
         background-color: ${token.colorSuccessBgHover};
         border-color: ${token.colorSuccessBgHover};
     `,
