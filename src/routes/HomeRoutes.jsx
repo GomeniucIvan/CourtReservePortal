@@ -46,7 +46,7 @@ export const HomeRouteNames = {
     MEMBERSHIPS: `/online/memberships/index`,
     MEMBERSHIP_DETAILS: `/online/memberships/viewmembership/:id`,
     MEMBERSHIP_REVIEW: `/online/memberships/review/:id`,
-    SAVE_MY_PLAY: `/online/savemyplay/index/:id`,
+    SAVE_MY_PLAY: `/online/savemyplay/index/:id`, //SaveMyPlaySessionRecording
     POUR_MY_BEV_CODE: `/online/pourmybev/code/:id`,
     POUR_MY_BEV_CART: `/online/pourmybev/cart/:id`,
 };

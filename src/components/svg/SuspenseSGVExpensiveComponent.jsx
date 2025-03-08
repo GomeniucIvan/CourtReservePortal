@@ -1,4 +1,3 @@
-import {ReactSVG} from "react-svg";
 import {equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {memo, useEffect, useRef, useState} from "react";
@@ -19,7 +18,8 @@ const SuspenseSGVExpensiveComponent = memo(({ icon,
     const {token} = useApp();
     const {svgList} = useSvgCacheProvider();
     const svgContainerRef = useRef(null);  // Reference for the container
-
+    
+    
     if (equalString(color, 'black')) {
         color = token.colorText;
     }
@@ -43,7 +43,7 @@ const SuspenseSGVExpensiveComponent = memo(({ icon,
         const paths = svg.querySelectorAll('path');
         const rects = svg.querySelectorAll('rect');
         const circles = svg.querySelectorAll('circle');
-
+        
         if (!preventPaths) {
             paths.forEach(path => {
                 if (replaceColor) {

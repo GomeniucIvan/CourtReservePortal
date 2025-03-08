@@ -27,6 +27,11 @@ export const bStyles = createStyles(({ css, token }) => ({
     buttonBlue: css`
       background-color: #0558d6;
       color: white;
+        &:not(.ant-btn-background-ghost){
+            span {
+                color: white;
+            }
+        }
         
       &:not(.ant-btn-disabled):not(.ant-btn-background-ghost):hover,
       &:not(.ant-btn-disabled):not(.ant-btn-background-ghost):active {

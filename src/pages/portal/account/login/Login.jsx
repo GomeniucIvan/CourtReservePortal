@@ -144,14 +144,14 @@ function Login() {
         <>
             {equalString(formik?.values?.step, 'initial') &&
                 <>
-                    {!isNullOrEmpty(spGuideId) &&
+                    {(!isNullOrEmpty(spGuideId) && !equalString(spGuideId, 'courtreserve')) &&
                         <LoginSpGuide onGetStartedClick={() => {setIsFromGetStarted(true);  navigateToStep('get-started') }}
                                       onLoginClick={() => { setIsFromGetStarted(false);navigateToStep('authorize') }} />
 
 
                     }
 
-                    {isNullOrEmpty(spGuideId) &&
+                    {(isNullOrEmpty(spGuideId) || equalString(spGuideId, 'courtreserve')) &&
                         <LoginCourtReserve onGetStartedClick={() => {setIsFromGetStarted(true); navigateToStep('get-started'); }}
                                            onLoginClick={() => {setIsFromGetStarted(false); navigateToStep('authorize') }} />
                     }

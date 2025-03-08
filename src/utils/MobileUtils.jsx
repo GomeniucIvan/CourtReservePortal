@@ -123,4 +123,19 @@ export const reactNativeTakePhoto = () =>{
     }
 }
 
+
+const reactNativeHideSplashBridge = () => {
+    if (window.ReactNativeWebView) {
+        logMobile('reactHideSplash');
+
+        const message = JSON.stringify({ type: 'reactHideSplash'});
+        window.ReactNativeWebView.postMessage(message);
+    }
+}
+export const reactNativeHideSplash = () => {
+    waitForWebViewBridge(() => {
+        reactNativeHideSplashBridge();
+    });
+}
+
 window.reactActivateStatus = reactActivateStatus;

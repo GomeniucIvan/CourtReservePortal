@@ -12,6 +12,7 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useTranslation} from "react-i18next";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {useAntd} from "@/context/AntdProvider.jsx";
 const {Title, Text, Paragraph, Link} = Typography;
 
 function LoginCourtReserve({ onGetStartedClick, onLoginClick }) {
@@ -43,6 +44,7 @@ function LoginCourtReserve({ onGetStartedClick, onLoginClick }) {
 
                            <Flex style={{height: '440px'}} vertical={true} justify={'center'}>
                                <SVG icon={`login-slide-${index+1}`} 
+                                    key={token.colorPrimary} //bind to key not sure why is not updating via useEffect
                                     preventFill={true} 
                                     style={{
                                         maxHeight: '80vh',

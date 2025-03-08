@@ -28,7 +28,7 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import {getCookie, saveCookie} from "@/utils/CookieUtils.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import LayoutScripts from "@/components/layout/LayoutScripts.jsx";
-import {reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/MobileUtils.jsx";
+import {reactNativeHideSplash, reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/MobileUtils.jsx";
 import apiService from "@/api/api.jsx";
 import {useFooter} from "@/context/FooterProvider.jsx";
 
@@ -99,6 +99,12 @@ function Layout() {
         }
     }
     
+    const innerReactNativeHideSplash = () => {
+        setTimeout(() => {
+            reactNativeHideSplash();
+        }, 1200);
+    }
+    
     useEffect(() => {
         const loadPrimaryData = async () => {
             let authData = await memberData();
@@ -119,6 +125,7 @@ function Layout() {
                 }
 
                 setIsFetching(false);
+                innerReactNativeHideSplash();
             }
             //authorized without active orgid
             else if (!isNullOrEmpty(workingMemberId) && isNullOrEmpty(workingOrgId)) {
@@ -129,6 +136,7 @@ function Layout() {
 
                 setIsFetching(false);
                 initializeFireBasePushToken();
+                innerReactNativeHideSplash();
             }
             
             //authorized with active orgid
@@ -149,6 +157,7 @@ function Layout() {
                     }
                 }
                 initializeFireBasePushToken();
+                innerReactNativeHideSplash();
                 //set from organization load
                 //setIsFetching(false);
             }
@@ -167,6 +176,7 @@ function Layout() {
         const isDebugMode = getConfigValue('IsDebugMode');
         if (!isNullOrEmpty(location.pathname) && location.pathname.startsWith('/dev/') && !isDebugMode) {
             navigate(HomeRouteNames.NOT_FOUND);
+            innerReactNativeHideSplash();
         }
         
         loadPrimaryData()
@@ -304,6 +314,10 @@ function Layout() {
             // }
         };
 
+        setTimeout(function(){
+            innerReactNativeHideSplash();
+        }, 10000)
+        
         // Cleanup on unmount
         return () => {
             delete window.updateFirebaseToken;
@@ -395,18 +409,13 @@ function Layout() {
     const disablePullDownToRefresh = currentRoute?.disablePullDown;
 
     useEffect(() => {
-        if (isMockData) {
-            setIsFetching(false);
-        } else {
-            if (shouldLoadOrgData) {
+        if (shouldLoadOrgData) {
+            setIsFetching(true);
+            setShouldLoadOrgData(false);
 
-                setIsFetching(true);
-                setShouldLoadOrgData(false);
-
-                //logged but without bearer token
-                //should refresh every day?!
-                loadOrganizationData();
-            }
+            //logged but without bearer token
+            //should refresh every day?!
+            loadOrganizationData();
         }
     }, [shouldLoadOrgData]);
 
@@ -422,12 +431,15 @@ function Layout() {
         if (toBoolean(requestData?.IsValid)) {
             await setAuthorizationData(requestData.OrganizationData);
             setIsFetching(false);
+            //innerReactNativeHideSplash();
         } if (toBoolean(requestData?.UnathorizeAccess)) {
             //validating data from backend
             navigate(AuthRouteNames.LOGIN);
             setIsFetching(false);
+            //innerReactNativeHideSplash();
         } else{
             setIsFetching(false);
+            //innerReactNativeHideSplash();
         }
         setIsLoading(false);
     }

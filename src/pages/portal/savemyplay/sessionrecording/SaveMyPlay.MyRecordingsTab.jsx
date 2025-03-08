@@ -39,7 +39,8 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
         availableHeight,
         setIsFooterVisible,
         setFooterContent,
-        setIsLoading
+        setIsLoading,
+        isLoading
     } = useApp();
 
     const [bodyHeight, setBodyHeight] = useState(availableHeight);
@@ -79,6 +80,7 @@ function SaveMyPlayMyRecordingsTab({selectedTab, tabsHeight}) {
         } finally {
             setIsFetching(false);
             setIsRecordingFetching(false);
+            setIsLoading(false);
         }
     }
     useEffect(() => {
