@@ -125,17 +125,30 @@ export const reactNativeTakePhoto = () =>{
 
 
 const reactNativeHideSplashBridge = () => {
-    if (window.ReactNativeWebView) {
-        logMobile('reactHideSplash');
 
-        const message = JSON.stringify({ type: 'reactHideSplash'});
-        window.ReactNativeWebView.postMessage(message);
-    }
 }
 export const reactNativeHideSplash = () => {
     waitForWebViewBridge(() => {
         reactNativeHideSplashBridge();
     });
+}
+
+export const reactNativeLaunchTel = (phone) => {
+    if (window.ReactNativeWebView) {
+        const message = JSON.stringify({ type: 'FlutterLaunchTel', telephone: phone });
+        window.ReactNativeWebView.postMessage(message);
+    } else {
+        document.location.href = 'tel:' + phone;
+    }
+}
+
+export const reactNativeLaunchEmail = (email) => {
+    if (window.ReactNativeWebView) {
+        const message = JSON.stringify({ type: 'FlutterLaunchMail', email: email });
+        window.ReactNativeWebView.postMessage(message);
+    } else {
+        document.location.href = 'mailto:' + email;
+    }
 }
 
 window.reactActivateStatus = reactActivateStatus;
