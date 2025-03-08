@@ -25,6 +25,7 @@ import PourMyBevCart from "@portal/pourmybev/pourmybevcart/PourMyBevCart.jsx";
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
     INDEX: '/',
+    PORTAL_INDEX: '/online/portal/index/:id',
     NOT_FOUND: '/403',
     SCHEDULER: '/online/reservations/bookings/:id',
     SCHEDULER_INDEX: '/online/reservations/index/:id',
@@ -45,7 +46,7 @@ export const HomeRouteNames = {
     PACKAGE_PURCHASE: `/online/packages/purchasepackages/:id`,
     MEMBERSHIPS: `/online/memberships/index`,
     MEMBERSHIP_DETAILS: `/online/memberships/viewmembership/:id`,
-    MEMBERSHIP_REVIEW: `/online/memberships/review/:id`,
+    MEMBERSHIP_REVIEW: `/online/memberships/review/:id`, //MembershipReview
     SAVE_MY_PLAY: `/online/savemyplay/index/:id`, //SaveMyPlaySessionRecording
     POUR_MY_BEV_CODE: `/online/pourmybev/code/:id`,
     POUR_MY_BEV_CART: `/online/pourmybev/cart/:id`,
@@ -62,6 +63,11 @@ const HomeRoutes = [
     {
         index: true,
         path: HomeRouteNames.INDEX,
+        element: <Dashboard />,
+        root: true
+    },
+    {
+        path: HomeRouteNames.PORTAL_INDEX,
         element: <Dashboard />,
         root: true
     },

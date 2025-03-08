@@ -151,6 +151,8 @@ function MembershipReview() {
             if (response && response?.data?.redirectUrl) {
                 pNotify('Successfully purchased membership.');
                 navigate(response.data.redirectUrl);
+                setIsLoading(false);
+                
             } else {
                 displayMessageModal({
                     title: "Error",
@@ -278,7 +280,7 @@ function MembershipReview() {
                     onClick={() => {
                        formik.submitForm();
                     }}>
-                Pay
+                Join Membership
             </Button>
         </FooterBlock>);
     }, [isFetching, isLoading]);

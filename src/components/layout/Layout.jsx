@@ -163,7 +163,8 @@ function Layout() {
             }
         }
 
-        if (equalString(location.pathname, '/MobileSso/AuthorizeAndRedirectApp') || equalString(location.pathname, '/MobileSso/AuthorizeAndRedirect')) {
+        if (equalString(location.pathname, '/MobileSso/AuthorizeAndRedirectApp') ||
+            equalString(location.pathname, '/MobileSso/AuthorizeAndRedirect')) {
             //TODO
             let redirectUrl = getGlobalRedirectUrl();
             if (isNullOrEmpty(redirectUrl)) {
