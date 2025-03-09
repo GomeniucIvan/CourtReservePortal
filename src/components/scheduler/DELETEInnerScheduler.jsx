@@ -3,7 +3,7 @@ import {isNullOrEmpty} from "../../utils/Utils.jsx";
 import {InnerScheduler} from "./partial/InnerScheduler.jsx";
 import {DayView} from "./partial/views/day/DayViewDisplay.jsx";
 import {SchedulerSlot} from "./partial/slots/SchedulerSlotDisplay.jsx";
-import {WeekView} from "./partial/views/week/WeekView.mjs";
+import {WeekView} from "./partial/views/week/WeekView.jsx";
 import {MonthView} from "./partial/views/month/MonthView.jsx";
 import {AgendaView} from "./partial/views/agenda/AgendaView.jsx";
 import {Typography} from "antd";

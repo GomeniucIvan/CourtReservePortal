@@ -3,7 +3,7 @@ import {Button, Flex, Segmented, Skeleton, Space, Spin} from "antd";
 import {useApp} from "@/context/AppProvider.jsx";
 import {InnerScheduler} from "@/components/scheduler/partial/InnerScheduler.jsx";
 import {DayView} from "@/components/scheduler/partial/views/day/DayViewDisplay.jsx";
-import {WeekView} from "@/components/scheduler/partial/views/week/WeekView.mjs";
+import {WeekView} from "@/components/scheduler/partial/views/week/WeekView.jsx";
 import {MonthView} from "@/components/scheduler/partial/views/month/MonthView.jsx";
 import {AgendaView} from "@/components/scheduler/partial/views/agenda/AgendaView.jsx";
 import mockData from "@/mocks/scheduler-data.json";
@@ -14,8 +14,7 @@ import appService from "@/api/app.jsx";
 import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {
     dateFormatByUiCulture,
-    dateTimeToFormat,
-    dateToTimeString, fromAspDateToString, fromDateTimeStringToDateTime,
+    fromAspDateToString, fromDateTimeStringToDateTime,
     toReactDate
 } from "@/utils/DateUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
@@ -31,10 +30,10 @@ import moment from "moment/moment.js";
 
 function EventCalendar() {
     const {setHeaderRightIcons} = useHeader();
-    const {globalStyles, setIsFooterVisible, setFooterContent, token} = useApp();
+    const {globalStyles, setIsFooterVisible, setFooterContent, token, availableHeight, isMockData} = useApp();
+    const {authData} = useAuth();
     const [showFilter, setShowFilter] = useState(false);
     const [selectedView, setSelectedView] = useState('');
-    const {availableHeight, isMockData} = useApp();
     const [events, setEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -302,6 +301,8 @@ function EventCalendar() {
                               startTime={startTimeString}
                               endTime={endTimeString}
                               workDayStart={startTimeString}
+                              workWeekStart={3}
+                              startDayOfTheWeek={3}
                               workDayEnd={endTimeString}/>
                     
                     <MonthView selectedView={'month'}/>

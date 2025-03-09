@@ -11,12 +11,10 @@ import { DayView, dayViewDefaultProps } from "./views/day/DayViewDisplay.jsx";
 import { DATA_ACTION } from "./constants/index.mjs";
 import { AgendaView, agendaViewDefaultProps } from "./views/agenda/AgendaView.jsx";
 import { MonthView, monthViewDefaultProps } from "./views/month/MonthView.jsx";
-import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.mjs";
-import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs";
+import { WeekView, weekViewDefaultProps } from "./views/week/WeekView.jsx";
+import { WorkWeekView, workWeekDefaultProps } from "./views/week/WorkWeekView.mjs"
 import { TimelineView, timeLineViewDefaultProps } from "./views/time/TimelineView.jsx";
-import {Button, Flex, Radio} from 'antd';
-import {equalString, isNullOrEmpty, toBoolean} from "../../../utils/Utils.jsx";
-import {CaretLeftOutlined, CaretRightOutlined} from "@ant-design/icons";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {useStyles} from "./styles.jsx";
 import {cx} from "antd-style";
 
@@ -92,8 +90,9 @@ const InnerSchedulerComponent = memo(React.forwardRef((props, ref) => {
                 date,
                 timezone,
                 numberOfDays: view.props.numberOfDays,
-                workWeekStart: view.props.workWeekStart || intl.firstDay(),
-                workWeekEnd: view.props.workWeekEnd || (intl.firstDay() + view.props.numberOfDays) % 6
+                workWeekStart: view.props.workWeekStart || intl.firstDay(view.props.startDayOfTheWeek),
+                workWeekEnd: view.props.workWeekEnd || (intl.firstDay(view.props.endDayOfTheWeek) + view.props.numberOfDays) % 6,
+                startDayOfTheWeek: view.props.startDayOfTheWeek
             })
             : view.props.dateRange
         : { start: schedulerDefaultProps.defaultDate, end: schedulerDefaultProps.defaultDate });

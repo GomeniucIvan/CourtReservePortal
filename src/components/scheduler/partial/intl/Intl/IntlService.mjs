@@ -110,8 +110,8 @@ class c {
    *
    * @return - The index of the first day of the week (0 == Sunday).
    */
-  firstDay() {
-    return e.firstDay(this.locale);
+  firstDay(incDayInt) {
+    return e.firstDay(this.locale, incDayInt);
   }
   /**
    * @hidden

@@ -1,5 +1,7 @@
 'use strict';
 
+import {isNullOrEmpty} from "@/utils/Utils.jsx";
+
 const defaultData = {
     en: {
         name: "en",
@@ -1344,9 +1346,12 @@ var DEFAULT_TERRITORY = '001';
 var NoWeekData = errors.NoWeekData;
 var NoFirstDay = errors.NoFirstDay;
 
-export function firstDay(locale) {
+export function firstDay(locale, incDayInt) {
+    if (!isNullOrEmpty(incDayInt)) {
+        return incDayInt;
+    }
+    
     var info = getLocaleInfo(locale);
-
     if (!isNaN(info.firstDay)) {
         return info.firstDay;
     }
@@ -1361,9 +1366,9 @@ export function firstDay(locale) {
     if (!firstDay) {
         throw NoFirstDay.error();
     }
-
+    
     info.firstDay = DAYS_OF_WEEK.indexOf(firstDay);
-
+    
     return info.firstDay;
 }
 

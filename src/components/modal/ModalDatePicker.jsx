@@ -6,8 +6,13 @@ import {cx} from "antd-style";
 import Modal from "./Modal.jsx";
 import dayjs from "dayjs";
 import {dateFormatByUiCulture} from "../../utils/DateUtils.jsx";
-
+import updateLocale from "dayjs/plugin/updateLocale";
+import {useAuth} from "@/context/AuthProvider.jsx";
 const {Title} = Typography;
+
+dayjs.extend(updateLocale);
+
+
 
 function ModalDatePicker({ show, 
                              selectedDate: initialSelectedDate,
@@ -17,6 +22,7 @@ function ModalDatePicker({ show,
                              onChange,
                              onConfirm}) {
     const { token } = useApp();
+    const { authData } = useAuth();
     const {styles} = useStyles();
     const datePickerWrapperRef = useRef(null);
     const datePickerRef = useRef(null);
@@ -29,6 +35,10 @@ function ModalDatePicker({ show,
         return datePickerWrapperRef.current || document.body;
     };
 
+    dayjs.updateLocale("en", {
+        weekStart: authData?.StartDayOfTheWeek || 0, 
+    });
+    
     const handleDateChange = (date) => {
         setSelectedDate(date);
         if (onChange) {
