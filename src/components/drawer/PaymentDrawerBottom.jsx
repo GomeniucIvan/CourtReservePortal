@@ -181,7 +181,7 @@ const PaymentDrawerBottom = forwardRef(({
                                                                         <Text>{paymentListItem.value}</Text>
                                                                     </Flex>
                                                                     {(!isLastIndex) &&
-                                                                        <Divider className={globalStyles.noMargin}/>
+                                                                        <Divider style={{marginTop: token.paddingXS, marginBottom: token.paddingXS}} />
                                                                     }
                                                                 </div>
                                                             )

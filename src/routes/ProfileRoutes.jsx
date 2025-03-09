@@ -20,7 +20,7 @@ export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
     RESERVATION_DETAILS: `/profile/reservation/details/:id`,
     RESERVATION_EDIT: `/profile/reservation/edit/:id`,
-    RESERVATION_CREATE: `/online/profile/reservation/create`,
+    RESERVATION_CREATE: `/online/profile/reservation/create`, //ReservationRegistration
     PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
     PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,

@@ -14,11 +14,7 @@ import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {
-    dateFormatByUiCulture,
-    dateToTimeString,
-    fromDateTimeStringToDate,
-    fromDateTimeStringToDateTime, fromTimeSpanString,
-    toReactDate
+    fromDateTimeStringToDateTime, fromTimeSpanString
 } from "@/utils/DateUtils.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
@@ -33,12 +29,8 @@ import {
 import {schedulerItemsRead} from "@portal/scheduler/SchedulerInnerServices.jsx";
 import {useTranslation} from "react-i18next";
 import ConsolidatedSchedulerSlot from "@portal/scheduler/ConsolidatedSchedulerSlot.jsx";
-import {hubConnection, startConnection} from "@/api/signalR/portalConsolidateSignalRService.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
-import HeaderSearch from "@/components/header/HeaderSearch.jsx";
-import {toLocalStorage} from "@/storage/AppStorage.jsx";
-import {AppstoreOutlined, BarsOutlined} from "@ant-design/icons";
 
 function ExpandedScheduler({index}) {
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();

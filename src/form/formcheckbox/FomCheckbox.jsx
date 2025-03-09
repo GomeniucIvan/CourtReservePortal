@@ -40,7 +40,7 @@ const FormCheckbox = ({label, text, formik, name, description, descriptionClick}
                 }
 
                 <Flex align={'center'}>
-                    <Checkbox className={globalStyles.checkboxWithLink}
+                    <Checkbox className={cx(globalStyles.checkboxWithLink, globalStyles.checkbox)}
                               {...addCypressTag(name)}
                               defaultChecked={toBoolean(field?.value)}
                               onChange={(e) => {formik.setFieldValue(name, e.target.checked)}}>

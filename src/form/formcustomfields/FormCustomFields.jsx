@@ -6,6 +6,7 @@ import FormSelect from "../formselect/FormSelect.jsx";
 import {cx} from "antd-style";
 import {useApp} from "../../context/AppProvider.jsx";
 import React from "react";
+import {randomNumber} from "@/utils/NumberUtils.jsx";
 const {Title} = Typography;
 
 const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
@@ -57,9 +58,8 @@ const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
 
                             case 'TextArea':
                                 return (
-                                    <div style={{paddingBottom: `${token.paddingSM}px`}}>
+                                    <div style={{paddingBottom: `${token.paddingSM}px`}} key={fieldName}>
                                         <FormTextArea
-                                            key={fieldName}
                                             label={Label}
                                             name={fieldName}
                                             loading={loading}

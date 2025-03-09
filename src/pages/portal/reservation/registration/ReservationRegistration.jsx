@@ -1,5 +1,5 @@
 ﻿
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {data, useLocation, useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import {Alert, Button, Divider, Flex, Segmented, Skeleton, Typography} from "antd";
 import mockData from "@/mocks/reservation-data.json";
@@ -13,7 +13,7 @@ import {
     encodeParam,
     encodeParamsObject,
     equalString,
-    isNullOrEmpty, oneListItem,
+    isNullOrEmpty, nullToEmpty, oneListItem,
     toBoolean
 } from "@/utils/Utils.jsx";
 import InlineBlock from "@/components/inlineblock/InlineBlock.jsx";
@@ -25,7 +25,7 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {
     dateTimeToFormat,
     dateToTimeString,
-    fromAspDateToString
+    fromAspDateToString, fromDateTimeStringToDate, fromDateTimeStringToDateFormat, fromTimeSpanString
 } from "@/utils/DateUtils.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {useTranslation} from "react-i18next";
@@ -48,6 +48,8 @@ import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 
 const {Title, Text, Link} = Typography;
 
@@ -61,7 +63,7 @@ function ReservationRegistration() {
     const {t} = useTranslation('');
 
     const {setHeaderRightIcons} = useHeader();
-    
+
     const {
         isMockData,
         setIsFooterVisible,
@@ -74,7 +76,7 @@ function ReservationRegistration() {
         isLoading,
         setDynamicPages
     } = useApp();
-    
+
     const [reservation, setReservation] = useState(null);
     const [matchMaker, setMatchMaker] = useState(null);
     const [reservationTypes, setReservationTypes] = useState([]);
@@ -110,7 +112,7 @@ function ReservationRegistration() {
         RegisteringMemberId: null,
         SelectedResourceName: null,
         StartTime: '',
-        EndTime: '12:30 pm',
+        EndTime: fromTimeSpanString(end),
         IsOpenReservation: false,
         InstructorName: '',
         SelectedReservationMembers: [],
@@ -177,14 +179,14 @@ function ReservationRegistration() {
             let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
             if (toBoolean(response?.IsValid)){
                 let data = response.Data;
-                
+
                 debugger;
                 //portal-details-payment-editreservation
                 let key = data.Key;
 
                 //remove current page
                 removeLastHistoryEntry();
-                
+
                 if (equalString(key, 'payment')){
                     let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgId);
                     navigate(route);
@@ -218,14 +220,37 @@ function ReservationRegistration() {
     });
 
     const loadData = async (refresh) => {
-        let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${encodeParam(dataItem.CourtTypeName)}&courtLabel=${encodeParam(dataItem.Label)}&customSchedulerId=${customSchedulerId}`);
+        let instructorId = null;
+        let courtLabel = dataItem.Label;
+        let courtType = dataItem.CourtTypeName;
+        let isConsolidated = false;
+
+
+        if (!isNullOrEmpty(dataItem?.InstructorType?.Id)){
+            //instructor scheduler
+            instructorId = dataItem?.InstructorId;
+            courtLabel = '';
+            courtType = '';
+        } else if (isNullOrEmpty(courtLabel)) {
+            //consolidated scheduler
+            courtType = dataItem.Value;
+            isConsolidated = true;
+        }
+
+        if (isNullOrEmpty(courtLabel) && isNullOrEmpty(courtType) && isNullOrEmpty(instructorId)) {
+            //direct link access
+            navigate(HomeRouteNames.INDEX);
+            return;
+        }
+
+        let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${nullToEmpty(encodeParam(courtType))}&courtLabel=${nullToEmpty(encodeParam(courtLabel))}&customSchedulerId=${nullToEmpty(customSchedulerId)}&instructorId=${nullToEmpty(instructorId)}&isConsolidated=${toBoolean(isConsolidated)}`);
 
         if (toBoolean(r?.IsValid)) {
             let incResData = r.Data.ReservationModel;
             let matchMakerData = r.Data.MatchMakerData;
             let matchMakerShowSportTypes = toBoolean(r.Data.MatchMakerShowSportTypes);
             setReservation(incResData);
-            
+
             if (isNullOrEmpty(incResData.InstructorId)){
                 setMiscFeesQuantities(anyInList(incResData?.MiscFeesSelectListItems) ? incResData?.MiscFeesSelectListItems.map((item) => ({
                     Text: item.Text,
@@ -270,8 +295,8 @@ function ReservationRegistration() {
                 CourtId: incResData.CourtId,
                 RegisteringMemberId: incResData.RegisteringMemberId,
                 SelectedResourceName: incResData.SelectedResourceName,
-                StartTime: dateToTimeString(start, true),
-                EndTime: dateToTimeString(end, true),
+                StartTime: fromTimeSpanString(start),
+                EndTime: fromTimeSpanString(end),
                 Date: fromAspDateToString(incResData.Date),
             });
 
@@ -324,7 +349,7 @@ function ReservationRegistration() {
         if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
             currentPlayersCount += formik?.values?.ReservationGuests?.length;
         }
-        
+
         //save button text
         if (toBoolean(authData?.EnableQuickReservationLockOutPeriod)){
             let buttonText = 'Save';
@@ -338,7 +363,7 @@ function ReservationRegistration() {
             setSubmitButtonText(buttonText);
         }
     }, [formik?.values?.ReservationGuests, reservationMembers]);
-    
+
     const onReservationTypeChange = async () => {
         setLoading('Duration', true);
 
@@ -351,8 +376,8 @@ function ReservationRegistration() {
         } else {
             let reservationTypeData = {
                 reservationTypeId: formik?.values?.ReservationTypeId,
-                startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
-                selectedDate: dateTimeToFormat(start, 'MM/DD/YYYY'),
+                startTime: start,
+                selectedDate: start,
                 uiCulture: authData?.UiCulture,
                 useMinTimeAsDefault: reservation?.UseMinTimeByDefault,
                 courtId: formik?.values?.CourtId,
@@ -364,6 +389,8 @@ function ReservationRegistration() {
                 selectedDuration: formik?.values?.Duration
             }
 
+            
+            
             let rDurations = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/GetDurationDropdown?id=${orgId}&${encodeParamsObject(reservationTypeData)}`);
 
             setDurations(rDurations);
@@ -397,17 +424,19 @@ function ReservationRegistration() {
     }
 
     useEffect(() => {
-        
+
         const loadEndTime = async () => {
             if (!isNullOrEmpty(formik?.values?.Duration)) {
                 let entTimeData = {
                     reservationTypeId: formik?.values?.ReservationTypeId,
-                    startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
-                    selectedDate: dateTimeToFormat(start, 'MM/DD/YYYY'),
+                    startTime: start,
+                    selectedDate: start,
                     uiCulture: authData?.UiCulture,
                     duration: formik?.values?.Duration
                 }
 
+                console.log(entTimeData)
+                
                 let rEndTime = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/CalculateReservationEndTime?id=${orgId}&${encodeParamsObject(entTimeData)}`);
 
                 if (rEndTime?.IsValid) {
@@ -427,8 +456,8 @@ function ReservationRegistration() {
                 setLoading('ResourceIds', true);
 
                 let resourcesData = {
-                    Date: dateTimeToFormat(start, 'MM/DD/YYYY'),
-                    startTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
+                    Date: start,
+                    startTime: start,
                     endTime: formik?.values?.EndTime,
                     courtTypes: reservation?.CourtTypeEnum,
                     selectedCourts: courts,
@@ -446,18 +475,18 @@ function ReservationRegistration() {
                 const selectedResourceIds = responseResources
                     .filter(resource => resource.AutoSelect)
                     .map(resource => resource.Id);
-                
+
                 await formik.setFieldValue('ResourceIds', selectedResourceIds)
                 setLoading('ResourceIds', false);
             }
         }
-        
+
         loadResources();
     }, [formik?.values?.EndTime]);
 
     useEffect(() => {
         if ((!isNullOrEmpty(formik?.values?.RegisteringMemberId) &&
-            !isNullOrEmpty(formik?.values?.Duration)) && 
+                !isNullOrEmpty(formik?.values?.Duration)) &&
             !isNullOrEmpty(formik?.values?.ReservationTypeId) &&
             !isNullOrEmpty(formik?.values?.EndTime) &&
             !isNullOrEmpty(formik?.values?.CourtId)) {
@@ -482,7 +511,7 @@ function ReservationRegistration() {
             //(true);
         }
     }, [shouldFetch, resetFetch]);
-    
+
     //members guest table
     const reloadPlayers = async (orgMemberIdToRemove, incGuests, isGuestRemove) => {
         setLoading('SelectedReservationMembers', true);
@@ -588,9 +617,9 @@ function ReservationRegistration() {
         }
 
         let courtsData = {
-            Date: dateTimeToFormat(start, 'MM/DD/YYYY'),
-            selectedDate: dateTimeToFormat(start, 'MM/DD/YYYY'), //resource call
-            StartTime: dateTimeToFormat(start, 'MM/DD/YYYY HH:mm'),
+            Date: start,
+            selectedDate: start, //resource call
+            StartTime: start,
             EndTime: endTime || formik?.values?.EndTime,
             CourtTypesString: courtType,
             UiCulture: authData?.UiCulture,
@@ -608,10 +637,10 @@ function ReservationRegistration() {
             setLoading('CourtId', false);
         })
     }
-    
+
     useEffect(() => {
         console.log(paymentList);
-        
+
         let paymentData = {
             list: anyInList(paymentList) ? paymentList.map(paymentItem =>({
                 label: paymentItem.Text,
@@ -675,7 +704,20 @@ function ReservationRegistration() {
                     <PaddingBlock topBottom={true}>
                         <Flex vertical={true} gap={token.padding}>
                             <Title level={1} className={globalStyles.noTopPadding}>Reservation Details</Title>
-                            
+
+                            {!isNullOrEmpty(reservation.DateStartTimeStringDisplay) &&
+                                <>
+                                    {!toBoolean(allowToSelectedStartTime(reservation)) &&
+                                        <>
+                                            <FormInputDisplay label="Date & Time"
+                                                       disabled={true}
+                                                       value={`${fromDateTimeStringToDateFormat(reservation.DateStartTimeStringDisplay, 'dddd, MMMM D')}, ${fromTimeSpanString(reservation.DateStartTimeStringDisplay, 'h:mma', true)}`}
+                                            />
+                                        </>
+                                    }
+                                </>
+                            }
+
                             {!isNullOrEmpty(reservation?.InstructorId) &&
                                 <FormInput formik={formik}
                                            disabled={true}

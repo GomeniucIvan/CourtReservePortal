@@ -1,4 +1,4 @@
-import {dateFormatByUiCulture} from "@/utils/DateUtils.jsx";
+import {dateFormatByUiCulture, dateTimeToFormat} from "@/utils/DateUtils.jsx";
 import {saveCookie} from "@/utils/CookieUtils.jsx";
 import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
@@ -56,7 +56,11 @@ export const expandedOpenReservationCreateModal = (navigate, props, dataItem) =>
     let start = props.start;
     let end = props.end;
     let customSchedulerId = props.customSchedulerId;
-debugger
+
+    start = moment(start).format(`${dateFormatByUiCulture()} HH:mm`);
+    end = moment(end).format(`${dateFormatByUiCulture()} HH:mm`);
+    
+
     navigate(ProfileRouteNames.RESERVATION_CREATE, {
         state: {
             dataItem,

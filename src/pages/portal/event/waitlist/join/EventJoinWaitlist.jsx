@@ -126,7 +126,7 @@ function EventJoinWaitlist() {
         }
         
         let response = await appService.get(navigate, readUrl);
-        console.log(response);
+
         if (toBoolean(response?.IsValid)) {
             setEventDetails(response.Data);
             formik.setFieldValue("FamilyMembers", response.Data.FamilyMembers);

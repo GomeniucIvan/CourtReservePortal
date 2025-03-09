@@ -1,4 +1,4 @@
-import {equalString, isNullOrEmpty} from "./Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "./Utils.jsx";
 import moment from "moment";
 import {date} from "yup";
 
@@ -323,11 +323,18 @@ export const fromDateTimeStringToDate = (dateString) => {
     return moment(dateString).format(`${dateFormatByUiCulture()}`);
 }
 
+//dddd, MMMM D -> Thursday, March 13
+
 export const fromDateTimeStringToDateFormat = (dateString, view = 'friendly') => {
     if (!dateString) return null;
 
+    const date = moment(dateString);
+
+    if (equalString(view, 'dddd, MMMM D')) {
+        return date.format('dddd, MMMM D');
+    }
+    
     if (equalString(view, 'friendly')) {
-        const date = moment(dateString);
         const day = date.date();
         const ordinal = getOrdinalSuffix(day);
 
@@ -341,8 +348,22 @@ export const fromDateTimeStringToDateFormat = (dateString, view = 'friendly') =>
     return '';
 }
 
-export const fromTimeSpanString = (dateString) => {
+//h:mma -> 3:00am
+//short -> am/pm -> a/p
+export const fromTimeSpanString = (dateString, format = '', short = false) => {
     if (!dateString) return null;
+    
+    if (!isNullOrEmpty(format)) {
+        const date = moment(dateString);
+        let timeToReturn = date.format(format);
+        
+        if (toBoolean(short)) {
+            timeToReturn.replace('m', ''); 
+        }
+        
+        return timeToReturn;
+    }
+    
     return moment(dateString).format('HH:mm');
 }
 

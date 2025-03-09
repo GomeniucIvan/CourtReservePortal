@@ -57,32 +57,37 @@ function ReservationRegistrationPlayers({formik,
     }
 
     useEffect(() => {
-        if (showSearchPlayers) {
+        const searchPlayersByFilter = async (showSearchPlayers, searchPlayersText, reservationMembers) => {
+            if (showSearchPlayers) {
+                setIsPlayersSearch(true);
 
-            setIsPlayersSearch(true);
+                if (!isNullOrEmpty(searchPlayersText) && searchPlayersText.length < 3) {
+                    setIsPlayersSearch(false);
+                    return;
+                }
 
-            if (!isNullOrEmpty(searchPlayersText) && searchingPlayers.length < 3) {
-                setIsPlayersSearch(false);
-                return;
+                let searchPlayersData = {
+                    costTypeId: reservation.MembershipId,
+                    IsMobileLayout: true,
+                    userId: reservation.MemberId,
+                    customSchedulerId: reservation.CustomSchedulerId,
+                    IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation) && toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker),
+                    filterValue: searchPlayersText,
+                    organizationMemberIdsString: reservationMembers.map(member => member.OrgMemberId).join(',')
+                }
+
+                let response = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/Api_Reservation_GetMembersToPlayWith?id=${orgId}&${encodeParamsObject(searchPlayersData)}`);
+
+                if (response) {
+                    setSearchingPlayers(response);
+                    setIsPlayersSearch(false); 
+                }
+            } else {
+
             }
-
-            let searchPlayersData = {
-                costTypeId: reservation.MembershipId,
-                IsMobileLayout: true,
-                userId: reservation.MemberId,
-                customSchedulerId: reservation.CustomSchedulerId,
-                IsOpenReservation: toBoolean(formik?.values?.IsOpenReservation) && toBoolean(selectedReservationType?.IsEligibleForPlayerMatchMaker),
-                filterValue: searchPlayersText,
-                organizationMemberIdsString: reservationMembers.map(member => member.OrgMemberId).join(',')
-            }
-
-            appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/Api_Reservation_GetMembersToPlayWith?id=${orgId}&${encodeParamsObject(searchPlayersData)}`).then(rSearchPlayers => {
-                setSearchingPlayers(rSearchPlayers);
-                setIsPlayersSearch(false);
-            })
-        } else {
-
         }
+
+        searchPlayersByFilter(showSearchPlayers, searchPlayersText, reservationMembers)
     }, [showSearchPlayers, searchPlayersText, reservationMembers]);
 
     const addRemovePlayerFromFavourite = async (player, addToFavList) => {
@@ -90,14 +95,33 @@ function ReservationRegistrationPlayers({formik,
 
         if (toBoolean(response?.IsValid)) {
             if (addToFavList){
-                setSearchPlayersText('');
-                searchPlayerDrawerBottomRef.current.setValue('');
-                setShouldRebindPlayers(true);
+                setSearchingPlayers((prevMembers) =>
+                    prevMembers.map((member) =>
+                        equalString(member.MemberOrgId, player.MemberOrgId)
+                            ? { ...member, IsFavoriteMember: true }
+                            : member
+                    )
+                );
                 pNotify(`${player.FirstName} ${player.LastName} added to favourite list.`);
             } else{
-                setSearchingPlayers((prevMembers) =>
-                    prevMembers.filter((member) => !equalString(member.MemberOrgId, player.MemberOrgId))
-                );
+                if (isNullOrEmpty(searchPlayersText)) {
+                    setSearchingPlayers((prevMembers) =>
+                        prevMembers.filter((member) => !equalString(member.MemberOrgId, player.MemberOrgId))
+                    );
+                    
+                    // setSearchPlayersText('');
+                    // searchPlayerDrawerBottomRef.current.setValue('');
+                    //setShouldRebindPlayers(true);
+                } else {
+                    setSearchingPlayers((prevMembers) =>
+                        prevMembers.map((member) =>
+                            equalString(member.MemberOrgId, player.MemberOrgId)
+                                ? { ...member, IsFavoriteMember: false }
+                                : member
+                        )
+                    );
+                }
+
                 pNotify(`${player.FirstName} ${player.LastName} successfully removed from favourite list.`);
             }
         } else {
@@ -356,7 +380,7 @@ function ReservationRegistrationPlayers({formik,
                         {!isPlayersSearch &&
                             <>
                                 {!anyInList(searchingPlayers) &&
-                                    <Text>No players message</Text>
+                                    <Text>No players found</Text>
                                 }
 
                                 {anyInList(searchingPlayers) &&
@@ -369,19 +393,12 @@ function ReservationRegistrationPlayers({formik,
 
                                                         <Flex gap={token.Custom.cardIconPadding}
                                                               align={'center'}>
-                                                            <Flex justify={'center'} align={'center'}
-                                                                  style={{
-                                                                      width: 48,
-                                                                      height: 48,
-                                                                      borderRadius: 50,
-                                                                      backgroundColor: 'red'
-                                                                  }}>
+                                                            <Flex justify={'center'} align={'center'} className={globalStyles.orgCircleMember}>
                                                                 <Title level={1} className={cx(globalStyles.noSpace)}>{player.FullNameInitial}</Title>
                                                             </Flex>
 
                                                             <Text>
-                                                                <Ellipsis direction='end'
-                                                                          content={player.DisplayName}/>
+                                                                <Ellipsis direction='end' content={player.DisplayName}/>
                                                             </Text>
                                                         </Flex>
                                                     </div>
