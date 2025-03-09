@@ -14,6 +14,7 @@ import ProfilePackageDetails from "@portal/profile/billing/packages/details/Prof
 import ProfileBillingInvoiceDetails from "@portal/profile/billing/invoice/details/ProfileBillingInvoiceDetails.jsx";
 import ProfileBillingInvoicePayment from "@portal/profile/billing/invoice/payment/ProfileBillingInvoicePayment.jsx";
 import ProfileMyMembership from "@portal/profile/membership/mymembership/ProfileMyMembership.jsx";
+import PaymentReceipt from "@portal/profile/billing/receipt/PaymentReceipt.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
@@ -38,6 +39,7 @@ export const ProfileRouteNames = {
     //why is different routes?!
     PROCESS_PAYMENT: `/online/payments/processpayment/:id`, // ProfileBillingPayment
     PROCESS_TRANSACTION_PAYMENT: `/online/mybalance/processtransactionpayments/:id`, //ProfileBillingPayment
+    PAYMENT_PROCESSED_SUCCESS:  `/online/payments/paymentprocessed/:id`,  //PaymentReceipt
 };
 
 const ProfileRoutes = [
@@ -144,6 +146,11 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_PACKAGE_DETAILS,
         element: <ProfilePackageDetails />,
         title: 'profilePackageDetails'
+    },
+    {
+        path: ProfileRouteNames.PAYMENT_PROCESSED_SUCCESS,
+        element: <PaymentReceipt />,
+        title: 'paymentReceipt'
     }
 ];
 
