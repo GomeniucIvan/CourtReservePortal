@@ -175,9 +175,10 @@ function EventCalendar() {
                     setSchedulerData(model);
                     setSelectedView(model.ViewType);
 
-                    const currentDateTime = new Date(fromDateTimeStringToDateTime(model.CurrentDateTimeStringDisplay));
+                    const minDateDb = new Date(fromDateTimeStringToDateTime(model.MinDateStringDisplay));
                     const dateToShow = new Date(fromDateTimeStringToDateTime(model.SchedulerDateStringDisplay));
-                    setMinDate(currentDateTime);
+
+                    setMinDate(minDateDb);
                     setTimeZone(model.TimeZone);
                     setInterval(model.MinInterval);
 
@@ -302,11 +303,11 @@ function EventCalendar() {
                               endTime={endTimeString}
                               workDayStart={startTimeString}
                               workWeekStart={3}
-                              startDayOfTheWeek={3}
+                              startDayOfTheWeek={authData?.StartDayOfTheWeek}
                               workDayEnd={endTimeString}/>
                     
-                    <MonthView selectedView={'month'}/>
-                    <AgendaView/>
+                    <MonthView selectedView={'month'} startDayOfTheWeek={authData?.StartDayOfTheWeek}/>
+                    <AgendaView startDayOfTheWeek={authData?.StartDayOfTheWeek}/>
                 </InnerScheduler>
             </Spin>
 

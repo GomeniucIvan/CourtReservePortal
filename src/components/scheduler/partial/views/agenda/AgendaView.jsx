@@ -203,11 +203,11 @@ const getTimeFormat = (intl, props) => {
 const GET_START_DATE = (date) => getDate(date);
 const GET_END_DATE = (start, numberOfDays) => getDate(addDays(start, numberOfDays || 1));
 
-const agendaViewDateRange = ({ intl, date, numberOfDays = 1, timezone }) => {
+const agendaViewDateRange = ({ intl, date, numberOfDays = 1, timezone, startDayOfTheWeek }) => {
     const normalized = ZonedDate.fromLocalDate(date, timezone);
 
     const firstDate = numberOfDays === DAYS_IN_WEEK_COUNT
-        ? GET_START_DATE(firstDayInWeek(normalized, intl.firstDay()))
+        ? GET_START_DATE(firstDayInWeek(normalized, intl.firstDay(startDayOfTheWeek)))
         : GET_START_DATE(normalized);
 
     const lastDate = GET_END_DATE(firstDate, numberOfDays);
@@ -237,7 +237,8 @@ export const agendaViewDefaultProps = {
     slotDuration: 60 * 24,
     slotDivision: 1,
     step: DAYS_IN_WEEK_COUNT,
-    numberOfDays: DAYS_IN_WEEK_COUNT
+    numberOfDays: DAYS_IN_WEEK_COUNT,
+    startDayOfTheWeek: 0
 };
 
 const propTypes = {

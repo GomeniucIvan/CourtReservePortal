@@ -29,7 +29,6 @@ export const NavigationDatePicker = React.forwardRef((
     );
 
     const {timezone, minDate, maxDate} = useSchedulerPropsContext();
-
     
     const normalized = ZonedDate.fromLocalDate(props.value, timezone);
     const value = getDate(normalized);

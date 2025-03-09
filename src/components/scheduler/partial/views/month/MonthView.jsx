@@ -208,11 +208,11 @@ export const MonthView = (props) => {
     );
 };
 
-const monthViewDateRange = ({ intl, date, timezone }) => {
+const monthViewDateRange = ({ intl, date, timezone, startDayOfTheWeek }) => {
     // The DateRange start from the first day of the week containing the first day of the month.
     // I know it sounds strange, but take a look and a wall-calendar!
-    const firstDay = firstDayInWeek(firstDayOfMonth(getDate(date)), intl.firstDay());
-    const lastDay = addDays(firstDayInWeek(lastDayOfMonth(getDate(date)), intl.firstDay()), DAYS_IN_WEEK_COUNT);
+    const firstDay = firstDayInWeek(firstDayOfMonth(getDate(date)), intl.firstDay(startDayOfTheWeek));
+    const lastDay = addDays(firstDayInWeek(lastDayOfMonth(getDate(date)), intl.firstDay(startDayOfTheWeek)), DAYS_IN_WEEK_COUNT);
 
     const zonedStart = ZonedDate.fromUTCDate(toUTCDateTime(firstDay), timezone);
     const zonedEnd = ZonedDate.fromUTCDate(toUTCDateTime(lastDay), timezone);
@@ -240,7 +240,8 @@ export const monthViewDefaultProps = {
     numberOfDays: 31,
     title: (localization) => localization.toLanguageString(monthViewTitle, messages[monthViewTitle]),
     selectedDateFormat: '{0:Y}',
-    selectedShortDateFormat: '{0:Y}'
+    selectedShortDateFormat: '{0:Y}',
+    startDayOfTheWeek: 0
 };
 
 const propTypes = {
