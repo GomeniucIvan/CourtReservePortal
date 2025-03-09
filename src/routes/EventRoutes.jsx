@@ -10,7 +10,7 @@ import EventJoinWaitlist from "@portal/event/waitlist/join/EventJoinWaitlist.jsx
 export const EventRouteNames = {
     EVENT_LIST: '/online/events/list/:id',
     EVENT_CATEGORIES: '/online/events/categories/:id',
-    EVENT_CALENDAR: '/online/calendar/events/:id',
+    EVENT_CALENDAR: '/online/calendar/events/:id', //EventCalendar
     EVENT_FILTER: '/online/events/list/:id/:filterKey',
     EVENT_DETAILS: '/online/events/details/:id/:number',
     EVENT_SIGNUP: '/online/events/signuptoevent/:id',

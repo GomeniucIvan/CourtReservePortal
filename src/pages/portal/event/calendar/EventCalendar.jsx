@@ -15,7 +15,7 @@ import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {
     dateFormatByUiCulture,
     dateTimeToFormat,
-    dateToTimeString, fromAspDateToString,
+    dateToTimeString, fromAspDateToString, fromDateTimeStringToDateTime,
     toReactDate
 } from "@/utils/DateUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
@@ -25,6 +25,9 @@ import {saveCookie} from "@/utils/CookieUtils.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import ListFilter from "@/components/filter/ListFilter.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import EventCalendarItemDayWeekMonth from "@portal/event/calendar/EventCalendarItem/EventCalendarItem.DayWeekMonth.jsx";
+import EventCalendarItemAgenda from "@portal/event/calendar/EventCalendarItem/EventCalendarItem.Agenda.jsx";
+import moment from "moment/moment.js";
 
 function EventCalendar() {
     const {setHeaderRightIcons} = useHeader();
@@ -124,8 +127,6 @@ function EventCalendar() {
         });
     }
     
-    
-    
     useEffect(() => {
         if (isNullOrEmpty(selectedView)){
             //loading?
@@ -169,14 +170,14 @@ function EventCalendar() {
                 if (toBoolean(r?.IsValid)){
                     const model = r.Data;
 
-                    setStartTimeString(dateToTimeString(model.MinOpenTime, true));
-                    setEndTimeString(dateToTimeString(model.MaxCloseTime, true));
+                    setStartTimeString(model.MinOpenTimeSpanStringDisplay);
+                    setEndTimeString(model.MaxCloseTimeSpanStringDisplay);
 
                     setSchedulerData(model);
                     setSelectedView(model.ViewType);
 
-                    const currentDateTime = toReactDate(model.CurrentDateTime);
-                    const dateToShow = toReactDate(model.SchedulerDate);
+                    const currentDateTime = new Date(fromDateTimeStringToDateTime(model.CurrentDateTimeStringDisplay));
+                    const dateToShow = new Date(fromDateTimeStringToDateTime(model.SchedulerDateStringDisplay));
                     setMinDate(currentDateTime);
                     setTimeZone(model.TimeZone);
                     setInterval(model.MinInterval);
@@ -200,8 +201,18 @@ function EventCalendar() {
     
     const handleDateChange = (event) => {
         const selectedDate = event.value;
-        setSelectedDate(selectedDate);
-        let dateTimeToSave = dateTimeToFormat(selectedDate, dateFormatByUiCulture());
+
+        //datepicker
+        let selectedLocalDate = selectedDate._localDate;
+
+        //header arrows, today
+        if (isNullOrEmpty(selectedLocalDate)){
+            selectedLocalDate = selectedDate;
+        }
+
+        setSelectedDate(selectedLocalDate);
+
+        let dateTimeToSave = moment(selectedLocalDate).format(dateFormatByUiCulture());
         saveCookie('InternalCalendarDate', dateTimeToSave, 300);
     }
 
@@ -269,6 +280,7 @@ function EventCalendar() {
                     selectedView={selectedView}
                     height={availableHeight}
                     editable={false}
+                    item={equalString(selectedView,'agenda') ? EventCalendarItemAgenda : EventCalendarItemDayWeekMonth}
                     minDate={minDate}
                     maxDate={maxDate}
                     interval={interval}
@@ -285,7 +297,13 @@ function EventCalendar() {
                         hideDateRow={false}
                     />
 
-                    <WeekView/>
+                    <WeekView slotDuration={interval}
+                              slotDivisions={1}
+                              startTime={startTimeString}
+                              endTime={endTimeString}
+                              workDayStart={startTimeString}
+                              workDayEnd={endTimeString}/>
+                    
                     <MonthView selectedView={'month'}/>
                     <AgendaView/>
                 </InnerScheduler>

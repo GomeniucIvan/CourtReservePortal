@@ -1,4 +1,5 @@
 import {logInfo} from "@/utils/ConsoleUtils.jsx";
+import {toBoolean} from "@/utils/Utils.jsx";
 
 export const getGlobalIsAuthorized = () => {
     if (typeof globalIsAuthorized !== 'undefined') {
@@ -50,11 +51,15 @@ export const getGlobalDeviceId = () => {
     }
 }
 
-export const getGlobalRedirectUrl = () => {
+export const getInitialGlobalRedirectUrl = (clearValue) => {
     if (typeof globalRedirectUrl !== 'undefined') {
         logInfo('globalRedirectUrl:', globalRedirectUrl);
-        return globalRedirectUrl;
-
+        const valueToReturn = globalRedirectUrl;
+        if (toBoolean(clearValue)) {
+            globalRedirectUrl = null;
+        }
+        
+        return valueToReturn;
     } else {
         logInfo('globalRedirectUrl is not defined');
     }

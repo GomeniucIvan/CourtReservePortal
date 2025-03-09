@@ -23,7 +23,7 @@ import {ErrorBoundary} from "react-error-boundary";
 import {Toaster} from "react-hot-toast";
 import portalService from "@/api/portal.jsx";
 import {locationCurrentRoute, toRoute} from "@/utils/RouteUtils.jsx";
-import {getGlobalRedirectUrl} from "@/utils/AppUtils.jsx";
+import {getInitialGlobalRedirectUrl} from "@/utils/AppUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {getCookie, saveCookie} from "@/utils/CookieUtils.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
@@ -166,9 +166,9 @@ function Layout() {
         if (equalString(location.pathname, '/MobileSso/AuthorizeAndRedirectApp') ||
             equalString(location.pathname, '/MobileSso/AuthorizeAndRedirect')) {
             //TODO
-            let redirectUrl = getGlobalRedirectUrl();
-            if (isNullOrEmpty(redirectUrl)) {
-                navigate(HomeRouteNames.INDEX);
+            let redirectUrl = getInitialGlobalRedirectUrl(true);
+            if (!isNullOrEmpty(redirectUrl)) {
+                navigate(redirectUrl);
             } else{
                 navigate(HomeRouteNames.INDEX);
             }
