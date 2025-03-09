@@ -116,11 +116,14 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, he
             case WEATHER_TYPE.temperature:
                 return (
                     <Flex align={"center"} gap={token.paddingXS}>
-                        <img
-                            alt="weather image"
-                            src={weather?.CurrentWeatherImage}
-                            className={styles.weatherHeaderIcon}
-                        />
+                        <div className={styles.weatherHeaderIcon} style={{position: 'relative'}}>
+                            <img
+                                alt="weather image"
+                                src={weather?.CurrentWeatherImage}
+                                style={{width:'36px', height:'36px', position:'absolute', left: '-10px', top: '-10px'}}
+                            />
+                        </div>
+
                         <Text className={styles.weatherHeaderText}>{value}&deg;</Text>
                     </Flex>
                 );
