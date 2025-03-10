@@ -44,10 +44,10 @@ const EventCalendarItemDayWeekMonth = (props) => {
     let    IsMemberRegistered = dataItem.IsMemberRegistered;
     let    OnlineSignUpOff = dataItem.OnlineSignUpOff;
     let    isMobileLayout = true;
-    let    RegistrationOpen = dataItem.RegistrationOpen;
-    let     CanSignUp = dataItem.CanSignUp;
-    let     EventId = dataItem.EventId;
-    let     ReservationId = dataItem.ReservationId;
+    let RegistrationOpen = dataItem.RegistrationOpen;
+    let CanSignUp = dataItem.CanSignUp;
+    let EventId = dataItem.EventId;
+    let ReservationId = dataItem.ReservationId;
 
 
 

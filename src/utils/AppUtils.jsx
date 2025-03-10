@@ -1,5 +1,5 @@
 import {logInfo} from "@/utils/ConsoleUtils.jsx";
-import {toBoolean} from "@/utils/Utils.jsx";
+import {equalString, toBoolean} from "@/utils/Utils.jsx";
 
 export const getGlobalIsAuthorized = () => {
     if (typeof globalIsAuthorized !== 'undefined') {
@@ -14,6 +14,10 @@ export const getGlobalIsAuthorized = () => {
 export const getGlobalSpGuideId = () => {
     if (typeof globalSpGuideId !== 'undefined') {
         logInfo('globalSpGuideId:', globalSpGuideId);
+        if (!equalString(globalSpGuideId, 'courtreserve')) {
+            return null; 
+        }
+        
         return globalSpGuideId;
 
     } else {
@@ -54,9 +58,9 @@ export const getGlobalDeviceId = () => {
 export const getInitialGlobalRedirectUrl = (clearValue) => {
     if (typeof globalRedirectUrl !== 'undefined') {
         logInfo('globalRedirectUrl:', globalRedirectUrl);
-        const valueToReturn = globalRedirectUrl;
+        let valueToReturn = globalRedirectUrl;
         if (toBoolean(clearValue)) {
-            globalRedirectUrl = null;
+            valueToReturn = null;
         }
         
         return valueToReturn;

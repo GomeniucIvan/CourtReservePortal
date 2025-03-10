@@ -6,10 +6,11 @@ import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {useNavigate} from "react-router-dom";
-import {theme} from "antd";
+import {Flex, theme} from "antd";
 import {isMemberSignUp} from "@/utils/SchedulerUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {stringToJson} from "@/utils/ListUtils.jsx";
+import {pNotify} from "@/components/notification/PNotify.jsx";
 const { useToken } = theme;
 
 const ExpandedSchedulerItem = (props) => {
@@ -335,22 +336,23 @@ const ExpandedSchedulerItem = (props) => {
                         )}
 
                         {dataItem.IsDynamicSlot && (
-                            <div className="main-reservation-container dynamic-container"
-                                 style={{background: 'white', display: 'flex'}}>
-                                <button
-                                    type="button"
-                                    style={isMobileLayout ? {
+                            <Flex align={'center'}
+                                  justify={'center'}
+                                  onClick={() => {pNotify('Dynamic slot TODO!')}}
+                                  style={{background: token.colorBgContainer, height: '100%'}}>
+                                <div
+                                    style={{
                                         maxHeight: '100% !important',
-                                        height: '100% !important'
-                                    } : null}
-                                    className="btn btn-default slot-btn btn-xs btn-expanded-slot slot-tr-height"
+                                        height: '100% !important',
+                                        color: token.colorText
+                                    }}
                                     start={dataItem.Start}
                                     end={dataItem.End}
                                     courtid={dataItem.CourtId}
                                 >
                                     {dataItem.ButtonName}
-                                </button>
-                            </div>
+                                </div>
+                            </Flex>
                         )}
 
                         {(!dataItem.IsDynamicSlot && !dataItem.IsOrgClosed && (isNullOrEmpty(dataItem.ClosureTypeId) || dataItem.ClosureTypeId <= 0) && !dataItem.IsCourtClosed) && (

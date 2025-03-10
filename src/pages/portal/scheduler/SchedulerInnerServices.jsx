@@ -43,7 +43,7 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
     let formattedEvents = [];
     
     if (equalString(type, 'expanded')) {
-        resp = await apiService.get(null, `/api/scheduler/member-expanded?id=${orgId}&jsonData=${JSON.stringify(result)}`);
+        resp = await apiService.get(`/api/scheduler/member-expanded?id=${orgId}&jsonData=${JSON.stringify(result)}`);
     } else if (equalString(type, 'instructor')){
         resp = await appService.get(null, `/app/Online/Reservations/ReadInstructorExpanded?id=${orgId}&jsonData=${JSON.stringify(result)}`);
     } else if (equalString(type, 'consolidated')){
