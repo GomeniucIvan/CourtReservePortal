@@ -82,6 +82,12 @@ export const scrollToCurrentTime = () => {
     }
 };
 
+export const resourceHeader = (res, token) => {
+    return (
+        `<span style="color: ${token.colorPrimary};font-weight: 500;">${res.ResourceName}</span><br/><span>${res.ResourceCategoryName}</span>`
+    )
+}
+
 export const courtHeader = (court, customSchedulerId, token) => {
     if (equalString(`WAITLIST${customSchedulerId}`, court.Label)){
         return `<span style="color: ${token.colorPrimary};font-weight: 500;">WAITLIST</span>`

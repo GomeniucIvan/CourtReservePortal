@@ -180,7 +180,6 @@ function ReservationRegistration() {
             if (toBoolean(response?.IsValid)){
                 let data = response.Data;
 
-                debugger;
                 //portal-details-payment-editreservation
                 let key = data.Key;
 
@@ -389,8 +388,6 @@ function ReservationRegistration() {
                 selectedDuration: formik?.values?.Duration
             }
 
-            
-            
             let rDurations = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/GetDurationDropdown?id=${orgId}&${encodeParamsObject(reservationTypeData)}`);
 
             setDurations(rDurations);
@@ -602,9 +599,9 @@ function ReservationRegistration() {
         setLoading('CourtId', true);
 
         const courtType = ''; // jQuery("#@Html.IdFor(c => c.SelectedCourtTypeId)").val();
-        var customSchedulerId = '';
-        var cIds = '';
-        var rq = '';
+        let customSchedulerId = '';
+        let cIds = '';
+        let rq = '';
         // @if (isFromWaitlisting)
         //     {
         //     @:cIds = '@Model.QueuedCourtIds';
@@ -639,8 +636,6 @@ function ReservationRegistration() {
     }
 
     useEffect(() => {
-        console.log(paymentList);
-
         let paymentData = {
             list: anyInList(paymentList) ? paymentList.map(paymentItem =>({
                 label: paymentItem.Text,
@@ -802,15 +797,17 @@ function ReservationRegistration() {
                                 }
                             </InlineBlock>
 
-                            <FormSelect formik={formik}
-                                        name={`CourtId`}
-                                        label='Court(s)'
-                                        options={courts}
-                                        required={true}
-                                        loading={toBoolean(loadingState.CourtId)}
-                                        propText='DisplayName'
-                                        propValue='Id'/>
-
+                            {(!toBoolean(reservation?.IsConsolidatedScheduler) && !toBoolean(reservation?.IsResourceReservation) && !toBoolean(reservation?.InstructorId)) &&
+                                <FormSelect formik={formik}
+                                            name={`CourtId`}
+                                            label='Court(s)'
+                                            options={courts}
+                                            required={true}
+                                            loading={toBoolean(loadingState.CourtId)}
+                                            propText='DisplayName'
+                                            propValue='Id'/>
+                            }
+                            
                             <ReservationRegistrationMatchMaker
                                 formik={formik}
                                 matchMaker={matchMaker}

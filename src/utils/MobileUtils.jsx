@@ -89,7 +89,7 @@ const reactNativeInitFireBaseBridge = () => {
     if (window.ReactNativeWebView) {
         let isInitFirebase = getCookie('isInitFirebase');
         
-        if (!toBoolean(isInitFirebase) || 1 == 1) {
+        if (!toBoolean(isInitFirebase)) {
             const message = JSON.stringify({ type: 'FlutterInitFirebase' });
             window.ReactNativeWebView.postMessage(message);
         }
@@ -125,7 +125,12 @@ export const reactNativeTakePhoto = () =>{
 
 
 const reactNativeHideSplashBridge = () => {
+    if (window.ReactNativeWebView) {
+        logMobile('reactHideSplash');
 
+        const message = JSON.stringify({ type: 'reactHideSplash'});
+        window.ReactNativeWebView.postMessage(message);
+    }
 }
 export const reactNativeHideSplash = () => {
     waitForWebViewBridge(() => {

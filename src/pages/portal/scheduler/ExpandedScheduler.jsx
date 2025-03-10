@@ -24,7 +24,7 @@ import {
     courtHeader, expandedModelFields,
     expandedOpenReservationCreateModal,
     handleDataChange,
-    handleDateChange, instructorHeader, scrollToCurrentTime
+    handleDateChange, instructorHeader, resourceHeader, scrollToCurrentTime
 } from "@portal/scheduler/SchedulerInnerUtils.jsx";
 import {schedulerItemsRead} from "@portal/scheduler/SchedulerInnerServices.jsx";
 import {useTranslation} from "react-i18next";
@@ -32,10 +32,10 @@ import ConsolidatedSchedulerSlot from "@portal/scheduler/ConsolidatedSchedulerSl
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 
-function ExpandedScheduler({index}) {
+function ExpandedScheduler({index, resource}) {
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
     const {availableHeight, setIsFooterVisible, setFooterContent, token, globalStyles} = useApp();
-    const {orgId} = useAuth();
+    const {orgId, authData} = useAuth();
     const {t} = useTranslation('');
 
     const [courts, setCourts] = useState([]);
@@ -85,6 +85,7 @@ function ExpandedScheduler({index}) {
     const loadSchedulerData = async (selectedIndexViewType) => {
 
         let response = null;
+        
         if (toBoolean(index)) {
             //default scheduler
             if (equalString(selectedIndexViewType, 'expanded')) {
@@ -92,15 +93,21 @@ function ExpandedScheduler({index}) {
             } else if (equalString(selectedIndexViewType, 'consolidated')){
                 response = await appService.get(navigate, `/app/Online/Reservations/Tab_ConsolidatedScheduler/${orgId}`);
             }
-        } else{
+        } else if (resource) {
+            response = await appService.get(navigate, `/app/Online/Reservations/resources/${orgId}`);
+        } else {
             //custom scheduler data
             response = await appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Bookings/${orgId}?sId=${customSchedulerId}`, {}, {}, true)
         }
 
-        if (toBoolean(response?.IsValid)){
-            const model = toBoolean(index) ? response.Data  : response.Data.Model;
+        if (toBoolean(response?.IsValid)) {
+            const model = toBoolean(index) || toBoolean(resource) ? response.Data  : response.Data.Model;
 
-            if (!toBoolean(index)){
+            console.log(model)
+            
+            if (toBoolean(resource)) {
+                
+            } else if (!toBoolean(index)){
                 setHeaderTitle(model.Name)
             }
 
@@ -108,18 +115,32 @@ function ExpandedScheduler({index}) {
             setEndTimeString(model.EndTimeSpanStringDisplay);
 
             setSchedulerData(model);
-            setSchedulerHours(model.SchedulerDto.OrganizationHours)
+            
+            if (!toBoolean(resource)) {
+                setSchedulerHours(model.SchedulerDto.OrganizationHours)
+            }
+
             const currentDateTime = new Date(fromDateTimeStringToDateTime(model.CurrentDateTimeStringDisplay));
             const dateToShow = new Date(fromDateTimeStringToDateTime(model.SchedulerDateStringDisplay));
             setMinDate(currentDateTime);
             setTimeZone(model.TimeZone);
             setInterval(model.MinInterval);
 
-            let formattedCourts = model.Courts.map(court => ({
-                ...court,
-                Text: courtHeader(court, customSchedulerId, token),
-                Value: court.Id
-            }));
+            let formattedCourts = [];
+            
+            if (toBoolean(resource)) {
+                formattedCourts = model.Resources.map(res => ({
+                    ...res,
+                    Text: resourceHeader(res, token),
+                    Value: res.ResourceName
+                }));
+            } else {
+                formattedCourts = model.Courts.map(court => ({
+                    ...court,
+                    Text: courtHeader(court, customSchedulerId, token),
+                    Value: court.Id
+                }));
+            }
             
             if (equalString(model?.TypeString, 'Instructor')) {
                 formattedCourts = model.SchedulerInstructors.map(instructor => ({
@@ -159,6 +180,10 @@ function ExpandedScheduler({index}) {
         setIsFooterVisible(true);
         setFooterContent(null);
 
+        if (toBoolean(resource)) {
+            setHeaderTitle(authData?.ResourceEntityName)
+        }
+        
         const loadMultipleSchedulerTab = async () => {
             setHeaderTitle('Book a Court')
             let response = await appService.getRoute(apiRoutes.MemberSchedulersApiUrl, `/app/Online/PublicSchedulerApi/Index/${orgId}?sId=${customSchedulerId}`, {}, {}, true);

@@ -28,7 +28,8 @@ export const HomeRouteNames = {
     PORTAL_INDEX: '/online/portal/index/:id',
     NOT_FOUND: '/403',
     SCHEDULER: '/online/reservations/bookings/:id',
-    SCHEDULER_INDEX: '/online/reservations/index/:id',
+    SCHEDULER_INDEX: '/online/reservations/index/:id',  //ExpandedScheduler
+    SCHEDULER_RESOURCES: '/online/reservations/resources/:id',  //ExpandedScheduler
     ANNOUNCEMENT_DETAILS: `/announcement/details/:id`,
     ANNOUNCEMENT_LIST: `/online/announcement/index/:id`,
     NOTIFICATION_LIST: `/online/notification/list/:id`,
@@ -81,6 +82,13 @@ const HomeRoutes = [
     {
         path: HomeRouteNames.SCHEDULER_INDEX,
         element: <ExpandedScheduler index={true} />,
+        title: '',
+        disablePullDown: true,
+        header: true
+    },
+    {
+        path: HomeRouteNames.SCHEDULER_RESOURCES,
+        element: <ExpandedScheduler resource={true} />,
         title: '',
         disablePullDown: true,
         header: true
