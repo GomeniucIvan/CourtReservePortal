@@ -7,7 +7,7 @@ import { DAYS_IN_WEEK_COUNT} from "../../constants/index.mjs";
 import { MS_PER_DAY, ZonedDate, firstDayInWeek, getDate, addDays } from "@progress/kendo-date-math";
 import { useDir, classNames, IconWrap } from "@progress/kendo-react-common";
 import { useInternationalization, useLocalization} from "../../intl/index.mjs";
-import { toRanges } from "../../services/rangeService.mjs";
+import { toRanges } from "../../services/rangeService.jsx";
 import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
 import { mapItemsToSlots, mapSlotsToItems, toUTCDateTime } from "../../utils/index.jsx";

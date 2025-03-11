@@ -7,7 +7,7 @@ import { TimelineViewAllEventsRowContent } from "./TimelineViewAllEventsRowConte
 import { VerticalResourceIterator } from "../common/VerticalResourceIterator.mjs";
 import { isInTimeRange, mapItemsToSlots, mapSlotsToItems, toUTCDateTime, isInDaysRange, intersects, last, first, orderSort } from "../../utils/index.jsx";
 import { classNames } from "@progress/kendo-react-common";
-import { toRanges } from "../../services/rangeService.mjs";
+import { toRanges } from "../../services/rangeService.jsx";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
 import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
@@ -44,7 +44,7 @@ export const MultiDayTimelineView = (props) => {
 
     const orientation = useSchedulerOrientationContext();
     const groups = useSchedulerGroupsContext();
-    const dateRange = useSchedulerDateRangeContext();
+    let dateRange = useSchedulerDateRangeContext();
     const fields = useSchedulerFieldsContext();
 
     const intl = useInternationalization();

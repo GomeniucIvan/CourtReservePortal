@@ -16,7 +16,7 @@ import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerGroupsCo
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
 import { CurrentTimeMarker } from "../../components/CurrentTimeMarketDisplay.jsx";
 import { DateHeaderCell } from "../../components/DateHeaderCell.jsx";
-import { toRanges } from "../../services/rangeService.mjs";
+import { toRanges } from "../../services/rangeService.jsx";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
 import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
@@ -59,7 +59,7 @@ export const MultiDayView = (props) => {
     const orientation = useSchedulerOrientationContext();
 
     const fields = useSchedulerFieldsContext();
-    const dateRange = useSchedulerDateRangeContext();
+    let dateRange = useSchedulerDateRangeContext();
 
     const viewStart = React.useMemo(
         () => showWorkHours
