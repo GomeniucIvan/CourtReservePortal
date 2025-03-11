@@ -15,7 +15,7 @@ import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
 import { BORDER_WIDTH } from "../../constants/index.mjs";
 import { useInternationalization } from "../../intl/index.mjs";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
-import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerOrientationContext, useSchedulerGroupsContext, useSchedulerDateRangeContext, useSchedulerFieldsContext } from "../../context/SchedulerContext.mjs";
+import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerOrientationContext, useSchedulerGroupsContext, useSchedulerDateRangeContext, useSchedulerFieldsContext } from "../../context/SchedulerContext.jsx";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
 import { CurrentTimeMarker } from "../../components/CurrentTimeMarketDisplay.jsx";
 import { DateHeaderCell} from "../../components/DateHeaderCell.jsx";

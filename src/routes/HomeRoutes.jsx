@@ -34,12 +34,12 @@ export const HomeRouteNames = {
     ANNOUNCEMENT_LIST: `/online/announcement/index/:id`,
     NOTIFICATION_LIST: `/online/notification/list/:id`,
     NOTIFICATION_DETAILS: `/online/notification/pushnotificationdetails/:id`,
-    ORGANIZATION_LIST: `/online/myprofile/myclubs/:id`,
+    ORGANIZATION_LIST: `/online/myprofile/myclubs/:id`, //ProfileMyOrganizationList
+    MY_CLUBS: `/online/myprofile/myclubs`, //ProfileMyOrganizationList
     NEWS_LIST: `/online/news/list/:id`,
     NEWS_DETAILS: `/online/news/details/:id`,
     NAVIGATE: `/online/portal/navigate/:id/:nodeId`,
     DISCLOSURE_PENDING_LOGIN: `/online/disclosures/pending/:id`,
-    MY_CLUBS: `/online/myprofile/myclubs`,
     MEMBER_GROUP: `/online/publicmembergroup/MemberGroup/:id`,
     TEXT_MESSAGE_MODAL: `/online/textmessage/optin/:id`, //textmessage/optin is bindned to check current page
     PACKAGE_LIST: `/online/packages/list/:id`,
@@ -142,6 +142,12 @@ const HomeRoutes = [
         path: HomeRouteNames.NEWS_DETAILS,
         element: <NewsDetails />,
         title: 'newsDetails',
+        header: true
+    },
+    {
+        path: HomeRouteNames.MY_CLUBS,
+        element: <ProfileMyOrganizationList />,
+        title: 'organizationList',
         header: true
     },
     {

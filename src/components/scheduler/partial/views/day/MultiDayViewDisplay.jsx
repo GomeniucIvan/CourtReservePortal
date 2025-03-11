@@ -12,7 +12,7 @@ import { useInternationalization } from "../../intl/index.mjs";
 import { MS_PER_MINUTE } from "../../constants/index.mjs";
 import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
-import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerGroupsContext, useSchedulerOrientationContext, useSchedulerFieldsContext, useSchedulerDateRangeContext } from "../../context/SchedulerContext.mjs";
+import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerGroupsContext, useSchedulerOrientationContext, useSchedulerFieldsContext, useSchedulerDateRangeContext } from "../../context/SchedulerContext.jsx";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
 import { CurrentTimeMarker } from "../../components/CurrentTimeMarketDisplay.jsx";
 import { DateHeaderCell } from "../../components/DateHeaderCell.jsx";
@@ -299,7 +299,7 @@ export const MultiDayView = (props) => {
                                                                         && s.range.index === rangeIndex
                                                                         && s.group.index === groupIndex)
                                                                     .map((slot) => {
-                                                                        let isPastStart = slot.start < props.currentDateTime;
+                                                                        let isPastStart = slot.zonedStart < props.currentDateTime;
                                                                         
                                                                         return (
                                                                             <EditSlot

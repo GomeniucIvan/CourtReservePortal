@@ -1,7 +1,7 @@
 import * as t from "react";
 import { SchedulerItem as h } from "../../items/SchedulerItemDisplay.jsx";
 import { SchedulerViewItem as g } from "../../items/SchedulerViewItemDisplay.jsx";
-import { useSchedulerPropsContext as w, useSchedulerGroupsContext as R, useSchedulerFieldsContext as p, useSchedulerDateRangeContext as x } from "../../context/SchedulerContext.mjs";
+import { useSchedulerPropsContext as w, useSchedulerGroupsContext as R, useSchedulerFieldsContext as p, useSchedulerDateRangeContext as x } from "../../context/SchedulerContext.jsx";
 import { mapItemsToSlots as v } from "../../utils/index.jsx";
 import { useSchedulerViewRangesContext as C, useSchedulerViewSlotsContext as z } from "../../context/SchedulerViewContext.mjs";
 import { toOccurrences as y } from "../../services/occurrenceService.jsx";

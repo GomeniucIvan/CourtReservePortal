@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useLocalization } from "../../../intl/index.mjs";
-import { useSchedulerActiveViewContext } from "../../../context/SchedulerContext.mjs";
+import { useSchedulerActiveViewContext } from "../../../context/SchedulerContext.jsx";
 
 export const ViewSelectorItem = (props) => {
     const [activeViewName, setActiveViewName] = useSchedulerActiveViewContext();

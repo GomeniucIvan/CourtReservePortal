@@ -339,7 +339,7 @@ const ExpandedSchedulerItem = (props) => {
                             <Flex align={'center'}
                                   justify={'center'}
                                   onClick={() => {pNotify('Dynamic slot TODO!')}}
-                                  style={{background: token.colorBgContainer, height: '100%'}}>
+                                  style={{background: token.colorBgContainer, height: '100%', borderBottom: `1px solid ${token.colorBorder}`}}>
                                 <div
                                     style={{
                                         maxHeight: '100% !important',

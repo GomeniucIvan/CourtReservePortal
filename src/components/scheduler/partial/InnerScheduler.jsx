@@ -1,7 +1,7 @@
 ﻿import React, { useMemo, useState, forwardRef, memo  } from 'react';
 import { getModelFields, toSchedulerGroups, findMaster, setField, getField, getToday } from "./utils/index.jsx";
 import { useRtl as useDir, clone, classNames } from "@progress/kendo-react-common";
-import { SchedulerContext } from "./context/SchedulerContext.mjs";
+import { SchedulerContext } from "./context/SchedulerContext.jsx";
 import { useControlledState } from "./hooks/useControlledState.mjs";
 import { useLocalization, useInternationalization } from "./intl/index.mjs";
 import { SchedulerHeader } from "./components/header/SchedulerHeader.jsx";

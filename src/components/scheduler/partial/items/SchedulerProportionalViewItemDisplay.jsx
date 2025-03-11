@@ -8,7 +8,7 @@ import { SchedulerItemContent} from "./SchedulerItemContent.mjs";
 import { useDir , IconWrap  } from "@progress/kendo-react-common";
 import { caretAltRightIcon , caretAltLeftIcon, arrowRotateCwIcon, nonRecurrenceIcon } from "@progress/kendo-svg-icons";
 import { useSchedulerViewItemsContext, useSchedulerViewSlotsContext  } from "../context/SchedulerViewContext.mjs";
-import { useSchedulerElementContext} from "../context/SchedulerContext.mjs";
+import { useSchedulerElementContext} from "../context/SchedulerContext.jsx";
 const ITEMS_SPACING = 1;
 
 /* eslint-disable max-len */

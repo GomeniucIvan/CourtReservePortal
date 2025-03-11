@@ -10,7 +10,7 @@ import {
     useSchedulerDateFormatContext,
     useSchedulerDateRangeContext,
     useSchedulerDateContext
-} from "../../../context/SchedulerContext.mjs";
+} from "../../../context/SchedulerContext.jsx";
 import {toUTCDateTime} from "../../../utils/index.jsx";
 import {Radio} from "antd";
 import DrawerDatePicker from "../../../../../../components/drawer/DrawerDatePicker.jsx";

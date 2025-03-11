@@ -9,7 +9,7 @@ import { useDir, IconWrap } from "@progress/kendo-react-common";
 import { useRowSync } from "../hooks/useRowSync.mjs";
 import { useEditable } from "../hooks/useEditable.mjs";
 import { useSchedulerViewItemsContext, useSchedulerViewSlotsContext } from "../context/SchedulerViewContext.mjs";
-import { useSchedulerElementContext } from "../context/SchedulerContext.mjs";
+import { useSchedulerElementContext } from "../context/SchedulerContext.jsx";
 
 const ITEMS_SPACING = 1;
 

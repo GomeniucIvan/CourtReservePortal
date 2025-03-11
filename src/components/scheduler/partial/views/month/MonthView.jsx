@@ -16,7 +16,7 @@ import { toOccurrences} from "../../services/occurrenceService.jsx";
 import { toItems} from "../../services/itemsService.mjs";
 import { ShowMoreItemsButton } from "../../components/ShowMoreItemsButton.jsx";
 import { SchedulerEditItem } from "../../items/SchedulerEditItemDisplay.jsx";
-import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerDateContext, useSchedulerActiveViewContext, useSchedulerViewsContext, useSchedulerGroupsContext, useSchedulerOrientationContext, useSchedulerDateRangeContext, useSchedulerFieldsContext } from "../../context/SchedulerContext.mjs";
+import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerDateContext, useSchedulerActiveViewContext, useSchedulerViewsContext, useSchedulerGroupsContext, useSchedulerOrientationContext, useSchedulerDateRangeContext, useSchedulerFieldsContext } from "../../context/SchedulerContext.jsx";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
 import { DateHeaderCell } from "../../components/DateHeaderCell.jsx";
 

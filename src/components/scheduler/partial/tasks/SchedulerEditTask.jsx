@@ -2,7 +2,7 @@ import * as React from "react";
 import { useControlledState } from "../hooks/useControlledState.mjs";
 import { findMaster } from "../utils/index.jsx";
 import { DATA_ACTION } from "../constants/index.mjs";
-import { useSchedulerFieldsContext, useSchedulerDataContext } from "../context/SchedulerContext.mjs";
+import { useSchedulerFieldsContext, useSchedulerDataContext } from "../context/SchedulerContext.jsx";
 import { SchedulerEditTaskContext } from "../context/SchedulerEditTaskContext.mjs";
 import { useEditable } from "../hooks/useEditable.mjs";
 import {setPage, toRoute} from "../../../../utils/RouteUtils.jsx";

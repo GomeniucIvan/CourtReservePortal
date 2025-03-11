@@ -250,7 +250,7 @@ const DisclosuresPartial = forwardRef(({readUrl, onPostSuccess, onLoad, isModal,
                                     </>
                                 ) :
                                 (
-                                    <EmptyBlock description={t('disclosure.noWaivers')} type={emptyBlockTypes.WAIVER}/>
+                                    <EmptyBlock description={t('disclosure.noWaivers')} type={emptyBlockTypes.WAIVER} removePadding={true}/>
                                 )
                             }
                         </>

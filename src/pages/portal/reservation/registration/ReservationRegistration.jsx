@@ -332,6 +332,22 @@ function ReservationRegistration() {
                     selectReservationTypeIdRef.current.open();
                 }
             }
+        } else {
+            setIsFetching(false);
+            
+            if (!isNullOrEmpty(r?.Path)) {
+                navigate(r.Path);
+            } else {
+                displayMessageModal({
+                    title: "Error",
+                    html: (onClose) => r.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+
+                    },
+                })
+            }
         }
 
         resetFetch();

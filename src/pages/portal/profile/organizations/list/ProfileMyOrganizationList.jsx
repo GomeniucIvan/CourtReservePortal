@@ -211,35 +211,34 @@ function ProfileMyOrganizationList() {
 
                                 return (
                                     <Card className={cx(globalStyles.card, globalStyles.cardNoPadding)}
-                                          key={organization.Id}
-                                          onClick={() => {
-
-                                          }}>
+                                          key={organization.Id}>
                                         <PaddingBlock topBottom={true}>
-                                            <Flex vertical={true} gap={token.paddingLG}>
-                                                <Flex justify="space-between">
-                                                    <img src={organization?.LogoUrl} alt={organization.Name} className={styles.orgCardLogo}/>
+                                            <div onClick={() => {changeViewingOrganization(organization)}}>
+                                                <Flex vertical={true} gap={token.paddingLG}>
+                                                    <Flex justify="space-between">
+                                                        <img src={organization?.LogoUrl} alt={organization.Name} className={styles.orgCardLogo}/>
 
-                                                    {anyInList(organizationTags) &&
-                                                       <div>
-                                                           <Flex gap={token.paddingXS} className={styles.headerBadgesWrapper}>
-                                                               {organizationTags.map((organizationTag, index) => {
-                                                                   return (
-                                                                       <Tag key={index} color={organizationTag.Type} className={globalStyles.tag}>
-                                                                           {organizationTag.Text}
-                                                                       </Tag>
-                                                                   )
-                                                               })}
-                                                           </Flex>
-                                                       </div>
-                                                    }
-                                                </Flex>
+                                                        {anyInList(organizationTags) &&
+                                                            <div>
+                                                                <Flex gap={token.paddingXS} className={styles.headerBadgesWrapper}>
+                                                                    {organizationTags.map((organizationTag, index) => {
+                                                                        return (
+                                                                            <Tag key={index} color={organizationTag.Type} className={globalStyles.tag}>
+                                                                                {organizationTag.Text}
+                                                                            </Tag>
+                                                                        )
+                                                                    })}
+                                                                </Flex>
+                                                            </div>
+                                                        }
+                                                    </Flex>
 
-                                                <Flex vertical={true}>
-                                                    <Title level={3}>{organization?.Name}</Title>
-                                                    <Text style={{color: token.colorSecondary}}>{organization?.Address}</Text>
+                                                    <Flex vertical={true}>
+                                                        <Title level={3}>{organization?.Name}</Title>
+                                                        <Text style={{color: token.colorSecondary}}>{organization?.Address}</Text>
+                                                    </Flex>
                                                 </Flex>
-                                            </Flex>
+                                            </div>
                                         </PaddingBlock>
 
                                         <Divider className={globalStyles.noMargin} />

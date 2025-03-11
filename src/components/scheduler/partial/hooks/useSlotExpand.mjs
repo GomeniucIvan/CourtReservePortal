@@ -10,7 +10,7 @@ import * as s from "react";
 import { getPadding as R, getRect as b, setRect as E } from "../views/common/utilsJava.js";
 import { BORDER_WIDTH as _ } from "../constants/index.mjs";
 import { useIsomorphicLayoutEffect as w } from "@progress/kendo-react-common";
-import { useSchedulerElementContext as x } from "../context/SchedulerContext.mjs";
+import { useSchedulerElementContext as x } from "../context/SchedulerContext.jsx";
 const z = (e, t) => {
   const f = s.useRef(), p = s.useRef(0), a = x(), d = () => {
     if (!e.current)

@@ -2,7 +2,7 @@ import * as React from "react";
 import { useLocalization} from "../../../intl/index.mjs";
 import { useWindow, classNames, IconWrap } from "@progress/kendo-react-common";
 import { ViewSelectorItem } from "./ViewSelectorItem.jsx";
-import { useSchedulerViewsContext, useSchedulerActiveViewContext } from "../../../context/SchedulerContext.mjs";
+import { useSchedulerViewsContext, useSchedulerActiveViewContext } from "../../../context/SchedulerContext.jsx";
 
 
 export const ViewSelectorList = React.forwardRef(() => {

@@ -14,7 +14,7 @@ import { useSeries, SERIES_ACTION } from "./hooks/use-series.mjs";
 import { ITEMS_SELECT_ACTION } from "../hooks/use-items-selection.mjs";
 import { useSchedulerViewSelectedItemsContext, useSchedulerViewItemsContext, useSchedulerViewFocusedItemsContext, useSchedulerViewFocusedSlotsContext } from "../context/SchedulerViewContext.mjs";
 import { ITEMS_FOCUS_ACTION } from "../hooks/use-items-focus.mjs";
-import { SchedulerItemSelectionContext } from "../context/SchedulerContext.mjs";
+import { SchedulerItemSelectionContext } from "../context/SchedulerContext.jsx";
 import { useEditable } from "../hooks/useEditable.mjs";
 import { SLOTS_FOCUS_ACTION } from "../hooks/use-slots-focus.mjs";
 import {toBoolean} from "../../../../utils/Utils.jsx";

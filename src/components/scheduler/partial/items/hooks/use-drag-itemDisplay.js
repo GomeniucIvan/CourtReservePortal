@@ -5,7 +5,7 @@ import { useControlledState } from "../../hooks/useControlledState.mjs";
 import { setField, getField, slotDive } from "../../utils/index.jsx";
 import { DATA_ACTION } from "../../constants/index.mjs";
 import { useSchedulerViewSelectedItemsContext } from "../../context/SchedulerViewContext.mjs";
-import { useSchedulerFieldsContext, useSchedulerGroupsContext } from "../../context/SchedulerContext.mjs";
+import { useSchedulerFieldsContext, useSchedulerGroupsContext } from "../../context/SchedulerContext.jsx";
 
 export const DRAG_ITEM_ACTION = {
     set: 'DRAG_ITEM_SET',

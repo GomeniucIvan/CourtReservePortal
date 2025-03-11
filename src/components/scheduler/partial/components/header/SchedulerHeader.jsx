@@ -8,7 +8,6 @@ import {useLocalization} from "../../intl/index.mjs";
 import {getToday} from "../../utils/index.jsx";
 import {useEffect, useState} from "react";
 import {addDays, addMonths} from "@progress/kendo-date-math";
-import {useSchedulerPropsContext} from "../../context/SchedulerContext.mjs";
 import {isNullOrEmpty} from "../../../../../utils/Utils.jsx";
 
 export const SchedulerHeader = React.forwardRef((props, ref) => {

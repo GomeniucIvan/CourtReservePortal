@@ -3,7 +3,7 @@ import { Keys } from "@progress/kendo-react-common";
 import { setField, isGroupped, getField, findFirstItem } from "../utils/index.jsx";
 import { SchedulerViewSlot } from "./SchedulerViewSlotDisplay.jsx";
 import { useControlledState } from "../hooks/useControlledState.mjs";
-import { useSchedulerFieldsContext } from "../context/SchedulerContext.mjs";
+import { useSchedulerFieldsContext } from "../context/SchedulerContext.jsx";
 import { SchedulerEditSlotContext } from "../context/SchedulerEditSlotContext.mjs";
 import { SLOTS_SELECT_ACTION } from "../hooks/use-slots-selection.mjs";
 import { DATA_ACTION } from "../constants/index.mjs";

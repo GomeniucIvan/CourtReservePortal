@@ -5,7 +5,7 @@ import { cloneDate} from "@progress/kendo-date-math";
 import { useDir, classNames } from "@progress/kendo-react-common";
 import { intersects, isInTimeRange, first } from "../utils/index.jsx";
 import { getRect } from "../views/common/utilsJava.js";
-import { useSchedulerElementContext, useSchedulerPropsContext } from "../context/SchedulerContext.mjs";
+import { useSchedulerElementContext, useSchedulerPropsContext } from "../context/SchedulerContext.jsx";
 import { useSchedulerViewSlotsContext } from "../context/SchedulerViewContext.mjs";
 
 const combineWidths = (slots) => {

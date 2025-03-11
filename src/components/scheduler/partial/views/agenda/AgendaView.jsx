@@ -13,7 +13,7 @@ import { toItems } from "../../services/itemsService.mjs";
 import { mapItemsToSlots, mapSlotsToItems, toUTCDateTime } from "../../utils/index.jsx";
 import { SchedulerEditTask } from "../../tasks/SchedulerEditTask.jsx";
 import { SchedulerEditSlot } from "../../slots/SchedulerEditSlotDisplay.jsx";
-import { useSchedulerPropsContext, useSchedulerDataContext , useSchedulerGroupsContext, useSchedulerFieldsContext, useSchedulerDateRangeContext } from "../../context/SchedulerContext.mjs";
+import { useSchedulerPropsContext, useSchedulerDataContext , useSchedulerGroupsContext, useSchedulerFieldsContext, useSchedulerDateRangeContext } from "../../context/SchedulerContext.jsx";
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
 import { toSlots  } from "../../services/slotsServiceDisplay.js";
 import { useCellSync} from "../../hooks/useCellSync.mjs";

@@ -7,6 +7,7 @@ import { MS_PER_MINUTE } from "../constants/index.mjs";
 export const toSlots = (_dateRange, { step }, { groups, ranges }) => {
     const slots = [];
 
+
     groups.forEach((group) => {
         ranges.forEach((range) => {
             const viewStart = range.zonedStart;
