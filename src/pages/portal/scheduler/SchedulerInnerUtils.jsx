@@ -57,10 +57,11 @@ export const expandedOpenReservationCreateModal = (navigate, startTime, endTime,
     
     const start = moment(new Date(startTime)).format(`${dateFormatByUiCulture()} HH:mm`);
     const end = moment(new Date(endTime)).format(`${dateFormatByUiCulture()} HH:mm`);
-
+    let objectData = dataItem.group.resources[0];
+    
     navigate(ProfileRouteNames.RESERVATION_CREATE, {
         state: {
-            dataItem,
+            dataItem: objectData,
             start,
             end,
             customSchedulerId

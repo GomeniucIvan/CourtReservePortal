@@ -220,8 +220,8 @@ function ReservationRegistration() {
 
     const loadData = async (refresh) => {
         let instructorId = null;
-        let courtLabel = dataItem.Label;
-        let courtType = dataItem.CourtTypeName;
+        let courtLabel = dataItem?.Label;
+        let courtType = dataItem?.CourtTypeName;
         let isConsolidated = false;
 
 

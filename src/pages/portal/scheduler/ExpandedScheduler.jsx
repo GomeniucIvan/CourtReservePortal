@@ -281,7 +281,7 @@ function ExpandedScheduler({index, resource}) {
                         entytyid={props.group.resources[0].Value}
                         onClick={() => {
                             expandedOpenReservationCreateModal(navigate, formatLocalDateString(props.zonedStart), formatLocalDateString(props.zonedEnd), {
-                                ...props.dataItem,
+                                ...props,
                                 CustomSchedulerId: customSchedulerId
                             })}
                     }
