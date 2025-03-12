@@ -274,7 +274,7 @@ export const SchedulerSlot = React.forwardRef((
             data-slot-index={props.index}
             data-start-date={props.start}
         >
-            {toBoolean(useTextSchedulerSlot) ?
+            {(toBoolean(useTextSchedulerSlot) && 1 == 2) ?
                 ( <div className={'k-scheduler-cell k-slot-cell'} style={{border: 'none'}}>
                     {schedulerSlotIntersects(props, schedulerEvents) ? (
                         <Text>

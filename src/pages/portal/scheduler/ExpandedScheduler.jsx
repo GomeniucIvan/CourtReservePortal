@@ -14,6 +14,7 @@ import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {
+    formatLocalDateString,
     fromDateTimeStringToDateTime, fromTimeSpanString
 } from "@/utils/DateUtils.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
@@ -31,6 +32,8 @@ import {useTranslation} from "react-i18next";
 import ConsolidatedSchedulerSlot from "@portal/scheduler/ConsolidatedSchedulerSlot.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
+import {SchedulerSlot} from "@/components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
+const {Text} = Typography;
 
 function ExpandedScheduler({index, resource}) {
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
@@ -103,8 +106,6 @@ function ExpandedScheduler({index, resource}) {
         if (toBoolean(response?.IsValid)) {
             const model = toBoolean(index) || toBoolean(resource) ? response.Data  : response.Data.Model;
 
-            console.log(model)
-            
             if (toBoolean(resource)) {
                 
             } else if (!toBoolean(index)){
@@ -264,6 +265,41 @@ function ExpandedScheduler({index, resource}) {
         );
     };
 
+    const shouldHideButton = () => {
+        return false;
+    }
+    
+    
+    const CustomSlot = (props) => {
+        let incStartString = formatLocalDateString(props.zonedStart);
+        return (
+            <SchedulerSlot {...props}>
+                {((new Date(incStartString) > currentDateTime) && toBoolean(schedulerData?.ShowReserveButton)) &&
+                    <Text
+                        start={props.zonedStart}
+                        end={props.zonedEnd}
+                        entytyid={props.group.resources[0].Value}
+                        onClick={() => {
+                            expandedOpenReservationCreateModal(navigate, formatLocalDateString(props.zonedStart), formatLocalDateString(props.zonedEnd), {
+                                ...props.dataItem,
+                                CustomSchedulerId: customSchedulerId
+                            })}
+                    }
+                        style={{
+                            width: '100%',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            display: 'flex'
+                            //display: `${(shouldHideButton(courtId, props.zonedStart, props.zonedEnd) ? 'none' : 'flex')}`
+                        }}
+                    >
+                        Reserve
+                    </Text>
+                }
+            </SchedulerSlot>
+        )
+    }
+    
     if (isSchedulerInitializing){
         return (
             <Flex vertical={true} gap={2} style={{overflow: 'auto'}}>
@@ -307,6 +343,7 @@ function ExpandedScheduler({index, resource}) {
                 minDate={minDate}
                 maxDate={maxDate}
                 viewSlot={CustomViewSlot}
+                slot={CustomSlot}
                 type={schedulerData?.TypeString}
                 group={{
                     resources: equalString(schedulerData?.TypeString, 'Consolidated') ? ["CourtTypes"] : ["Courts"],
@@ -314,7 +351,7 @@ function ExpandedScheduler({index, resource}) {
                 interval={interval}
                 item={equalString(schedulerData?.TypeString, 'Consolidated') ? ConsolidatedSchedulerSlot : ExpandedSchedulerItem}
                 useTextSchedulerSlot={!equalString(schedulerData?.TypeString, 'Consolidated')}
-                openReservationCreateModal={(props, dataItem) => {expandedOpenReservationCreateModal(navigate, props, dataItem)}}
+                //openReservationCreateModal={(props, dataItem) => {expandedOpenReservationCreateModal(navigate, props, dataItem)}}
                 resources={equalString(schedulerData?.TypeString, 'Consolidated') ?
                     [{
                         name: 'CourtTypes',
@@ -337,7 +374,7 @@ function ExpandedScheduler({index, resource}) {
                 <DayView
                     viewItem={SchedulerProportionalViewItem}
                     startTime={startTimeString}
-                    endTime={endTimeString}
+                    endTIme={startTimeString}
                     workDayStart={startTimeString}
                     workDayEnd={endTimeString}
                     slotDuration={interval}

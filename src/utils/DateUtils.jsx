@@ -378,3 +378,14 @@ export const dateToTimeString = (incDate, twentyFourHourFormat) => {
 
     return moment.utc(incDate).format('H:mm');
 }
+
+export const formatLocalDateString = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // Simple local date format without timezone adjustment
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+};

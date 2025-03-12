@@ -52,14 +52,11 @@ export const handleDateChange = (event, setSelectedDate) => {
 export const handleDataChange = (e) => {
 }
 
-export const expandedOpenReservationCreateModal = (navigate, props, dataItem) => {
-    let start = props.start;
-    let end = props.end;
-    let customSchedulerId = props.customSchedulerId;
-
-    start = moment(start).format(`${dateFormatByUiCulture()} HH:mm`);
-    end = moment(end).format(`${dateFormatByUiCulture()} HH:mm`);
+export const expandedOpenReservationCreateModal = (navigate, startTime, endTime, dataItem) => {
+    let customSchedulerId = dataItem.CustomSchedulerId;
     
+    const start = moment(new Date(startTime)).format(`${dateFormatByUiCulture()} HH:mm`);
+    const end = moment(new Date(endTime)).format(`${dateFormatByUiCulture()} HH:mm`);
 
     navigate(ProfileRouteNames.RESERVATION_CREATE, {
         state: {

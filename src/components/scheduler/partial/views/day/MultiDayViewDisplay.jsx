@@ -16,11 +16,11 @@ import { useSchedulerPropsContext, useSchedulerDataContext, useSchedulerGroupsCo
 import { SchedulerResourceIteratorContext } from "../../context/SchedulerResourceIteratorContext.mjs";
 import { CurrentTimeMarker } from "../../components/CurrentTimeMarketDisplay.jsx";
 import { DateHeaderCell } from "../../components/DateHeaderCell.jsx";
-import { toRanges } from "../../services/rangeService.jsx";
+import {toRanges} from "../../services/rangeService.jsx";
 import { toSlots } from "../../services/slotsServiceDisplay.js";
 import { toOccurrences } from "../../services/occurrenceService.jsx";
 import { toItems } from "../../services/itemsService.mjs";
-import {equalString, toBoolean} from "../../../../../utils/Utils.jsx";
+import {isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 
 
 const FIRST_INDEX = 0;
@@ -60,7 +60,7 @@ export const MultiDayView = (props) => {
 
     const fields = useSchedulerFieldsContext();
     let dateRange = useSchedulerDateRangeContext();
-
+    
     const viewStart = React.useMemo(
         () => showWorkHours
             ? workDayStart
@@ -104,7 +104,7 @@ export const MultiDayView = (props) => {
             timezone
         ]
     );
-
+    
     const daySlots = React.useMemo(
         () => toSlots(
             dateRange,
@@ -136,7 +136,8 @@ export const MultiDayView = (props) => {
             groups,
             timeRanges
         ]);
-
+    
+    
     const occurrences = React.useMemo(
         () => toOccurrences(data, { dateRange, fields, timezone }),
         [data, dateRange.start.getTime(), dateRange.end.getTime(), fields, timezone]
@@ -299,11 +300,23 @@ export const MultiDayView = (props) => {
                                                                         && s.range.index === rangeIndex
                                                                         && s.group.index === groupIndex)
                                                                     .map((slot) => {
-                                                                        let isPastStart = slot.zonedStart < props.currentDateTime;
+                                                                        // if (!isNullOrEmpty(slot?.range?.start)) {
+                                                                        //     slot.start = slot?.range?.start;
+                                                                        // }
                                                                         
+                                                                        let isPast = false;
+                                                                        let slotDate = null;
+                                                                        
+                                                                        if (!isNullOrEmpty(slot.znSlStart)) {
+                                                                            slotDate = new Date(slot.znSlStart);
+                                                                        }
+                                                                        
+                                                                        let isPastStart = (slotDate || slot.start) < props.currentDateTime;
+                                                                        
+                                                                        //slot.start.getTime()
                                                                         return (
                                                                             <EditSlot
-                                                                                key={`${slot.start.getTime()}:${slot.group.index}`}
+                                                                                key={`${slot.znSlStart || slot.start}:${slot.group.index}`}
                                                                                 {...slot}
                                                                                 onDataAction={props.onDataAction}
                                                                                 slot={props.slot}

@@ -663,17 +663,21 @@ function ReservationRegistration() {
             holdTimeForReservation: reservation?.HoldTimeForReservation
         };
 
-        setFooterContent(<PaymentDrawerBottom paymentData={paymentData}>
-            <Button type="primary"
-                    block
-                    htmlType="submit"
-                    loading={isLoading}
-                    disabled={isFetching}
-                    onClick={formik.handleSubmit}>
-                {submitButtonText}
-            </Button>
-        </PaymentDrawerBottom>)
-    }, [isFetching, isLoading, submitButtonText, totalPriceToPay, reservation]);
+        if (!isFetching && isNullOrEmpty(reservation)) {
+            setFooterContent('')
+        } else {
+            setFooterContent(<PaymentDrawerBottom paymentData={paymentData}>
+                <Button type="primary"
+                        block
+                        htmlType="submit"
+                        loading={isLoading}
+                        disabled={isFetching}
+                        onClick={formik.handleSubmit}>
+                    {submitButtonText}
+                </Button>
+            </PaymentDrawerBottom>)
+        }
+    }, [isFetching, isLoading, submitButtonText, totalPriceToPay, reservation,reservation]);
 
     useEffect(() => {
         setIsFooterVisible(true);
@@ -710,19 +714,19 @@ function ReservationRegistration() {
                 </PaddingBlock>
             }
 
-            {!isFetching &&
+            {(!isFetching && !isNullOrEmpty(reservation)) &&
                 <>
                     <PaddingBlock topBottom={true}>
                         <Flex vertical={true} gap={token.padding}>
                             <Title level={1} className={globalStyles.noTopPadding}>Reservation Details</Title>
 
-                            {!isNullOrEmpty(reservation.DateStartTimeStringDisplay) &&
+                            {!isNullOrEmpty(reservation?.DateStartTimeStringDisplay) &&
                                 <>
                                     {!toBoolean(allowToSelectedStartTime(reservation)) &&
                                         <>
                                             <FormInputDisplay label="Date & Time"
                                                        disabled={true}
-                                                       value={`${fromDateTimeStringToDateFormat(reservation.DateStartTimeStringDisplay, 'dddd, MMMM D')}, ${fromTimeSpanString(reservation.DateStartTimeStringDisplay, 'h:mma', true)}`}
+                                                       value={`${fromDateTimeStringToDateFormat(reservation?.DateStartTimeStringDisplay, 'dddd, MMMM D')}, ${fromTimeSpanString(reservation.DateStartTimeStringDisplay, 'h:mma', true)}`}
                                             />
                                         </>
                                     }

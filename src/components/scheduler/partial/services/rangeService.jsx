@@ -1,4 +1,5 @@
 import { ZonedDate } from '@progress/kendo-date-math';
+import {isNullOrEmpty} from "@/utils/Utils.jsx";
 
 /**
  * 
@@ -10,14 +11,13 @@ import { ZonedDate } from '@progress/kendo-date-math';
  *-------------------------------------------------------------------------------------------
  */
 "use client";
-export const toRanges = (dateRange, { step, timezone }) => {
+
+export const toRanges = (dateRange, { step, timezone }, incZonedStart = null, incZonedEnd = null) => {
   const ranges = [];
 
-  const zonedRangeStart = ZonedDate.fromLocalDate(dateRange.start, timezone);
-  const zonedRangeEnd = ZonedDate.fromLocalDate(dateRange.end, timezone);
+  let zonedRangeStart = ZonedDate.fromLocalDate(dateRange.start, timezone);
+  let zonedRangeEnd = ZonedDate.fromLocalDate(dateRange.end, timezone);
 
-  console.log(dateRange.start)
-  console.log(timezone)
   for (
       let current = zonedRangeStart.clone(), index = 0;
       current.getTime() < zonedRangeEnd.getTime();
@@ -26,9 +26,9 @@ export const toRanges = (dateRange, { step, timezone }) => {
     const zonedStart = current.clone();
     const zonedEnd = zonedStart.clone().addTime(step);
 
-    const start = new Date(zonedStart.getTime());
-    const end = new Date(zonedEnd.getTime());
-
+    let start = new Date(zonedStart.getTime());
+    let end = new Date(zonedEnd.getTime());
+    
     const range = {
       index,
 

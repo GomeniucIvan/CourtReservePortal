@@ -1,18 +1,17 @@
 "use client";
 import * as React from "react";
-import { MS_PER_DAY } from "@progress/kendo-date-math";
+import {getDate, MS_PER_DAY, ZonedDate} from "@progress/kendo-date-math";
 import { MS_PER_MINUTE } from "../constants/index.mjs";
-
+import {isNullOrEmpty} from "@/utils/Utils.jsx";
 
 export const toSlots = (_dateRange, { step }, { groups, ranges }) => {
     const slots = [];
-
 
     groups.forEach((group) => {
         ranges.forEach((range) => {
             const viewStart = range.zonedStart;
             const viewEnd = range.zonedEnd;
-
+            
             const offset = (viewEnd.timezoneOffset - viewStart.timezoneOffset);
 
             for (
@@ -42,10 +41,9 @@ export const toSlots = (_dateRange, { step }, { groups, ranges }) => {
 
                     end,
                     start,
-
                     zonedStart,
                     zonedEnd,
-
+                    
                     range,
                     group,
                     items: [],
