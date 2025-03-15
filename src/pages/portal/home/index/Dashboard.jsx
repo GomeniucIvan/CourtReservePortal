@@ -4,7 +4,7 @@ import {
     getNavigationStorage,
     toLocalStorage
 } from "@/storage/AppStorage.jsx";
-import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
+import {equalString, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import DashboardModern from "@portal/home/index/modern/DashboardModern.jsx";
@@ -19,6 +19,8 @@ import * as React from "react";
 import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
 import {getGlobalDeviceId} from "@/utils/AppUtils.jsx";
 import appService from "@/api/app.jsx";
+import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
+import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 
 function Dashboard() {
     const { setIsFooterVisible, setFooterContent, shouldFetch, resetFetch, token, setIsLoading, setNavigationLinks } = useApp();
@@ -56,6 +58,12 @@ function Dashboard() {
         
         //should ping to check if is no any disclosures on home page
         let response = await appService.get(navigate, `/app/Online/AuthData/Ping?id=${orgId}`);
+        if (toBoolean(response?.Logout)) {
+            navigate(AuthRouteNames.LOGIN)
+            setIsFetching(false);
+            return;
+        }
+        
         
         let dashboardData = await portalService.dashboardData(orgId,
             authData.CostTypeId,

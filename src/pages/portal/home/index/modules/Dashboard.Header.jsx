@@ -120,7 +120,7 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, he
                             <img
                                 alt="weather image"
                                 src={weather?.CurrentWeatherImage}
-                                style={{width:'36px', height:'36px', position:'absolute', left: '-10px', top: '-10px'}}
+                                style={{width:'30px', height:'30px', position:'absolute', left: '-8px', top: '-12px'}}
                             />
                         </div>
 

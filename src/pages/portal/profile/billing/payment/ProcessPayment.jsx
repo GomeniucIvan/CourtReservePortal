@@ -33,7 +33,7 @@ import ProfileBillingPaymentPartial from "@portal/profile/billing/payment/Profil
 
 const {Title, Text} = Typography;
 
-function PaymentsIndex({}) {
+function ProcessPayment({}) {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
     const [paymentModel, setPaymentModel] = useState(null);
@@ -43,23 +43,18 @@ function PaymentsIndex({}) {
     const {orgId, authData} = useAuth();
     const {setHeaderRightIcons} = useHeader();
 
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-
-    //url params
-    const resId = queryParams.get("resId");
-    const psId = queryParams.get("psId");
-
     const loadData = async (refresh) => {
         setIsFetching(true);
         setIsLoading(true);
-        let paymentsResponse = await appService.get(navigate, `/app/Online/Payments/Index?id=${orgId}&resId=${resId}&psId=${psId}`);
+        let             paymentsResponse = await appService.get(navigate, `/app/Online/Payments/ProcessPayment?id=${orgId}&loadHtmlContent=true`);
 
         if (!isNullOrEmpty(paymentsResponse?.Path)){
             navigate(paymentsResponse?.Path);
             setIsFetching(false);
         } else if (toBoolean(paymentsResponse?.IsValid)){
-            setPaymentModel(paymentsResponse.Data);
+            let data = paymentsResponse.Data;
+            setPaymentModel(data.Model);
+            setOrganizationData(data.OrganizationData)
             setIsFetching(false);
         } else {
             setIsFetching(false);
@@ -121,4 +116,4 @@ function PaymentsIndex({}) {
     )
 }
 
-export default PaymentsIndex
+export default ProcessPayment

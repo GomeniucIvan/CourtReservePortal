@@ -165,6 +165,8 @@ function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, 
             formik.setFieldValue('card_state', paymentModel?.BillingInformation?.State);
             formik.setFieldValue('card_zipCode', paymentModel?.BillingInformation?.ZipCode);
             formik.setFieldValue('card_phoneNumber', paymentModel?.BillingInformation?.PhoneNumber);
+            formik.setFieldValue('card_firstPaymentType', isNullOrEmpty(paymentModel?.FirstLevelPaymentType) ? 2 : 1);
+            
             setIsFetching(false);
         }
     }, [paymentModel])

@@ -41,7 +41,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     const [stripeCardElement, setStripeCardElement] = useState(null);
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
     const [selectedSegmentType, setSelectedSegmentType] = useState('');
-    const [selectedSegmentFirstLevelType, setSelectedSegmentFirstLevelType] = useState('');
+    const [selectedSegmentFirstLevelType, setSelectedSegmentFirstLevelType] = useState(equalString(paymentModel?.FirstLevelPaymentType, 1) ? 'Package' : 'Credit Card');
 
 
     const stripeCardElementRef = useRef(null);
@@ -238,6 +238,14 @@ const FormPaymentProfile = React.forwardRef(({ formik,
         }
     }, [selectedSegmentType])
 
+    useEffect(() => {
+        if (equalString(selectedSegmentFirstLevelType, 'Package')){
+            formik.setFieldValue('card_firstPaymentType', 2);
+        } else {
+            formik.setFieldValue('card_firstPaymentType', 1);
+        }
+    }, [selectedSegmentFirstLevelType])
+    
     return (
         <Flex vertical={true} gap={token.padding}>
             {toBoolean(paymentProviderData?.ShowFirstPaymentTypeSegment) &&
@@ -249,7 +257,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                 </>
             }
 
-            {(isNullOrEmpty(selectedSegmentFirstLevelType) || equalString(formik?.values?.card_firstPaymentType, 'Credit Card'))  &&
+            {(isNullOrEmpty(selectedSegmentFirstLevelType) || equalString(formik?.values?.card_firstPaymentType, 2))  &&
                 <>
                     {(anyInList(paymentTypes)) &&
                         <>
