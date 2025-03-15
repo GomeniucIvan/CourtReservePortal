@@ -15,12 +15,13 @@ import ProfileBillingInvoiceDetails from "@portal/profile/billing/invoice/detail
 import ProfileBillingInvoicePayment from "@portal/profile/billing/invoice/payment/ProfileBillingInvoicePayment.jsx";
 import ProfileMyMembership from "@portal/profile/membership/mymembership/ProfileMyMembership.jsx";
 import PaymentReceipt from "@portal/profile/billing/receipt/PaymentReceipt.jsx";
+import PaymentsIndex from "@portal/profile/billing/payment/PaymentsIndex.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
-    RESERVATION_DETAILS: `/profile/reservation/details/:id`,
+    RESERVATION_DETAILS: `/profile/myprofile/reservation/:id`, //ProfileBookingDetails
     RESERVATION_EDIT: `/profile/reservation/edit/:id`,
-    RESERVATION_CREATE: `/online/profile/reservation/create`, //ReservationRegistration
+    RESERVATION_CREATE: `/online/myprofile/reservation/create`, //ReservationRegistration
     PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
     PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
@@ -37,6 +38,7 @@ export const ProfileRouteNames = {
     PROFILE_PACKAGE_DETAILS: `/online/mybalance/portalpackagepunchdetails/:id`,
     
     //why is different routes?!
+    PAYMENTS_INDEX: `/online/payments/index/:id`, // ProfileBillingPayment
     PROCESS_PAYMENT: `/online/payments/processpayment/:id`, // ProfileBillingPayment
     PROCESS_TRANSACTION_PAYMENT: `/online/mybalance/processtransactionpayments/:id`, //ProfileBillingPayment
     PAYMENT_PROCESSED_SUCCESS:  `/online/payments/paymentprocessed/:id`,  //PaymentReceipt
@@ -111,8 +113,14 @@ const ProfileRoutes = [
         disablePullDown: true
     },
     {
+        path: ProfileRouteNames.PAYMENTS_INDEX,
+        element: <PaymentsIndex />,
+        title: 'paymentIndex',
+        disablePullDown: true
+    },
+    {
         path: ProfileRouteNames.PROCESS_PAYMENT,
-        element: <ProfileBillingPayment />,
+        element: <ProfileBillingPayment isProcessTransaction={true} />,
         title: 'billingPayment',
         disablePullDown: true
     },

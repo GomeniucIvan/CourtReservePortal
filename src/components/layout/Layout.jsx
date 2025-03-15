@@ -246,6 +246,11 @@ function Layout() {
 
     useEffect(() => {
         calculateMaxHeight();
+        
+        setTimeout(function () {
+            //dom
+            calculateMaxHeight();
+        }, 500)
     }, [isFooterVisible, footerContent, footerRef.current, headerRef.current, customHeader, headerTitle, headerTitleKey, isFetching]);
     
     const handleIphoneInputFocus = () => {

@@ -11,9 +11,9 @@ import {
     toBoolean
 } from "@/utils/Utils.jsx";
 import {cx} from "antd-style";
-import {Ellipsis} from "antd-mobile";
+import {Ellipsis, Toast} from "antd-mobile";
 import SVG from "@/components/svg/SVG.jsx";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {costDisplay} from "@/utils/CostUtils.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
@@ -22,6 +22,9 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import RegistrationGuestBlock from "@/components/registration/RegistrationGuestBlock.jsx";
 import Sticky from "@/components/sticky/Sticky.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
+import {useNavigate} from "react-router-dom";
+import DisclosuresPartial from "@/form/formdisclosures/DisclosuresPartial.jsx";
+import Modal from "@/components/modal/Modal.jsx";
 
 const {Title, Text} = Typography;
 
@@ -45,8 +48,12 @@ function ReservationRegistrationPlayers({formik,
     const [searchPlayersText, setSearchPlayersText] = useState('');
     const {orgId, authData} = useAuth();
     const { globalStyles, token} = useApp();
-
-
+    const navigate = useNavigate();
+    const disclosureSignHandler = useRef();
+    const disclosureRef = useRef();
+    const [disclosureModalData, setDisclosureModalData] = useState(null);
+    const [disclosureSubmitting, setDisclosureSubmitting] = useState(false);
+    
     // PLAYERS FUNCTIONS START
     const onPlayersSearch = (searchVal) => {
         setSearchPlayersText(searchVal);
@@ -56,6 +63,28 @@ function ReservationRegistrationPlayers({formik,
         setShowSearchPlayers(false);
     }
 
+    const loadMemberWaivers = async (memberId) => {
+        let selectedReservationId = reservation.Id;
+
+        let response = await appService.get(navigate, `/app/Online/Disclosures/Pending?id=${orgId}&userId=${memberId}&reservationId=${selectedReservationId}`);
+
+        if (toBoolean(response?.IsValid)) {
+            disclosureSignHandler.current?.close();
+            let disclosureData = response.Data;
+
+            let members = disclosureData.Members;
+            //show only for selected member
+            disclosureData.Members = members.filter(member => equalString(member.MemberId, memberId));
+            setDisclosureModalData(disclosureData);
+        }
+    }
+
+    const onWaiverSignPostSuccess = () => {
+        setDisclosureModalData(null)
+
+        reloadPlayers();
+    }
+    
     useEffect(() => {
         const searchPlayersByFilter = async (showSearchPlayers, searchPlayersText, reservationMembers) => {
             if (showSearchPlayers) {
@@ -211,11 +240,6 @@ function ReservationRegistrationPlayers({formik,
             </>
         )
     }
-    // PLAYERS FUNCTIONS END
-
-    // GUESTS FUNCTIONS START
-
-    // GUESTS FUNCTIONS END
 
     return (
         <>
@@ -289,26 +313,47 @@ function ReservationRegistrationPlayers({formik,
                                                                         <Ellipsis direction='end'
                                                                                   content={reservationMember.FullName}/>
                                                                     </Text>
-                                                                    <Text
-                                                                        type="secondary">{costDisplay(reservationMember.PriceToPay)}</Text>
+                                                                    <Text type="secondary">{costDisplay(reservationMember.PriceToPay)}</Text>
                                                                 </Flex>
+
+                                                               
                                                             </Flex>
 
-                                                            {(toBoolean(reservationMember.IsOwner) && anyInList(reservation.FamilyMembers)) &&
-                                                                <div onClick={() => {
-                                                                    selectRegisteringMemberIdRef.current.open();
-                                                                }}>
-                                                                    <SVG icon={'edit-user'} size={23}
-                                                                         color={token.colorLink}/>
-                                                                </div>
-                                                            }
-                                                            {(!toBoolean(reservationMember.IsOwner) && toBoolean(playersModelData?.IsAllowedToEditPlayers)) &&
-                                                                <div onClick={() => {
-                                                                    removePlayer(reservationMember)
-                                                                }}>
-                                                                    <SVG icon={'circle-minus'} size={23} preventFill={true}/>
-                                                                </div>
-                                                            }
+                                                            <Flex align={'center'} gap={token.paddingSM}>
+                                                                {toBoolean(reservationMember.HasDisclosureToSign) &&
+                                                                    <div onClick={() => {
+                                                                        disclosureSignHandler.current = Toast.show({
+                                                                            icon: 'loading',
+                                                                            content: '',
+                                                                            maskClickable: false,
+                                                                            duration: 0
+                                                                        })
+                                                                        loadMemberWaivers(reservationMember.MemberId);
+                                                                    }}>
+
+                                                                        <SVG icon={'file-signature-regular'} 
+                                                                             size={30}
+                                                                            color={equalString(reservationMember.DisclosureStatus, 2) ? token.colorError : token.colorInfo}
+                                                                        />
+                                                                    </div>
+                                                                }
+
+                                                                {(toBoolean(reservationMember.IsOwner) && anyInList(reservation.FamilyMembers)) &&
+                                                                    <div onClick={() => {
+                                                                        selectRegisteringMemberIdRef.current.open();
+                                                                    }}>
+                                                                        <SVG icon={'edit-user'} size={23}
+                                                                             color={token.colorLink}/>
+                                                                    </div>
+                                                                }
+                                                                {(!toBoolean(reservationMember.IsOwner) && toBoolean(playersModelData?.IsAllowedToEditPlayers)) &&
+                                                                    <div onClick={() => {
+                                                                        removePlayer(reservationMember)
+                                                                    }}>
+                                                                        <SVG icon={'circle-minus'} size={23} preventFill={true}/>
+                                                                    </div>
+                                                                }
+                                                            </Flex>
                                                         </Flex>
 
                                                         <Divider className={globalStyles.playersDivider}/>
@@ -432,6 +477,29 @@ function ReservationRegistrationPlayers({formik,
                     </Flex>
                 </PaddingBlock>
             </DrawerBottom>
+
+            <Modal show={!isNullOrEmpty(disclosureModalData)}
+                   onClose={() => {
+                       setDisclosureModalData(null)
+                   }}
+                   loading={disclosureSubmitting}
+                   onConfirm={() => {
+                       disclosureRef.current.submit();
+                   }}
+                   showConfirmButton={true}
+                   confirmButtonText={'Sign'}
+                   title={'Waiver(s)'}>
+
+                <DisclosuresPartial orgId={orgId}
+                                    ref={disclosureRef}
+                                    isModal={true}
+                                    isFormSubmit={(e) =>{
+                                        setDisclosureSubmitting(e);
+                                    }}
+                                    disclosureData={disclosureModalData}
+                                    onPostSuccess={onWaiverSignPostSuccess}
+                                    navigate={navigate}/>
+            </Modal>
         </>
     )
 }

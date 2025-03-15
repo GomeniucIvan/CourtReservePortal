@@ -19,7 +19,7 @@ import appService from "@/api/app.jsx";
 import {useNavigate} from "react-router-dom";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import {getConfigValue} from "@/config/WebConfig.jsx";
+import {getConfigValue, getWebConfigValue} from "@/config/WebConfig.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import portalService from "@/api/portal.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
@@ -35,7 +35,7 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
     const {setIsLoading} = useApp();
 
     const { setAuthorizationData } = useAuth();
-    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
+    let captchaKey = getWebConfigValue('GoogleCaptchaKey_V3');
     const navigate = useNavigate();
     const recaptchaRef = useRef(null);
     let signupData = data;

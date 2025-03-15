@@ -2,8 +2,18 @@
 import {isNullOrEmpty, toBoolean} from "../utils/Utils.jsx";
 import prodConfig from './Config.prod.jsx';
 import devConfig from './Config.dev.jsx';
+import {logInfo} from "@/utils/ConsoleUtils.jsx";
 
 let isProduction = import.meta.env.VITE_ENV === 'production';
+
+export const getWebConfigValue = (key) => {
+    if (typeof key !== 'undefined') {
+        logInfo('getWebConfigValue:', key);
+        return key;
+    }
+    
+    return getConfigValue(key);
+}
 
 export const getConfigValue = (key) => {
     if (isNullOrEmpty(key)) return null;

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Flex, Typography} from 'antd';
-import {getConfigValue} from "../../config/WebConfig.jsx";
+import {getConfigValue, getWebConfigValue} from "../../config/WebConfig.jsx";
 import FormSelect from "../formselect/FormSelect.jsx";
 import FormInput from "../input/FormInput.jsx";
 import {getAllCountries} from "../../utils/CountryUtils.jsx";
@@ -11,7 +11,7 @@ const { Paragraph } = Typography;
 
 const FormPaymentProfileCardConnect = React.forwardRef(({ formik}, ref) => {
     const [validationMessage, setValidationMessage] = useState('');
-    const tokenizerUrl = getConfigValue('CardConnect_TokenizerURL');
+    const tokenizerUrl = getWebConfigValue('CardConnect_TokenizerURL');
     const {token, globalStyles} = useApp();
 
     let metaCardConnectCard = null;

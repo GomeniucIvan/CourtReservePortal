@@ -2,7 +2,7 @@ import React, {useRef, useState, forwardRef, useImperativeHandle, useEffect} fro
 import {Flex, Skeleton, Typography} from 'antd';
 import { FortisPaymentType_Ach, FortisPaymentType_CreditCard, PAYMENT_FORTIS_SOURCE_CreateMember, PAYMENT_FORTIS_SOURCE_CreatePaymentProfileAdmin, PAYMENT_FORTIS_SOURCE_CreatePaymentProfilePortal, PAYMENT_FORTIS_SOURCE_POS, PAYMENT_FORTIS_SOURCE_PayTransactionAdmin, PAYMENT_FORTIS_SOURCE_PortalPayment, PAYMENT_FORTIS_SOURCE_PortalRequestAccess, PaymentProfileAccountType_Card, TransactionPaymentTypeEnum_CreditCardSwipe } from './FormPaymentProfile_Contants.jsx';
 import {isNullOrEmpty, equalString, toBoolean, focus, anyInList} from "../../utils/Utils.jsx";
-import {getConfigValue} from "../../config/WebConfig.jsx";
+import {getConfigValue, getWebConfigValue} from "../../config/WebConfig.jsx";
 import FormSelect from "../formselect/FormSelect.jsx";
 import FormInput from "../input/FormInput.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
@@ -50,7 +50,7 @@ const FormPaymentProfileFortis = React.forwardRef(({ formik,
     const [isFortisInitialized, setIsFortisInitialized] = useState(false);
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
 
-    const tokenizerUrl = getConfigValue('CardConnect_TokenizerURL');
+    const tokenizerUrl = getWebConfigValue('CardConnect_TokenizerURL');
     const stripeCardElementRef = useRef(null);
     const fortisElementRef = useRef(null);
     const hidePostalCode = false;

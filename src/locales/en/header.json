@@ -45,6 +45,7 @@
   "invoiceDetails": "Invoice Details",
   "invoicePay": "Invoice Payment",
   "billingPayment": "Payment",
+  "paymentIndex": "Cart Item(s)",
   "stringing": "Stringing Jobs",
   "stringingDetails": "Stringing Details",
   "paymentProfiles": "Payment Profiles",

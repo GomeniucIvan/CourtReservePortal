@@ -23,7 +23,7 @@ import * as React from "react";
 import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {validatePersonalInformation} from "@/utils/ValidationUtils.jsx";
 import ReCAPTCHA from 'react-google-recaptcha';
-import {getConfigValue} from "@/config/WebConfig.jsx";
+import {getConfigValue, getWebConfigValue} from "@/config/WebConfig.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
@@ -36,7 +36,7 @@ function MyProfileDetails({selectedTab}) {
     const [profileData, setProfileData] = useState(null);
     const {t} = useTranslation('');
     const [isFetching, setIsFetching] = useState(true);
-    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
+    let captchaKey = getWebConfigValue('GoogleCaptchaKey_V3');
     const {setHeaderRightIcons} = useHeader();
     const {setIsFooterVisible, setFooterContent, isLoading, setIsLoading} = useApp();
     const {orgId, authData} = useAuth();

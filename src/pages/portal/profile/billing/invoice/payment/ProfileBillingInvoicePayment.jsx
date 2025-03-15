@@ -33,7 +33,7 @@ import FormSelect from "@/form/formselect/FormSelect.jsx";
 import {addSelectEmptyOption, memberPaymentProfiles} from "@/utils/SelectUtils.jsx";
 import {is} from "@/components/timepicker/npm/utils/func.jsx";
 import ReCAPTCHA from "react-google-recaptcha";
-import {getConfigValue} from "@/config/WebConfig.jsx";
+import {getConfigValue, getWebConfigValue} from "@/config/WebConfig.jsx";
 import {fromDateTimeStringToDateTime} from "@/utils/DateUtils.jsx";
 const {Title} = Typography;
 
@@ -51,7 +51,7 @@ function ProfileBillingInvoicePayment() {
     const { t } = useTranslation('login');
     const [payWithMoneyBalance, setPayWithMoneyBalance] = useState();
     const recaptchaRef = useRef(null);
-    let captchaKey = getConfigValue('GoogleCaptchaKey_V3');
+    let captchaKey = getWebConfigValue('GoogleCaptchaKey_V3');
     
     const {
         token,

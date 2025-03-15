@@ -4,7 +4,7 @@ export const emptyBlockTypes = {
     WAIVER: 'waiver'
 }
 
-function EmptyBlock({description, type, removePadding}) {
+function EmptyBlock({description, removePadding}) {
     return (
         <EntityEmptyBlock text={description} height={80} removePadding={removePadding} />
     );

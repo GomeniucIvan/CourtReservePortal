@@ -15,6 +15,7 @@ export const CardConstants = {
     card_routingNumber: '',
     card_accountNumber: '',
     card_savePaymentProfile: false,
+    card_firstPaymentType: false, //credit card - package
     card_country: '',
     card_paymentProfileId: '' //profile
 }

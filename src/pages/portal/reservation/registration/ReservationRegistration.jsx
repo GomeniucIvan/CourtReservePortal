@@ -25,7 +25,11 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {
     dateTimeToFormat,
     dateToTimeString,
-    fromAspDateToString, fromDateTimeStringToDate, fromDateTimeStringToDateFormat, fromTimeSpanString
+    fromAspDateToString,
+    fromDateTimeStringToDate,
+    fromDateTimeStringToDateFormat,
+    fromDateTimeStringToDateTime,
+    fromTimeSpanString
 } from "@/utils/DateUtils.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
 import {useTranslation} from "react-i18next";
@@ -175,31 +179,22 @@ function ReservationRegistration() {
         },
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
+            values.SelectedMembers = reservationMembers;
+            values.DateString = values.Date;
 
             let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
             if (toBoolean(response?.IsValid)){
-                let data = response.Data;
-
-                //portal-details-payment-editreservation
-                let key = data.Key;
-
                 //remove current page
                 removeLastHistoryEntry();
 
-                if (equalString(key, 'payment')){
-                    let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgId);
-                    navigate(route);
-                } else if (equalString(key, 'details') || equalString(key, 'portal')){
-                    let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', data.ReservationId);
-                    setPage(setDynamicPages, data.Name, route);
-                    navigate(route);
-                } else if (equalString(key, 'editreservation')){
-                    let route = toRoute(ProfileRouteNames.RESERVATION_EDIT, 'id', data.ReservationId);
-                    setPage(setDynamicPages, data.Name, route);
-                    navigate(route);
+                if (!isNullOrEmpty(response?.Path)) {
+                    navigate(response?.Path);
                 }
-                if (!isNullOrEmpty(data.Message)){
-                    pNotify(data.Message);
+                
+                if (!isNullOrEmpty(response?.Message)){
+                    pNotify(response.Message);
+                } else {
+                    pNotify('Reservation successfully created.');
                 }
                 setIsLoading(false);
             } else{
@@ -296,7 +291,7 @@ function ReservationRegistration() {
                 SelectedResourceName: incResData.SelectedResourceName,
                 StartTime: fromTimeSpanString(start),
                 EndTime: fromTimeSpanString(end),
-                Date: fromAspDateToString(incResData.Date),
+                Date: fromDateTimeStringToDateTime(incResData.DateStringDisplay),
             });
 
             setIsFetching(false);
@@ -410,7 +405,7 @@ function ReservationRegistration() {
             const selectedDuration = rDurations.find(duration => duration.Selected);
 
             if (equalString(formik?.values?.Duration, selectedDuration?.Value)) {
-                await reloadPlayers();
+                //await reloadPlayers();
             } else if (selectedDuration) {
                 await formik.setFieldValue('Duration', selectedDuration.Value);
             }
@@ -456,6 +451,8 @@ function ReservationRegistration() {
                     await formik.setFieldValue('EndTime', rEndTime.data);
                     await reloadCourts(rEndTime.data);
                 }
+
+                await reloadPlayers();
             }
         }
 
@@ -511,9 +508,10 @@ function ReservationRegistration() {
         if (!isNullOrEmpty(formik?.values?.ReservationTypeId)) {
             setSelectedReservationType(null);
 
-            let currentReservationType = reservation?.ReservationTypes?.find(v => v.Id === formik?.values?.ReservationTypeId);
+            let currentReservationType = reservation?.ReservationTypes?.find(v => equalString(v.Id, formik?.values?.ReservationTypeId));
             setSelectedReservationType(currentReservationType);
-            formik.setFieldValue('FeeResponsibility', selectedReservationType?.DefaultFeeResponsibility);
+
+            formik.setFieldValue('FeeResponsibility', isNullOrEmpty(currentReservationType?.CalculationType) ? 1 : currentReservationType?.CalculationType);
         } else {
             setSelectedReservationType(null);
         }
@@ -571,7 +569,7 @@ function ReservationRegistration() {
             }))),
             InstructorId: reservation?.InstructorId,
             MembersWithDisclosures: membersWithDisclosures,
-            RefillMemberDisclosures: refillDisclosureMemberIds,
+            RefillMemberDisclosures: toBoolean(reservation?.RefillMemberDisclosures),
             NumberOfGuests: numberOfGuests,
             SelectedNumberOfGuests: selectedNumberOfGuests,
             GuestsString: JSON.stringify(resGuests),

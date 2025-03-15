@@ -28,28 +28,16 @@ import ReceiptBlock from "@/components/receiptblock/ReceiptBlock.jsx";
 import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import ProfileBillingPaymentPartial from "@portal/profile/billing/payment/ProfileBillingPaymentPartial.jsx";
 
 const {Title, Text} = Typography;
 
-function ProfileBillingPayment({isProcessTransaction}) {
+function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, organizationData}) {
     const navigate = useNavigate();
-    const [isFetching, setIsFetching] = useState(true);
-    const [paymentModel, setPaymentModel] = useState(null);
-    const [organizationData, setOrganizationData] = useState(null);
     const {setIsLoading, isLoading, token} = useApp();
     const {orgId, authData} = useAuth();
     const { t } = useTranslation('payment');
     const recaptchaRef = useRef(null);
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const {setHeaderRightIcons} = useHeader();
-
-    //url params
-    const payments = queryParams.get("payments");
-    const reservationId = queryParams.get("reservationId");
-    const resMemberId = queryParams.get("resMemberId");
-    const sessionId = queryParams.get("sessionId");
+    let captchaKey = getWebConfigValue('GoogleCaptchaKey_V3');
 
     const initialValues = {
         ...CardConstants,
@@ -139,99 +127,139 @@ function ProfileBillingPayment({isProcessTransaction}) {
         },
     });
 
-
     const {
-        setIsFooterVisible,
-        shouldFetch,
-        resetFetch,
+        setFooterContent
     } = useApp();
 
     useEffect(() => {
-        setIsFooterVisible(true);
-        setHeaderRightIcons('')
+        setFooterContent(<FooterBlock topBottom={true}>
+            <Button type="primary"
+                    block
+                    disabled={isFetching}
+                    loading={isLoading}
+                    htmlType="submit"
+                    onClick={() => {
+                        formik.submitForm();
+                    }}>
+                'Pay'
+            </Button>
+        </FooterBlock>)
     }, [isFetching, isLoading]);
 
-    const loadData = async (refresh) => {
-        setIsFetching(true);
-        let innerPayments = payments;
-        let paymentsResponse = null;
-        
-        if (toBoolean(isProcessTransaction)) {
-            paymentsResponse = await appService.get(navigate, `/app/Online/Payments/ProcessPayment?id=${orgId}&loadHtmlContent=true`);
-        } else {
-            if (isNullOrEmpty(innerPayments)){
-                let response = await appService.get(navigate, `/app/Online/MyBalance/PayMyBalance?id=${orgId}&reservationId=${nullToEmpty(reservationId)}&resMemberId=${nullToEmpty(resMemberId)}&sessionId=${nullToEmpty(sessionId)}`);
-                if (toBoolean(response?.IsValid)) {
-                    innerPayments = response.Data.payments;
-                }
-            }
-
-            paymentsResponse = await appService.get(navigate,`/app/Online/MyBalance/ProcessTransactionPayments?id=${orgId}&payments=${innerPayments}` );
-        }
-
-        if (!isNullOrEmpty(paymentsResponse?.Path)){
-            navigate(paymentsResponse?.Path);
-        } else if (toBoolean(paymentsResponse?.IsValid)){
-            let paymentsData = paymentsResponse.Data;
-            let paymentsModel =  paymentsData.Model;
-            setPaymentModel(paymentsModel);
-            setOrganizationData(paymentsData.OrganizationData);
-
-            setIsFetching(false);
-        } else {
-            if (isNullOrEmpty(response?.Message)){
-                if (!isNullOrEmpty(response?.Data?.RedirectUrl)){
-                    navigate(response?.Data?.RedirectUrl);
-                }
+    
+    useEffect(() => {
+        if (!isNullOrEmpty(paymentModel)){
+            if (anyInList(paymentModel?.Profiles)) {
+                let firstProfile = paymentModel?.Profiles[0];
+                formik.setFieldValue('card_paymentProfileId', firstProfile.Id);
             } else {
-                displayMessageModal({
-                    title: 'Error',
-                    html: (onClose) => `${response?.Message}.`,
-                    type: "error",
-                    buttonType: modalButtonType.DEFAULT_CLOSE,
-                    onClose: () => {
-                        if (!isNullOrEmpty(response?.Data?.RedirectUrl)){
-                            navigate(response?.Data?.RedirectUrl);
-                        }
-                    },
-                })
+                //new
+                formik.setFieldValue('card_paymentProfileId', 0);
             }
+
+            formik.setFieldValue('card_accountType', 1);
+            formik.setFieldValue('card_firstName', paymentModel?.BillingInformation?.FirstName);
+            formik.setFieldValue('card_lastName', paymentModel?.BillingInformation?.LastName);
+            formik.setFieldValue('card_streetAddress', paymentModel?.BillingInformation?.Address1);
+            formik.setFieldValue('card_city', paymentModel?.BillingInformation?.City);
+            formik.setFieldValue('card_state', paymentModel?.BillingInformation?.State);
+            formik.setFieldValue('card_zipCode', paymentModel?.BillingInformation?.ZipCode);
+            formik.setFieldValue('card_phoneNumber', paymentModel?.BillingInformation?.PhoneNumber);
+            setIsFetching(false);
+        }
+    }, [paymentModel])
+
+    let receiptItems = [];
+
+    if(!isNullOrEmpty(paymentModel?.CalculateTotal)) {
+        receiptItems.push({
+            Key: '',
+            Label: 'Subtotal',
+            Value: costDisplay(paymentModel?.CalculateTotal)
+        })
+    }
+
+    let showConvenienceFee = false;
+
+    if (anyInList(paymentModel?.Profiles)) {
+        let selectedPaymentType = paymentModel.Profiles.find(v => equalString(v.Value, formik?.values?.card_accountType));
+
+        if (!isNullOrEmpty(selectedPaymentType) && equalString(selectedPaymentType?.AccountType, 1)) {
+            showConvenienceFee = true;
         }
     }
 
-    useEffect(() => {
-        if (shouldFetch) {
-            loadData(true);
-        }
-    }, [shouldFetch, resetFetch]);
+    let convenienceFee = null;
+    let total = paymentModel?.CalculateTotal;
 
-    useEffect(() => {
-        loadData();
-    }, []);
+    if (!showConvenienceFee && equalString(formik?.values?.card_accountType, 1)) {
+        showConvenienceFee = true;
+    }
+
+    if (showConvenienceFee) {
+        const calculatedConvenienceFee = calculateConvenienceFee(/*total*/ total, /*org*/ organizationData, /*onlyFee*/ true);
+        if (!isNullOrEmpty(calculatedConvenienceFee)) {
+            convenienceFee = calculatedConvenienceFee;
+            total += calculatedConvenienceFee;
+        }
+    }
+
+    if(!isNullOrEmpty(organizationData?.ConvenienceFeePercent) && convenienceFee > 0) {
+        receiptItems.push({
+            Key: 'Text',
+            Label: <Text>
+                Credit Card Convenience Fee <Text style={{color: token.colorError}}>{' '} ({organizationData?.ConvenienceFeePercent}%)</Text>
+            </Text>,
+            Value: costDisplay(convenienceFee)
+        })
+    }
+
+    receiptItems.push({
+        Key: 'divider'
+    })
+
+    if(!isNullOrEmpty(paymentModel?.CalculateTotal)) {
+        receiptItems.push({
+            Key: '',
+            Label: 'Total',
+            Value: costDisplay(total)
+        })
+    }
 
     return (
-        <PaddingBlock topBottom={true}>
-            {isFetching &&
-                <Flex vertical={true} gap={16}>
-                    {emptyArray(6).map((item, index) => (
-                        <div key={index}>
-                            <Flex vertical={true} gap={8}>
-                                <Skeleton.Button active={true} block
-                                                 style={{height: `23px`, width: `${randomNumber(25, 50)}%`}}/>
-                                <Skeleton.Button active={true} block style={{height: `${token.Input.controlHeight}px`}}/>
-                            </Flex>
-                        </div>
-                    ))}
-                </Flex>
-            }
+        <>
+            <FormPaymentProfile formik={formik}
+                                includeCustomerDetails={true}
+                                allowToSavePaymentProfile={true}
+                                paymentProviderData={organizationData}
+                                hideFields={{
+                                    firstLastName: false,
+                                    address2: true,
+                                    phoneNumber: false,
+                                    accountType: false
+                                }}
+                                paymentTypes={memberPaymentProfiles(paymentModel?.Profiles, true)}
+            />
 
-            {!isFetching &&
-                <>
-                    <ProfileBillingPaymentPartial paymentModel={paymentModel} isFetching={isFetching} organizationData={organizationData} setIsFetching={setIsFetching} />
-                </>
-            }
-        </PaddingBlock>
+            <Divider style={{margin: `${token.padding}px 0px`}} />
+
+            <PaddingBlock leftRight={false}>
+                <Flex vertical={true} gap={token.paddingXXL}>
+                    <Title level={3}>Payment Summary</Title>
+
+                    <Flex vertical={true} gap={token.padding}>
+                        <ReceiptBlock receiptItems={receiptItems} />
+                    </Flex>
+                </Flex>
+            </PaddingBlock>
+
+            <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey={captchaKey}
+            />
+        </>
     )
 }
 
-export default ProfileBillingPayment
+export default ProfileBillingPaymentPartial
