@@ -229,7 +229,9 @@ function ProfileBookingList() {
             return (
                 <Card className={cx(globalStyles.card, globalStyles.clickableCard)}
                       onClick={() => {
-                          let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', booking.ReservationId);
+                          let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', orgId);
+                          route = toRoute(route, 'reservationId', booking.ReservationId);
+                          
                           setPage(setDynamicPages, booking.Title, route);
                           navigate(route);
                       }}>
@@ -323,7 +325,9 @@ function ProfileBookingList() {
                                        arrowIcon={false}
                                        onClick={() => {
                                            if (isNullOrEmpty(booking.EventId)) {
-                                               let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', booking.ReservationId);
+                                               let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', orgId);
+                                               route = toRoute(route, 'reservationId', booking.ReservationId);
+                                               
                                                setPage(setDynamicPages, booking.ReservationTypeName, route);
                                                navigate(route);
                                            } else {

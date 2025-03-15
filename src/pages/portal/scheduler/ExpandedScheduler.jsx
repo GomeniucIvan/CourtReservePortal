@@ -243,7 +243,7 @@ function ExpandedScheduler({index, resource}) {
                     }
                 }
 
-                let items = await schedulerItemsRead(schedulerData?.TypeString, schedulerData, selectedDate, courts);
+                let items = await schedulerItemsRead((!isNullOrEmpty(schedulerData?.TypeString) ? schedulerData?.TypeString : filterSelectedView), schedulerData, selectedDate, courts);
 
                 setEvents(items);
                 setLoading(false);

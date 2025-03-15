@@ -21,7 +21,8 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 
 const {Title, Text} = Typography;
 
-function ProfileBookingDetails() {    let {id} = useParams();
+function ProfileBookingDetails() {   
+    let {reservationId} = useParams();
     const [booking, setBooking] = useState(null);
     const {t} = useTranslation('');
     const [showCancelReservation, setShowCancelReservation] = useState(false);
@@ -46,7 +47,7 @@ function ProfileBookingDetails() {    let {id} = useParams();
             const details = mockData.details;
             setBooking(details);
         } else {
-            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/ApiReservation?id=${orgId}&reservationId=${id}`).then(r => {
+            appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/ApiReservation?id=${orgId}&reservationId=${reservationId}`).then(r => {
                 if (toBoolean(r?.IsValid)) {
                     setBooking(r.Data.Reservation);
                 }

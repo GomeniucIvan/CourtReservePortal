@@ -20,15 +20,15 @@ import ProcessPayment from "@portal/profile/billing/payment/ProcessPayment.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
-    RESERVATION_DETAILS: `/profile/myprofile/reservation/:id`, //ProfileBookingDetails
-    RESERVATION_EDIT: `/profile/reservation/edit/:id`,
+    RESERVATION_DETAILS: `/online/myprofile/reservation/:id/:reservationId`, //ProfileBookingDetails
+    RESERVATION_EDIT: `/online/myprofile/reservation/edit/:id`,
     RESERVATION_CREATE: `/online/myprofile/reservation/create`, //ReservationRegistration
     PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
-    PROFILE_FAMILY_INFO_EDIT: `/profile/member/:id`,
+    PROFILE_FAMILY_INFO_EDIT: `/online/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
     PROFILE_CALENDAR_FEED: `/online/myprofile/mycalendar/:id`,
     PROFILE_MEMBERSHIP: `/online/myprofile/mymembership/:id`, //ProfileMyMembership
-    PROFILE_BILLING: `/online/mybalance/index/:id`,
+    PROFILE_BILLING: `/online/mybalance/index/:id`, //ProfileBilling
     PROFILE_BILLING_INVOICES: `/online/myinvoices/index/:id`,
     PROFILE_BILLING_INVOICE_DETAILS: `/online/myinvoices/viewmyinvoice/:id`,
     PROFILE_INVOICE_PAY: `/online/myinvoices/payinvoice/:id`, //ProfileBillingInvoicePayment

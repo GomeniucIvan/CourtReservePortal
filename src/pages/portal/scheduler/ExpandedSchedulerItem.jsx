@@ -115,7 +115,8 @@ const ExpandedSchedulerItem = (props) => {
 
                 if (allowToClick) {
                     if (isNullOrEmpty(dataItem.EventId)) {
-                        let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', dataItem.ReservationId);
+                        let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', dataItem.OrganizationId);
+                        route = toRoute(route, 'reservationId', dataItem.ReservationId);
                         setPage(setDynamicPages, dataItem.ReservationType, route);
                         navigate(route);
                     } else {

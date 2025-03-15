@@ -11,10 +11,12 @@ import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 import SVG from "@/components/svg/SVG.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
+import {useAuth} from "@/context/AuthProvider.jsx";
 const {Text, Title} = Typography;
 
 const EntityCardBooking = ({booking, isFullHeight}) => {
     const { token } = useToken();
+    const { orgId } = useAuth();
     const navigate = useNavigate();
     const { t } = useTranslation('');
     const {tagStyles} = useCombinedStyles();
@@ -25,7 +27,8 @@ const EntityCardBooking = ({booking, isFullHeight}) => {
         return (
             <Card className={cx(globalStyles.card, globalStyles.clickableCard)}
                   onClick={() => {
-                      let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', innerBooking.ReservationId);
+                      let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', orgId);
+                      route = toRoute(route, 'reservationId', innerBooking.ReservationId);
                       setPage(setDynamicPages, innerBooking.Title, route);
                       navigate(route);
                   }}>

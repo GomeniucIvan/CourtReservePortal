@@ -41,7 +41,7 @@ const FormPaymentProfile = React.forwardRef(({ formik,
     const [stripeCardElement, setStripeCardElement] = useState(null);
     const [isUsingCollectJsLoading, setIsUsingCollectJsLoading] = useState(true);
     const [selectedSegmentType, setSelectedSegmentType] = useState('');
-    const [selectedSegmentFirstLevelType, setSelectedSegmentFirstLevelType] = useState(equalString(paymentModel?.FirstLevelPaymentType, 1) ? 'Package' : 'Credit Card');
+    const [selectedSegmentFirstLevelType, setSelectedSegmentFirstLevelType] = useState(equalString(formik?.values?.card_firstPaymentType, 1) ? 'Package' : 'Credit Card');
 
 
     const stripeCardElementRef = useRef(null);

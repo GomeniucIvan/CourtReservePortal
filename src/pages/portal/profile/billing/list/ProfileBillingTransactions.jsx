@@ -300,7 +300,7 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
             </PaddingBlock>
         )
     }
-
+    
     return (
         <>
             <div ref={headerRef}>
@@ -401,7 +401,8 @@ function ProfileBillingTransactions({selectedTab, tabsHeight}) {
                 showButton={!toBoolean(selectedDrawerFee?.IsPaid) ? true : false}
                 confirmButtonText={!toBoolean(selectedDrawerFee?.IsPaid) ? 'Pay' : ''}
                 onConfirmButtonClick={() => {
-
+                    let route = toRoute(ProfileRouteNames.PROCESS_TRANSACTION_PAYMENT, 'id', orgId);
+                    navigate(`${route}&payments=${selectedDrawerFee?.TransactionId}`);
                 }}
             >
                 <PaddingBlock onlyBottom={true}>

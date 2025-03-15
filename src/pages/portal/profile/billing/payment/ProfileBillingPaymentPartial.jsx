@@ -141,7 +141,7 @@ function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, 
                     onClick={() => {
                         formik.submitForm();
                     }}>
-                'Pay'
+                Pay
             </Button>
         </FooterBlock>)
     }, [isFetching, isLoading]);

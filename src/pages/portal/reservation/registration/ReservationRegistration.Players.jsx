@@ -1,6 +1,6 @@
 ﻿import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {Button, Card, Divider, Flex, Segmented, Skeleton, Typography} from "antd";
+import {Button, Card, Divider, Flex, Segmented, Skeleton, Tag, Typography} from "antd";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {
     anyInList,
@@ -25,6 +25,7 @@ import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {useNavigate} from "react-router-dom";
 import DisclosuresPartial from "@/form/formdisclosures/DisclosuresPartial.jsx";
 import Modal from "@/components/modal/Modal.jsx";
+import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 
 const {Title, Text} = Typography;
 
@@ -48,6 +49,7 @@ function ReservationRegistrationPlayers({formik,
     const [searchPlayersText, setSearchPlayersText] = useState('');
     const {orgId, authData} = useAuth();
     const { globalStyles, token} = useApp();
+    const {tagStyles} = useCombinedStyles();
     const navigate = useNavigate();
     const disclosureSignHandler = useRef();
     const disclosureRef = useRef();
@@ -263,7 +265,7 @@ function ReservationRegistrationPlayers({formik,
                                 </label>
 
                                 <Segmented
-                                    value={formik?.values?.FeeResponsibility}
+                                    value={(isNullOrEmpty(formik?.values?.FeeResponsibility) || formik?.values?.FeeResponsibility > 2) ? '1' : `${formik?.values?.FeeResponsibility}`}
                                     block={true}
                                     onChange={(e) => {
                                         formik.setFieldValue('FeeResponsibility', e)
@@ -313,10 +315,13 @@ function ReservationRegistrationPlayers({formik,
                                                                         <Ellipsis direction='end'
                                                                                   content={reservationMember.FullName}/>
                                                                     </Text>
-                                                                    <Text type="secondary">{costDisplay(reservationMember.PriceToPay)}</Text>
+                                                                    <Flex gap={token.paddingSM}>
+                                                                        <Text type="secondary" delete={toBoolean(reservationMember?.IsMonthlyFree)}>{costDisplay(reservationMember.PriceToPay)}</Text>
+                                                                        {toBoolean(reservationMember?.IsMonthlyFree) &&
+                                                                            <Tag className={cx(globalStyles.tag, tagStyles.success)}>Monthly Free</Tag>
+                                                                        }
+                                                                    </Flex>
                                                                 </Flex>
-
-                                                               
                                                             </Flex>
 
                                                             <Flex align={'center'} gap={token.paddingSM}>

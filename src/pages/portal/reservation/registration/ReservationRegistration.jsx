@@ -511,7 +511,11 @@ function ReservationRegistration() {
             let currentReservationType = reservation?.ReservationTypes?.find(v => equalString(v.Id, formik?.values?.ReservationTypeId));
             setSelectedReservationType(currentReservationType);
 
-            formik.setFieldValue('FeeResponsibility', isNullOrEmpty(currentReservationType?.CalculationType) ? 1 : currentReservationType?.CalculationType);
+            if (equalString(currentReservationType?.CalculationType, 2) || equalString(currentReservationType?.CalculationType, 3)) {
+                formik.setFieldValue('FeeResponsibility', 2);
+            } else {
+                formik.setFieldValue('FeeResponsibility', 1);  
+            }
         } else {
             setSelectedReservationType(null);
         }
