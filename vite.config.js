@@ -77,6 +77,7 @@ export default defineConfig({
         alias: {
             '@': path.resolve(__dirname, './src'),
             '@portal': path.resolve(__dirname, './src/pages/portal'),
+            '@services': path.resolve(__dirname, './src/services/portal'),
         },
     },
     build: {

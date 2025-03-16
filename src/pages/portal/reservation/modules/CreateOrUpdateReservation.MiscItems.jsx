@@ -9,7 +9,7 @@ import {useApp} from "@/context/AppProvider.jsx";
 
 const {Title, Text, Link} = Typography;
 
-function ReservationRegistrationMiscItems({miscFeesQuantities, setMiscFeesQuantities }) {
+function CreateOrUpdateReservationMiscItems({miscFeesQuantities, setMiscFeesQuantities }) {
     const [showMiscItems, setShowMiscItems] = useState(false);
     const { globalStyles, token} = useApp();
 
@@ -159,4 +159,4 @@ function ReservationRegistrationMiscItems({miscFeesQuantities, setMiscFeesQuanti
     )
 }
 
-export default ReservationRegistrationMiscItems
+export default CreateOrUpdateReservationMiscItems

@@ -29,7 +29,7 @@ import useCombinedStyles from "@/hooks/useCombinedStyles.jsx";
 
 const {Title, Text} = Typography;
 
-function ReservationRegistrationPlayers({formik,
+function CreateOrUpdateReservationPlayers({formik,
                                             reservation,
                                             showSearchPlayers,
                                             setShowSearchPlayers,
@@ -509,4 +509,4 @@ function ReservationRegistrationPlayers({formik,
     )
 }
 
-export default ReservationRegistrationPlayers
+export default CreateOrUpdateReservationPlayers

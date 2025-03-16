@@ -40,7 +40,7 @@ function ProfileBookingDetails() {
     const {t} = useTranslation('');
     const [showCancelReservation, setShowCancelReservation] = useState(false);
 
-    const {setHeaderRightIcons} = useHeader();
+    const {setHeaderRightIcons, setHeaderTitle} = useHeader();
 
     const {
         setIsFooterVisible,
@@ -62,7 +62,9 @@ function ProfileBookingDetails() {
         } else {
             let response = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/ApiReservation?id=${orgId}&reservationId=${reservationId}`);
             if (toBoolean(response?.IsValid)) {
-                setBooking(response.Data.Reservation);
+                let data = response.Data;
+                setBooking(data.Reservation);
+                setHeaderTitle(data.Reservation.ReservationType);
             }
 
             setIsFetching(false);

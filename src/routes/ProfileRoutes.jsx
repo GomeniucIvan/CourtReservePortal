@@ -1,5 +1,5 @@
 import ProfileBookingDetails from "@portal/reservation/details/ReservationDetails.jsx";
-import ReservationRegistration from "@portal/reservation/registration/ReservationRegistration.jsx";
+import CreateReservation from "@portal/reservation/create/CreateReservation.jsx";
 import ProfileFamilyList from "@portal/profile/family/ProfileFamilyList.jsx";
 import ProfileCalendarFeed from "@portal/profile/calendar/ProfileCalendarFeed.jsx";
 import ProfileBilling from "@portal/profile/billing/list/ProfileBilling.jsx";
@@ -22,7 +22,7 @@ export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
     RESERVATION_DETAILS: `/online/myprofile/reservation/:id/:reservationId`, //ProfileBookingDetails
     RESERVATION_EDIT: `/online/myprofile/reservation/edit/:id`,
-    RESERVATION_CREATE: `/online/myprofile/reservation/create`, //ReservationRegistration
+    RESERVATION_CREATE: `/online/myprofile/reservation/create`, //CreateReservation
     PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
     PROFILE_FAMILY_INFO_EDIT: `/online/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
@@ -54,12 +54,12 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.RESERVATION_DETAILS,
         element: <ProfileBookingDetails />,
-        title: 'reservationDetails',
+        title: '',
         header: true
     },
     {
         path: ProfileRouteNames.RESERVATION_CREATE,
-        element: <ReservationRegistration />,
+        element: <CreateReservation />,
         title: '', //createReservation
         header: true
     },

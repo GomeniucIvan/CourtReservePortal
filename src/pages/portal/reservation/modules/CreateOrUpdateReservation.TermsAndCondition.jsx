@@ -23,7 +23,7 @@ import {useNavigate} from "react-router-dom";
 
 const {Title, Text} = Typography;
 
-function ReservationRegistrationTermsAndCondition({disclosure, formik }) {
+function CreateOrUpdateReservationTermsAndCondition({disclosure, formik }) {
     const [showTermAndCondition, setShowTermAndCondition] = useState(false);
     const [pdfDataUrl, setPdfDataUrl] = useState(null);
     const [selectedWaiverToView, setSelectedWaiverToView] = useState(null);
@@ -142,4 +142,4 @@ function ReservationRegistrationTermsAndCondition({disclosure, formik }) {
     )
 }
 
-export default ReservationRegistrationTermsAndCondition
+export default CreateOrUpdateReservationTermsAndCondition

@@ -3,7 +3,9 @@
     "baseUrl": "./", 
     "paths": {
       "@/*": [ "src/*" ],
-      "@portal/*": [ "src/pages/portal/*" ]
+      "@portal/*": [ "src/pages/portal/*" ],
+      "@services/*": [ "src/services/portal/*" ],
+      "@admin-services/*": [ "src/services/admin/*" ]
     }
   },
   "include": [ "src/**/*" ], 

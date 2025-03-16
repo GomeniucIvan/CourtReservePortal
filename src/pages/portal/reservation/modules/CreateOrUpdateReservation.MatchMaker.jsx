@@ -22,7 +22,7 @@ import {useTranslation} from "react-i18next";
 
 const {Title, Text} = Typography;
 
-function ReservationRegistrationMatchMaker({formik, 
+function CreateOrUpdateReservationMatchMaker({formik, 
                                                matchMaker, 
                                                selectedReservationType,
                                                matchMakerRatingCategories,
@@ -304,4 +304,4 @@ function ReservationRegistrationMatchMaker({formik,
     )
 }
 
-export default ReservationRegistrationMatchMaker
+export default CreateOrUpdateReservationMatchMaker

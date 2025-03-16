@@ -231,8 +231,7 @@ function ProfileBookingList() {
                       onClick={() => {
                           let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', orgId);
                           route = toRoute(route, 'reservationId', booking.ReservationId);
-                          
-                          setPage(setDynamicPages, booking.Title, route);
+                          setPage(setDynamicPages, booking.TypeName, route);
                           navigate(route);
                       }}>
                     <Flex gap={token.Custom.cardIconPadding} align={'center'}>

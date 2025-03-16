@@ -29,7 +29,7 @@ const EntityCardBooking = ({booking, isFullHeight}) => {
                   onClick={() => {
                       let route = toRoute(ProfileRouteNames.RESERVATION_DETAILS, 'id', orgId);
                       route = toRoute(route, 'reservationId', innerBooking.ReservationId);
-                      setPage(setDynamicPages, innerBooking.Title, route);
+                      setPage(setDynamicPages, innerBooking.TypeName, route);
                       navigate(route);
                   }}>
 
