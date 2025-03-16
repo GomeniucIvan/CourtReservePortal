@@ -180,12 +180,19 @@ function UpdateReservation() {
                 //     await formik.setFieldValue('CourtId', dataItem.Value);
                 // }
 
+                console.log(incResData)
                 await formik.setValues({
                     ...initialValues,
                     ReservationTypeId: incResData.ReservationTypeId,
                     Duration: incResData.Duration,
                     Udfs: anyInList(incResData?.Udfs) ? incResData?.Udfs : [],
+                    CourtId: anyInList(incResData?.CourtId) ? incResData?.CourtId : [],
+                    StartTime: incResData.DateStartTimeStringDisplay,
+                    EndTime: incResData.EndTime,
+                    ReservationGuests: incResData?.ReservationGuests,
                 });
+                
+                setReservationMembers(incResData.InitialMembers);
                 
                 let reservationTypeData = {
                     customSchedulerId: incResData.CustomSchedulerId,
@@ -233,7 +240,7 @@ function UpdateReservation() {
     const onReservationTypeChange = async () => {
         await reservationCreateOrUpdateOnReservationTypeChange(setLoading,
             formik,
-            formik?.values?.StartTime,
+            reservation.DateStartTimeStringDisplay,
             reservation,
             authData,
             orgId,
@@ -244,7 +251,7 @@ function UpdateReservation() {
     useEffect(() => {
 
         const loadEndTime = async () => {
-            await reservationCreateOrUpdateLoadEndTime(formik, formik?.values?.StartTime, authData, orgId, reloadCourts, reloadPlayers);
+            await reservationCreateOrUpdateLoadEndTime(formik, reservation?.DateStartTimeStringDisplay, authData, orgId, reloadCourts, reloadPlayers);
         }
 
         loadEndTime();
@@ -255,7 +262,7 @@ function UpdateReservation() {
         const loadResources = async () => {
             await reservationCreateOrUpdateLoadResources(showResources,
                 setLoading,
-                formik?.values?.StartTime,
+                reservation?.DateStartTimeStringDisplay,
                 formik,
                 reservation,
                 courts,
@@ -312,7 +319,7 @@ function UpdateReservation() {
     const reloadCourts = async (endTime) => {
         await reservationCreateOrUpdateReloadCourts(setLoading,
             reservation,
-            formik?.values?.StartTime,
+            reservation?.DateStartTimeStringDisplay,
             endTime,
             formik,
             authData,

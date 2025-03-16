@@ -345,7 +345,7 @@ export const reservationCreateOrUpdateReloadPlayers = async (setLoading,
                                                              setReservationMembers,
                                                              setPlayersModelData) => {
     setLoading('SelectedReservationMembers', true);
-
+    
     let registeringOrganizationMemberId = null;
     let membersWithDisclosures = [];
     let refillDisclosureMemberIds = [];
@@ -364,7 +364,7 @@ export const reservationCreateOrUpdateReloadPlayers = async (setLoading,
             member => member.OrgMemberId !== orgMemberIdToRemove && !toBoolean(member.IsOwner)
         );
     }
-
+    
     let postData = {
         Start: formik?.values?.StartTime,
         End: toBoolean(reservation?.IsAllowedToPickStartAndEndTime) ? formik?.values?.EndTime : formik?.values?.EndTime,
@@ -374,9 +374,9 @@ export const reservationCreateOrUpdateReloadPlayers = async (setLoading,
         ReservationTypeId: formik?.values?.ReservationTypeId,
         RegisteringOrganizationMemberId: registeringOrganizationMemberId,
         RegisteringMemberId: formik?.values?.RegisteringMemberId,
-        Date: formik?.values?.Date,
+        Date: reservation?.DateStartTimeStringDisplay,
         MembersString: JSON.stringify(filteredReservationMembers.map(member => ({
-            OrgMemberId: member.OrgMemberId,
+            OrgMemberId: !isNullOrEmpty(member.MemberOrgId) ? member.MemberOrgId : member.OrgMemberId,
             PriceToPay: member.PriceToPay,
             MemberId: member.MemberId,
             FirstName: member.FirstName,
