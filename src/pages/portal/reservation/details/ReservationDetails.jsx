@@ -30,6 +30,8 @@ import {emptyArray} from "@/utils/ListUtils.jsx";
 import {randomNumber} from "@/utils/NumberUtils.jsx";
 import FormInputDisplay from "@/form/input/FormInputDisplay.jsx";
 import customFormik from "@/components/formik/CustomFormik.jsx";
+import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
+import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 
 const {Title, Text} = Typography;
 
@@ -39,9 +41,9 @@ function ProfileBookingDetails() {
     const [isFetching, setIsFetching] = useState(true);
     const {t} = useTranslation('');
     const [showCancelReservation, setShowCancelReservation] = useState(false);
-
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
-
+    
+    const navigate = useNavigate();
     const {
         setIsFooterVisible,
         setFooterContent,
@@ -51,9 +53,9 @@ function ProfileBookingDetails() {
         token,
         setIsLoading,
         isLoading,
+        setDynamicPages
     } = useApp();
     const {orgId} = useAuth();
-
 
     const loadData = async (refresh) => {
         if (isMockData) {
@@ -315,6 +317,12 @@ function ProfileBookingDetails() {
 
                                 <Button type="primary"
                                         block
+                                        onClick={() => {
+                                            let route = toRoute(ProfileRouteNames.RESERVATION_UPDATE, 'id', orgId);
+                                            route = toRoute(route, 'reservationId', booking?.Id);
+                                            setPage(setDynamicPages, booking?.ReservationType, route);
+                                            navigate(route);
+                                        }}
                                         htmlType={'button'}>
                                     Edit
                                 </Button>

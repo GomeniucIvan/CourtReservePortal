@@ -3,6 +3,7 @@ import {saveCookie} from "@/utils/CookieUtils.jsx";
 import {equalString, isNullOrEmpty} from "@/utils/Utils.jsx";
 import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import moment from "moment";
+import {toRoute} from "@/utils/RouteUtils.jsx";
 
 export const expandedModelFields = {
     id: "UqId",
@@ -59,7 +60,8 @@ export const expandedOpenReservationCreateModal = (navigate, startTime, endTime,
     const end = moment(new Date(endTime)).format(`${dateFormatByUiCulture()} HH:mm`);
     let objectData = dataItem.group.resources[0];
 
-    navigate(ProfileRouteNames.RESERVATION_CREATE, {
+    let route = toRoute(ProfileRouteNames.RESERVATION_CREATE, 'id', dataItem.OrgId)
+    navigate(route, {
         state: {
             dataItem: objectData,
             start,

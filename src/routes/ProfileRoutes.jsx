@@ -17,12 +17,14 @@ import ProfileMyMembership from "@portal/profile/membership/mymembership/Profile
 import PaymentReceipt from "@portal/profile/billing/receipt/PaymentReceipt.jsx";
 import PaymentsIndex from "@portal/profile/billing/payment/PaymentsIndex.jsx";
 import ProcessPayment from "@portal/profile/billing/payment/ProcessPayment.jsx";
+import UpdateReservation from "@portal/reservation/update/UpdateReservation.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
     RESERVATION_DETAILS: `/online/myprofile/reservation/:id/:reservationId`, //ProfileBookingDetails
     RESERVATION_EDIT: `/online/myprofile/reservation/edit/:id`,
-    RESERVATION_CREATE: `/online/myprofile/reservation/create`, //CreateReservation
+    RESERVATION_CREATE: `/online/myprofile/reservation/create/:id`, //CreateReservation
+    RESERVATION_UPDATE: `/online/myprofile/reservation/update/:id/:reservationId`, //CreateReservation
     PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
     PROFILE_FAMILY_INFO_EDIT: `/online/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
@@ -61,6 +63,12 @@ const ProfileRoutes = [
         path: ProfileRouteNames.RESERVATION_CREATE,
         element: <CreateReservation />,
         title: '', //createReservation
+        header: true
+    },
+    {
+        path: ProfileRouteNames.RESERVATION_UPDATE,
+        element: <UpdateReservation />,
+        title: '', //updateReservation
         header: true
     },
     {

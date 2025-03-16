@@ -20,6 +20,7 @@ import apiService from "@/api/api.jsx";
 import {saveCookie} from "@/utils/CookieUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import '@progress/kendo-date-math/tz/all.js';
+import {toRoute} from "@/utils/RouteUtils.jsx";
 
 function ExpandedScheduler() {
     const {setHeaderRightIcons} = useHeader();
@@ -240,8 +241,10 @@ function ExpandedScheduler() {
     const openReservationCreateModal = (props, dataItem) => {
         let start = props.start;
         let end = props.end;
+
+        let route = toRoute(ProfileRouteNames.RESERVATION_CREATE, 'id', orgId)
         
-        navigate(ProfileRouteNames.RESERVATION_CREATE, {
+        navigate(route, {
             state: {
                 dataItem,
                 start,

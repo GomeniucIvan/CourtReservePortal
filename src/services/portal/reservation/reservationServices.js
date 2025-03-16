@@ -1,7 +1,15 @@
 ﻿import useCustomFormik from "@/components/formik/CustomFormik.jsx";
 import {validateReservationGuests, validateReservationMatchMaker, validateUdfs} from "@/utils/ValidationUtils.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
-import {anyInList, encodeParamsObject, equalString, isNullOrEmpty, oneListItem, toBoolean} from "@/utils/Utils.jsx";
+import {
+    anyInList,
+    encodeParamsObject,
+    equalString,
+    isNullOrEmpty,
+    nullToEmpty,
+    oneListItem,
+    toBoolean
+} from "@/utils/Utils.jsx";
 import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
@@ -13,18 +21,18 @@ export const reservationCreateOrUpdateInitialValues = {
     Duration: '',
     CourtId: '',
     MemberId: '',
-    //CustomSchedulerId: customSchedulerId,
+    CustomSchedulerId: '',
     RegisteringMemberId: null,
     SelectedResourceName: null,
     StartTime: '',
-    //EndTime: fromTimeSpanString(end),
+    EndTime: '',
     IsOpenReservation: false,
     InstructorName: '',
     SelectedReservationMembers: [],
     ReservationGuests: [],
     FeeResponsibility: '',
     ResourceIds: [],
-    //OrgId: orgId,
+    OrgId: '',
     Date: '',
     Udfs: [],
 
@@ -224,6 +232,8 @@ export const reservationCreateOrUpdateOnReservationTypeChange = async (setLoadin
     let udfData = {
         reservationTypeId: formik?.values?.ReservationTypeId,
         uiCulture: authData?.UiCulture,
+        reservationId: nullToEmpty(formik?.values?.ReservationId),
+        allowMembersToUpdateReservations: toBoolean(reservation?.AllowMembersToUpdateReservations),
     }
 
     let rUdf = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/AjaxReservation/Api_GetUdfsByReservationTypeOnReservationCreate?id=${orgId}&${encodeParamsObject(udfData)}`);
@@ -231,9 +241,11 @@ export const reservationCreateOrUpdateOnReservationTypeChange = async (setLoadin
         setCustomFields(rUdf.Data);
 
         await formik.setFieldValue('Udfs', rUdf.Data.map(udf => {
+            const existingUdf = formik?.values?.Udfs.find(u => u.Id === udf.Id);
+            
             return {
                 ...udf,
-                Value: ''
+                Value: existingUdf ? existingUdf.Value : ''
             }
         }));
     }
@@ -248,8 +260,6 @@ export const reservationCreateOrUpdateLoadEndTime = async (formik, start, authDa
             uiCulture: authData?.UiCulture,
             duration: formik?.values?.Duration
         }
-
-        console.log(entTimeData)
 
         let rEndTime = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/api/v1/portalreservationsapi/CalculateReservationEndTime?id=${orgId}&${encodeParamsObject(entTimeData)}`);
 
@@ -284,7 +294,8 @@ export const reservationCreateOrUpdateLoadResources = async (showResources,
             ReservationTypeId: formik?.values?.ReservationTypeId,
             customSchedulerId: reservation?.CustomSchedulerId,
             uiCulture: authData?.UiCulture,
-            duration: formik?.values?.Duration
+            duration: formik?.values?.Duration,
+            CurrentReservataionId: nullToEmpty(formik?.values?.ReservationId),
         }
 
         let rResources = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/api/v1/portalreservationsapi/Api_Reservation_GetAvailableResourcesOnReservationCreate?id=${orgId}&${encodeParamsObject(resourcesData)}`);
@@ -387,7 +398,9 @@ export const reservationCreateOrUpdateReloadPlayers = async (setLoading,
         AuthUserId: reservation?.MemberId,
         IsMobileLayout: true,
         IsFamilyMember: anyInList(reservation?.FamilyMembers),
-        IsModernTemplate: true
+        IsModernTemplate: true,
+        ReservationId: nullToEmpty(formik?.values?.ReservationId),
+        IsAllowedToEditPlayers: reservation?.IsAllowToEditReservationPlayers,
     };
 
     let responseReservationGuests = [];
@@ -456,7 +469,8 @@ export const reservationCreateOrUpdateReloadCourts = async (setLoading,
         //AllowPastReservationsUpToXMinutes: '@org.AllowPastReservationsUpToXMinutes',
         ResourceId: reservation.SelectedResourceId,
         CourtIdsString: cIds,
-        ReservationQueueSlotId: rq
+        ReservationQueueSlotId: rq,
+        CurrentReservataionId: nullToEmpty(formik?.values?.ReservationId),
     };
     let resp = await appService.getRoute(apiRoutes.ServiceMemberPortal, `/app/Online/ReservationsApi/GetAvailableCourtsMemberPortal?id=${orgId}&${encodeParamsObject(courtsData)}`);
 

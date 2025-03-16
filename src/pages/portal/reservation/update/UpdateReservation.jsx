@@ -23,7 +23,7 @@ import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
 import {
-    fromDateTimeStringToDateFormat,
+    fromDateTimeStringToDateFormat, fromDateTimeStringToDateTime,
     fromTimeSpanString
 } from "@/utils/DateUtils.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
@@ -40,7 +40,7 @@ import CreateOrUpdateReservationTermsAndCondition
 import CreateOrUpdateReservationMiscItems from "@portal/reservation/modules/CreateOrUpdateReservation.MiscItems.jsx";
 import CreateOrUpdateReservationMatchMaker from "@portal/reservation/modules/CreateOrUpdateReservation.MatchMaker.jsx";
 import {
-    reservationCreateOrUpdateFormik,
+    reservationCreateOrUpdateFormik, reservationCreateOrUpdateInitialValues as anyIncResData,
     reservationCreateOrUpdateInitialValues,
     reservationCreateOrUpdateLoadDataSuccessResponse,
     reservationCreateOrUpdateLoadEndTime,
@@ -59,13 +59,11 @@ function UpdateReservation() {
     const {orgId, authData} = useAuth();
     const [isFetching, setIsFetching] = useState(true);
     const location = useLocation();
-    const {dataItem, start, end, customSchedulerId} = location.state || {};
     const {t} = useTranslation('');
-
+    let {reservationId} = useParams();
     const {setHeaderRightIcons, setHeaderTitle} = useHeader();
 
     const {
-        isMockData,
         setIsFooterVisible,
         shouldFetch,
         resetFetch,
@@ -105,8 +103,9 @@ function UpdateReservation() {
 
     const initialValues = {
         ...reservationCreateOrUpdateInitialValues,
-        CustomSchedulerId: customSchedulerId,
-        EndTime: fromTimeSpanString(end),
+        ReservationId: reservationId,
+        // CustomSchedulerId: customSchedulerId,
+        // EndTime: fromTimeSpanString(end),
         OrgId: orgId
     };
 
@@ -145,36 +144,9 @@ function UpdateReservation() {
         isLesson);
 
     const loadData = async (refresh) => {
-        let instructorId = null;
-        let courtLabel = dataItem?.Label;
-        let courtType = dataItem?.CourtTypeName;
-        let isConsolidated = false;
+        setHeaderTitle('Reservation Details');
 
-        if (!isNullOrEmpty(dataItem?.InstructorType?.Id)){
-            //instructor scheduler
-            instructorId = dataItem?.Id;
-            courtLabel = '';
-            courtType = '';
-
-        } else if (isNullOrEmpty(courtLabel)) {
-            //consolidated scheduler
-            courtType = dataItem.Value;
-            isConsolidated = true;
-        }
-
-        if (isNullOrEmpty(courtLabel) && isNullOrEmpty(courtType) && isNullOrEmpty(instructorId)) {
-            //direct link access
-            navigate(HomeRouteNames.INDEX);
-            return;
-        }
-
-        if (isNullOrEmpty(instructorId)){
-            setHeaderTitle('Create Reservation');
-        } else {
-            setHeaderTitle('Lesson Create');
-        }
-
-        let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${nullToEmpty(encodeParam(courtType))}&courtLabel=${nullToEmpty(encodeParam(courtLabel))}&customSchedulerId=${nullToEmpty(customSchedulerId)}&instructorId=${nullToEmpty(instructorId)}&isConsolidated=${toBoolean(isConsolidated)}`);
+        let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/UpdateMyReservation?id=${orgId}&reservationId=${reservationId}`);
 
         if (toBoolean(r?.IsValid)) {
             let incResData = r.Data.ReservationModel;
@@ -193,29 +165,36 @@ function UpdateReservation() {
                 initialValues,
                 setIsFetching,
                 authData,
-                start,
-                end
+                formik?.values?.StartTime,
+                formik?.values?.EndTime
             );
 
             if (!toBoolean(r.Data.IsResourceReservation)) {
                 setLoading('ReservationTypeId', true);
 
-                if (!isNullOrEmpty(dataItem?.Value) && isNullOrEmpty(incResData.InstructorId)) {
-                    setCourts([{
-                        DisplayName: `${dataItem.CourtTypeName} - ${dataItem.DisplayMobilSchedulerHeaderName}`,
-                        Id: dataItem.Value
-                    }]);
-                    await formik.setFieldValue('CourtId', dataItem.Value);
-                }
+                // if (!isNullOrEmpty(dataItem?.Value) && isNullOrEmpty(incResData.InstructorId)) {
+                //     setCourts([{
+                //         DisplayName: `${dataItem.CourtTypeName} - ${dataItem.DisplayMobilSchedulerHeaderName}`,
+                //         Id: dataItem.Value
+                //     }]);
+                //     await formik.setFieldValue('CourtId', dataItem.Value);
+                // }
 
+                await formik.setValues({
+                    ...initialValues,
+                    ReservationTypeId: incResData.ReservationTypeId,
+                    Duration: incResData.Duration,
+                    Udfs: anyInList(incResData?.Udfs) ? incResData?.Udfs : [],
+                });
+                
                 let reservationTypeData = {
                     customSchedulerId: incResData.CustomSchedulerId,
                     userId: incResData.RegisteringMemberId,
-                    startTime: start,
-                    date: start,
-                    courtId: isNullOrEmpty(incResData.InstructorId) ? dataItem.Id : '',
+                    startTime: formik?.values?.StartTime,
+                    date: formik?.values?.StartTime,
+                    courtId: formik?.values?.CourtId,
                     courtType: incResData.CourtTypeEnum,
-                    endTime: end,
+                    endTime: formik?.values?.EndTime,
                     isDynamicSlot:incResData.IsFromDynamicSlots,
                     instructorId: incResData.InstructorId
                 }
@@ -223,10 +202,6 @@ function UpdateReservation() {
                 let rTypes = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/AjaxReservation/GetAvailableReservationTypes?id=${orgId}&${encodeParamsObject(reservationTypeData)}`);
                 setReservationTypes(rTypes);
                 setLoading('ReservationTypeId', false);
-
-                if (!isNullOrEmpty(selectReservationTypeIdRef?.current) && isNullOrEmpty(formik?.values?.ReservationTypeId)) {
-                    selectReservationTypeIdRef.current.open();
-                }
             }
         } else {
             setIsFetching(false);
@@ -258,7 +233,7 @@ function UpdateReservation() {
     const onReservationTypeChange = async () => {
         await reservationCreateOrUpdateOnReservationTypeChange(setLoading,
             formik,
-            start,
+            formik?.values?.StartTime,
             reservation,
             authData,
             orgId,
@@ -269,7 +244,7 @@ function UpdateReservation() {
     useEffect(() => {
 
         const loadEndTime = async () => {
-            await reservationCreateOrUpdateLoadEndTime(formik, start, authData, orgId, reloadCourts, reloadPlayers);
+            await reservationCreateOrUpdateLoadEndTime(formik, formik?.values?.StartTime, authData, orgId, reloadCourts, reloadPlayers);
         }
 
         loadEndTime();
@@ -280,7 +255,7 @@ function UpdateReservation() {
         const loadResources = async () => {
             await reservationCreateOrUpdateLoadResources(showResources,
                 setLoading,
-                start,
+                formik?.values?.StartTime,
                 formik,
                 reservation,
                 courts,
@@ -337,7 +312,7 @@ function UpdateReservation() {
     const reloadCourts = async (endTime) => {
         await reservationCreateOrUpdateReloadCourts(setLoading,
             reservation,
-            start,
+            formik?.values?.StartTime,
             endTime,
             formik,
             authData,
