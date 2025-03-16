@@ -60,7 +60,8 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.RESERVATION_CREATE,
         element: <ReservationRegistration />,
-        title: 'createReservation'
+        title: '', //createReservation
+        header: true
     },
     {
         path: ProfileRouteNames.PROFILE_PERSONAL_INFO,

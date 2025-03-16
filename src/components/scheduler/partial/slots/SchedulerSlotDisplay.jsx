@@ -222,19 +222,19 @@ export const SchedulerSlot = React.forwardRef((
     );
     
     //ignore consolidated
-    if (toBoolean(useTextSchedulerSlot)) {
-        if (toBoolean(props?.group?.resources[0]?.IsWailitsingData)){
-            return (<div ref={element} className={'k-scheduler-cell k-slot-cell'}></div>)
-        }
-
-        if (toBoolean(props.isPastStart)){
-            return (<div ref={element} className={className} id={props.id} tabIndex={tabIndex}></div>)
-        }
-
-        if (toBoolean(props?.group?.resources[0]?.IsCourtClosed)){
-            return (<div ref={element} className={'k-scheduler-cell k-slot-cell k-closed-slot'}></div>)
-        }
-    }
+    // if (toBoolean(useTextSchedulerSlot)) {
+    //     if (toBoolean(props?.group?.resources[0]?.IsWailitsingData)){
+    //         return (<div ref={element} className={'k-scheduler-cell k-slot-cell'}></div>)
+    //     }
+    //
+    //     if (toBoolean(props.isPastStart)){
+    //         return (<div ref={element} className={className} id={props.id} tabIndex={tabIndex}></div>)
+    //     }
+    //
+    //     if (toBoolean(props?.group?.resources[0]?.IsCourtClosed)){
+    //         return (<div ref={element} className={'k-scheduler-cell k-slot-cell k-closed-slot'}></div>)
+    //     }
+    // }
     
     
     return (

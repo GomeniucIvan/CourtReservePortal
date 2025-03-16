@@ -66,7 +66,7 @@ function ReservationRegistration() {
     const {dataItem, start, end, customSchedulerId} = location.state || {};
     const {t} = useTranslation('');
 
-    const {setHeaderRightIcons} = useHeader();
+    const {setHeaderRightIcons, setHeaderTitle} = useHeader();
 
     const {
         isMockData,
@@ -222,9 +222,10 @@ function ReservationRegistration() {
 
         if (!isNullOrEmpty(dataItem?.InstructorType?.Id)){
             //instructor scheduler
-            instructorId = dataItem?.InstructorId;
+            instructorId = dataItem?.Id;
             courtLabel = '';
             courtType = '';
+
         } else if (isNullOrEmpty(courtLabel)) {
             //consolidated scheduler
             courtType = dataItem.Value;
@@ -237,6 +238,12 @@ function ReservationRegistration() {
             return;
         }
 
+        if (isNullOrEmpty(instructorId)){
+            setHeaderTitle('Create Reservation');
+        } else {
+            setHeaderTitle('Create Lesson');
+        }
+        
         let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${nullToEmpty(encodeParam(courtType))}&courtLabel=${nullToEmpty(encodeParam(courtLabel))}&customSchedulerId=${nullToEmpty(customSchedulerId)}&instructorId=${nullToEmpty(instructorId)}&isConsolidated=${toBoolean(isConsolidated)}`);
 
         if (toBoolean(r?.IsValid)) {

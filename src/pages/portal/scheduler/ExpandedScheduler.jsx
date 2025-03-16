@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 import {DayView} from "@/components/scheduler/partial/views/day/DayViewDisplay.jsx";
 import {InnerScheduler} from "@/components/scheduler/partial/InnerScheduler.jsx";
-import {anyInList, equalString, isNullOrEmpty, moreThanOneInList, toBoolean} from "@/utils/Utils.jsx";
+import {anyInList, equalString, isNullOrEmpty, moreThanOneInList, oneListItem, toBoolean} from "@/utils/Utils.jsx";
 import {Flex, Segmented, Skeleton, Space, Spin, Typography} from "antd";
 import {useLocation, useNavigate} from "react-router-dom";
 import moment from "moment";
@@ -33,6 +33,7 @@ import ConsolidatedSchedulerSlot from "@portal/scheduler/ConsolidatedSchedulerSl
 import {pNotify} from "@/components/notification/PNotify.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import {SchedulerSlot} from "@/components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
+import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
 const {Text} = Typography;
 
 function ExpandedScheduler({index, resource}) {
@@ -57,7 +58,7 @@ function ExpandedScheduler({index, resource}) {
     const [interval, setInterval] = useState(15);
     const [startTimeString, setStartTimeString] = useState('')
     const [endTimeString, setEndTimeString] = useState('')
-    const [filterSelectedView, headerFilterSelectedView] = useState('')
+    const [filterSelectedView, headerFilterSelectedView] = useState(toBoolean(index) ? fromLocalStorage('scheduler-tabs', 'Expanded') : '');
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -73,6 +74,8 @@ function ExpandedScheduler({index, resource}) {
                                   onOptionChange={(selValue) => {
                                       if (!equalString(filterSelectedView, selValue)) {
                                           headerFilterSelectedView(selValue);
+                                          toLocalStorage('scheduler-tabs', selValue);
+                                          
                                           setIsSchedulerInitializing(true);
                                           
                                           setTimeout(function () {
@@ -86,7 +89,6 @@ function ExpandedScheduler({index, resource}) {
     }, [filterSelectedView]);
 
     const loadSchedulerData = async (selectedIndexViewType) => {
-
         let response = null;
         
         if (toBoolean(index)) {
@@ -195,9 +197,13 @@ function ExpandedScheduler({index, resource}) {
                     //add ability to select type from header
                     let firstAllowedType = allowedViewTypes[0];
 
-                    if (moreThanOneInList(allowedViewTypes)){
+                    if (oneListItem(allowedViewTypes)){
                         headerFilterSelectedView(firstAllowedType);
+                        toLocalStorage('scheduler-tabs', firstAllowedType);
+                    } else {
+                        firstAllowedType = fromLocalStorage('scheduler-tabs', 'Expanded')
                     }
+                    
                     loadSchedulerData(firstAllowedType);
                 }
             } else {
@@ -272,6 +278,24 @@ function ExpandedScheduler({index, resource}) {
     
     const CustomSlot = (props) => {
         let incStartString = formatLocalDateString(props.zonedStart);
+        
+        
+        if (toBoolean(props?.group?.resources[0]?.IsWailitsingData)) {
+           return (
+               <SchedulerSlot {...props}>
+
+               </SchedulerSlot>
+           )
+        }
+
+        if (toBoolean(props?.group?.resources[0]?.IsCourtClosed)) {
+            return (
+                <SchedulerSlot {...props}>
+
+                </SchedulerSlot>
+            )
+        }
+        
         return (
             <SchedulerSlot {...props}>
                 {((new Date(incStartString) > currentDateTime) && toBoolean(schedulerData?.ShowReserveButton)) &&

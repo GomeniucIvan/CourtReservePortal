@@ -65,7 +65,11 @@ function CenterModal({ show,
         >
             {!isNullOrEmpty(buttonType) &&
                 <Flex vertical={true} gap={token.padding * 2}>
-                    {children}
+                    {typeof children === 'string' ? (
+                        <div dangerouslySetInnerHTML={{ __html: children }} />
+                    ) : (
+                        children
+                    )}
                     
                     {equalString(buttonType, modalButtonType.DEFAULT_CLOSE) &&
                         <Button block={true} onClick={onClose}>Close</Button>
@@ -74,7 +78,11 @@ function CenterModal({ show,
             }
             
             {isNullOrEmpty(buttonType) &&
-                <>{children}</>
+                <>{typeof children === 'string' ? (
+                    <div dangerouslySetInnerHTML={{ __html: children }} />
+                ) : (
+                    children
+                )}</>
             }
         </AntModal>
     )

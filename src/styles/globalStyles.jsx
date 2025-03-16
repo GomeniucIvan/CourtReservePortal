@@ -197,7 +197,13 @@ export const useStyles = createStyles(({ css, token }) => ({
       margin-top: 0 !important;
    `,
    noMargin: css`
-      margin: 0 !important;
+       &:not(.ant-divider){
+           margin: 0 !important;
+       }
+       &.ant-divider{
+           margin-top: 0 !important;
+           margin-bottom: 0 !important;
+       }
    `,
    noPadding: css`
       padding: 0 !important;
