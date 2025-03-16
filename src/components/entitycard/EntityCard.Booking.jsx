@@ -20,7 +20,7 @@ const EntityCardBooking = ({booking, isFullHeight}) => {
     const navigate = useNavigate();
     const { t } = useTranslation('');
     const {tagStyles} = useCombinedStyles();
-    const {globalStyles} = useApp();
+    const {globalStyles, setDynamicPages} = useApp();
     const { styles } = useStyles();
     
     const bookingTemplate = (innerBooking, isUnpaid) => {
