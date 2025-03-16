@@ -49,15 +49,14 @@ import {
     reservationCreateOrUpdateOnReservationTypeChange,
     reservationCreateOrUpdateReloadCourts,
     reservationCreateOrUpdateReloadPlayers
-} from "@services/reservation/reservationServices.jsx";
+} from "@services/reservation/reservationServices.js";
 import CreateOrUpdateReservationPlayers from "@portal/reservation/modules/CreateOrUpdateReservation.Players.jsx";
 
 const {Title, Text, Link} = Typography;
 
-function CreateReservation() {
+function UpdateReservation() {
     const navigate = useNavigate();
     const {orgId, authData} = useAuth();
-    const [submitButtonText, setSubmitButtonText] = useState('Save');
     const [isFetching, setIsFetching] = useState(true);
     const location = useLocation();
     const {dataItem, start, end, customSchedulerId} = location.state || {};
@@ -178,6 +177,8 @@ function CreateReservation() {
         let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}&start=${start}&end=${end}&courtType=${nullToEmpty(encodeParam(courtType))}&courtLabel=${nullToEmpty(encodeParam(courtLabel))}&customSchedulerId=${nullToEmpty(customSchedulerId)}&instructorId=${nullToEmpty(instructorId)}&isConsolidated=${toBoolean(isConsolidated)}`);
 
         if (toBoolean(r?.IsValid)) {
+            let incResData = r.Data.ReservationModel;
+
             await reservationCreateOrUpdateLoadDataSuccessResponse(r,
                 setReservation,
                 setMiscFeesQuantities,
@@ -190,7 +191,10 @@ function CreateReservation() {
                 setDisclosure,
                 formik,
                 initialValues,
-                setIsFetching
+                setIsFetching,
+                authData,
+                start,
+                end
             );
 
             if (!toBoolean(r.Data.IsResourceReservation)) {
@@ -250,26 +254,6 @@ function CreateReservation() {
             onReservationTypeChange();
         }
     }, [formik?.values?.ReservationTypeId]);
-
-    useEffect(() => {
-        let currentPlayersCount = ((reservationMembers?.length || 0));
-        if (!isNullOrEmpty(formik?.values?.ReservationGuests?.length)){
-            currentPlayersCount += formik?.values?.ReservationGuests?.length;
-        }
-
-        //save button text
-        if (toBoolean(authData?.EnableQuickReservationLockOutPeriod)){
-            let buttonText = 'Save';
-            if (selectedReservationType) {
-                let currentReservationTypeMinVariable = selectedReservationType.MinimumNumberOfPlayers;
-                if (!isNullOrEmpty(currentReservationTypeMinVariable) && currentPlayersCount < currentReservationTypeMinVariable){
-                    buttonText = 'Save & Add Player(s)'
-                }
-            }
-
-            setSubmitButtonText(buttonText);
-        }
-    }, [formik?.values?.ReservationGuests, reservationMembers]);
 
     const onReservationTypeChange = async () => {
         await reservationCreateOrUpdateOnReservationTypeChange(setLoading,
@@ -383,11 +367,11 @@ function CreateReservation() {
                         loading={isLoading}
                         disabled={isFetching}
                         onClick={formik.handleSubmit}>
-                    {submitButtonText}
+                    Update
                 </Button>
             </PaymentDrawerBottom>)
         }
-    }, [isFetching, isLoading, submitButtonText, totalPriceToPay, reservation,reservation]);
+    }, [isFetching, isLoading, totalPriceToPay, reservation,reservation]);
 
     useEffect(() => {
         setIsFooterVisible(true);
@@ -600,4 +584,4 @@ function CreateReservation() {
     )
 }
 
-export default CreateReservation;
+export default UpdateReservation;
