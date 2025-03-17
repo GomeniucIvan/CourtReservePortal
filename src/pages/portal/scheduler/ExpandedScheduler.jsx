@@ -58,7 +58,7 @@ function ExpandedScheduler({index, resource}) {
     const [interval, setInterval] = useState(15);
     const [startTimeString, setStartTimeString] = useState('')
     const [endTimeString, setEndTimeString] = useState('')
-    const [filterSelectedView, headerFilterSelectedView] = useState(toBoolean(index) ? fromLocalStorage('scheduler-tabs', 'Expanded') : '');
+    const [filterSelectedView, headerFilterSelectedView] = useState('');
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -193,15 +193,17 @@ function ExpandedScheduler({index, resource}) {
             if (toBoolean(response?.IsValid)){
                 let data = response?.Data;
                 let allowedViewTypes = data.ViewTypes;
+
                 if (anyInList(allowedViewTypes)){
                     //add ability to select type from header
                     let firstAllowedType = allowedViewTypes[0];
 
                     if (oneListItem(allowedViewTypes)){
-                        headerFilterSelectedView(firstAllowedType);
+                        //headerFilterSelectedView(firstAllowedType);
                         toLocalStorage('scheduler-tabs', firstAllowedType);
                     } else {
-                        firstAllowedType = fromLocalStorage('scheduler-tabs', 'Expanded')
+                        firstAllowedType = fromLocalStorage('scheduler-tabs', 'Expanded');
+                        headerFilterSelectedView(firstAllowedType);
                     }
                     
                     loadSchedulerData(firstAllowedType);

@@ -51,6 +51,7 @@ import {
     reservationCreateOrUpdateReloadPlayers
 } from "@services/reservation/reservationServices.js";
 import CreateOrUpdateReservationPlayers from "@portal/reservation/modules/CreateOrUpdateReservation.Players.jsx";
+import {historyNavigateBack} from "@/toolkit/HistoryStack.js";
 
 const {Title, Text, Link} = Typography;
 
@@ -244,6 +245,8 @@ function CreateReservation() {
 
                     },
                 })
+
+                historyNavigateBack(navigate);
             }
         }
 

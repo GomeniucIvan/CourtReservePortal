@@ -63,3 +63,7 @@ export const removeLastHistoryEntry = () => {
         historyStack.pop(); 
     }
 };
+
+export const historyNavigateBack = (navigate) => {
+    navigate(getLastFromHistoryPath());
+}
