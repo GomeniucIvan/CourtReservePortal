@@ -130,7 +130,6 @@ function UpdateReservation() {
 
     const isLesson = !isNullOrEmpty(reservation?.InstructorId);
 
-
     //FORMIK
     const formik = reservationCreateOrUpdateFormik(initialValues,
         validationSchema,
@@ -141,16 +140,17 @@ function UpdateReservation() {
         setIsLoading,
         orgId,
         navigate,
-        isLesson);
+        isLesson,
+        true);
 
     const loadData = async (refresh) => {
-        setHeaderTitle('Reservation Details');
-
         let r = await appService.getRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/UpdateMyReservation?id=${orgId}&reservationId=${reservationId}`);
 
         if (toBoolean(r?.IsValid)) {
             let incResData = r.Data.ReservationModel;
 
+            setHeaderTitle(!isNullOrEmpty(incResData?.InstructorId) ? 'Lesson Details' : 'Reservation Details');
+            
             await reservationCreateOrUpdateLoadDataSuccessResponse(r,
                 setReservation,
                 setMiscFeesQuantities,
@@ -168,7 +168,19 @@ function UpdateReservation() {
                 formik?.values?.StartTime,
                 formik?.values?.EndTime
             );
-
+            await formik.setValues({
+                ...initialValues,
+                ReservationTypeId: incResData.ReservationTypeId,
+                Duration: incResData.Duration,
+                Udfs: anyInList(incResData?.Udfs) ? incResData?.Udfs : [],
+                CourtId: anyInList(incResData?.CourtId) ? incResData?.CourtId : [],
+                StartTime: incResData.DateStartTimeStringDisplay,
+                EndTime: incResData.EndTime,
+                ReservationGuests: incResData?.ReservationGuests,
+                MemberId: incResData.MemberId,
+                Date: incResData.DateStringDisplay,
+            });
+            
             if (!toBoolean(r.Data.IsResourceReservation)) {
                 setLoading('ReservationTypeId', true);
 
@@ -179,18 +191,6 @@ function UpdateReservation() {
                 //     }]);
                 //     await formik.setFieldValue('CourtId', dataItem.Value);
                 // }
-
-                console.log(incResData)
-                await formik.setValues({
-                    ...initialValues,
-                    ReservationTypeId: incResData.ReservationTypeId,
-                    Duration: incResData.Duration,
-                    Udfs: anyInList(incResData?.Udfs) ? incResData?.Udfs : [],
-                    CourtId: anyInList(incResData?.CourtId) ? incResData?.CourtId : [],
-                    StartTime: incResData.DateStartTimeStringDisplay,
-                    EndTime: incResData.EndTime,
-                    ReservationGuests: incResData?.ReservationGuests,
-                });
                 
                 setReservationMembers(incResData.InitialMembers);
                 
@@ -493,12 +493,13 @@ function UpdateReservation() {
                                 }
                             </InlineBlock>
 
-                            {(!toBoolean(reservation?.IsConsolidatedScheduler) && !toBoolean(reservation?.IsResourceReservation) && !toBoolean(reservation?.InstructorId)) &&
+                            {((!toBoolean(reservation?.IsConsolidatedScheduler) && !toBoolean(reservation?.IsResourceReservation) && !toBoolean(reservation?.InstructorId)) ||
+                                    (toBoolean(reservation?.InstructorId) && toBoolean(reservation?.CanSelectCourt))) &&
                                 <FormSelect formik={formik}
                                             name={`CourtId`}
                                             label='Court(s)'
                                             options={courts}
-                                            required={true}
+                                            required={(toBoolean(reservation?.InstructorId) && toBoolean(reservation?.IsCourtRequired)) || !toBoolean(reservation?.InstructorId)}
                                             loading={toBoolean(loadingState.CourtId)}
                                             propText='DisplayName'
                                             propValue='Id'/>

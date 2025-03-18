@@ -171,15 +171,15 @@ const RegistrationGuestBlock = forwardRef(({formik,
 
                                     if (equalString(type, 'event')) {
                                         if (moreThanOneInList(reservationMembers)){
-                                            let guestOwner = reservationMembers?.find(v => v.OrganizationMemberId === guest.GuestOwnerId);
+                                            let guestOwner = reservationMembers?.find(v => equalString(v.OrganizationMemberId, guest.GuestOwnerId));
                                          
                                             if (!isNullOrEmpty(guestOwner)){
                                                 secondRowText = `${guestOwner.FirstName} ${guestOwner.LastName}`;
                                             }
                                         }
                                     } else {
-                                        if (!isNullOrEmpty(guest.GuestOwnerId)) {
-                                            let reservationOwner = reservationMembers?.find(v => v.OrgMemberId === guest.GuestOwnerId);
+                                        if (!isNullOrEmpty(guest.GuestOwnerId) && moreThanOneInList(reservationMembers)) {
+                                            let reservationOwner = reservationMembers?.find(v => equalString(v.OrgMemberId, guest.GuestOwnerId));
                                             if (!isNullOrEmpty(reservationOwner)) {
                                                 ownerText = reservationOwner.FullName;
                                             }
@@ -193,8 +193,6 @@ const RegistrationGuestBlock = forwardRef(({formik,
                                             secondRowText = ownerText;
                                         }
                                     }
-                                    
-
 
                                     let fullName = '';
                                     if (!isNullOrEmpty(firstName) && !isNullOrEmpty(lastName)) {

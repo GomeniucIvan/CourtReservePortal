@@ -39,6 +39,7 @@ export const loadBearerToken = async () => {
 const axiosInstance = axios.create({
     baseURL: backendUrl,
     timeout: 60000,
+    withCredentials: true,
     headers: {
         'X-Requested-By': 'ReactApp',
         'Content-Type': 'application/json',

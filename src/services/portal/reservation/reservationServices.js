@@ -55,7 +55,7 @@ export const reservationCreateOrUpdateInitialValues = {
     Description: null,
     MatchMakerIsPrivateMatch: false,
     MatchMakerJoinCode: '',
-    DisclosureAgree: false,
+    DisclosureAgree: false
 }
 
 export const reservationCreateOrUpdateFormik = (initialValues,
@@ -67,7 +67,8 @@ export const reservationCreateOrUpdateFormik = (initialValues,
                                                 setIsLoading,
                                                 orgId,
                                                 navigate,
-                                                isLesson) => {
+                                                isLesson,
+                                                isUpdate) => {
     let formik = useCustomFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
@@ -82,7 +83,15 @@ export const reservationCreateOrUpdateFormik = (initialValues,
             values.SelectedMembers = reservationMembers;
             values.DateString = values.Date;
 
-            let response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
+            let response = null;
+            
+            if (isUpdate) {
+                values.MemberId = 
+                response = await appService.post(`/app/Online/Reservations/UpdateMyReservation?id=${orgId}`, values);  
+            } else {
+                response = await appService.postRoute(apiRoutes.CREATE_RESERVATION, `/app/Online/ReservationsApi/CreateReservation?id=${orgId}`, values);
+            }
+            
             if (toBoolean(response?.IsValid)){
                 //remove current page
                 removeLastHistoryEntry();
@@ -94,7 +103,11 @@ export const reservationCreateOrUpdateFormik = (initialValues,
                 if (!isNullOrEmpty(response?.Message)){
                     pNotify(response.Message);
                 } else {
-                    pNotify(isLesson ? 'Lesson successfully created.' : 'Reservation successfully created.');
+                    if (isUpdate) {
+                        pNotify(isLesson ? 'Lesson successfully updated.' : 'Reservation successfully updated.');
+                    } else {
+                        pNotify(isLesson ? 'Lesson successfully created.' : 'Reservation successfully created.');
+                    }
                 }
                 setIsLoading(false);
             } else{

@@ -21,6 +21,7 @@ export const apiRoutes = {
 
 const axiosInstance = axios.create({
     timeout: 60000,
+    withCredentials: true,
     headers: {
         'X-Requested-By': 'ReactApp',
         'Content-Type': 'application/json',

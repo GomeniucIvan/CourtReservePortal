@@ -144,7 +144,8 @@ function CreateReservation() {
         setIsLoading,
         orgId,
         navigate,
-        isLesson);
+        isLesson,
+        false);
 
     const loadData = async (refresh) => {
         let instructorId = null;
@@ -535,12 +536,13 @@ function CreateReservation() {
                                 }
                             </InlineBlock>
 
-                            {(!toBoolean(reservation?.IsConsolidatedScheduler) && !toBoolean(reservation?.IsResourceReservation) && !toBoolean(reservation?.InstructorId)) &&
+                            {((!toBoolean(reservation?.IsConsolidatedScheduler) && !toBoolean(reservation?.IsResourceReservation) && !toBoolean(reservation?.InstructorId)) ||
+                                    (toBoolean(reservation?.InstructorId) && toBoolean(reservation?.CanSelectCourt))) &&
                                 <FormSelect formik={formik}
                                             name={`CourtId`}
                                             label='Court(s)'
                                             options={courts}
-                                            required={true}
+                                            required={(toBoolean(reservation?.InstructorId) && toBoolean(reservation?.IsCourtRequired)) || !toBoolean(reservation?.InstructorId)}
                                             loading={toBoolean(loadingState.CourtId)}
                                             propText='DisplayName'
                                             propValue='Id'/>
