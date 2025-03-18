@@ -1,7 +1,7 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {Select, Skeleton, Typography} from "antd";
 import {useStyles} from "./styles.jsx";
-import {calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
+import {anyInList, calculateSkeletonLabelWidth, equalString, isNullOrEmpty, toBoolean} from "../../utils/Utils.jsx";
 import DrawerBottom from "../../components/drawer/DrawerBottom.jsx";
 import {useApp} from "../../context/AppProvider.jsx";
 import {cx} from "antd-style";
@@ -124,7 +124,7 @@ const FormSelect = forwardRef(({
                         {...addCypressTag(name)}
                         ref={selectRef}
                         placeholder={innerPlaceholder}
-                        value={isNullOrEmpty(field.value) ? undefined : toBoolean(multi) ? field.value : `${field.value}`}
+                        value={(isNullOrEmpty(field.value) || !anyInList(options)) ? undefined : toBoolean(multi) ? field.value : `${field.value}`}
                         open={false}
                         mode={toBoolean(multi) ? 'multiple' : undefined}
                         loading={toBoolean(loading)}
