@@ -208,15 +208,6 @@ const ExpandedSchedulerItem = (props) => {
 
                         {renderTooltipInfoIcon(dataItem)}
 
-                        {(dataItem.HasEventCoordinators ||
-                            (isLightVersionEventSlot && !isNullOrEmpty(dataItem.InstructorInfoJson)) ||
-                            (!isLightVersionEventSlot && dataItem.Instructors != null)) && (
-                            <div className="row ">
-                                <div className="pull-right scheduler-badges light-instructor-badges"
-                                     dangerouslySetInnerHTML={{__html: displayInstructorsRow(dataItem, isLightVersionEventSlot)}}></div>
-                            </div>
-                        )}
-
                         {/* Start Open Reservation Region */}
                         {dataItem.IsOpenReservation && !dataItem.IsOpenMatchFinalize && (
                             <div className="row">

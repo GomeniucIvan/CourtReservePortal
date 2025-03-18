@@ -50,16 +50,46 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
         resp = await appService.get(null, `/app/Online/Reservations/ReadConsolidated?id=${orgId}&jsonData=${JSON.stringify(result)}`);
     }
     
-    formattedEvents = resp?.Data?.map(event => ({
-        ...event,
-        Start: equalString(type, 'consolidated') ? new Date(event.StartTimeString) :  new Date(event.Start),
-        start: equalString(type, 'consolidated') ? new Date(event.StartTimeString) :  new Date(event.Start),
-        End: equalString(type, 'consolidated') ? new Date(event.EndTimeString) :  new Date(event.End),
-        end: equalString(type, 'consolidated') ? new Date(event.EndTimeString) :  new Date(event.End),
+    console.log(resp?.Data)
+    
+    if (equalString(type, 'instructor')) {
+        formattedEvents = resp?.Data?.map(event => ({
+            ...event,
+            Start: new Date(event.StartStringDisplay),
+            start: new Date(event.StartStringDisplay),
+            End: new Date(event.EndStringDisplay),
+            end: new Date(event.EndStringDisplay),
 
-        isAllDay: false,
-        IsAllDay: false,
-    })) || [];
+            isAllDay: false,
+            IsAllDay: false,
+        })) || [];
+    } else if (equalString(type, 'consolidated')){
+        formattedEvents = resp?.Data?.map(event => ({
+            ...event,
+            Start: new Date(event.StartTimeString),
+            start: new Date(event.StartTimeString),
+            End: new Date(event.EndTimeString),
+            end: new Date(event.EndTimeString),
 
+            isAllDay: false,
+            IsAllDay: false,
+        })) || [];
+    } else {
+        formattedEvents = resp?.Data?.map(event => ({
+            ...event,
+            Start: new Date(event.Start),
+            start: new Date(event.Start),
+            End: new Date(event.End),
+            end: new Date(event.End),
+
+            isAllDay: false,
+            IsAllDay: false,
+        })) || [];
+    }
+    
+
+
+    console.log(formattedEvents)
+    
     return formattedEvents;
 }

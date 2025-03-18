@@ -5,6 +5,20 @@ import {ProfileRouteNames} from "@/routes/ProfileRoutes.jsx";
 import moment from "moment";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 
+export const instructorModelFields = {
+    id: "UqId",
+    title: "Title",
+    description: "Description",
+    start: "Start",
+    end: "End",
+    recurrenceRule: "RecurrenceRule",
+    recurrenceId: "RecurrenceId",
+    recurrenceExceptions: "RecurrenceException",
+    //startTimezone: "StartTimezone",
+    //endTimezone: "EndTimezone",
+    isAllDay: "isAllDay",
+};
+
 export const expandedModelFields = {
     id: "UqId",
     title: "Title",

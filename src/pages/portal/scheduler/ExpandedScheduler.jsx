@@ -25,7 +25,7 @@ import {
     courtHeader, expandedModelFields,
     expandedOpenReservationCreateModal,
     handleDataChange,
-    handleDateChange, instructorHeader, resourceHeader, scrollToCurrentTime
+    handleDateChange, instructorHeader, instructorModelFields, resourceHeader, scrollToCurrentTime
 } from "@portal/scheduler/SchedulerInnerUtils.jsx";
 import {schedulerItemsRead} from "@portal/scheduler/SchedulerInnerServices.jsx";
 import {useTranslation} from "react-i18next";
@@ -88,6 +88,7 @@ function ExpandedScheduler({index, resource}) {
         }
     }, [filterSelectedView]);
 
+    //load page data
     const loadSchedulerData = async (selectedIndexViewType) => {
         let response = null;
         
@@ -348,6 +349,8 @@ function ExpandedScheduler({index, resource}) {
         )
     }
 
+    let isInstructorScheduler = equalString(schedulerData?.SchedulerType, 2);
+    
     return (
         <Spin spinning={loading}>
 
@@ -364,7 +367,7 @@ function ExpandedScheduler({index, resource}) {
                 currentDateTime={currentDateTime}
                 onDateChange={(e) => {handleDateChange(e, setSelectedDate)}}
                 onDataChange={handleDataChange}
-                modelFields={equalString(schedulerData?.TypeString, 'Consolidated') ? consolidatedModelFields : expandedModelFields}
+                modelFields={equalString(schedulerData?.TypeString, 'Consolidated') ? consolidatedModelFields : (toBoolean(isInstructorScheduler) ? instructorModelFields : expandedModelFields) }
                 height={availableHeight}
                 minDate={minDate}
                 maxDate={maxDate}
@@ -372,12 +375,11 @@ function ExpandedScheduler({index, resource}) {
                 slot={CustomSlot}
                 type={schedulerData?.TypeString}
                 group={{
-                    resources: equalString(schedulerData?.TypeString, 'Consolidated') ? ["CourtTypes"] : ["Courts"],
+                    resources: equalString(schedulerData?.TypeString, 'Consolidated') ? ["CourtTypes"] : (toBoolean(isInstructorScheduler) ? ["SchedulerInstructors"] : ["Courts"]) ,
                 }}
                 interval={interval}
                 item={equalString(schedulerData?.TypeString, 'Consolidated') ? ConsolidatedSchedulerSlot : ExpandedSchedulerItem}
                 useTextSchedulerSlot={!equalString(schedulerData?.TypeString, 'Consolidated')}
-                //openReservationCreateModal={(props, dataItem) => {expandedOpenReservationCreateModal(navigate, props, dataItem)}}
                 resources={equalString(schedulerData?.TypeString, 'Consolidated') ?
                     [{
                         name: 'CourtTypes',
@@ -387,7 +389,16 @@ function ExpandedScheduler({index, resource}) {
                         valueField: 'Value',
                         color: 'ReservationColor'
                     }]
-                    :
+                    : toBoolean(isInstructorScheduler) ?
+                        [{
+                            name: 'SchedulerInstructors',
+                            data: courts,
+                            field: 'InstructorId',
+                            textField: 'Text',
+                            valueField: 'Value',
+                            color: 'ReservationColor'
+                        }]
+                        :
                     [{
                         name: 'Courts',
                         data: courts,
