@@ -50,8 +50,6 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
         resp = await appService.get(null, `/app/Online/Reservations/ReadConsolidated?id=${orgId}&jsonData=${JSON.stringify(result)}`);
     }
     
-    console.log(resp?.Data)
-    
     if (equalString(type, 'instructor')) {
         formattedEvents = resp?.Data?.map(event => ({
             ...event,
@@ -87,9 +85,6 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
         })) || [];
     }
     
-
-
     console.log(formattedEvents)
-    
     return formattedEvents;
 }

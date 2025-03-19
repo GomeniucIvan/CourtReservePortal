@@ -18,6 +18,7 @@ import PaymentReceipt from "@portal/profile/billing/receipt/PaymentReceipt.jsx";
 import PaymentsIndex from "@portal/profile/billing/payment/PaymentsIndex.jsx";
 import ProcessPayment from "@portal/profile/billing/payment/ProcessPayment.jsx";
 import UpdateReservation from "@portal/reservation/update/UpdateReservation.jsx";
+import ProfilePayMyMembership from "@portal/profile/billing/payment/ProfilePayMyMembership.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
@@ -43,6 +44,7 @@ export const ProfileRouteNames = {
     //why is different routes?!
     PAYMENTS_INDEX: `/online/payments/index/:id`, // ProfileBillingPayment
     PROCESS_PAYMENT: `/online/payments/processpayment/:id`, // ProcessPayment
+    PAY_MY_MEMBERSHIP: `/online/mybalance/paymymembershipFees/:id`, //ProfilePayMyMembership
     PROCESS_TRANSACTION_PAYMENT: `/online/mybalance/processtransactionpayments/:id`, //ProfileBillingPayment
     PAYMENT_PROCESSED_SUCCESS:  `/online/payments/paymentprocessed/:id`,  //PaymentReceipt
 };
@@ -131,6 +133,12 @@ const ProfileRoutes = [
     {
         path: ProfileRouteNames.PROCESS_PAYMENT,
         element: <ProcessPayment />,
+        title: 'processPayment',
+        disablePullDown: true
+    },
+    {
+        path: ProfileRouteNames.PAY_MY_MEMBERSHIP,
+        element: <ProfilePayMyMembership />,
         title: 'processPayment',
         disablePullDown: true
     },

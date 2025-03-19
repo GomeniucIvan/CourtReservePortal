@@ -30,45 +30,31 @@ import {pNotify} from "@/components/notification/PNotify.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import EmptyBlock from "@/components/emptyblock/EmptyBlock.jsx";
 import ProfileBillingPaymentPartial from "@portal/profile/billing/payment/ProfileBillingPaymentPartial.jsx";
+import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
 
-const {Title, Text} = Typography;
-
-function ProcessPayment({}) {
+function ProfilePayMyMembership({}) {
     const navigate = useNavigate();
     const [isFetching, setIsFetching] = useState(true);
-    const [paymentModel, setPaymentModel] = useState(null);
-    const [organizationData, setOrganizationData] = useState(null);
-
     const {setIsLoading, isLoading, token, setIsFooterVisible, setFooterContent} = useApp();
-    const {orgId, authData} = useAuth();
+    const {orgId} = useAuth();
     const {setHeaderRightIcons} = useHeader();
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+
+    //url params
+    const membershipId = queryParams.get("membershipId");
 
     const loadData = async (refresh) => {
         setIsFetching(true);
         setIsLoading(true);
-        let paymentsResponse = await appService.get(navigate, `/app/Online/Payments/ProcessPayment?id=${orgId}&loadHtmlContent=true`);
+        let paymentsResponse = await appService.get(navigate, `/app/Online/MyBalance/PayMyMembershipFees?id=${orgId}&membershipId=${membershipId}`);
 
         if (!isNullOrEmpty(paymentsResponse?.Path)){
+            removeLastHistoryEntry();
             navigate(paymentsResponse?.Path);
             setIsFetching(false);
-        } else if (toBoolean(paymentsResponse?.IsValid)){
-            let data = paymentsResponse.Data;
-            setPaymentModel(data.Model);
-            setOrganizationData(data.OrganizationData)
-            setIsFetching(false);
-        } else {
-            setIsFetching(false);
-            displayMessageModal({
-                title: 'Error',
-                html: (onClose) => `${paymentsResponse?.Message}.`,
-                type: "error",
-                buttonType: modalButtonType.DEFAULT_CLOSE,
-                onClose: () => {
-
-                },
-            })
-        }
-
+        } 
         setIsLoading(false);
     }
 
@@ -78,8 +64,6 @@ function ProcessPayment({}) {
         setFooterContent('');
         setIsFooterVisible(true);
     }, []);
-
-    const anyItemsToPay = paymentModel?.CalculateTotal > 0;
 
     return (
         <PaddingBlock topBottom={true}>
@@ -96,24 +80,8 @@ function ProcessPayment({}) {
                     ))}
                 </Flex>
             }
-
-            {!isFetching &&
-                <>
-                    {anyItemsToPay &&
-                        <>
-                            <ProfileBillingPaymentPartial paymentModel={paymentModel}
-                                                          setIsFetching={setIsFetching} 
-                                                          isFetching={isFetching} 
-                                                          organizationData={organizationData} />
-                        </>
-                    }
-                    {!anyItemsToPay &&
-                        <EmptyBlock removePadding={true} description={'You don\'t have any booked items to pay.'} />
-                    }
-                </>
-            }
         </PaddingBlock>
     )
 }
 
-export default ProcessPayment
+export default ProfilePayMyMembership

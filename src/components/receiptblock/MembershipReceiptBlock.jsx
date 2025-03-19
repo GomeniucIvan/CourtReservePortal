@@ -97,7 +97,7 @@ function MembershipReceiptBlock({selectedMembership,
             })
         }
 
-        if(!isNullOrEmpty(taxTotal)){
+        if(!isNullOrEmpty(taxTotal) && taxTotal > 0){
             receiptItems.push({
                 Key: 'Text',
                 Label: 'Tax',

@@ -7,9 +7,9 @@ import {logInfo} from "@/utils/ConsoleUtils.jsx";
 let isProduction = import.meta.env.VITE_ENV === 'production';
 
 export const getWebConfigValue = (key) => {
-    if (typeof key !== 'undefined') {
-        logInfo('getWebConfigValue:', key);
-        return key;
+    if (typeof key === 'string' && window[key] !== undefined) {
+        logInfo('getWebConfigValue:', key, window[key]);
+        return window[key];
     }
     
     return getConfigValue(key);

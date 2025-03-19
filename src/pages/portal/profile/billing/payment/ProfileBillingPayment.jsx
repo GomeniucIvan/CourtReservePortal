@@ -40,7 +40,6 @@ function ProfileBillingPayment({isProcessTransaction}) {
     const {setIsLoading, isLoading, token} = useApp();
     const {orgId, authData} = useAuth();
     const { t } = useTranslation('payment');
-    const recaptchaRef = useRef(null);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const {setHeaderRightIcons} = useHeader();
@@ -50,95 +49,6 @@ function ProfileBillingPayment({isProcessTransaction}) {
     const reservationId = queryParams.get("reservationId");
     const resMemberId = queryParams.get("resMemberId");
     const sessionId = queryParams.get("sessionId");
-
-    const initialValues = {
-        ...CardConstants,
-        card_country: orgCardCountryCode(authData?.UiCulture),
-
-        paymentFrequency: '',
-        hiddenFortisTokenId: '',
-    };
-
-    const validationSchema = Yup.object({
-
-    });
-
-    const formik = useCustomFormik({
-        initialValues: initialValues,
-        validationSchema: validationSchema,
-        validate: () => {
-            let isValidPaymentProfile = true;
-
-            if (equalString(formik?.values?.card_paymentProfileId, 1)) {
-                isValidPaymentProfile = validatePaymentProfile(t, formik, true)
-            }
-            
-            return isValidPaymentProfile;
-        },
-        validateOnBlur: true,
-        validateOnChange: true,
-        onSubmit: async (values, {setStatus, setSubmitting}) => {
-            setIsLoading(true);
-
-            let captchaToken = await recaptchaRef.current.executeAsync();
-            let paymentProfileId = (isNullOrEmpty(values?.card_paymentProfileId)) || equalString(values?.card_paymentProfileId, 0) ? null : values?.card_paymentProfileId;
-            let accountType =  (isNullOrEmpty(values?.card_paymentProfileId)) || equalString(values?.card_paymentProfileId, 0) ? null : parseSafeInt(values?.card_accountType, '');
-
-            const postModel = {
-                //...values,
-                Items: paymentModel.Items,
-                Invoice: paymentModel.Invoice,
-                FirstLevelPaymentType: paymentModel.FirstLevelPaymentType,
-                ReCaptchaToken: captchaToken,
-                Country: values?.card_country,
-                BillingInformation: {
-                    ...values.BillingInformation,
-                    AccountType: accountType,
-                    Country: values?.card_country,
-                    StripeBankAccountToken: values?.card_number,
-                    CardNumber: values?.card_number,
-                    FirstName: values?.card_firstName,
-                    LastName: values?.card_lastName,
-                    PhoneNumber: values?.card_phoneNumber,
-                    Address1: values?.card_streetAddress,
-                    City: values?.card_city,
-                    State: values?.card_state,
-                    OrganizationId: orgId,
-                    AccountNumber: values?.card_accountNumber,
-                    RoutingNumber: values?.card_routingNumber,
-                    Cvv: values?.card_securityCode,
-                    ExpiryDate: values?.card_expiryDate,
-                    //OrganizationMemberId: values.OrganizationMemberId,
-                    ZipCode: values?.card_zipCode,
-                    SaveDataForFutureUse: values?.card_savePaymentProfile,
-                    PaymentProvider: organizationData.PaymentProvider,
-                    PaymentProfileId: paymentProfileId
-                },
-            }
-
-            let response = await appService.post(`/app/Online/MyBalance/ProcessTransactionPayments?id=${orgId}`, postModel);
-            if (toBoolean(response?.IsValid)){
-                pNotify("Item(s) successfully paid.");
-                setIsLoading(false);
-
-                if (!isNullOrEmpty(response.Path)) {
-                    navigate(response.Path);
-                } else {
-                    navigate(HomeRouteNames.INDEX);
-                }
-            } else{
-                displayMessageModal({
-                    title: "Payment Error",
-                    html: (onClose) => response.Message,
-                    type: "error",
-                    buttonType: modalButtonType.DEFAULT_CLOSE,
-                    onClose: () => {},
-                })
-                setIsLoading(false);
-            }
-        },
-    });
-
 
     const {
         setIsFooterVisible,
@@ -227,7 +137,10 @@ function ProfileBillingPayment({isProcessTransaction}) {
 
             {!isFetching &&
                 <>
-                    <ProfileBillingPaymentPartial paymentModel={paymentModel} isFetching={isFetching} organizationData={organizationData} setIsFetching={setIsFetching} />
+                    <ProfileBillingPaymentPartial paymentModel={paymentModel} 
+                                                  isFetching={isFetching} 
+                                                  organizationData={organizationData}
+                                                  setIsFetching={setIsFetching} />
                 </>
             }
         </PaddingBlock>

@@ -23,6 +23,7 @@ const FormPaymentProfileSafeSave = React.forwardRef(({ formik,
     
     useEffect(() => {
         const loadAndInitializeCollectSafeSave = (isEcheck) => {
+            
             setIsUsingCollectJsLoading(true);
             const script = document.createElement('script');
             script.src = 'https://secure.safesavegateway.com/token/Collect.js';
@@ -261,6 +262,7 @@ const FormPaymentProfileSafeSave = React.forwardRef(({ formik,
                                    formik={formik}
                                    name='card_expiryDate'
                                    placeholder='MM/YY'
+                                   mask={'XX/XX'}
                                    maxLength={5}
                                    required={true}
                                    isExpiryDate={true}

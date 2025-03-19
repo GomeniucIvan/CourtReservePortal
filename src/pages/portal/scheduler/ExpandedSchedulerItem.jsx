@@ -26,7 +26,7 @@ const ExpandedSchedulerItem = (props) => {
     const hideCheckInFromReservations = true;
     const customSchedulerId = 11945;
     const { token } = useToken();
-
+    
     const displayInstructorsRow = () => {
         return (<></>);
     }
@@ -75,7 +75,7 @@ const ExpandedSchedulerItem = (props) => {
         }
         return null;
     }
-
+    
     return (
         <>
             {isWaitlistCourt(dataItem.CourtId) &&

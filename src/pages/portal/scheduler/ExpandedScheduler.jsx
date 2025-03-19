@@ -159,7 +159,7 @@ function ExpandedScheduler({index, resource}) {
                     Value: courtType.Name
                 }));
             }
-
+            
             setCourts(formattedCourts);
             setIsSchedulerInitializing(false);
             setCurrentDateTime(currentDateTime);
@@ -252,7 +252,10 @@ function ExpandedScheduler({index, resource}) {
                     }
                 }
 
-                let items = await schedulerItemsRead((!isNullOrEmpty(schedulerData?.TypeString) ? schedulerData?.TypeString : filterSelectedView), schedulerData, selectedDate, courts);
+                let items = await schedulerItemsRead((!isNullOrEmpty(schedulerData?.TypeString) ? schedulerData?.TypeString : filterSelectedView), 
+                    schedulerData,
+                    selectedDate,
+                    courts);
 
                 setEvents(items);
                 setLoading(false);
@@ -349,8 +352,9 @@ function ExpandedScheduler({index, resource}) {
         )
     }
 
-    let isInstructorScheduler = equalString(schedulerData?.SchedulerType, 2);
-    
+    let isInstructorScheduler = equalString(schedulerData?.SchedulerDto?.SchedulerEntityType, 2);
+
+    console.log(schedulerData?.TypeString)
     return (
         <Spin spinning={loading}>
 
@@ -367,19 +371,21 @@ function ExpandedScheduler({index, resource}) {
                 currentDateTime={currentDateTime}
                 onDateChange={(e) => {handleDateChange(e, setSelectedDate)}}
                 onDataChange={handleDataChange}
-                modelFields={equalString(schedulerData?.TypeString, 'Consolidated') ? consolidatedModelFields : (toBoolean(isInstructorScheduler) ? instructorModelFields : expandedModelFields) }
+                modelFields={equalString(schedulerData?.TypeString, 'Consolidated') ? consolidatedModelFields : 
+                    (toBoolean(isInstructorScheduler) ? instructorModelFields : expandedModelFields) }
                 height={availableHeight}
                 minDate={minDate}
                 maxDate={maxDate}
-                viewSlot={CustomViewSlot}
+                //viewSlot={CustomViewSlot}
                 slot={CustomSlot}
                 type={schedulerData?.TypeString}
                 group={{
-                    resources: equalString(schedulerData?.TypeString, 'Consolidated') ? ["CourtTypes"] : (toBoolean(isInstructorScheduler) ? ["SchedulerInstructors"] : ["Courts"]) ,
+                    resources: equalString(schedulerData?.TypeString, 'Consolidated') ? ["CourtTypes"] :
+                        (toBoolean(isInstructorScheduler) ? ["SchedulerInstructors"] : ["Courts"]) ,
                 }}
                 interval={interval}
                 item={equalString(schedulerData?.TypeString, 'Consolidated') ? ConsolidatedSchedulerSlot : ExpandedSchedulerItem}
-                useTextSchedulerSlot={!equalString(schedulerData?.TypeString, 'Consolidated')}
+                //useTextSchedulerSlot={!equalString(schedulerData?.TypeString, 'Consolidated')}
                 resources={equalString(schedulerData?.TypeString, 'Consolidated') ?
                     [{
                         name: 'CourtTypes',
