@@ -56,7 +56,7 @@ const EventRoutes = [
     {
         path: EventRouteNames.EVENT_CHANGE_SIGNUP,
         element: <EventChangeSignUp />,
-        title: 'eventSignup',
+        title: 'eventChangeSignup',
         entityTitle: true,
         header: true,
     },

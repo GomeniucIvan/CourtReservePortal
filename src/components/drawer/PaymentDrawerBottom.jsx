@@ -143,28 +143,26 @@ const PaymentDrawerBottom = forwardRef(({
                                                             const itemKey = `pml_${paymentListItem.label}-${index}`;
                                                             
                                                             return (
-                                                                <>
-                                                                    <Flex key={itemKey} vertical={true}>
-                                                                        <Text level={1} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
+                                                                <Flex key={itemKey} vertical={true}>
+                                                                    <Text level={1} style={{color: token.colorTextSecondary}}>{paymentListItem.label}</Text>
 
-                                                                        {paymentListItem.items.map((paymentItem, paymentItemIndex) => {
-                                                                            const innerItemKey = `pmi_${paymentItem.label}-${paymentItem.price}-${paymentItemIndex}`;
-                                                                            
-                                                                            return (
-                                                                                <div key={innerItemKey}>
-                                                                                    <Flex align={'center'} justify={'space-between'} gap={2}>
-                                                                                        <Text><strong>{paymentItem.label}</strong></Text>
-                                                                                        <Text>{costDisplay(paymentItem.price)}</Text>
-                                                                                    </Flex>
-                                                                                </div>
-                                                                            )
-                                                                        })}
+                                                                    {paymentListItem.items.map((paymentItem, paymentItemIndex) => {
+                                                                        const innerItemKey = `pmi_${paymentItem.label}-${paymentItem.price}-${paymentItemIndex}`;
 
-                                                                        {!isLastIndex &&
-                                                                            <Divider style={{marginTop: token.paddingXS, marginBottom: token.paddingXS}} />
-                                                                        }
-                                                                    </Flex>
-                                                                </>
+                                                                        return (
+                                                                            <div key={innerItemKey}>
+                                                                                <Flex align={'center'} justify={'space-between'} gap={2}>
+                                                                                    <Text><strong>{paymentItem.label}</strong></Text>
+                                                                                    <Text>{costDisplay(paymentItem.price)}</Text>
+                                                                                </Flex>
+                                                                            </div>
+                                                                        )
+                                                                    })}
+
+                                                                    {!isLastIndex &&
+                                                                        <Divider style={{marginTop: token.paddingMD, marginBottom: token.paddingMD}} />
+                                                                    }
+                                                                </Flex>
                                                             )
                                                         })}
                                                     </>
@@ -181,7 +179,7 @@ const PaymentDrawerBottom = forwardRef(({
                                                                         <Text>{paymentListItem.value}</Text>
                                                                     </Flex>
                                                                     {(!isLastIndex) &&
-                                                                        <Divider style={{marginTop: token.paddingXS, marginBottom: token.paddingXS}} />
+                                                                        <Divider style={{marginTop: token.paddingMD, marginBottom: token.paddingMD}} />
                                                                     }
                                                                 </div>
                                                             )

@@ -63,6 +63,7 @@ function EventDetails() {
         } else {
             setIsFetching(true);
             let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/ApiDetails?id=${orgId}&number=${number}&memberId=${authData?.MemberId}`);
+            
             if (response.IsValid){
                 const data = response.Data;
                 const registrationData = data.RegistrationData;

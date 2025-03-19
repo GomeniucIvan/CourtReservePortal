@@ -24,6 +24,7 @@ import {EventRouteNames} from "@/routes/EventRoutes.jsx";
 import {eReplace} from "@/utils/TranslateUtils.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
+import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
 const {Title, Text} = Typography;
 
 function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMember, maxAllowedGuests}) {
@@ -103,10 +104,12 @@ function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMem
                 <Button type="primary"
                         block
                         onClick={() => {
+                            removeLastHistoryEntry()
                             let route = toRoute(EventRouteNames.EVENT_SIGNUP, 'id', orgId);
                             route = `${route}?eventId=${event.EventId}&reservationId=${event?.SelectedReservation?.Id}&reservationNumber=${event.ReservationNumber}&isFullEventReg=true`;
                             setPage(setDynamicPages, event.EventName, route);
                             navigate(route);
+                            loadData(false, true)
                         }}
                         htmlType={'button'}>
                     {eReplace('Register to Full Event')}
@@ -115,7 +118,7 @@ function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMem
 
 
             {/*//TODO FIND A WAY TO MERGE WITH LEAGUES*/}
-            {(moreThanOneInList(formik?.values?.Members) || toBoolean(isFamilyMember)) &&
+            {(1 == 1) &&
                 <>
                     <List
                         itemLayout="horizontal"
@@ -130,14 +133,20 @@ function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMem
                                         <Flex justify={'space-between'} align={'center'}>
                                             <Title level={3} onClick={() => {
                                                 if (!requireToSignWaiver) {
-                                                    toggleInitialCheck(index)
+                                                    if ((moreThanOneInList(formik?.values?.Members) || toBoolean(isFamilyMember))) {
+                                                        toggleInitialCheck(index)
+                                                    }
                                                 }
                                             }}>
                                                 {member.FullName}
                                             </Title>
-                                            <Switch checked={member.IsChecked}
-                                                    onChange={() => toggleInitialCheck(index)}
-                                                    disabled={requireToSignWaiver}/>
+                                            {(moreThanOneInList(formik?.values?.Members) || toBoolean(isFamilyMember)) &&
+                                                <>
+                                                    <Switch checked={member.IsChecked}
+                                                            onChange={() => toggleInitialCheck(index)}
+                                                            disabled={requireToSignWaiver}/>
+                                                </>
+                                            }
                                         </Flex>
 
                                         {toBoolean(member.HasDisclosureToSign) &&
@@ -205,12 +214,12 @@ function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMem
                             {event.OtherFromSameEvent.map((event, index) => {
 
                                 return (
-                                    <>
+                                    <div key={index}>
                                         <Flex>
                                             <Text style={{padding: `0px ${token.padding}px`}}>{event.Start}</Text>
                                         </Flex>
                                         <Divider style={{margin: `${token.paddingLG}px 0px`}} />
-                                    </>
+                                    </div>
                                 )
                             })}
                         </>

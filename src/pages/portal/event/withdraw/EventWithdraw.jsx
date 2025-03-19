@@ -98,7 +98,8 @@ function EventWithdraw() {
 
             let familyMembers = [];
             let currentMember = values.Members[0];
-
+            let reservationGuests = formik.values.ReservationGuests;
+            
             if (isFamilyMember) {
                 familyMembers = values.Members;
 
@@ -123,13 +124,20 @@ function EventWithdraw() {
                     ...currentMember,
                     IsChecked: true,
                 }
+                
+                if (anyInList(reservationGuests)){
+                    reservationGuests = reservationGuests.map((guest, idx) => ({
+                        ...guest,
+                        IsChecked: true,
+                    }));
+                }
             }
 
             let postModel = {
                 CurrentMember: currentMember,
                 FamilyMembers: familyMembers,
                 PullOutReason: values.PullOutReason,
-                ReservationGuests: formik.values.ReservationGuests,
+                ReservationGuests: reservationGuests,
                 EventId: eventId,
                 SelectedReservation: {
                     Id: reservationId

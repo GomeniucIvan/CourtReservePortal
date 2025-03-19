@@ -134,8 +134,14 @@ function EventSignUp() {
             }
             
             let postModel = formResponse.PostModel;
-            
-            let response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_DropIn_Post?id=${orgId}`,postModel);
+
+            let response = null;
+            if (isFullEventReg) {
+                response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_FullEvent_Post?id=${orgId}`,postModel);
+            } else {
+                response = await appService.postRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_DropIn_Post?id=${orgId}`,postModel);
+            }
+
             setIsLoading(false);
             if (toBoolean(response?.IsValid)) {
                 removeLastHistoryEntry();
@@ -257,16 +263,20 @@ function EventSignUp() {
         </PaymentDrawerBottom>)
     }, [isFetching, isLoading, formik.values])
     
-    const loadData = async (refresh) => {
+    const loadData = async (refresh, isFullEventForce) => {
         setIsFetching(true);
-        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_Get?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&ajaxCall=false&isFullEventReg=${isFullEventReg}`);
+        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_Get?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&ajaxCall=false&isFullEventReg=${toBoolean(isFullEventForce) || toBoolean(isFullEventReg)}`);
 
         if (toBoolean(response?.isValid)){
             setEvent(response.Data);
+
             setIsFamilyMember(anyInList(response.Data.FamilyMembers));
 
             let allMembers = [];
-            allMembers.push(response.Data.CurrentMember);
+            allMembers.push({
+                ...response.Data.CurrentMember,
+                IsChecked: anyInList(response.Data.FamilyMembers) ? toBoolean(response.Data.CurrentMember?.IsChecked): true
+            });
 
             response.Data.FamilyMembers.map(familyMember => {
                 allMembers.push(familyMember);

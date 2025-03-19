@@ -107,7 +107,6 @@ function LeagueList({filter}) {
         };
 
         let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/Leagues/LoadLeagues?id=${orgId}`, postData);
-        console.log(response);
         if (toBoolean(response?.IsValid)){
             setEvents(response.Data)
             //setHasMore(response.Data.TotalRecords > response.Data.length)

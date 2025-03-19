@@ -31,6 +31,7 @@
   "eventWithdraw": "Event Withdraw",
   "eventDetails": "Event Details",
   "eventSignup": "Event Signup",
+  "eventChangeSignup": "Update Registration",
   "bookings": "Booking(s)",
   "eventWaitlist": "Waitlist",
   "reservationDetails": "Reservation Details",

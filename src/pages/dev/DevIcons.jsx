@@ -22,7 +22,6 @@ function DevIcons() {
         // Fetch the list of SVG files from the manifest
         fetch("/svg-manifest.json")
             .then((response) => {
-                console.log(response);
                 if (!response.ok) {
                     throw new Error("Failed to fetch SVG manifest");
                 }

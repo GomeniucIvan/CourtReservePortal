@@ -75,6 +75,7 @@ export const generateEventPostModel = (formik, isFamilyMember, setIsLoading,even
         FamilyMembers: familyMembers,
         ReservationGuests: formik.values.ReservationGuests,
         MemberUdfs: registrationUdfs,
+        Udfs: registrationUdfs,
         EventId: eventId,
         SelectedNumberOfGuests: countListItems(formik.values.ReservationGuests),
         SelectedReservation: {

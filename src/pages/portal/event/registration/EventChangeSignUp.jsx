@@ -259,7 +259,7 @@ function EventChangeSignUp({isFullEventReg = false}) {
                     loading={isLoading}
                     disabled={isFetching}
                     onClick={formik.handleSubmit}>
-                Change
+                Update
             </Button>
         </PaymentDrawerBottom>)
     }, [isFetching, isLoading, formik.values])
@@ -312,7 +312,7 @@ function EventChangeSignUp({isFullEventReg = false}) {
                         guest.MemberUdfs = structuredClone(udfs);
 
                         let currentMemberInList = response.Data.MemberUdfs.find(v =>
-                            equalString(v.Guid, guest.Guid)
+                            equalString(v.GuestGuid, guest.Guid)
                         );
 
                         guest.MemberUdfs.forEach(memberUdf => {
