@@ -6,10 +6,10 @@ export const costDisplay = (price, negative) => {
     if (isNullOrEmpty(price)){
         price = 0;    
     }
-    
-    if (parseSafeInt(price) === 0){
-        price = 0;
-    }
+    //
+    // if (parseSafeInt(price) === 0){
+    //     price = 0;
+    // }
 
     if (negative && price !== 0){
         price = price * -1;

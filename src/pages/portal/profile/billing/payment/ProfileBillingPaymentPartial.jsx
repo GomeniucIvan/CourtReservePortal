@@ -31,7 +31,7 @@ import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 
 const {Title, Text} = Typography;
 
-function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, organizationData}) {
+function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, organizationData, isProcessPayment}) {
     const navigate = useNavigate();
     const {setIsLoading, isLoading, token} = useApp();
     const {orgId, authData} = useAuth();
@@ -63,8 +63,6 @@ function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, 
             
             return isValidPaymentProfile;
         },
-        validateOnBlur: true,
-        validateOnChange: true,
         onSubmit: async (values, {setStatus, setSubmitting}) => {
             setIsLoading(true);
 
@@ -79,6 +77,7 @@ function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, 
                 FirstLevelPaymentType: paymentModel.FirstLevelPaymentType,
                 ReCaptchaToken: captchaToken,
                 Country: values?.card_country,
+                PaymentItems: !isProcessPayment ? undefined : { ...paymentModel?.PaymentItems },
                 BillingInformation: {
                     ...values.BillingInformation,
                     AccountType: accountType,
@@ -103,8 +102,15 @@ function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, 
                     PaymentProfileId: paymentProfileId
                 },
             }
+            let response = null;
+            
+            if (isProcessPayment) {
+                response = await appService.post(`/app/Online/Payments/ProcessPayment?id=${orgId}`, postModel);
+            } else {
+                response = await appService.post(`/app/Online/MyBalance/ProcessTransactionPayments?id=${orgId}`, postModel);
+            }
+            
 
-            let response = await appService.post(`/app/Online/MyBalance/ProcessTransactionPayments?id=${orgId}`, postModel);
             if (toBoolean(response?.IsValid)){
                 pNotify("Item(s) successfully paid.");
                 setIsLoading(false);
@@ -194,7 +200,7 @@ function ProfileBillingPaymentPartial({paymentModel, setIsFetching, isFetching, 
     let convenienceFee = null;
     let total = paymentModel?.CalculateTotal;
 
-    if (!showConvenienceFee && equalString(formik?.values?.card_accountType, 1)) {
+    if (!showConvenienceFee && (equalString(formik?.values?.card_accountType, 1) || isNullOrEmpty(formik?.values?.card_accountType))) {
         showConvenienceFee = true;
     }
 

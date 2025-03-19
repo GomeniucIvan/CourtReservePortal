@@ -104,6 +104,7 @@ function ProcessPayment({}) {
                             <ProfileBillingPaymentPartial paymentModel={paymentModel}
                                                           setIsFetching={setIsFetching} 
                                                           isFetching={isFetching} 
+                                                          isProcessPayment={true} 
                                                           organizationData={organizationData} />
                         </>
                     }

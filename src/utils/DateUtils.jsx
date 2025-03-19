@@ -181,12 +181,16 @@ export const dateToString = (incDate) => {
     return moment.utc(incDate).format(dateFormatByUiCulture());
 }
 
-export const isNonUsCulture = () => {
-    if (isNullOrEmpty(clientUiCulture)) {
+export const isNonUsCulture = (incUiCulture) => {
+    if (isNullOrEmpty(clientUiCulture) && isNullOrEmpty(incUiCulture)) {
         return false;
     }
 
-    return equalString(clientUiCulture, 'en-us');
+    if (isNullOrEmpty(incUiCulture)){
+        incUiCulture = clientUiCulture;
+    }
+    
+    return !equalString(incUiCulture, 'en-us');
 }
 
 export const dateTimeToFormat = (incDate, format) => {

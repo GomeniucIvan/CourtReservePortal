@@ -320,8 +320,9 @@ const FormPaymentProfile = React.forwardRef(({ formik,
                                                                    name='card_state'
                                                 />
 
-                                                <FormInput label={isNonUsCulture() ? 'Postal Code' : 'Zip Code'}
+                                                <FormInput label={isNonUsCulture(uiCulture) ? 'Postal Code' : 'Zip Code'}
                                                            formik={formik}
+                                                           required={equalString(paymentProvider, 3)}
                                                            name='card_zipCode' />
                                             </Flex>
 

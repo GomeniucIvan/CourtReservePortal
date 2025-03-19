@@ -24,7 +24,6 @@ const ExpandedSchedulerItem = (props) => {
     const useCore = true;
     const donTrackMember = true;
     const hideCheckInFromReservations = true;
-    const customSchedulerId = 11945;
     const { token } = useToken();
     
     const displayInstructorsRow = () => {
@@ -34,11 +33,11 @@ const ExpandedSchedulerItem = (props) => {
     const canUserEditItem = () => {
         return false;
     }
-
-    const isWaitlistCourt = (courtId) => {
-        return equalString(`WAITLIST${customSchedulerId}`, `WAITLIST${courtId}`);
-    }
-
+    
+    const isWaitlistCourt = () => {
+        return false
+    };
+    
     const isLightVersionEventSlot = typeof dataItem.IsLightVersion !== 'undefined' ? dataItem.IsLightVersion : false;
 
     const [isHovered, setIsHovered] = useState(false);
@@ -88,7 +87,7 @@ const ExpandedSchedulerItem = (props) => {
                         zIndex: isHovered ? '2' : '1'
                     }}
                 >
-                    <></>
+                    <>Waitlist</>
                 </SchedulerItem>
             }
             {!isWaitlistCourt(dataItem.CourtId) &&

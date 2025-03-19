@@ -85,6 +85,5 @@ export const schedulerItemsRead = async (type, schedulerData, selectedDate, cour
         })) || [];
     }
     
-    console.log(formattedEvents)
     return formattedEvents;
 }
