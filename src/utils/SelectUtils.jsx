@@ -162,6 +162,15 @@ const saveMyPlayPeriodsFunc = () => {
     return list;
 }
 
+const memberRolesFunc = () => {
+    let list = [];
+    list.push({Text: "Primary", Value: '1'});
+    list.push({Text: "Spouse", Value: '2'});
+    list.push({Text: "Other Adult", Value: '3'});
+    list.push({Text: "Child", Value: '4'});
+    return list;
+}
+
 export const bookingTypes = bookingTypesFunc();
 export const filterDates = filterDatesFunc();
 export const usaStateList = usaStates();
@@ -169,3 +178,4 @@ export const genderList = genders();
 export const matchmakerGenderList = matchMakerGenders();
 export const canadianProvincesList = canadianProvinces();
 export const saveMyPlayPeriodList = saveMyPlayPeriodsFunc();
+export const memberRoles = memberRolesFunc();

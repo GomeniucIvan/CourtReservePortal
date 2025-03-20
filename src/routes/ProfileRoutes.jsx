@@ -1,6 +1,5 @@
 import ProfileBookingDetails from "@portal/reservation/details/ReservationDetails.jsx";
 import CreateReservation from "@portal/reservation/create/CreateReservation.jsx";
-import ProfileFamilyList from "@portal/profile/family/ProfileFamilyList.jsx";
 import ProfileCalendarFeed from "@portal/profile/calendar/ProfileCalendarFeed.jsx";
 import ProfileBilling from "@portal/profile/billing/list/ProfileBilling.jsx";
 import MyProfile from "@portal/profile/myprofile/MyProfile.jsx";
@@ -19,6 +18,8 @@ import PaymentsIndex from "@portal/profile/billing/payment/PaymentsIndex.jsx";
 import ProcessPayment from "@portal/profile/billing/payment/ProcessPayment.jsx";
 import UpdateReservation from "@portal/reservation/update/UpdateReservation.jsx";
 import ProfilePayMyMembership from "@portal/profile/billing/payment/ProfilePayMyMembership.jsx";
+import ProfileFamilyList from "@portal/profile/family/list/ProfileFamilyList.jsx";
+import ProfileAddFamilyMember from "@portal/profile/family/add/ProfileAddFamilyMember.jsx";
 
 export const ProfileRouteNames = {
     BOOKING_LIST: `/online/bookings/list/:id`, //navigation-data
@@ -29,6 +30,7 @@ export const ProfileRouteNames = {
     PROFILE_PERSONAL_INFO: `/online/myprofile/myprofile/:id`,
     PROFILE_FAMILY_INFO_EDIT: `/online/profile/member/:id`,
     PROFILE_FAMILY_LIST: `/online/myfamily/index/:id`,
+    PROFILE_FAMILY_ADD: `/online/myfamily/addfamilymember/:id`,
     PROFILE_CALENDAR_FEED: `/online/myprofile/mycalendar/:id`,
     PROFILE_MEMBERSHIP: `/online/myprofile/mymembership/:id`, //ProfileMyMembership
     PROFILE_BILLING: `/online/mybalance/index/:id`, //ProfileBilling
@@ -88,6 +90,11 @@ const ProfileRoutes = [
         path: ProfileRouteNames.PROFILE_FAMILY_LIST,
         element: <ProfileFamilyList />,
         title: 'myFamily'
+    },
+    {
+        path: ProfileRouteNames.PROFILE_FAMILY_ADD,
+        element: <ProfileAddFamilyMember />,
+        title: 'addFamilyMember'
     },
     {
         path: ProfileRouteNames.PROFILE_CALENDAR_FEED,

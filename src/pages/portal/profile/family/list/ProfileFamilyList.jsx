@@ -56,7 +56,7 @@ function ProfileFamilyList() {
         setIsLoading
     } = useApp();
     
-    const {orgId} = useAuth();
+    const {orgId, authData} = useAuth();
     const [familyMembers, setFamilyMembers] = useState([]);
     const [selectedDrawerMember, setSelectedDrawerMember] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
@@ -95,12 +95,20 @@ function ProfileFamilyList() {
         setIsFooterVisible(true);
         setHeaderRightIcons('')
 
-        setFooterContent(<FooterBlock topBottom={true}>
-            <Button type="primary"
-                    block>
-                {t('profile.family.addNewFamilyMember')}
-            </Button>
-        </FooterBlock>)
+        if (toBoolean(authData?.DoNotAllowAddsDeletesForFamilyMember)) {
+            setFooterContent('')
+        } else {
+            setFooterContent(<FooterBlock topBottom={true}>
+                <Button type="primary"
+                        onClick={() => {
+                            let route = toRoute(ProfileRouteNames.PROFILE_FAMILY_ADD, 'id', orgId);
+                            navigate(route);
+                        }}
+                        block>
+                    {t('profile.family.addNewFamilyMember')}
+                </Button>
+            </FooterBlock>)
+        }
 
         loadData();
     }, []);

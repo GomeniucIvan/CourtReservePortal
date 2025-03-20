@@ -43,17 +43,17 @@ function MyProfileDetails({selectedTab}) {
     const {token} = useApp();
     const recaptchaRef = useRef(null);
 
-    const loadData = () => {
+    const loadData = async () => {
         setIsFetching(true);
 
-        appService.get(navigate, `/app/Online/MyProfile/MyProfile?id=${orgId}`).then(r => {
-            if (toBoolean(r?.IsValid)) {
-                setProfileData(r.Data);
-                setFormikValues(r.Data)
-            }
-            setIsFetching(false);
-            setIsLoading(false);
-        })
+        let response = await appService.get(navigate, `/app/Online/MyProfile/MyProfile?id=${orgId}`);
+
+        if (toBoolean(response?.IsValid)) {
+            setProfileData(response.Data);
+            setFormikValues(response.Data)
+        }
+        setIsFetching(false);
+        setIsLoading(false);
     }
 
     const setFormikValues = (data) => {
@@ -81,6 +81,7 @@ function MyProfileDetails({selectedTab}) {
         formik.setValues(valuesToSet);
     };
 
+    //merge with ProfileAddFamilyMember
     const initialValues = {
         FirstName: '',
         LastName: '',
