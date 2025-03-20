@@ -137,7 +137,7 @@ function EventJoinWaitlist() {
                 type: "error",
                 buttonType: modalButtonType.DEFAULT_CLOSE,
                 onClose: () => {
-
+                    navigate(getLastFromHistoryPath());
                 },
             })
         }

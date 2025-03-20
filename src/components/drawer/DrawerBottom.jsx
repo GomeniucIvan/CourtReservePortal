@@ -7,6 +7,7 @@ import {useApp} from "../../context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {cx} from "antd-style";
+import {useSafeArea} from "@/context/SafeAreaContext.jsx";
 
 const {Title, Text} = Typography;
 const {Search} = Input;
@@ -42,6 +43,7 @@ const DrawerBottom = forwardRef(({
     const [topBottomHeight, setTopBottomHeight] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [isFullyOpened, setIsFullyOpened] = useState(false);
+    const {safeAreaInsets} = useSafeArea();
     
     // Use useRef to persist the debounceTimeout value between renders
     const debounceTimeoutRef = useRef(null);
@@ -102,7 +104,8 @@ const DrawerBottom = forwardRef(({
                     height: toBoolean(fullHeight) ? '100%' : 'auto',
                     maxHeight: `${maxHeightVh}vh`,
                     display: 'flex',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    paddingBottom: `${safeAreaInsets?.bottom || 0}px`
                 }}
             >
                 <>

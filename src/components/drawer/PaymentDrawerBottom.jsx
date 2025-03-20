@@ -11,6 +11,7 @@ import {costDisplay} from "../../utils/CostUtils.jsx";
 import {cx} from "antd-style";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {useSafeArea} from "@/context/SafeAreaContext.jsx";
 
 const {Title, Text} = Typography;
 
@@ -28,12 +29,12 @@ const PaymentDrawerBottom = forwardRef(({
     const {styles} = useStyles();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    const headerRef = useRef(null);
     const footerRef = useRef(null);
     const drawerOpenerAndClose = useRef(null);
     const [topBottomHeight, setTopBottomHeight] = useState('');
     const [startY, setStartY] = useState(null);
-
+    const {safeAreaInsets} = useSafeArea();
+    
     useImperativeHandle(ref, () => ({
         setValue: (incValue) => {
 
@@ -106,7 +107,8 @@ const PaymentDrawerBottom = forwardRef(({
                             display: 'flex',
                             flexDirection: 'column',
                             overflowY: 'auto',
-                            boxShadow: token.boxShadow
+                            boxShadow: token.boxShadow,
+                            paddingBottom: `${safeAreaInsets?.bottom || 0}px`
                         }}
                     >
                         <PaddingBlock topBottom={true}>
