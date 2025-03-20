@@ -30,7 +30,7 @@ const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
             </div>
         )
     }
-
+    
     return (
         <>
             {anyInList(customFields) &&
@@ -78,8 +78,8 @@ const FormCustomFields = ({ customFields, formik, loading, index, name }) => {
                                         label={Label}
                                         name={fieldName}
                                         options={Options.map(udfVal => ({
-                                            Text: udfVal,
-                                            Value: udfVal
+                                            Text: udfVal?.Value || udfVal,
+                                            Value: udfVal?.Value || udfVal
                                         }))}
                                         propText='Text'
                                         propValue='Value'

@@ -1,9 +1,12 @@
 import {fromAuthLocalStorage} from "../storage/AppStorage.jsx";
 import {anyInList, equalString, isNullOrEmpty, toBoolean} from "./Utils.jsx";
 
-const genders = () => {
+const genders = (hideNone) => {
     let list = [];
-    list.push({Text: "gender.none", Value: 'None', translate: true});
+    if (!toBoolean(hideNone)) {
+        list.push({Text: "gender.none", Value: 'None', translate: true});
+    }
+
     list.push({Text: "gender.male", Value: 'Male', translate: true});
     list.push({Text: "gender.female", Value: 'Female', translate: true});
     list.push({Text: "gender.preferNotToDisclose", Value: 'PND', translate: true});
@@ -175,6 +178,7 @@ export const bookingTypes = bookingTypesFunc();
 export const filterDates = filterDatesFunc();
 export const usaStateList = usaStates();
 export const genderList = genders();
+export const genderListWithoutNone = genders(true);
 export const matchmakerGenderList = matchMakerGenders();
 export const canadianProvincesList = canadianProvinces();
 export const saveMyPlayPeriodList = saveMyPlayPeriodsFunc();

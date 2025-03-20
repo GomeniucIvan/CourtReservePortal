@@ -20,7 +20,7 @@ import {isCanadaCulture} from "@/utils/OrganizationUtils.jsx";
 import {isNonUsCulture} from "@/utils/DateUtils.jsx";
 import FormSelect from "@/form/formselect/FormSelect.jsx";
 import FormCustomFields from "@/form/formcustomfields/FormCustomFields.jsx";
-import {genderList} from "@/utils/SelectUtils.jsx";
+import {genderList, genderListWithoutNone} from "@/utils/SelectUtils.jsx";
 import FormDateOfBirth from "@/form/formdateofbirth/FormDateOfBirth.jsx";
 import FormStateProvince from "@/form/formstateprovince/FormStateProvince.jsx";
 import {requiredMessage} from "@/utils/TranslateUtils.jsx";
@@ -249,7 +249,7 @@ function LoginAdditionalInfo({mainFormik, onSignupSubmit, page = 'create-account
                                 formik={formik}
                                 name='gender'
                                 label={t(`additionalInfo.form.gender`)}
-                                options={genderList}
+                                options={genderListWithoutNone}
                                 required={additionInfoData.IsGenderRequired}
                             />
                         }
