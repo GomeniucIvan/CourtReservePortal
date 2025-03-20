@@ -241,7 +241,11 @@ function JoinOrganization() {
                     lastStep={isMembershipDetailsLastStep()}
                     onNext={(formikValues) => {
                         if (isMembershipDetailsLastStep()) {
-                            formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(formik?.values?.selectedMembership?.Name)}</b>. Review the information provided and confirm.` )
+                            if (isNullOrEmpty(formik?.values?.selectedMembership?.Name)) {
+                                formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${signupData?.selectedOrgName}</b>. Review the information provided and confirm.` )
+                            } else {
+                                formik.setFieldValue('reviewModalTitle', `You are going to join the <b>${getMembershipText(formik?.values?.selectedMembership?.Name)}</b>. Review the information provided and confirm.` )
+                            }
                             setShowReviewModal(true);
                         } else {
                             navigateToStep('review');
