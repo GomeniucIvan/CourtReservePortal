@@ -95,7 +95,7 @@ export const AntdProvider = ({ children }) => {
                             paddingSM: 8,
                             paddingXS: 4,
                             paddingXXS: 2,
-                            colorTextTertiary: 'rgba(0, 0, 0, 0.45)',
+                            colorTextTertiary: toBoolean(isDarkMode) ? '#a1a1a1' : 'rgba(0, 0, 0, 0.45)',
                             colorInfoText: '#1677ff',
                             colorSplit: '#d9d9d9', //divider color
                             colorBorderSecondary: '#d9d9d9', //cards color
