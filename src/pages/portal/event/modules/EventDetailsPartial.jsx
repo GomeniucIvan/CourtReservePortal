@@ -13,24 +13,26 @@ function EventDetailsPartial({registration, event, page = 'details'}) {
 
     return (
         <>
-            {anyInList(event?.EventTags) &&
-                <Flex gap={token.padding/2}>
-                    {event.EventTags.map(eventTag => (
-                        <Tag color={eventTag.TextColor} key={eventTag.EventTagId} style={{ backgroundColor: eventTag.BackgroundColor }} className={globalStyles.tag}>{eventTag.Name}</Tag>
-                    ))}
-                </Flex>
-            }
-            
-            <div style={{marginBottom: `${token.padding}px`}}>
-                <Title level={3} style={{marginBottom: 0}}>
-                    {event?.EventName}
+            <Flex vertical={true} gap={token.paddingMD}>
+                {anyInList(event?.EventTags) &&
+                    <Flex gap={token.paddingXS} style={{flexWrap: 'wrap'}}>
+                        {event.EventTags.map(eventTag => (
+                            <Tag color={eventTag.TextColor} key={eventTag.EventTagId} style={{ backgroundColor: eventTag.BackgroundColor }} className={globalStyles.tag}>{eventTag.Name}</Tag>
+                        ))}
+                    </Flex>
+                }
 
-                    {toBoolean(event?.IsFeatured) &&
-                        <Tag color="default" className={globalStyles.tag}>Featured</Tag>
-                    }
-                </Title>
-                <Text type="secondary">{event?.EventType}</Text>
-            </div>
+                <div style={{marginBottom: `${token.padding}px`}}>
+                    <Title level={3} style={{marginBottom: 0}}>
+                        {event?.EventName}
+
+                        {toBoolean(event?.IsFeatured) &&
+                            <Tag color="default" className={globalStyles.tag}>Featured</Tag>
+                        }
+                    </Title>
+                    <Text type="secondary">{event?.EventType}</Text>
+                </div>
+            </Flex>
 
             <Flex vertical gap={4}>
                 {!isNullOrEmpty(registration?.CalendarDate) &&

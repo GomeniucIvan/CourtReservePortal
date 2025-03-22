@@ -7,7 +7,7 @@ function IframeContent({ content, id }) {
     const iframeRef = useRef(null);
     const [iframeHeight, setIframeHeight] = useState('150px');
     const [isLoading, setIsLoading] = useState(true);
-const{token} = useApp();
+    const{token} = useApp();
 
     useEffect(() => {
         const iframe = iframeRef.current;
@@ -31,7 +31,7 @@ const{token} = useApp();
     `;
 
     return (
-        <>
+        <div style={{padding: `${token.paddingXS}px`}}>
             {isLoading &&
                 <Skeleton.Button block active={true} style={{height : `350px`}} />
             }
@@ -45,11 +45,10 @@ const{token} = useApp();
                     height: iframeHeight,
                     backgroundColor: 'white',
                     borderRadius: `${token.borderRadius}px`,
-                    padding: `${token.paddingXS}px`
                 }}
                 srcDoc={styledContent}
             />
-        </>
+        </div>
     );
 }
 
