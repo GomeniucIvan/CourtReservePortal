@@ -3,16 +3,13 @@ import React, {useEffect, useRef, useState} from "react";
 import {AppProvider, useApp} from "@/context/AppProvider.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 import {Button, Flex, List, Typography, Switch, Skeleton } from "antd";
-import {useFormik} from "formik";
 import * as Yup from "yup";
-import mockData from "@/mocks/event-data.json";
-import CardIconLabel from "@/components/cardiconlabel/CardIconLabel.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {AuthProvider, useAuth} from "@/context/AuthProvider.jsx";
 
 import {
-    anyInList,
-    equalString,
+    anyInList, displayMinMaxAgeValue,
+    equalString, getValueOrDefault,
     isNullOrEmpty,
     moreThanOneInList, oneListItem,
     toBoolean
@@ -36,10 +33,11 @@ import EventSignUpPartial from "@portal/event/registration/modules/EventSignUpPa
 import EventSignUpDetails from "@portal/event/registration/modules/EventSignUpDetails.jsx";
 import EventSignUpSkeleton from "@portal/event/registration/modules/EventSignUpSkeleton.jsx";
 import {generateEventPostModel} from "@portal/event/registration/modules/functions.jsx";
+const {Text} = Typography;
 
 function EventSignUp() {
     const navigate = useNavigate();
-    const {orgId, authData} = useAuth();
+    const {orgId, authData, authDataOrgMemberIds} = useAuth();
     const [event, setEvent] = useState(null);
 
     const [isFetching, setIsFetching] = useState(true);
@@ -262,6 +260,119 @@ function EventSignUp() {
             </Button>
         </PaymentDrawerBottom>)
     }, [isFetching, isLoading, formik.values])
+
+    const getDisplayDynamicRatings = (rating, separator = ' ') => {
+        if (!rating || equalString(rating.RatingCategoryType, 2)) {
+            return <>Any</>;
+        }
+
+        const displayDuprRating = (value, precision) => {
+            return value.toFixed(precision ?? 2);
+        };
+
+        const result = [];
+
+        const format = (label, min, max) => {
+            if (min != null || max != null) {
+                return (
+                    <span key={label}>
+                        {label}:{' '}
+                        {min != null ? `Min ${displayDuprRating(min, rating.Precision)}` : ''}{' '}
+                        {max != null ? `Max ${displayDuprRating(max, rating.Precision)}` : ''}
+                    </span>
+                );
+            }
+            return null;
+        };
+
+        const singles = format('Singles', rating.MinSingles, rating.MaxSingles);
+        const doubles = format('Doubles', rating.MinDoubles, rating.MaxDoubles);
+        const mixed = format('Mixed', rating.MinMixed, rating.MaxMixed);
+        const skinny = format('Skinny Singles', rating.MinSkinnySingles, rating.MaxSkinnySingles);
+
+        [singles, doubles, mixed, skinny].forEach(item => {
+            if (item) result.push(item);
+        });
+
+        if (result.length === 0) {
+            return <>Any</>;
+        }
+
+        return (
+            <>
+                {result.map((item, index) => (
+                    <React.Fragment key={index}>
+                        {index > 0 && <span>{separator}</span>}
+                        {item}
+                    </React.Fragment>
+                ))}
+            </>
+        );
+    }
+    
+    const restrictionHtml = (eventData) => {
+        return (<Flex vertical={true} gap={token.paddingMD}>
+            {moreThanOneInList(authDataOrgMemberIds) &&
+                <>
+                    <Text>No Family Members are eligible. See restrictions below.</Text>
+                </>
+            }
+            {oneListItem(authDataOrgMemberIds) &&
+                <>
+                    <Text>You are not eligible. See restrictions below.</Text>
+                </>
+            }
+
+            <Flex vertical={true} gap={token.paddingXS}>
+                {!isNullOrEmpty(eventData?.GenderRestriction) &&
+                    <Text>Gender Restriction: <Text>{eventData.GenderRestriction}</Text></Text>
+                }
+                {(!isNullOrEmpty(eventData?.MinAgeRestriction) || !isNullOrEmpty(eventData?.MaxAgeRestriction)) &&
+                    <Text>Age Restriction: <Text>{displayMinMaxAgeValue(eventData?.MinAgeRestriction, eventData?.MaxAgeRestriction)}</Text></Text>
+                }
+                {anyInList(eventData?.EventRatingCategoriesRestriction) &&
+                    <>
+                        {eventData.EventRatingCategoriesRestriction.map((ratingCat, index) => {
+                            let isDynamic = equalString(ratingCat.RatingCategoryType, 2);
+                            if (isDynamic) {
+                                return (
+                                    <Text key={index}>
+                                        {ratingCat.CategoryName} Restriction: <Text>{getDisplayDynamicRatings(ratingCat, ' | ')}</Text>
+                                    </Text>
+                                )
+                            } else {
+                                if (anyInList(ratingCat?.RatingCategoryRatings)) {
+                                    let ratingNameList = ratingCat.RatingCategoryRatings.map(f => f.RatingName);
+                                    
+                                    return (
+                                        <Text key={index}>
+                                            {ratingCat.CategoryName} Restriction: <Text>{ratingNameList.join(", ")}</Text>
+                                        </Text>
+                                    )
+                                } else {
+                                    return (
+                                        <Text key={index}>
+                                            {ratingCat.CategoryName} Restriction: <Text>Any</Text>
+                                        </Text>
+                                    )
+                                }
+                            }
+                        })}
+                    </>
+                }
+
+                {anyInList(eventData?.MemberGroups) &&
+                    <Text key={index}>
+                        Member Group(s) Restriction: <Text>{eventData?.MemberGroups.map(v => v.NavigationName).join(", ")}</Text>
+                    </Text>
+                }
+                
+                {(toBoolean(eventData?.IsNotAllowedToSignUpForOpenPlayEvents)) &&
+                    <Text>Registration: <Text>Not allowed</Text></Text>
+                }
+            </Flex>
+        </Flex>)
+    }
     
     const loadData = async (refresh, isFullEventForce) => {
         setIsFetching(true);
@@ -295,15 +406,31 @@ function EventSignUp() {
             
             formik.setFieldValue("Members", allMembers);
         } else {
-            displayMessageModal({
-                title: "Registration Error",
-                html: (onClose) => response.Message,
-                type: "error",
-                buttonType: modalButtonType.DEFAULT_CLOSE,
-                onClose: () => {
-                    navigate(getLastFromHistoryPath());
-                },
-            })
+            //restrictions
+            if (!isNullOrEmpty(response?.Data)) {
+                navigate(getLastFromHistoryPath());
+                let respData = response.Data;
+
+                displayMessageModal({
+                    title: 'Registration Error',
+                    html: (onClose) => restrictionHtml(respData),
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+
+                    },
+                })
+            } else {
+                displayMessageModal({
+                    title: "Registration Error",
+                    html: (onClose) => response.Message,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+                        navigate(getLastFromHistoryPath());
+                    },
+                })
+            }
         }
         setIsFetching(false);
         resetFetch();

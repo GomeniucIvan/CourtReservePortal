@@ -263,3 +263,17 @@ export const filterList = (keys, list, searchText) => {
         keys.some(key => containsNoCase(item[key], searchText))
     );
 };
+
+export const displayMinMaxAgeValue = (minAge, maxAge) => {
+    if (!isNullOrEmpty(minAge) && !isNullOrEmpty(maxAge)) {
+        return `Min Age ${minAge}, Max Age ${maxAge}`;
+    }
+    if (!isNullOrEmpty(minAge)) {
+        return `Min Age ${minAge}`;
+    }
+    if (!isNullOrEmpty(maxAge)) {
+        return `Max Age ${maxAge}`;
+    }
+    
+    return ``;
+}
