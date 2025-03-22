@@ -33,8 +33,8 @@ function CreateOrUpdateReservationTermsAndCondition({disclosure, formik }) {
     const { token} = useApp();
     
     useEffect(() => {
-        if (isNullOrEmpty(selectedWaiverToView)) {
-            appService.get(navigate, `/app/Online/Disclosures/GetDisclosureDetailsById?id=${orgId}&disclosureId=${disclosure.Id}`).then(response => {
+        if (isNullOrEmpty(selectedWaiverToView) && showTermAndCondition) {
+            appService.get(navigate, `/app/Online/Disclosures/GetDisclosureDetailsById?id=${orgId}&disclosureId=${disclosure?.Id}`).then(response => {
                 if (toBoolean(response?.IsValid)) {
                     const incWaiver = response.Data;
 

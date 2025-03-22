@@ -89,7 +89,7 @@ function CreateReservation() {
     const [playersModelData, setPlayersModelData] = useState(false);
     const [selectedReservationType, setSelectedReservationType] = useState(false);
     const [matchMakerShowSportTypes, setMatchMakerShowSportTypes] = useState(false);
-    const [disclosure, setDisclosure] = useState(false);
+    const [disclosure, setDisclosure] = useState(null);
     const [matchMakerMemberGroups, setMatchMakerMemberGroups] = useState(false);
     const [matchMakerRatingCategories, setMatchMakerRatingCategories] = useState(false);
     const [miscFeesQuantities, setMiscFeesQuantities] = useState([]);
@@ -574,7 +574,12 @@ function CreateReservation() {
                                 searchPlayerDrawerBottomRef={searchPlayerDrawerBottomRef}
                             />
 
-                            <Divider className={cx(globalStyles.formDivider, globalStyles.noMargin)}/>
+                            {((!toBoolean(formik?.values?.IsOpenReservation) && anyInList(miscFeesQuantities))  ||
+                                    (showResources && anyInList(resources)) ||
+                                    anyInList(customFields) ||
+                                    !isNullOrEmpty(disclosure?.Id)) &&
+                                <Divider className={cx(globalStyles.formDivider, globalStyles.noMargin)}/>
+                            }
 
                             {!toBoolean(formik?.values?.IsOpenReservation) &&
                                 <CreateOrUpdateReservationMiscItems miscFeesQuantities={miscFeesQuantities}
