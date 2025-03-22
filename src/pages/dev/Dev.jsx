@@ -12,7 +12,7 @@ import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const { Text, Title } = Typography;
 
 function Dev() {
-    const {setIsFooterVisible} = useApp();
+    const {setIsFooterVisible, token} = useApp();
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -28,18 +28,18 @@ function Dev() {
     return (
         <PaddingBlock topBottom={true}> 
             <Flex vertical={true} gap={16}>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_ICONS)}}>Icons</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_PAYMENT_PROVIDERS)}}>Payment Providers</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_TYPOGRAPHY)}}>Typography</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_COLORS)}}>Colors</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_DATE_PICKER)}}>Date & Time Pickers</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_FORM)}}>Form</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_MODALS)}}>Alerts & Modals</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_CARDS)}}>Cards</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_BUTTONS)}}>Buttons</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_ALERT_BLOCKS)}}>Alert Blocks</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_AGREEMENTS)}}>Disclosure/Waiver & Agreements</Flex>
-                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_OTHER)}}>Other</Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_ICONS)}}><Text>Icons</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_PAYMENT_PROVIDERS)}}><Text>Payment Providers</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_TYPOGRAPHY)}}><Text>Typography</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_COLORS)}}><Text>Colors</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_DATE_PICKER)}}><Text>Date & Time Pickers</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_FORM)}}><Text>Form</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_MODALS)}}><Text>Alerts & Modals</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_CARDS)}}><Text>Cards</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_BUTTONS)}}><Text>Buttons</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_ALERT_BLOCKS)}}><Text>Alert Blocks</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_AGREEMENTS)}}><Text>Disclosure/Waiver & Agreements</Text></Flex>
+                <Flex flex={1} align={'center'} style={style} onClick={() => {navigate(DevRouteNames.DEV_OTHER)}}><Text>Other</Text></Flex>
             </Flex>
         </PaddingBlock>
     );

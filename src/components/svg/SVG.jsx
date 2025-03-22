@@ -15,7 +15,8 @@ const SGV = ({
                  preventPaths = false,
                  preventRects = true,
                  preventCircles = true,
-                 pathFillColor
+                 pathFillColor,
+                 elementAttributes = {}
              }) => {
 
     const {token} = useApp();
@@ -38,6 +39,7 @@ const SGV = ({
                 preventRects={preventRects}
                 preventCircles={preventCircles}
                 pathFillColor={pathFillColor}
+                elementAttributes={elementAttributes}
             />
         </Suspense>
     );

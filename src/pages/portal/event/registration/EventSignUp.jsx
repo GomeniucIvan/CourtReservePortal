@@ -28,7 +28,7 @@ import {
 import {useTranslation} from "react-i18next";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
-import {removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
+import {getLastFromHistoryPath, removeLastHistoryEntry} from "@/toolkit/HistoryStack.js";
 import {
     eventValidResponseRedirect
 } from "@/utils/RedirectUtils.jsx";
@@ -265,7 +265,7 @@ function EventSignUp() {
     
     const loadData = async (refresh, isFullEventForce) => {
         setIsFetching(true);
-        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_Get?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&ajaxCall=false&isFullEventReg=${toBoolean(isFullEventForce) || toBoolean(isFullEventReg)}`);
+        let response = await appService.getRoute(apiRoutes.EventsApiUrl, `/app/Online/EventsApi/EventApi_SignUpToEvent_Get?id=${orgId}&reservationId=${reservationId}&eventId=${eventId}&ajaxCall=true&isFullEventReg=${toBoolean(isFullEventForce) || toBoolean(isFullEventReg)}`);
 
         if (toBoolean(response?.isValid)){
             setEvent(response.Data);
@@ -294,6 +294,16 @@ function EventSignUp() {
             }
             
             formik.setFieldValue("Members", allMembers);
+        } else {
+            displayMessageModal({
+                title: "Registration Error",
+                html: (onClose) => response.Message,
+                type: "error",
+                buttonType: modalButtonType.DEFAULT_CLOSE,
+                onClose: () => {
+                    navigate(getLastFromHistoryPath());
+                },
+            })
         }
         setIsFetching(false);
         resetFetch();
@@ -303,7 +313,7 @@ function EventSignUp() {
         <>
             <EventSignUpSkeleton isFetching={isFetching} />
 
-            {!isFetching &&
+            {(!isFetching && !isNullOrEmpty(event)) &&
                 <PaddingBlock topBottom={true}>
                     <Flex vertical={true} gap={token.padding}>
                         <EventSignUpDetails event={event} />

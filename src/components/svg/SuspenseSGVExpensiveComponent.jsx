@@ -13,7 +13,8 @@ const SuspenseSGVExpensiveComponent = memo(({ icon,
                                                 preventPaths = false,
                                                 preventRects = true,
                                                 preventCircles = true,
-                                                pathFillColor}) => {
+                                                pathFillColor,
+                                                elementAttributes = {}}) => {
 
     const {token} = useApp();
     const {svgList} = useSvgCacheProvider();
@@ -28,6 +29,17 @@ const SuspenseSGVExpensiveComponent = memo(({ icon,
     const svgData = svgList.find(v => equalString(icon, v.Icon));
     const svgContent = svgData ? svgData.Code : null;
 
+    const applyAttributes = (elements, tag) => {
+        const attrs = elementAttributes?.[tag];
+        if (!attrs) return;
+
+        elements.forEach(el => {
+            Object.entries(attrs).forEach(([attr, value]) => {
+                el.setAttribute(attr, value);
+            });
+        });
+    };
+    
     // Use `useEffect` to modify the SVG **after** rendering
     useEffect(() => {
         if (!svgContent || !svgContainerRef.current) return;
@@ -105,6 +117,10 @@ const SuspenseSGVExpensiveComponent = memo(({ icon,
             });
         }
 
+        applyAttributes(paths, 'path');
+        applyAttributes(rects, 'rect');
+        applyAttributes(circles, 'circle');
+        
     }, [svgContent, color, size]); // Keep dependencies consistent
 
     // If there's no SVG content, return `null` (instead of conditionally rendering hooks)
