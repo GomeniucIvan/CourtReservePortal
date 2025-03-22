@@ -3,7 +3,15 @@ import React, {useEffect, useState} from "react";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
-import {anyInList, equalString, isNullOrEmpty, oneListItem, toBoolean} from "@/utils/Utils.jsx";
+import {
+    anyInList,
+    equalString,
+    getValueOrDefault,
+    isNullOrEmpty,
+    moreThanOneInList,
+    oneListItem,
+    toBoolean
+} from "@/utils/Utils.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
@@ -118,6 +126,36 @@ function LeagueRegistration() {
         },
     });
 
+    const restrictionHtml = (leagueData) => {
+        let respData = leagueData?.LeagueSession;
+        
+
+        return (<Flex vertical={true} gap={token.paddingMD}>
+            {moreThanOneInList(authDataOrgMemberIds) &&
+                <>
+                    <Text>No Family Members are eligible. See restrictions below.</Text>
+                </>
+            }
+            {oneListItem(authDataOrgMemberIds) &&
+                <>
+                    <Text>You are not eligible. See restrictions below.</Text>
+                </>
+            }
+
+           <Flex vertical={true} gap={token.paddingXS}>
+               {!equalString(getValueOrDefault(respData?.LeagueGender, 4), 4) &&
+                   <Text>Gender Restriction: <Text style={{color: (toBoolean(leagueData?.GenderMatching) ? '' : token.colorError)}}>{respData.LeagueGenderStringDisplay}</Text></Text>
+               }
+               {(!isNullOrEmpty(respData?.MinAgeRestriction) || !isNullOrEmpty(respData?.MinAgeRestriction)) &&
+                   <Text>Age Restriction: <Text style={{color: (toBoolean(leagueData?.AgeMatching) ? '' : token.colorError)}}>{respData.AgeRestrictionStringDisplay}</Text></Text>
+               }
+               {(!isNullOrEmpty(respData?.RatingNames)) &&
+                   <Text>Rating(s) Restriction: <Text style={{color: (toBoolean(leagueData?.RatingMatching) ? '' : token.colorError)}}>{respData.RatingNames}</Text></Text>
+               }
+           </Flex>
+        </Flex>)
+    }
+    
     const loadData = async () => {
         setIsFetching(true);
 
@@ -129,18 +167,31 @@ function LeagueRegistration() {
             formik.setFieldValue("FamilyMembers", respData.FamilyMembers);
         } else {
 
-            if (!isNullOrEmpty(response?.RestrictionData)) {
+            if (!isNullOrEmpty(response?.Data)) {
                 //hide submit button
-                let respData = response.RestrictionData;
-                setErrorData(respData);
-            } else {
+                navigate(getLastFromHistoryPath());
+                
+                let respData = response.Data;
+
                 displayMessageModal({
-                    title: 'Error',
-                    html: (onClose) => `${response?.Message}.`,
+                    title: 'Registration Error',
+                    html: (onClose) => restrictionHtml(respData),
                     type: "error",
                     buttonType: modalButtonType.DEFAULT_CLOSE,
                     onClose: () => {
 
+                    },
+                })
+                
+                setErrorData(respData);
+            } else {
+                displayMessageModal({
+                    title: 'Registration Error',
+                    html: (onClose) => `${response?.Message}.`,
+                    type: "error",
+                    buttonType: modalButtonType.DEFAULT_CLOSE,
+                    onClose: () => {
+                        navigate(getLastFromHistoryPath());
                     },
                 })
             }
@@ -241,7 +292,7 @@ function LeagueRegistration() {
                         </>
                     }
 
-                    {(!isFetching && !isNullOrEmpty(errorData)) &&
+                    {(!isFetching && !isNullOrEmpty(errorData) && 1 == 2) &&
                         <LeagueSessionRestrictionBlock model={errorData} memberIds={authDataOrgMemberIds} />
                     }
                 </Flex>

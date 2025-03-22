@@ -170,7 +170,7 @@ function LeagueDetails() {
 
             {!isFetching &&
                 <>
-                    {(!toBoolean(sessionDetails?.IsLoggedInAccountRegistered)) &&
+                    {(!toBoolean(sessionDetails?.IsLoggedInAccountRegistered) && toBoolean(sessionDetails?.IsStandingHidden)) &&
                         <PaddingBlock topBottom={true} leftRight={false}>
                             <LeagueDetailsSessionInfo selectedTab={'sessioninfo'} tabsHeight={tabsHeight} sessionDetails={sessionDetails}/>
                         </PaddingBlock>

@@ -24,8 +24,9 @@ export const isNullOrEmpty = (data) => {
 }
 
 export const getValueOrDefault = (data, defaultValue) => {
+
     try {
-        if (data) {
+        if (isNullOrEmpty(data)) {
             return defaultValue;
         }
         return data;
