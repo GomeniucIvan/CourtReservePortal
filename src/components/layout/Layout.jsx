@@ -61,7 +61,7 @@ function Layout() {
         setIsLoading
     } = useApp();
 
-    const {safeAreaInsets} = useSafeArea();
+    const { safeAreaInsets = { top: 0, bottom: 0 } } = useSafeArea() || {};
 
     const {
         memberId,

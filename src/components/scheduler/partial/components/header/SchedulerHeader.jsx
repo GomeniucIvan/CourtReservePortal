@@ -5,10 +5,11 @@ import {CaretLeftOutlined, CaretRightOutlined} from "@ant-design/icons";
 import {NavigationDatePicker} from "./navigation/NavigationDatePicker.jsx";
 import {messages, today} from "../../messages/index.mjs";
 import {useLocalization} from "../../intl/index.mjs";
-import {getToday} from "../../utils/index.jsx";
+import {getToday, toUTCDateTime} from "../../utils/index.jsx";
 import {useEffect, useState} from "react";
-import {addDays, addMonths} from "@progress/kendo-date-math";
+import {addDays, addMonths, ZonedDate} from "@progress/kendo-date-math";
 import {isNullOrEmpty} from "../../../../../utils/Utils.jsx";
+import {useSchedulerPropsContext} from "@/components/scheduler/partial/context/SchedulerContext.jsx";
 
 export const SchedulerHeader = React.forwardRef((props, ref) => {
     const {
@@ -20,6 +21,7 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
     const [headerDate, setHeaderDate] = useState(props.date);
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
     const [isNextDisabled, setIsNextDisabled] = useState(true);
+    const { timezone } = useSchedulerPropsContext();
     
     useEffect(() => {
         if (isNullOrEmpty(props.scheduler.current.props?.minDate)){
@@ -54,7 +56,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
             props.setLoading(true);
             
             setTimeout(function(){
-                props.setDate(newDate)
+                const normalizedValue = ZonedDate.fromUTCDate(toUTCDateTime(newDate), timezone);
+                props.setDate(normalizedValue)
             }, 300)
         },
         [setHeaderDate]
@@ -78,7 +81,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
             props.setLoading(true);
             
             setTimeout(function(){
-                props.setDate(newDate)
+                const normalizedValue = ZonedDate.fromUTCDate(toUTCDateTime(newDate), timezone);
+                props.setDate(normalizedValue)
             }, 50)
         },
         [headerDate, setHeaderDate, props.numberOfDays]
@@ -101,7 +105,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
                 props.setLoading(true);
                 
                 setTimeout(function(){
-                    props.setDate(newDate)
+                    const normalizedValue = ZonedDate.fromUTCDate(toUTCDateTime(newDate), timezone);
+                    props.setDate(normalizedValue)
                 }, 50)
                 
             }, 50);
@@ -120,7 +125,8 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
             }, 50)
 
             setTimeout(function(){
-                props.setDate(event.value)
+                const normalizedValue = ZonedDate.fromUTCDate(toUTCDateTime(event.value), timezone);
+                props.setDate(normalizedValue)
             }, 300)
         },
         [

@@ -179,7 +179,7 @@ function ExpandedScheduler({index, resource}) {
             }
         }
     }
-    
+
     useEffect(() => {
         setIsFooterVisible(true);
         setFooterContent(null);
@@ -353,8 +353,7 @@ function ExpandedScheduler({index, resource}) {
     }
 
     let isInstructorScheduler = equalString(schedulerData?.SchedulerDto?.SchedulerEntityType, 2);
-
-    console.log(schedulerData?.TypeString)
+    
     return (
         <Spin spinning={loading}>
 

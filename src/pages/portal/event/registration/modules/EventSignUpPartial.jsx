@@ -118,7 +118,7 @@ function EventSignUpPartial({formik, event, loadData, guestBlockRef, isFamilyMem
 
 
             {/*//TODO FIND A WAY TO MERGE WITH LEAGUES*/}
-            {(1 == 1) &&
+            {((moreThanOneInList(formik?.values?.Members) || toBoolean(isFamilyMember)) || formik.values.Members.some(v => equalString(v.DisclosureStatus, 2))) &&
                 <>
                     <List
                         itemLayout="horizontal"

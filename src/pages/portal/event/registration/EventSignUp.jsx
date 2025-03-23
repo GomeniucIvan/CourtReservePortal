@@ -325,10 +325,10 @@ function EventSignUp() {
 
             <Flex vertical={true} gap={token.paddingXS}>
                 {!isNullOrEmpty(eventData?.GenderRestriction) &&
-                    <Text>Gender Restriction: <Text>{eventData.GenderRestriction}</Text></Text>
+                    <Text><Text type={'secondary'}>Gender Restriction: </Text> <Text>{eventData.GenderRestriction}</Text></Text>
                 }
                 {(!isNullOrEmpty(eventData?.MinAgeRestriction) || !isNullOrEmpty(eventData?.MaxAgeRestriction)) &&
-                    <Text>Age Restriction: <Text>{displayMinMaxAgeValue(eventData?.MinAgeRestriction, eventData?.MaxAgeRestriction)}</Text></Text>
+                    <Text><Text type={'secondary'}>Age Restriction: </Text> <Text>{displayMinMaxAgeValue(eventData?.MinAgeRestriction, eventData?.MaxAgeRestriction)}</Text></Text>
                 }
                 {anyInList(eventData?.EventRatingCategoriesRestriction) &&
                     <>
@@ -337,7 +337,7 @@ function EventSignUp() {
                             if (isDynamic) {
                                 return (
                                     <Text key={index}>
-                                        {ratingCat.CategoryName} Restriction: <Text>{getDisplayDynamicRatings(ratingCat, ' | ')}</Text>
+                                        <Text type={'secondary'}>{ratingCat.CategoryName} Restriction: </Text> <Text>{getDisplayDynamicRatings(ratingCat, ' | ')}</Text>
                                     </Text>
                                 )
                             } else {
@@ -346,13 +346,13 @@ function EventSignUp() {
                                     
                                     return (
                                         <Text key={index}>
-                                            {ratingCat.CategoryName} Restriction: <Text>{ratingNameList.join(", ")}</Text>
+                                            <Text type={'secondary'}>{ratingCat.CategoryName} Restriction: </Text> <Text>{ratingNameList.join(", ")}</Text>
                                         </Text>
                                     )
                                 } else {
                                     return (
                                         <Text key={index}>
-                                            {ratingCat.CategoryName} Restriction: <Text>Any</Text>
+                                           <Text type={'secondary'}>{ratingCat.CategoryName} Restriction: </Text> <Text>Any</Text>
                                         </Text>
                                     )
                                 }
@@ -363,12 +363,12 @@ function EventSignUp() {
 
                 {anyInList(eventData?.MemberGroups) &&
                     <Text key={index}>
-                        Member Group(s) Restriction: <Text>{eventData?.MemberGroups.map(v => v.NavigationName).join(", ")}</Text>
+                        <Text type={'secondary'}>Member Group(s) Restriction: </Text> <Text>{eventData?.MemberGroups.map(v => v.NavigationName).join(", ")}</Text>
                     </Text>
                 }
                 
                 {(toBoolean(eventData?.IsNotAllowedToSignUpForOpenPlayEvents)) &&
-                    <Text>Registration: <Text>Not allowed</Text></Text>
+                    <Text><Text type={'secondary'}>Registration:</Text> <Text>Not allowed</Text></Text>
                 }
             </Flex>
         </Flex>)
