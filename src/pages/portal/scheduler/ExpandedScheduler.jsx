@@ -14,7 +14,7 @@ import ExpandedSchedulerItem from "./ExpandedSchedulerItem.jsx";
 import appService, {apiRoutes} from "@/api/app.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {
-    formatLocalDateString,
+    formatLocalDateString, fromDateTimeStringToDate,
     fromDateTimeStringToDateTime, fromTimeSpanString
 } from "@/utils/DateUtils.jsx";
 import {emptyArray} from "@/utils/ListUtils.jsx";
@@ -34,6 +34,8 @@ import {pNotify} from "@/components/notification/PNotify.jsx";
 import HeaderFilter from "@/components/header/HeaderFilter.jsx";
 import {SchedulerSlot} from "@/components/scheduler/partial/slots/SchedulerSlotDisplay.jsx";
 import {fromLocalStorage, toLocalStorage} from "@/storage/AppStorage.jsx";
+import {ZonedDate} from "@progress/kendo-date-math";
+import {toUTCDateTime} from "@/components/scheduler/partial/utils/index.jsx";
 const {Text} = Typography;
 
 function ExpandedScheduler({index, resource}) {
@@ -125,7 +127,6 @@ function ExpandedScheduler({index, resource}) {
             }
 
             const currentDateTime = new Date(fromDateTimeStringToDateTime(model.CurrentDateTimeStringDisplay));
-            const dateToShow = new Date(fromDateTimeStringToDateTime(model.SchedulerDateStringDisplay));
             setMinDate(currentDateTime);
             setTimeZone(model.TimeZone);
             setInterval(model.MinInterval);
@@ -165,7 +166,11 @@ function ExpandedScheduler({index, resource}) {
             setCurrentDateTime(currentDateTime);
 
             //always last
-            setSelectedDate(dateToShow);
+            const dateToShow = new Date(`${fromDateTimeStringToDate(model.SchedulerDateStringDisplay)} ${model.StartTimeSpanStringDisplay}`);
+            const normalizedValue = ZonedDate.fromUTCDate(toUTCDateTime(dateToShow), model.TimeZone);
+            
+            console.log(normalizedValue)
+            setSelectedDate(normalizedValue);
             setTimeout(function(){
                 //dom
                 scrollToCurrentTime();

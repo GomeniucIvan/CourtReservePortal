@@ -49,7 +49,7 @@ export const consolidatedModelFields = {
 
 export const handleDateChange = (event, setSelectedDate) => {
     const selectedDate = event.value;
-
+    
     //datepicker
     let selectedLocalDate = selectedDate._localDate;
 

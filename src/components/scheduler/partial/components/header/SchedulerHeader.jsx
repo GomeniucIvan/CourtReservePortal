@@ -10,6 +10,7 @@ import {useEffect, useState} from "react";
 import {addDays, addMonths, ZonedDate} from "@progress/kendo-date-math";
 import {isNullOrEmpty} from "../../../../../utils/Utils.jsx";
 import {useSchedulerPropsContext} from "@/components/scheduler/partial/context/SchedulerContext.jsx";
+import {dateTimeToOnlyDate} from "@/utils/DateUtils.jsx";
 
 export const SchedulerHeader = React.forwardRef((props, ref) => {
     const {
@@ -24,16 +25,22 @@ export const SchedulerHeader = React.forwardRef((props, ref) => {
     const { timezone } = useSchedulerPropsContext();
     
     useEffect(() => {
-        if (isNullOrEmpty(props.scheduler.current.props?.minDate)){
+        const minDate = props.scheduler.current.props?.minDate;
+        const maxDate = props.scheduler.current.props?.maxDate;
+        const headerDateOnly = dateTimeToOnlyDate(headerDate);
+        
+        if (isNullOrEmpty(minDate)){
             setIsPrevDisabled(false)
         } else{
-            setIsPrevDisabled(headerDate <= props.scheduler.current.props.minDate);
+            const minDateOnly = dateTimeToOnlyDate(new Date(minDate));
+            setIsPrevDisabled(headerDateOnly <= minDateOnly);
         }
-        
-        if (isNullOrEmpty(props.scheduler.current.props?.maxDate)){
+
+        if (isNullOrEmpty(maxDate)) {
             setIsNextDisabled(false);
         } else{
-            setIsNextDisabled(headerDate >= props.scheduler.current.props.maxDate);
+            const maxDateOnly = dateTimeToOnlyDate(new Date(maxDate));
+            setIsNextDisabled(headerDateOnly >= maxDateOnly);
         }
     }, [headerDate])
     

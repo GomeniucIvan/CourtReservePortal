@@ -393,3 +393,7 @@ export const formatLocalDateString = (date) => {
     // Simple local date format without timezone adjustment
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
+
+export const dateTimeToOnlyDate = (date)=> {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
