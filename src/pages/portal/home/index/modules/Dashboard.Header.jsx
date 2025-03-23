@@ -20,6 +20,8 @@ import {setClientUiCulture} from "@/utils/DateUtils.jsx";
 import {isValidJson} from "@/utils/ListUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {reactNavigateToMainRoute} from "@/utils/MobileUtils.jsx";
+import {toRoute} from "@/utils/RouteUtils.jsx";
+import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
 const {Text, Title} = Typography;
 
 const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, headerOrgChange }) => {
@@ -209,7 +211,8 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, he
                 showButton={(isNullOrEmpty(spGuideId) || !toBoolean(authData?.HideJoinOrganization))}
                 confirmButtonText={!spGuideId ? "Add Organization" : "Add Location"}
                 onConfirmButtonClick={() => {
-                    //window.location.href = `/Online/MyProfile/JoinClub/${orgId}`
+                    let route = toRoute(AccountRouteNames.REQUEST_ORGANIZATION, 'id', orgId);
+                    navigate(route)
                 }}>
                 {organizationList.map((orgListItem, index) => {
                     const innerLogoSrc = organizationLogoSrc(orgListItem.Id, orgListItem.LogoUrl);

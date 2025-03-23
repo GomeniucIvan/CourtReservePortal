@@ -168,8 +168,7 @@ function ExpandedScheduler({index, resource}) {
             //always last
             const dateToShow = new Date(`${fromDateTimeStringToDate(model.SchedulerDateStringDisplay)} ${model.StartTimeSpanStringDisplay}`);
             const normalizedValue = ZonedDate.fromUTCDate(toUTCDateTime(dateToShow), model.TimeZone);
-            
-            console.log(normalizedValue)
+
             setSelectedDate(normalizedValue);
             setTimeout(function(){
                 //dom

@@ -25,7 +25,14 @@ function LayoutBackgroundReload({ children }) {
     
     const fetchVersion = async () => {
         try {
-            const response = await fetch("/version.json", { cache: "no-store" });
+            const isProduction = process.env.NODE_ENV === 'production';
+            let response = '';
+            if (isProduction) {
+                response = await fetch("/ClientApp/dist/version.json", { cache: "no-store" });
+            } else {
+                response = await fetch("/version.json", { cache: "no-store" });
+            }
+           
             const data = await response.json();
             return data.version;
         } catch (error) {

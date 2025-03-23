@@ -1,23 +1,23 @@
 import apiService from "@/api/api.jsx";
 import moment from "moment/moment.js";
-import {dateFormatByUiCulture} from "@/utils/DateUtils.jsx";
+import {dateFormatByUiCulture, schedulerStringDate} from "@/utils/DateUtils.jsx";
 import {equalString} from "@/utils/Utils.jsx";
 import appService from "@/api/app.jsx";
 
 
 export const schedulerItemsRead = async (type, schedulerData, selectedDate, courts) => {
     let orgId = schedulerData.OrgId;
-    
+
     let result = {
-        startDate: selectedDate,
+        startDate: schedulerStringDate(selectedDate),
         //end: scheduler.view().endDate(),
         orgId: orgId,
         TimeZone: schedulerData.TimeZone,
-        Date: moment(selectedDate).format(dateFormatByUiCulture()),
+        Date: schedulerStringDate(selectedDate),
         KendoDate: {
-            Year: moment(selectedDate).year(),
-            Month: moment(selectedDate).month() + 1,
-            Day: moment(selectedDate).date()
+            Year: selectedDate.getFullYear(),
+            Month: selectedDate.getMonth() + 1,
+            Day: selectedDate.getDate()
         },
         UiCulture: schedulerData.UiCulture,
         CostTypeId: schedulerData.CostTypeId,
