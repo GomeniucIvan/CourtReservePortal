@@ -9,15 +9,15 @@ dotenv.config();
 let appUrl = process.env.VITE_APP_URL;
 let backendUrl = process.env.VITE_BACKEND_URL;
 const isProduction = process.env.NODE_ENV === 'production';
-
-const showConsoleLog = true;
+let showConsoleLog = true;
+let enableDebug = !isProduction;
 
 if (!isProduction){
     appUrl = 'http://localhost:2129/';
     backendUrl = 'https://localhost:7130/';
+    showConsoleLog = false;
 }
 
-let enableDebug = !isProduction;
 
 //enableDebug = true;
 
@@ -85,10 +85,12 @@ export default defineConfig({
         minify: 'terser',
         terserOptions: {
             compress: {
-                drop_console: showConsoleLog !== true, // true, //prod true !! Set to true in production to remove console logs
+                // true, //prod true !! Set to true in production to remove console logs
+                drop_console: showConsoleLog !== true
             },
             output: {
-                comments: enableDebug, //false, //prod false !!// Include comments in development for debugging
+                //false, //prod false !!// Include comments in development for debugging
+                comments: enableDebug, 
             },
         },
         rollupOptions: {
