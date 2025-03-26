@@ -21,6 +21,7 @@ import MembershipReview from "@portal/membership/review/MembershipReview.jsx";
 import SaveMyPlaySessionRecording from "@portal/savemyplay/sessionrecording/SaveMyPlaySessionRecording.jsx";
 import PourMyBevCode from "@portal/pourmybev/pourmybevcode/PourMyBevCode.jsx";
 import PourMyBevCart from "@portal/pourmybev/pourmybevcart/PourMyBevCart.jsx";
+import OpenReservationList from "@portal/openreservations/list/OpenReservationList.jsx";
 
 export const HomeRouteNames = {
     CR_STARTUP_URL: `/mobilesso/newmobile`,
@@ -51,6 +52,7 @@ export const HomeRouteNames = {
     SAVE_MY_PLAY: `/online/savemyplay/index/:id`, //SaveMyPlaySessionRecording
     POUR_MY_BEV_CODE: `/online/pourmybev/code/:id`,
     POUR_MY_BEV_CART: `/online/pourmybev/cart/:id`,
+    OPEN_RESERVATION_LIST: `/online/openreservation/list/:id`,
 };
 
 const HomeRoutes = [
@@ -214,6 +216,12 @@ const HomeRoutes = [
         path: HomeRouteNames.POUR_MY_BEV_CART,
         element: <PourMyBevCart />,
         title: 'pourMyBevCart',
+        header: true
+    },
+    {
+        path: HomeRouteNames.OPEN_RESERVATION_LIST,
+        element: <OpenReservationList />,
+        title: 'openReservations',
         header: true
     }
 ];
