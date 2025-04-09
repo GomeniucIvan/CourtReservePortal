@@ -1,10 +1,8 @@
 ﻿import {Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import AppRoutes from "../../routes/AppRoutes.jsx";
 import "./Layout.module.less";
-import Header from "../header/Header.jsx";
 import {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
-import Footer from "../footer/Footer.jsx";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {
@@ -31,6 +29,11 @@ import LayoutScripts from "@/components/layout/LayoutScripts.jsx";
 import {reactNativeHideSplash, reactNativeInitFireBase, reactNativeSaveBadgeCount} from "@/utils/MobileUtils.jsx";
 import apiService from "@/api/api.jsx";
 import {useFooter} from "@/context/FooterProvider.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
+import MobileHeader from "@/components/header/MobileHeader.jsx";
+import WebHeader from "@/components/header/WebHeader.jsx";
+import MobileFooter from "@/components/footer/MobileFooter.jsx";
+import WebFooter from "@/components/footer/WebFooter.jsx";
 
 function Layout() {
     const location = useLocation();
@@ -43,6 +46,7 @@ function Layout() {
     const [isFetching, setIsFetching] = useState(true);
     const [maxHeight, setMaxHeight] = useState(0);
     const [pushTokenInitialized, setPushTokenInitialized] = useState(false);
+    const {isMobile} = useDevice();
     
     //used only for ios keyboard open
     const [isPrevIsFooterVisible, setIsPrevIsFooterVisible] = useState(null);
@@ -94,15 +98,19 @@ function Layout() {
     }
     
     const initializeFireBasePushToken = () => {
-        if (!pushTokenInitialized && !isNullOrEmpty(orgId)) {
-            reactNativeInitFireBase();
+        if (isMobile){
+            if (!pushTokenInitialized && !isNullOrEmpty(orgId)) {
+                reactNativeInitFireBase();
+            }
         }
     }
     
     const innerReactNativeHideSplash = () => {
-        setTimeout(() => {
-            reactNativeHideSplash();
-        }, 1200);
+        if (isMobile){
+            setTimeout(() => {
+                reactNativeHideSplash();
+            }, 1200); 
+        }
     }
     
     useEffect(() => {
@@ -184,63 +192,65 @@ function Layout() {
     }, [location, navigate]);
     
     const calculateMaxHeight = () => {
-        const windowHeight = window.innerHeight;
-        const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
-        const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
-        
-        //on application keyboard open not sure why safeAreaInsets always return 0
-        let safeAreaInsetsTop = safeAreaInsets?.top || 0;
-        let safeAreaInsetsBottom = safeAreaInsets?.bottom || 0;
-        
-        if (safeAreaInsetsTop === 0) {
-            let cookieSafeArea = getCookie('data-safe-area-data');
-            if (!isNullOrEmpty(cookieSafeArea)) {
-                let cookieParsedData = JSON.parse(cookieSafeArea);
-                let cookieSafeAreaTopValue = cookieParsedData?.top;
-                if (!isNullOrEmpty(cookieSafeAreaTopValue) && parseInt(cookieSafeAreaTopValue) > 0) {
-                    safeAreaInsetsTop = cookieSafeAreaTopValue;
+        if (isMobile) {
+            const windowHeight = window.innerHeight;
+            const headerHeight = headerRef.current ? headerRef.current.getBoundingClientRect().height : 0;
+            const footerHeight = footerRef.current ? footerRef.current.getBoundingClientRect().height : 0;
+
+            //on application keyboard open not sure why safeAreaInsets always return 0
+            let safeAreaInsetsTop = safeAreaInsets?.top || 0;
+            let safeAreaInsetsBottom = safeAreaInsets?.bottom || 0;
+
+            if (safeAreaInsetsTop === 0) {
+                let cookieSafeArea = getCookie('data-safe-area-data');
+                if (!isNullOrEmpty(cookieSafeArea)) {
+                    let cookieParsedData = JSON.parse(cookieSafeArea);
+                    let cookieSafeAreaTopValue = cookieParsedData?.top;
+                    if (!isNullOrEmpty(cookieSafeAreaTopValue) && parseInt(cookieSafeAreaTopValue) > 0) {
+                        safeAreaInsetsTop = cookieSafeAreaTopValue;
+                    }
                 }
             }
-        }
 
-        if (safeAreaInsetsBottom === 0) {
-            let cookieSafeArea = getCookie('data-safe-area-data');
-            if (!isNullOrEmpty(cookieSafeArea)) {
-                let cookieParsedData = JSON.parse(cookieSafeArea);
-                let cookieSafeAreaBottomValue = cookieParsedData?.bottom;
-                if (!isNullOrEmpty(cookieSafeAreaBottomValue) && parseInt(cookieSafeAreaBottomValue) > 0) {
-                    safeAreaInsetsBottom = cookieSafeAreaBottomValue;
+            if (safeAreaInsetsBottom === 0) {
+                let cookieSafeArea = getCookie('data-safe-area-data');
+                if (!isNullOrEmpty(cookieSafeArea)) {
+                    let cookieParsedData = JSON.parse(cookieSafeArea);
+                    let cookieSafeAreaBottomValue = cookieParsedData?.bottom;
+                    if (!isNullOrEmpty(cookieSafeAreaBottomValue) && parseInt(cookieSafeAreaBottomValue) > 0) {
+                        safeAreaInsetsBottom = cookieSafeAreaBottomValue;
+                    }
                 }
             }
-        }
-        
-        let isIosKeyboardOpen = !isNullOrEmpty(iosKeyboardHeight) && parseInt(iosKeyboardHeight) > 0;
-        
-        let calculatedMaxHeight = windowHeight - headerHeight - safeAreaInsetsTop - footerHeight - safeAreaInsetsBottom;
 
-        if (!isFetching) {
-            if (toBoolean(currentRoute?.fullHeight)) {
-                calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
-            }
-        }
-        
-        setAvailableHeight(calculatedMaxHeight);
-        setMaxHeight(calculatedMaxHeight);
-        
-        if (isIosKeyboardOpen) {
-            if (!equalString(isFooterVisible, isPrevIsFooterVisible)) {
-                setIsPrevIsFooterVisible(isFooterVisible)
+            let isIosKeyboardOpen = !isNullOrEmpty(iosKeyboardHeight) && parseInt(iosKeyboardHeight) > 0;
+
+            let calculatedMaxHeight = windowHeight - headerHeight - safeAreaInsetsTop - footerHeight - safeAreaInsetsBottom;
+
+            if (!isFetching) {
+                if (toBoolean(currentRoute?.fullHeight)) {
+                    calculatedMaxHeight = windowHeight - headerHeight - footerHeight;
+                }
             }
 
-            setIsFooterVisible(false);
+            setAvailableHeight(calculatedMaxHeight);
+            setMaxHeight(calculatedMaxHeight);
 
-            //scroll into view
-            //handleIphoneInputFocus();
-        }
-        
-        if (equalString(iosKeyboardHeight, -1)) {
-            setIsFooterVisible(true);
-            setIosKeyboardHeight(null);
+            if (isIosKeyboardOpen) {
+                if (!equalString(isFooterVisible, isPrevIsFooterVisible)) {
+                    setIsPrevIsFooterVisible(isFooterVisible)
+                }
+
+                setIsFooterVisible(false);
+
+                //scroll into view
+                //handleIphoneInputFocus();
+            }
+
+            if (equalString(iosKeyboardHeight, -1)) {
+                setIsFooterVisible(true);
+                setIosKeyboardHeight(null);
+            }
         }
     };
 
@@ -273,63 +283,67 @@ function Layout() {
     const saveDeviceFirebaseToken = async (deviceId, token, androidDevice, innerOrgId) => {
         let orgIdToSet = orgId;
         
-        if (isNullOrEmpty(orgIdToSet)) {
-            const memberData = fromAuthLocalStorage('memberData', {});
-            orgIdToSet = memberData?.OrgId;
-        }
-
-        if (!isNullOrEmpty(orgIdToSet)) {
-            let postModel = {
-                deviceId: deviceId,
-                token: token,
-                androidDevice: toBoolean(androidDevice),
-                loadUnSeen: true,
-                spGuideId: nullToEmpty(spGuideId)
+        if (isMobile) {
+            if (isNullOrEmpty(orgIdToSet)) {
+                const memberData = fromAuthLocalStorage('memberData', {});
+                orgIdToSet = memberData?.OrgId;
             }
-            
-            let response = await apiService.post(`/api/native/firebase-token?id=${orgIdToSet}`, postModel);   
 
-            if (response) {
-                reactNativeSaveBadgeCount(response?.unSeenCount);
-                setAlertsCount(response?.unSeenCount);
-                setPushTokenInitialized(true);
-                saveCookie('isInitFirebase', true, 1140);
+            if (!isNullOrEmpty(orgIdToSet)) {
+                let postModel = {
+                    deviceId: deviceId,
+                    token: token,
+                    androidDevice: toBoolean(androidDevice),
+                    loadUnSeen: true,
+                    spGuideId: nullToEmpty(spGuideId)
+                }
+
+                let response = await apiService.post(`/api/native/firebase-token?id=${orgIdToSet}`, postModel);
+
+                if (response) {
+                    reactNativeSaveBadgeCount(response?.unSeenCount);
+                    setAlertsCount(response?.unSeenCount);
+                    setPushTokenInitialized(true);
+                    saveCookie('isInitFirebase', true, 1140);
+                }
             }
         }
     }
     
     //events
     useEffect(() => {
-        window.updateFirebaseToken = async (deviceId, token, androidDevice) => {
-           await saveDeviceFirebaseToken(deviceId, token, androidDevice, orgId);
-        };
-        
-        // Define the function to handle keyboard show event
-        window.onReactNativeKeyboardShow = (isIOS, keyboardHeight) => {
-            if (isIOS) {
-                // if (!equalString(iosKeyboardHeight, keyboardHeight)) {
-                //     setIosKeyboardHeight(keyboardHeight);
+        if (isMobile) {
+            window.updateFirebaseToken = async (deviceId, token, androidDevice) => {
+                await saveDeviceFirebaseToken(deviceId, token, androidDevice, orgId);
+            };
+
+            // Define the function to handle keyboard show event
+            window.onReactNativeKeyboardShow = (isIOS, keyboardHeight) => {
+                if (isIOS) {
+                    // if (!equalString(iosKeyboardHeight, keyboardHeight)) {
+                    //     setIosKeyboardHeight(keyboardHeight);
+                    // }
+                }
+            };
+
+            // Define the function to handle keyboard hide event
+            window.onReactNativeKeyboardHide = (isIOS) => {
+                // if (isIOS) {
+                //     setIosKeyboardHeight(-1);
                 // }
-            }
-        };
+            };
 
-        // Define the function to handle keyboard hide event
-        window.onReactNativeKeyboardHide = (isIOS) => {
-            // if (isIOS) {
-            //     setIosKeyboardHeight(-1);
-            // }
-        };
+            setTimeout(function(){
+                innerReactNativeHideSplash();
+            }, 10000)
 
-        setTimeout(function(){
-            innerReactNativeHideSplash();
-        }, 10000)
-        
-        // Cleanup on unmount
-        return () => {
-            delete window.updateFirebaseToken;
-            delete window.onReactNativeKeyboardShow;
-            delete window.onReactNativeKeyboardHide;
-        };
+            // Cleanup on unmount
+            return () => {
+                delete window.updateFirebaseToken;
+                delete window.onReactNativeKeyboardShow;
+                delete window.onReactNativeKeyboardHide;
+            };
+        }
     }, []);
 
     useEffect(() => {
@@ -412,7 +426,7 @@ function Layout() {
         document.head.appendChild(style);
     }, [token]);
 
-    const disablePullDownToRefresh = currentRoute?.disablePullDown;
+    const disablePullDownToRefresh = currentRoute?.disablePullDown || !isMobile;
 
     useEffect(() => {
         if (shouldLoadOrgData) {
@@ -491,12 +505,16 @@ function Layout() {
         <>
             <div className={styles.root}>
                 <div ref={headerRef}>
-                    <Header route={currentRoute}/>
+                    {isMobile ?
+                        <MobileHeader route={currentRoute}/>
+                    :
+                        <WebHeader route={currentRoute}/>
+                    }
                 </div>
 
                 <div id={'page-body'}
                      className={styles.pageBody}
-                     style={{height: `${maxHeight}px`}}>
+                     style={{height: isMobile ? `${maxHeight}px` : undefined}}>
                     <ErrorBoundary FallbackComponent={ErrorFallback} key={location.pathname}>
                         <>
                             <LayoutExtra />
@@ -546,9 +564,13 @@ function Layout() {
                 </div>
 
                 <div ref={footerRef}>
-                    <Footer isFooterVisible={isFooterVisible}
-                            footerContent={footerContent}
-                            isFetching={isFetching}/>
+                    {isMobile ?
+                        <MobileFooter isFooterVisible={isFooterVisible}
+                                      footerContent={footerContent}
+                                      isFetching={isFetching}/>
+                    :
+                        <WebFooter />
+                    }
                 </div>
             </div>
         </>

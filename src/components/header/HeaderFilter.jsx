@@ -1,4 +1,4 @@
-﻿import {useStyles} from "./styles.jsx";
+﻿import {useStyles} from "./mStyles.jsx";
 import {Badge, Button, Flex, Segmented} from "antd";
 import {FilterOutlined} from "@ant-design/icons";
 import * as React from "react";

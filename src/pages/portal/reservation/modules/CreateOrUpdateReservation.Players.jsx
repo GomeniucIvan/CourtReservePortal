@@ -42,6 +42,7 @@ function CreateOrUpdateReservationPlayers({formik,
                                             playersModelData,
                                             reloadPlayers,
                                             setLoading,
+            
                                             searchPlayerDrawerBottomRef}) {
 
     const [isPlayersSearch, setIsPlayersSearch] = useState(false);

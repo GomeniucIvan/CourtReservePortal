@@ -3,23 +3,23 @@ import {useAuth} from "@/context/AuthProvider.jsx";
 import {anyInList, equalString, toBoolean} from "@/utils/Utils.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
 const { Title } = Typography;
-import DashboardAnnouncements from "@portal/home/index/modules/Dashboard.Announcements.jsx";
-import DashboardLeagues from "@portal/home/index/modules/Dashboard.Leagues.jsx";
+import DashboardAnnouncements from "@portal/home/index/mobile/modules/Dashboard.Announcements.jsx";
+import DashboardLeagues from "@portal/home/index/mobile/modules/Dashboard.Leagues.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import DashboardHeader from "@portal/home/index/modules/Dashboard.Header.jsx";
-import DashboardMembershipBar from "@portal/home/index/modules/Dashboard.MembershipBar.jsx";
+import DashboardHeader from "@portal/home/index/mobile/modules/Dashboard.Header.jsx";
+import DashboardMembershipBar from "@portal/home/index/mobile/modules/Dashboard.MembershipBar.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 import {useApp} from "@/context/AppProvider.jsx";
-import DashboardBookings from "@portal/home/index/modules/Dashboard.Bookings.jsx";
+import DashboardBookings from "@portal/home/index/mobile/modules/Dashboard.Bookings.jsx";
 import {useStyles} from ".././styles.jsx";
 import ButtonLinks from "@/components/navigationlinks/ButtonLinks.jsx";
 import {getDashboardMainLinks} from "@/storage/AppStorage.jsx";
 import {setPage, toRoute} from "@/utils/RouteUtils.jsx";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import CardLinks from "@/components/navigationlinks/CardLinks.jsx";
-import DashboardSaveMyPlay from "@portal/home/index/modules/Dashboard.SaveMyPlay.jsx";
-import DashboardPourMyBev from "@portal/home/index/modules/Dashboard.PourMyBev.jsx";
+import DashboardSaveMyPlay from "@portal/home/index/mobile/modules/Dashboard.SaveMyPlay.jsx";
+import DashboardPourMyBev from "@portal/home/index/mobile/modules/Dashboard.PourMyBev.jsx";
 
 function DashboardModern({navigationItems, 
                              dashboardData, 

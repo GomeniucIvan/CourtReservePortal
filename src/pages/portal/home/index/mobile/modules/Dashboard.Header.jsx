@@ -19,7 +19,6 @@ import {toAuthLocalStorage} from "@/storage/AppStorage.jsx";
 import {setClientUiCulture} from "@/utils/DateUtils.jsx";
 import {isValidJson} from "@/utils/ListUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
-import {reactNavigateToMainRoute} from "@/utils/MobileUtils.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
 const {Text, Title} = Typography;

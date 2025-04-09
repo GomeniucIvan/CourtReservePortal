@@ -5,7 +5,6 @@ import {useApp} from "@/context/AppProvider.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import apiService from "@/api/api.jsx";
-import DashboardMembershipBar from "@portal/home/index/modules/Dashboard.MembershipBar.jsx";
 import {anyInList, isNullOrEmpty, toBoolean} from "@/utils/Utils.jsx";
 import AlertBlock from "@/components/alertblock/AlertBlock.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";

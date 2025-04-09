@@ -1,4 +1,4 @@
-﻿import {useStyles} from "./styles.jsx";
+﻿import {useStyles} from "./mStyles.jsx";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {Skeleton} from "antd-mobile";
 import React, {useEffect, useRef, useState} from "react";
@@ -15,13 +15,12 @@ import DrawerBottom from "@/components/drawer/DrawerBottom.jsx";
 import ListLinks from "@/components/navigationlinks/ListLinks.jsx";
 import {getDashboardMainLinks, getNavigationStorage} from "@/storage/AppStorage.jsx";
 import PaddingBlock from "@/components/paddingblock/PaddingBlock.jsx";
-import {any} from "prop-types";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {getCookie} from "@/utils/CookieUtils.jsx";
 
 const {Text} = Typography;
-const Footer = ({isFooterVisible, footerContent, isFetching}) => {
+const MobileFooter = ({isFooterVisible, footerContent, isFetching}) => {
     const {styles} = useStyles();
     const navigate = useNavigate();
     const {token, globalStyles} = useApp();
@@ -253,4 +252,4 @@ const Footer = ({isFooterVisible, footerContent, isFetching}) => {
     )
 }
 
-export default Footer;
+export default MobileFooter;

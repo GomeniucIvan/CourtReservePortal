@@ -1,4 +1,4 @@
-﻿import {useStyles} from "./styles.jsx";
+﻿import {useStyles} from "./mStyles.jsx";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import {getLastFromHistory, pushToHistory} from "@/toolkit/HistoryStack.js";
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -11,7 +11,7 @@ import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {eTranslate} from "@/utils/TranslateUtils.jsx";
 
-const Header = forwardRef((props, ref) => {
+const MobileHeader = forwardRef((props, ref) => {
     const location = useLocation();
     const navigate = useNavigate();
     const {headerRightIcons, headerTitleKey, customHeader, onBack, headerTitle, hideHeader} = useHeader();
@@ -117,4 +117,4 @@ const Header = forwardRef((props, ref) => {
     );
 })
 
-export default Header;
+export default MobileHeader;
