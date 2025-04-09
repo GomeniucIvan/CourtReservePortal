@@ -28,6 +28,7 @@ import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
 import {navigationClearHistory} from "@/toolkit/HistoryStack.js";
 import LoginJoinOrganizationModal from "@portal/account/modules/LoginJoinOrganizationModal.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
 
 const {Title} = Typography;
 
@@ -40,6 +41,7 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
     const recaptchaRef = useRef(null);
     let signupData = data;
     let reviewData = data;
+    const {isMobile} = useDevice();
     
     const createAccount = async () => {
         setIsLoading(true);
@@ -123,7 +125,7 @@ function LoginCreateAccountReviewModal({show, setShow, data}) {
         let response = await appService.post(`/app/Online/Portal/RegisterAccount?id=${orgIdToCreateAccount}`, postModel);
 
         if (toBoolean(response?.IsValid)){
-            let requestData = await portalService.requestData(navigate, orgIdToCreateAccount);
+            let requestData = await portalService.requestData(navigate, orgIdToCreateAccount, isMobile);
 
             if (toBoolean(requestData?.IsValid)) {
                 await setAuthorizationData(requestData.OrganizationData);

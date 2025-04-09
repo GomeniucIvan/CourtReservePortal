@@ -28,12 +28,13 @@ import {modalButtonType} from "@/components/modal/CenterModal.jsx";
 import {getGlobalSpGuideId} from "@/utils/AppUtils.jsx";
 import {navigationClearHistory} from "@/toolkit/HistoryStack.js";
 import LoginJoinOrganizationModal from "@portal/account/modules/LoginJoinOrganizationModal.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
 
 const {Title} = Typography;
 
 function JoinOrganizationReviewModal({show, setShow, data}) {
     const {setIsLoading} = useApp();
-
+    const {isMobile} = useDevice();
     const { setAuthorizationData } = useAuth();
     let captchaKey = getWebConfigValue('GoogleCaptchaKey_V3');
 
@@ -125,7 +126,7 @@ function JoinOrganizationReviewModal({show, setShow, data}) {
         let response = await appService.post(`/app/Online/Portal/SignUp?id=${orgIdToCreateAccount}`, postModel);
 
         if (toBoolean(response?.IsValid)){
-            let requestData = await portalService.requestData(navigate, orgIdToCreateAccount);
+            let requestData = await portalService.requestData(navigate, orgIdToCreateAccount, isMobile);
 
             if (toBoolean(requestData?.IsValid)) {
                 

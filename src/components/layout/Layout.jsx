@@ -446,7 +446,7 @@ function Layout() {
             orgId = memberData?.OrgId;
         }
 
-        let requestData = await portalService.requestData(navigate, orgId);
+        let requestData = await portalService.requestData(navigate, orgId, isMobile);
 
         if (toBoolean(requestData?.IsValid)) {
             await setAuthorizationData(requestData.OrganizationData);
@@ -508,7 +508,7 @@ function Layout() {
                     {isMobile ?
                         <MobileHeader route={currentRoute}/>
                     :
-                        <WebHeader route={currentRoute}/>
+                        <WebHeader route={currentRoute} isFetching={isFetching}/>
                     }
                 </div>
 

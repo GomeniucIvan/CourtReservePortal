@@ -18,6 +18,7 @@ import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import {useTranslation} from "react-i18next";
 import portalService from "@/api/portal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
 
 const {Paragraph, Title, Text} = Typography;
 const {useToken} = theme;
@@ -41,7 +42,7 @@ function LoginUpdatePassword({mainFormik, onSkipPasswordUpdate }) {
     const ssoKey = mainFormik?.values?.ssoKey;
     const[isLogin, setIsLogin] = useState(false);
     const {t} = useTranslation('login');
-
+    const {isMobile} = useDevice();
 
     useEffect(() => {
         setIsFooterVisible(false);
@@ -72,7 +73,7 @@ function LoginUpdatePassword({mainFormik, onSkipPasswordUpdate }) {
         if (loginResponse){
             let orgId = loginResponse.orgId;
 
-            let requestData = await portalService.requestData(navigate, orgId);
+            let requestData = await portalService.requestData(navigate, orgId, isMobile);
             if (requestData.IsValid) {
                 await setAuthorizationData(requestData.OrganizationData);
                 setIsLoading(false);

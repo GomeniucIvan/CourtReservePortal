@@ -5,6 +5,10 @@ export const setPage = (setDynamicPages,title, path, key) => {
     setDynamicPages([{title: title, path: path}]);
 }
 
+export const setPageTitle= (title) => {
+    
+}
+
 export const toRoute = (template, key, value) => {
     const regex = new RegExp(`:${key}`, 'g');
     return template.replace(regex, value);

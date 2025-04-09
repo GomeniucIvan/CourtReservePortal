@@ -10,11 +10,11 @@ const portalService = {
     frictLogin: async (navigate, ssoKey, secretKey, spGuideId) => {
         return await appService.get(navigate, `/app/MobileSso/FrictLogin?ssoKey=${ssoKey}&initialAuthCode=${secretKey}&spGuideId=${nullToEmpty(spGuideId)}&loaded=true`)
     },
-    navigationData: async (navigate, orgId) => {
+    navigationData: async (navigate, orgId, isMobile) => {
         let navigationType = getCookie("dashboard_navigationType");
-        return await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}&navigationType=${nullToEmpty(navigationType)}`);
+        return await appService.get(navigate, `/app/Online/AuthData/NavigationData?id=${orgId}&navigationType=${nullToEmpty(navigationType)}&isMobile=${isMobile}`);
     },
-    requestData: async (navigate, orgId) => {
+    requestData: async (navigate, orgId, isMobile) => {
         //params for bearer authorization, we pass param like requestData to auth member/user
         let response = await appService.get(navigate, `/app/Online/AuthData/RequestData?id=${orgId}`);
         
@@ -23,7 +23,7 @@ const portalService = {
             setRequestData(responseData.RequestData);
 
             
-            let dashboardData = await portalService.navigationData(navigate, orgId);
+            let dashboardData = await portalService.navigationData(navigate, orgId, isMobile);
 
             if (toBoolean(dashboardData?.IsValid)) {
                 setNavigationStorage(orgId, dashboardData);

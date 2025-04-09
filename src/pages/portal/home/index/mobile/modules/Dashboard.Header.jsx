@@ -21,6 +21,7 @@ import {isValidJson} from "@/utils/ListUtils.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
 import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
 const {Text, Title} = Typography;
 
 const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, headerOrgChange }) => {
@@ -36,6 +37,7 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, he
     const [loadingOrganizationId, setLoadingOrganizationId] = useState(null);
     const navigate = useNavigate();
     const {setPrimaryColor} = useAntd();
+    const {isMobile} = useDevice();
     
     let cookieWeatherKey = `Dashboard_Weather_${orgId}`;
     
@@ -181,7 +183,7 @@ const DashboardHeader = ({ dashboardData, organizationList, isReloadFetching, he
     const changeViewingOrganization = async (selectedOrg) => {
         setLoadingOrganizationId(selectedOrg.Id);
 
-        let requestData = await portalService.requestData(navigate, selectedOrg.Id);
+        let requestData = await portalService.requestData(navigate, selectedOrg.Id, isMobile);
         if (toBoolean(requestData?.IsValid)) {
             setTimeout(function(){
                 loadOrganizationData(requestData)

@@ -17,6 +17,7 @@ import portalService from "@/api/portal.jsx";
 import {useHeader} from "@/context/HeaderProvider.jsx";
 import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {modalButtonType} from "@/components/modal/CenterModal.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
 
 const {Title, Link, Text, Paragraph} = Typography;
 
@@ -34,6 +35,7 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
     const email = mainFormik?.values?.email;
     const navigate = useNavigate();
     const {t} = useTranslation('login');
+    const {isMobile} = useDevice();
     
     const initialValues = {
         email: email,
@@ -115,7 +117,7 @@ function LoginAuthorize({ isFromGetStarted, mainFormik, onRequestACode }) {
 
                 const responseData = loginApiResponse.Data;
                 setRequestData(responseData.RequestData);
-                const authResponse = await portalService.requestData(navigate, responseData.OrgId);
+                const authResponse = await portalService.requestData(navigate, responseData.OrgId, isMobile);
                 
                 if (toBoolean(authResponse?.IsValid)) {
 

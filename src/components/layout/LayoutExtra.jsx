@@ -19,6 +19,7 @@ import {AuthRouteNames} from "@/routes/AuthRoutes.jsx";
 import {getConfigValue} from "@/config/WebConfig.jsx";
 import {DevRouteNames} from "@/routes/DevRoutes.jsx";
 import DevConsole from "@/pages/dev/DevConsole.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
 
 function LayoutExtra() {
     const { isMockData } = useApp();
@@ -34,6 +35,7 @@ function LayoutExtra() {
     const [showConsole, setShowConsole] = useState(false);
     const [selectedPrimaryPageType, setSelectedPrimaryPageType] = useState('empty-set-sharp-regular');
     const isDebugMode = getConfigValue('IsDebugMode');
+    const {isMobile} = useDevice();
     
     //based on route
     const [showDashboardType, setShowDashboardType] = useState(false);
@@ -105,7 +107,7 @@ function LayoutExtra() {
 
         if (!isNullOrEmpty(orgId)) {
             const response = await toast.promise(
-                portalService.requestData(navigate, orgId),
+                portalService.requestData(navigate, orgId, isMobile),
                 {
                     position: 'top-center',
                     loading: 'Loading...',

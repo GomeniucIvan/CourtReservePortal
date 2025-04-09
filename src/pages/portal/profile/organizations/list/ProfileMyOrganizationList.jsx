@@ -19,6 +19,7 @@ import {useHeader} from "@/context/HeaderProvider.jsx";
 import FooterBlock from "@/components/footer/FooterBlock.jsx";
 import {AccountRouteNames} from "@/routes/AccountRoutes.jsx";
 import {toRoute} from "@/utils/RouteUtils.jsx";
+import {useDevice} from "@/context/DeviceProvider.jsx";
 
 const {Title, Text} = Typography;
 
@@ -35,7 +36,7 @@ function ProfileMyOrganizationList() {
     const [hideOrganizationDataModal, setHideOrganizationDataModal] = useState(null);
     const [tabKey, setTabKey] = useState(1);
     const [showOrganizationDataModal, setShowOrganizationDataModal] = useState(null);
-    
+    const {isMobile} = useDevice();
     const {styles} = useStyles();
 
     const [organizations, setOrganizations] = useState([]);
@@ -92,7 +93,7 @@ function ProfileMyOrganizationList() {
         setIsFooterVisible(false);
         setLoadingOrganization(selectedOrg);
 
-        let requestData = await portalService.requestData(navigate, selectedOrg.Id);
+        let requestData = await portalService.requestData(navigate, selectedOrg.Id, isMobile);
         if (toBoolean(requestData?.IsValid)) {
             await setAuthorizationData(requestData.OrganizationData);
             navigate(HomeRouteNames.INDEX);
