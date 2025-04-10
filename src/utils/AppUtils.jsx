@@ -93,3 +93,14 @@ export const getGlobalSpGuideTextColor = () => {
 
     return '';
 }
+
+export const getGlobalIsMobile = () => {
+    if (typeof globalIsMobile !== 'undefined') {
+        logInfo('globalIsMobile:', globalSpGuideId);
+        return globalIsMobile;
+    } else {
+        logInfo('globalIsMobile is not defined');
+    }
+
+    return '';
+}

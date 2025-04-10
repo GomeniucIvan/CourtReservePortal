@@ -11,6 +11,7 @@ import {useDevice} from "@/context/DeviceProvider.jsx";
 const AntdContext = createContext();
 
 export const useAntd = () => useContext(AntdContext);
+let colorError = '#D32F2F';
 
 const webThemeConfig = (primaryColor, primaryTextColor, isDarkMode) => ({
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
@@ -18,7 +19,7 @@ const webThemeConfig = (primaryColor, primaryTextColor, isDarkMode) => ({
         colorPrimary: primaryColor,
         colorOrgText: primaryTextColor,
         colorCourtReserve: '#34495E',
-        colorError: '#D32F2F',
+        colorError: colorError,
         fontFamily: "Inter, -apple-system, BlinkMacSystemFont, ...",
         colorTextDisabled: isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
     },
@@ -37,34 +38,103 @@ const webThemeConfig = (primaryColor, primaryTextColor, isDarkMode) => ({
 const mobileThemeConfig = (primaryColor, primaryTextColor, isDarkMode) => ({
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
+        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+        colorCourtReserve: '#34495E',
         colorPrimary: primaryColor,
         colorOrgText: primaryTextColor,
-        boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, ...',
-        fontSize: 14,
+        boxShadow: 'rgb(0 0 0 / 77%) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px',
+        headerActionHeight: 32,
         borderRadiusSM: 8,
+        borderRadiusXS: 4,
+        checkboxBorderRadius: 4,
+        ribonBorderRadius: 4,
+        inputLeftPadding: 12,
+        fontSizeIcon: 14,
+        fontSizeXS: 10,
+        fontSizeSM: 12,
+        fontSize: 14,
+        fontSizeLG: 16,
+        fontSizeXL: 20,
+        colorSecondary: '#a1a1a1',
+        colorBlack: '#1F1F1F',
+        colorScrollbar: '#eaeaea',
+        colorError: colorError,
+        colorTextDisabled: toBoolean(isDarkMode) ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
         padding: 16,
-        colorError: '#D32F2F',
-        colorTextDisabled: isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
+        paddingXXL: 20,
+        paddingXL: 14,
+        paddingLG: 12,
+        paddingMD: 10,
+        paddingSM: 8,
+        paddingXS: 4,
+        paddingXXS: 2,
+        colorTextTertiary: toBoolean(isDarkMode) ? '#a1a1a1' : 'rgba(0, 0, 0, 0.45)',
+        colorInfoText: '#1677ff',
+        colorSplit: '#d9d9d9', //divider color
+        colorBorderSecondary: '#d9d9d9', //cards color
+        colorLabelValue : '#616161', //FormInputDisplay
     },
     components: {
         Custom: {
             cardIconPadding: 8,
             cardIconWidth: 22,
-            workingTheme: isDarkMode ? 'dark' : 'light',
+            buttonPadding: 8,
+            colorPrimaryText: 'black',
+            workingTheme: toBoolean(isDarkMode) ? 'dark' : 'light'
         },
         Button: {
             contentFontSize: 16,
+            controlHeightSM: 36,
             controlHeight: 40,
+            controlHeightLG: 44,
             borderRadius: 8,
+            paddingXS: 8,
+            marginXS: 8,
+            defaultShadow: 'none',
+            primaryShadow: 'none',
         },
         Input: {
             borderRadius: 8,
             controlHeight: 40,
+            activeShadow: 'none',
+            activeBorderColor: '#d9d9d9',
+            hoverBorderColor: '#d9d9d9',
+        },
+        Select: {
+            borderRadius: 8,
+            controlHeight: 40,
+            activeShadow: 'none',
+            activeBorderColor: '#d9d9d9'
         },
         Form: {
             labelFontSize: 14,
+            verticalLabelPadding: '0 0 8px',
+            labelColonMarginInlineStart: 0,
+            colorError: colorError,
             itemMarginBottom: 16,
-            colorError: '#D32F2F',
+            labelRequiredMarkColor: colorError,
+            marginXXS: 4,
+            colorBorder: "rgb(217,217,217)"
+        },
+        Modal: {
+            fontSize: 15,
+            fontSizeHeading5: 18
+        },
+        Typography: {
+            titleMarginTop: 0,
+            lineHeight: '22px',
+            titleMarginBottom: 0,
+            fontSizeHeading1: 20,
+            fontSizeHeading2: 18,
+            fontSizeHeading3: 16,
+            fontSizeHeading4: 14,
+            fontSizeHeading5: 12
+        },
+        Descriptions: {
+            itemPaddingBottom: 8
+        },
+        Skeleton: {
+            blockRadius: 2
         },
     }
 });
@@ -115,7 +185,6 @@ export const AntdProvider = ({ children }) => {
         }
     }, [isDarkMode]);
     
-    let colorError = '#D32F2F';
     return (
         <AntdContext.Provider value={{setPrimaryColor, setIsDarkMode, isDarkMode, setPrimaryTextColor}}>
             <App>

@@ -15,6 +15,10 @@ let enableDebug = !isProduction;
 if (!isProduction){
     appUrl = 'http://localhost:2129/';
     backendUrl = 'https://localhost:7130/';
+
+    // appUrl = 'http://83.218.209.97:2200/';
+    // backendUrl = 'http://83.218.209.97:7197/';
+    
     showConsoleLog = false;
 }
 

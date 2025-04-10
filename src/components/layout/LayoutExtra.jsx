@@ -7,10 +7,10 @@ import {fromLocalStorage, toLocalStorage} from "../../storage/AppStorage.jsx";
 import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import SVG from "@/components/svg/SVG.jsx";
-import {equalString, isNullOrEmpty, setCookie} from "@/utils/Utils.jsx";
+import {equalString, isNullOrEmpty, setCookie, toBoolean} from "@/utils/Utils.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
-import {getCookie} from "@/utils/CookieUtils.jsx";
+import {getCookie, saveCookie} from "@/utils/CookieUtils.jsx";
 import portalService from "@/api/portal.jsx";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import toast from "react-hot-toast";
@@ -277,7 +277,16 @@ function LayoutExtra() {
                         }}>
                             <SVG icon={'pincode'} size={16}/>
                         </Button>
+                    </div>
 
+                    <div className={styles.dashboardTypeContainer}>
+                        <Button shape="circle"
+                                onClick={() => {
+                                    let cookieValue = getCookie('IsMobile');
+                                    saveCookie('IsMobile', !toBoolean(cookieValue), 300);
+                        }}>
+                           M
+                        </Button>
                     </div>
 
                     {1 == 2 &&
