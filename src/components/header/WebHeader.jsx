@@ -11,20 +11,21 @@ import {displayMessageModal} from "@/context/MessageModalProvider.jsx";
 import {Button, Flex, Layout, Typography, Dropdown, Space} from "antd";
 import {openMobileExternalBrowser} from "@/utils/MobileUtils.jsx";
 import {setPageTitle, toRoute} from "@/utils/RouteUtils.jsx";
-import {HomeRouteNames} from "@/routes/HomeRoutes.jsx";
 import * as React from "react";
 import {useAuth} from "@/context/AuthProvider.jsx";
 import {addCypressTag} from "@/utils/TestUtils.jsx";
+import SVG from "@/components/svg/SVG.jsx";
+import {Ellipsis} from "antd-mobile";
 
 const { Header, Content, Footer } = Layout;
-const { Link } = Typography;
+const { Link,Text } = Typography;
 
 const WebHeader = forwardRef((props, ref) => {
     const location = useLocation();
     const { orgId, authData } = useAuth();
     const {headerRightIcons, headerTitleKey, customHeader, onBack, headerTitle, hideHeader} = useHeader();
     const [navigationItems, setNavigationItems] = useState(getNavigationStorage(orgId));
-    const {isLoading} = useApp();
+    const {isLoading, token} = useApp();
     const {styles} = useStyles();
     const {t} = useTranslation('header');
     const navigate = useNavigate();
@@ -58,6 +59,7 @@ const WebHeader = forwardRef((props, ref) => {
         items: items.map((child, idx) => ({
             label: child.Text,
             key: `${child.Item}${idx.toString()}`,
+            icon: <div className={'ant-dropdown-menu-item-icon'}><SVG icon={`navigation/portal/${child.IconClass}`} size={16} color={token.colorText} /></div> ,
             onClick: () => {
                 if (toBoolean(child.TargetBlank)) {
                     openMobileExternalBrowser(child.Url);
@@ -67,63 +69,88 @@ const WebHeader = forwardRef((props, ref) => {
             }
         }))
     });
-    
+
+    const renderMenuItem = (link) => {
+        return (
+            <Link {...addCypressTag(`header_${link.Item}`)}
+                  onClick={() => {
+                      if (!anyInList(link.Childrens)) {
+                          if (toBoolean(link.TargetBlank)) {
+                              displayMessageModal({
+                                  title: "External Link",
+                                  html: (onClose) => <Flex vertical={true}>
+                                      <Text>{'You are about to leave our platform and access an external website. Open external link?'}</Text>
+
+                                      <Flex vertical={true} gap={token.padding}>
+                                          <Button block={true} type={'primary'} onClick={() => {
+                                              openMobileExternalBrowser(link.Url);
+                                              onClose();
+                                          }}>
+                                              Open
+                                          </Button>
+
+                                          <Button block={true} onClick={() => {
+                                              onClose();
+                                          }}>
+                                              Close
+                                          </Button>
+                                      </Flex>
+                                  </Flex>,
+                                  type: "warning",
+                                  onClose: () => {},
+                              })
+                          } else {
+                              navigate(link.Url);
+                          }
+                      }
+                  }}
+                  className={styles.mainHeaderItem}>
+                <Flex vertical={true} justify="center">
+                    <div style={{margin: 'auto'}}>
+                        <SVG icon={`navigation/portal/${link.IconClass}`} size={20} color={token.colorHeaderText} />
+                    </div>
+                    <Text style={{color: token.colorHeaderText, fontSize: 12, maxWidth: 100, paddingTop: '0.25rem'}}>
+                        <Ellipsis direction='end' rows={1} content={link.Text}/>
+                    </Text>
+                </Flex>
+            </Link>
+        )
+    }
+
     return (
         <>
             {anyInList(navigationItems) &&
                 <>
-                    <Header style={{ display: 'flex', alignItems: 'center' }}>
-                        <div className="demo-logo" />
-                        {navigationItems.map((link,index) => {
+                    <Header className={styles.header}>
+                        <Flex justify="space-between">
+                            <Flex align="center">
+                                <div className="demo-logo" />
+                                {navigationItems.map((link,index) => {
 
-                                if (anyInList(link.Childrens)) {
+                                    if (anyInList(link.Childrens)) {
+                                        return (
+                                            <Dropdown menu={linkDropdownItems(link.Childrens)}
+                                                      trigger={['click']}
+                                                      key={`dd_${index}`}
+                                                      overlayClassName={styles.headerDropdown}
+                                                      arrow>
+                                                {renderMenuItem(link)}
+                                            </Dropdown>
+                                        )
+                                    }
+
                                     return (
-                                        <Dropdown menu={linkDropdownItems(link.Childrens)} trigger={['click']}>
-                                            <a onClick={(e) => e.preventDefault()}>
-                                                <Space>
-                                                    {link.Text}
-                                                </Space>
-                                            </a>
-                                        </Dropdown>
+                                        <React.Fragment key={`dd_${index}`}>
+                                            {renderMenuItem(link)}
+                                        </React.Fragment>
                                     )
-                                }
+                                })}
+                            </Flex>
 
-                                return (
-                                    <Link key={index}
-                                          {...addCypressTag(`header_${link.Item}`)}
-                                          onClick={() => {
-                                              if (toBoolean(link.TargetBlank)) {
-                                                  displayMessageModal({
-                                                      title: "External Link",
-                                                      html: (onClose) => <Flex vertical={true}>
-                                                          <Text>{'You are about to leave our platform and access an external website. Open external link?'}</Text>
-
-                                                          <Flex vertical={true} gap={token.padding}>
-                                                              <Button block={true} type={'primary'} onClick={() => {
-                                                                  openMobileExternalBrowser(link.Url);
-                                                                  onClose();
-                                                              }}>
-                                                                  Open
-                                                              </Button>
-
-                                                              <Button block={true} onClick={() => {
-                                                                  onClose();
-                                                              }}>
-                                                                  Close
-                                                              </Button>
-                                                          </Flex>
-                                                      </Flex>,
-                                                      type: "warning",
-                                                      onClose: () => {},
-                                                  })
-                                              } else {
-                                                  navigate(link.Url);
-                                              }
-                                          }}>
-                                        {link.Text}
-                                    </Link>
-                                )
-                            })}
+                            <Flex>
+                                <div>test</div>
+                            </Flex>
+                        </Flex>
                     </Header>
                 </>
             }

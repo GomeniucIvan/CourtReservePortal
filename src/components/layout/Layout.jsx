@@ -1,18 +1,17 @@
 ﻿import {Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import AppRoutes from "../../routes/AppRoutes.jsx";
 import "./Layout.module.less";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useApp} from "../../context/AppProvider.jsx";
 import {useStyles} from "./styles.jsx";
 import {equalString, isNullOrEmpty, nullToEmpty, toBoolean} from "../../utils/Utils.jsx";
 import {
     fromAuthLocalStorage, getShowUnsubscribeModal
 } from "../../storage/AppStorage.jsx";
-import {PullToRefresh} from "antd-mobile";
+import {PullToRefresh, Skeleton} from "antd-mobile";
 import LayoutExtra from "./LayoutExtra.jsx";
 import {useAuth} from "../../context/AuthProvider.jsx";
-import {Flex} from "antd";
-import {Skeleton} from 'antd-mobile'
+import {Flex, Skeleton as AntSkeleton, Layout as AntLayout} from "antd";
 import PaddingBlock from "../paddingblock/PaddingBlock.jsx";
 import {HomeRouteNames} from "../../routes/HomeRoutes.jsx";
 import {AuthRouteNames} from "../../routes/AuthRoutes.jsx";
@@ -34,6 +33,8 @@ import MobileHeader from "@/components/header/MobileHeader.jsx";
 import WebHeader from "@/components/header/WebHeader.jsx";
 import MobileFooter from "@/components/footer/MobileFooter.jsx";
 import WebFooter from "@/components/footer/WebFooter.jsx";
+import {cx} from "antd-style";
+const { Content } = AntLayout;
 
 function Layout() {
     const location = useLocation();
@@ -528,36 +529,75 @@ function Layout() {
 
                             {toBoolean(isFetching) ? (
                                 <>
-                                    {/*<div className={'safe-area-top'}></div>*/}
+                                    {isMobile &&
+                                        <>
+                                            {/*<div className={'safe-area-top'}></div>*/}
 
-                                    <PaddingBlock topBottom={true}>
-                                        <Flex vertical={true} gap={token.padding}>
-                                            {skeletonArray.map((_, index) => (
-                                                <Skeleton key={index} animated className={styles.skeleton}/>
-                                            ))}
-                                        </Flex>
-                                    </PaddingBlock>
+                                            <PaddingBlock topBottom={true}>
+                                                <Flex vertical={true} gap={token.padding}>
+                                                    {skeletonArray.map((_, index) => (
+                                                        <Skeleton key={index} active={true} className={styles.skeleton}/>
+                                                    ))}
+                                                </Flex>
+                                            </PaddingBlock>
+                                        </>
+                                    }
+
+                                    {!isMobile &&
+                                        <Content>
+                                            <Flex vertical={true} gap={token.padding}>
+                                                <AntSkeleton.Button active={true} block style={{height: `70px`}} />
+                                                <AntSkeleton.Button active={true} block style={{height: `180px`}} />
+                                                <AntSkeleton.Button active={true} block style={{height: `210px`}} />
+                                            </Flex>
+                                        </Content>
+                                        
+                                        
+                                    }
                                 </>
                             ) : (
-                                <PullToRefresh onRefresh={refreshData}
-                                               disabled={toBoolean(disablePullDownToRefresh)}
-                                               pullingText={'Pull down to refresh.'}
-                                               refreshingText={'Loading...'}
-                                               completeText={'Refresh successful.'}
-                                               canReleaseText={'Release to refresh immediately.'}>
-                                    <Routes>
-                                        {AppRoutes.map((route, index) => {
-                                            const {element, path, ...rest} = route;
+                                <>
+                                    {isMobile &&
+                                        <>
+                                            <PullToRefresh onRefresh={refreshData}
+                                                           disabled={toBoolean(disablePullDownToRefresh)}
+                                                           pullingText={'Pull down to refresh.'}
+                                                           refreshingText={'Loading...'}
+                                                           completeText={'Refresh successful.'}
+                                                           canReleaseText={'Release to refresh immediately.'}>
+                                                <Routes>
+                                                    {AppRoutes.map((route, index) => {
+                                                        const {element, path, ...rest} = route;
 
-                                            return <Route
-                                                onUpdate={() => window.scrollTo(0, 0)}
-                                                key={index}
-                                                path={path}
-                                                {...rest}
-                                                element={element}/>;
-                                        })}
-                                    </Routes>
-                                </PullToRefresh>
+                                                        return <Route
+                                                            onUpdate={() => window.scrollTo(0, 0)}
+                                                            key={index}
+                                                            path={path}
+                                                            {...rest}
+                                                            element={element}/>;
+                                                    })}
+                                                </Routes>
+                                            </PullToRefresh>
+                                        </>
+                                    }
+
+                                    {!isMobile &&
+                                        <Content>
+                                            <Routes>
+                                                {AppRoutes.map((route, index) => {
+                                                    const {element, path, ...rest} = route;
+
+                                                    return <Route
+                                                        onUpdate={() => window.scrollTo(0, 0)}
+                                                        key={index}
+                                                        path={path}
+                                                        {...rest}
+                                                        element={element}/>;
+                                                })}
+                                            </Routes>
+                                        </Content>
+                                    }
+                                </>
                             )}
                         </>
                     </ErrorBoundary>

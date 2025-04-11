@@ -16,11 +16,13 @@ let colorError = '#D32F2F';
 const webThemeConfig = (primaryColor, primaryTextColor, isDarkMode) => ({
     algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
+        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+        colorCourtReserve: '#34495E',
+        colorHeaderBg: '#284b74',
+        colorHeaderText: '#FFFFFF',
         colorPrimary: primaryColor,
         colorOrgText: primaryTextColor,
-        colorCourtReserve: '#34495E',
         colorError: colorError,
-        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, ...",
         colorTextDisabled: isDarkMode ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.88)',
     },
     components: {
